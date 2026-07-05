@@ -10,6 +10,14 @@
 
 **Spec:** [`docs/superpowers/specs/2026-07-05-pwa-web-app-install-design.md`](../specs/2026-07-05-pwa-web-app-install-design.md)
 
+> **Correction discovered during Task 5 (2026-07-05):** `import.meta.env.BASE_URL`
+> resolves to `/aic-web` (no trailing slash) in this Astro setup, not `/aic-web/`
+> as the spec assumed. Every `${BASE}...` concatenation broke and `scope` was
+> malformed. Tasks 5, 6, and 7 normalize BASE to guarantee a trailing slash
+> (`const BASE = RAW_BASE.endsWith('/') ? RAW_BASE : RAW_BASE + '/'`). Task 5
+> also folded in `@types/node`, which the icon endpoint needs under strict mode.
+> The unit-test/devDep additions are otherwise unchanged.
+
 ---
 
 ## File Map
