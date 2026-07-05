@@ -5,16 +5,8 @@
       <stop offset="1" stop-color="#e88a4f" />
     </linearGradient>
   </defs>
-  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#g)" />
-  <text
-    x="32"
-    y="44"
-    width="60"
-    height="60"
-    font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif"
-    font-weight="800"
-    font-size="38"
-    fill="#1a1408"
-    text-anchor="middle"
-    letter-spacing="-1.5">a</text>
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#g)" />
+  <rect x="2.5" y="2.5" width="59" height="59" rx="14.5" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1" />
+  <path fill="#1a1408" d="M28,15 Q28,34 47,34 Q28,34 28,53 Q28,34 9,34 Q28,34 28,15 Z" />
+  <path fill="#1a1408" d="M48,8 Q48,16 56,16 Q48,16 48,24 Q48,16 40,16 Q48,16 48,8 Z" />
 </svg>

@@ -13,7 +13,12 @@ const { version } = Astro.props;
 
 <header class="topbar" data-topbar>
   <a class="brand" href="#top" aria-label="aic — home">
-    <span class="mark" aria-hidden="true">a</span>
+    <span class="mark" aria-hidden="true">
+      <svg class="mark-svg" viewBox="0 0 24 24" width="22" height="22" focusable="false">
+        <path d="M10,5 Q10,13 18,13 Q10,13 10,21 Q10,13 2,13 Q10,13 10,5 Z" fill="#1a1408" />
+        <path d="M18,2 Q18,6 22,6 Q18,6 18,10 Q18,6 14,6 Q18,6 18,2 Z" fill="#1a1408" />
+      </svg>
+    </span>
     <span class="brand-text">
       <span class="brand-name">aic</span>
       <span class="brand-tag">AI-powered git commits</span>
@@ -79,11 +84,20 @@ const { version } = Astro.props;
     box-shadow:
       0 10px 28px -8px rgba(243, 179, 64, 0.4),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 1.15rem;
-    color: #1a1408;
-    letter-spacing: -0.04em;
+  }
+  .mark-svg {
+    display: block;
+    transition: transform var(--duration-normal) var(--ease-out-expo);
+  }
+  .brand:hover .mark-svg {
+    transform: rotate(12deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mark-svg,
+    .brand:hover .mark-svg {
+      transition: none;
+      transform: none;
+    }
   }
   .brand-text {
     display: flex;
