@@ -36,6 +36,13 @@ const themeColor = '#0e0f14';
 
     <!-- icons -->
     <link rel="icon" href="/aic-web/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/aic-web/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/aic-web/manifest.webmanifest" />
+
+    <!-- apple web app -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="aic" />
 
     <!-- fonts — preload only regular weight (Q12 hybrid) -->
     <link
@@ -76,6 +83,15 @@ const themeColor = '#0e0f14';
         },
       })}
     />
+
+    <!-- PWA: register service worker (progressive enhancement — fails silently) -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/aic-web/sw.js').catch(() => {});
+        });
+      }
+    </script>
 
     <meta name="generator" content={Astro.generator} />
   </head>
