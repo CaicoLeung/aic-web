@@ -1,0 +1,7 @@
+# pnpm settings (v10.26+/v11 home for config; see https://pnpm.io/settings)
+# Approves native-binary postinstall scripts for trusted packages:
+#   - esbuild: Vite/Astro bundler binary
+#   - sharp:   Astro image-optimization native libvips
+allowBuilds:
+  esbuild: true
+  sharp: true
