@@ -1,0 +1,88 @@
+---
+/**
+ * Base layout — HTML shell, head, font preloads, OG metadata.
+ * Spiritual-adaptation (ADR-0002): palette + grain + glows come from
+ * the design tokens in global.css, not hardcoded here.
+ */
+import '@/styles/global.css';
+
+interface Props {
+  readonly version: string;
+  readonly title?: string;
+  readonly description?: string;
+}
+
+const {
+  version,
+  title = 'aic — AI-powered git commits',
+  description = 'aic reads your diff, drafts a conventional commit, and commits it — one command. Nothing staged? It groups your work into logical commits for you.',
+} = Astro.props;
+
+const site = Astro.site?.toString() ?? 'https://caicoleung.github.io';
+const canonical = new URL(Astro.url.pathname, site).toString();
+const ogImage = new URL('/aic-web/og.png', site).toString();
+const themeColor = '#0e0f14';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={themeColor} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- icons -->
+    <link rel="icon" href="/aic-web/favicon.svg" type="image/svg+xml" />
+
+    <!-- fonts — preload only regular weight (Q12 hybrid) -->
+    <link
+      rel="preload"
+      href="/aic-web/fonts/JetBrainsMono-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- open graph / twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- structured data — software application -->
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'aic',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'macOS, Linux, Windows',
+        softwareVersion: `v${version}`,
+        description,
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+        },
+      })}
+    />
+
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="relative z-2 contents">
+      <slot />
+    </div>
+  </body>
+</html>

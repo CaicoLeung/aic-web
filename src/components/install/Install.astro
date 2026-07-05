@@ -1,0 +1,194 @@
+---
+/**
+ * Install section — tabbed view of all install methods.
+ * Tabs use roving tabindex + arrow-key navigation (a11y bar Q14).
+ */
+import { INSTALL_METHODS } from '@/config/site';
+import CopyButton from '@/components/ui/CopyButton.astro';
+---
+
+<section id="install" class="section install">
+  <div class="container">
+    <p class="eyebrow">
+      <span class="line" aria-hidden="true"></span>05 — Install
+    </p>
+    <h2>install aic in one line.</h2>
+
+    <div class="tabs-row" role="tablist" aria-label="Install method" data-tabs>
+      {
+        INSTALL_METHODS.map((method, i) => (
+          <button
+            role="tab"
+            id={`tab-${method.id}`}
+            class:list={['tab', { 'is-active': i === 0 }]}
+            aria-controls={`panel-${method.id}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            data-tab={method.id}
+          >
+            {method.label}
+          </button>
+        ))
+      }
+    </div>
+
+    {
+      INSTALL_METHODS.map((method, i) => (
+        <div
+          role="tabpanel"
+          id={`panel-${method.id}`}
+          class:list={['panel', { 'is-hidden': i !== 0 }]}
+          aria-labelledby={`tab-${method.id}`}
+          data-panel={method.id}
+        >
+          <div class="cmd-line-row">
+            <code class="cmd-line">{method.command}</code>
+            <CopyButton text={method.command} label={method.label} variant="primary" />
+          </div>
+          {method.note && <p class="note">{method.note}</p>}
+        </div>
+      ))
+    }
+
+    <p class="postinstall">
+      <span class="arrow" aria-hidden="true">→</span> then run
+      <code>aic setup</code> to pick provider, key, and model.
+    </p>
+  </div>
+</section>
+
+<style>
+  .install {
+    padding: clamp(3rem, 1rem + 6vw, 6rem) 0;
+    position: relative;
+    z-index: 2;
+  }
+  h2 {
+    font-size: var(--text-h2);
+    line-height: 1.05;
+    margin: 0.75rem 0 1.75rem;
+  }
+  .tabs-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    border-bottom: 1px solid var(--color-line-soft);
+    margin-bottom: 1.5rem;
+  }
+  .tab {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0.7rem 1.1rem;
+    color: var(--color-ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition:
+      color var(--duration-fast) ease,
+      border-color var(--duration-fast) ease;
+  }
+  .tab:hover {
+    color: var(--color-ink);
+  }
+  .tab.is-active {
+    color: var(--color-amber);
+    border-bottom-color: var(--color-amber);
+  }
+  .panel {
+    animation: fade-in var(--duration-normal) var(--ease-out-expo);
+  }
+  .panel.is-hidden {
+    display: none;
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .cmd-line-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    background: var(--color-surface);
+  }
+  .cmd-line {
+    flex: 1 1 320px;
+    color: var(--color-ink);
+    font-size: 0.82rem;
+    word-break: break-all;
+  }
+  .note {
+    color: var(--color-ink-muted);
+    font-size: 0.8rem;
+    margin-top: 0.85rem;
+    line-height: 1.55;
+  }
+  .postinstall {
+    margin-top: 1.5rem;
+    color: var(--color-ink-muted);
+    font-size: 0.85rem;
+  }
+  .postinstall .arrow {
+    color: var(--color-amber);
+  }
+  .postinstall code {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.78rem;
+  }
+</style>
+
+<script>
+  // Accessible tabbed interface — WAI-ARIA tabs pattern with roving
+  // tabindex + arrow-key navigation. Reduced-motion-safe (CSS only).
+  const tabsRoot = document.querySelector<HTMLElement>('[data-tabs]');
+  if (tabsRoot) {
+    const tabs = Array.from(tabsRoot.querySelectorAll<HTMLButtonElement>('.tab'));
+    const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-panel]'));
+
+    const activate = (id: string) => {
+      tabs.forEach((t) => {
+        const active = t.dataset.tab === id;
+        t.classList.toggle('is-active', active);
+        t.setAttribute('aria-selected', String(active));
+        t.tabIndex = active ? 0 : -1;
+      });
+      panels.forEach((p) => {
+        p.classList.toggle('is-hidden', p.dataset.panel !== id);
+      });
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => activate(tab.dataset.tab ?? ''));
+
+      tab.addEventListener('keydown', (e: KeyboardEvent) => {
+        const last = tabs.length - 1;
+        let next = i;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = i >= last ? 0 : i + 1;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp')
+          next = i <= 0 ? last : i - 1;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = last;
+        else return;
+        e.preventDefault();
+        tabs[next].focus();
+        activate(tabs[next].dataset.tab ?? '');
+      });
+    });
+  }
+</script>

@@ -1,0 +1,144 @@
+---
+/**
+ * Hero — eyebrow + H1 + lede + commands table + primary CTA, with the
+ * animated terminal to the right. Reflows to single-column on mobile.
+ */
+import CommandsTable from './CommandsTable.astro';
+import Terminal from './Terminal.astro';
+import CopyButton from '@/components/ui/CopyButton.astro';
+import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
+---
+
+<section class="hero" id="top">
+  <div class="hero-grid container">
+    <div class="hero-copy">
+      <p class="eyebrow" data-reveal>
+        <span class="line" aria-hidden="true"></span>01 — Introduction
+      </p>
+      <h1 data-reveal>
+        Stop writing<br />
+        <em class="ital">commit</em>
+        <span class="pop">messages.</span>
+      </h1>
+      <p class="lede" data-reveal>
+        <b>aic</b> reads your diff, drafts a conventional commit, and commits it — one command.
+        Nothing staged? It groups your work into logical commits for you.
+      </p>
+
+      <div data-reveal>
+        <CommandsTable />
+      </div>
+
+      <div class="hero-cta" data-reveal>
+        <CopyButton
+          text={PRIMARY_INSTALL_COMMAND}
+          label="brew tap CaicoLeung/aic && brew install aic"
+          variant="primary"
+        />
+        <span class="cta-hint">
+          <span class="arrow" aria-hidden="true">→</span> then run
+          <code>aic setup</code>
+        </span>
+      </div>
+    </div>
+
+    <div class="hero-terminal" data-reveal>
+      <Terminal />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    z-index: 2;
+    padding: clamp(2rem, 1rem + 5vw, 5rem) 0 clamp(3rem, 1rem + 6vw, 6rem);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(2.5rem, 1rem + 3vw, 4rem);
+    align-items: center;
+  }
+  @media (min-width: 1024px) {
+    .hero-grid {
+      grid-template-columns: 5fr 7fr;
+    }
+  }
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  h1 {
+    font-size: var(--text-hero);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    margin: 0;
+  }
+  h1 .ital {
+    font-style: italic;
+    font-weight: 700;
+    color: var(--color-ink-muted);
+  }
+  h1 .pop {
+    color: var(--color-amber);
+  }
+  .lede {
+    font-size: var(--text-lede);
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    max-width: 32rem;
+  }
+  .lede b {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .hero-cta {
+    margin-top: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .cta-hint {
+    font-size: 0.85rem;
+    color: var(--color-ink-muted);
+  }
+  .cta-hint .arrow {
+    color: var(--color-amber);
+  }
+  .cta-hint code {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.78rem;
+  }
+
+  /* Reduced-motion / no-JS default: visible & in place. */
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+
+<script>
+  import { gsap, whenMotionOk } from '@/lib/motion';
+
+  whenMotionOk(() => {
+    const items = gsap.utils.toArray<HTMLElement>('.hero [data-reveal]');
+    if (items.length === 0) return;
+
+    gsap.set(items, { opacity: 0, y: 12 });
+    gsap.to(items, {
+      opacity: 1,
+      y: 0,
+      duration: 0.55,
+      stagger: 0.09,
+      ease: 'power3.out',
+      delay: 0.15,
+    });
+  });
+</script>

@@ -1,0 +1,144 @@
+---
+/**
+ * CopyButton — accessible copy-to-clipboard with visible feedback.
+ *
+ * Accessibility:
+ * - `<button>` with descriptive `aria-label`
+ * - On success, label briefly becomes "Copied" so screen-reader users know
+ * - Falls back to execCommand for insecure (non-HTTPS /w) contexts
+ */
+interface Props {
+  readonly text: string;
+  readonly label?: string;
+  readonly variant?: 'primary' | 'ghost';
+  readonly class?: string;
+}
+
+const {
+  text,
+  label = 'Copy command',
+  variant = 'ghost',
+  class: className = '',
+} = Astro.props;
+---
+
+<button
+  type="button"
+  class:list={['copy-btn', `copy-btn--${variant}`, className]}
+  data-copy={text}
+  aria-label={`Copy ${label}`}
+>
+  <span class="copy-btn__label" data-label>{label}</span>
+  <svg
+    class="copy-btn__icon"
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <rect x="9" y="9" width="11" height="11" rx="2.5"></rect>
+    <path d="M5 15V5a2 2 0 0 1 2-2h10"></path>
+  </svg>
+  <span class="copy-btn__done" aria-hidden="true">Copied ✓</span>
+</button>
+
+<style>
+  .copy-btn {
+    --bg: transparent;
+    --fg: var(--color-ink);
+    --border: var(--color-line);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.95rem;
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition:
+      background var(--duration-fast) ease,
+      border-color var(--duration-fast) ease,
+      color var(--duration-fast) ease,
+      transform var(--duration-fast) ease;
+  }
+  .copy-btn:hover {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+  }
+  .copy-btn:active {
+    transform: translateY(1px);
+  }
+  .copy-btn--primary {
+    --bg: var(--color-amber);
+    --fg: #1a1408;
+    --border: var(--color-amber);
+    box-shadow: 0 14px 32px -10px rgba(243, 179, 64, 0.45);
+  }
+  .copy-btn--primary:hover {
+    --bg: var(--color-amber-warm);
+    --border: var(--color-amber-warm);
+    color: #1a1408;
+  }
+  .copy-btn__done {
+    display: none;
+    color: var(--color-mint);
+  }
+  .copy-btn[data-state='copied'] .copy-btn__label,
+  .copy-btn[data-state='copied'] .copy-btn__icon {
+    display: none;
+  }
+  .copy-btn[data-state='copied'] .copy-btn__done {
+    display: inline;
+  }
+  .copy-btn--primary[data-state='copied'] .copy-btn__done {
+    color: #1a1408;
+  }
+</style>
+
+<script>
+  // Single delegated listener — Astro hoists & bundles this once per page.
+  document.addEventListener('click', async (event: MouseEvent) => {
+    const target = event.target as HTMLElement | null;
+    const btn = target?.closest<HTMLButtonElement>('[data-copy]');
+    if (!btn) return;
+
+    const text = btn.dataset.copy ?? '';
+    const label = btn.querySelector('[data-label]')?.textContent ?? 'command';
+
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Insecure-context fallback (e.g. preview environments without HTTPS).
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'absolute';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+      } catch {
+        /* no-op */
+      }
+      ta.remove();
+    }
+
+    btn.dataset.state = 'copied';
+    btn.setAttribute('aria-label', `Copied ${label}`);
+    window.setTimeout(() => {
+      delete btn.dataset.state;
+      btn.setAttribute('aria-label', `Copy ${label}`);
+    }, 1800);
+  });
+</script>

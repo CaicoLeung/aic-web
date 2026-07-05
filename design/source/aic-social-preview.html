@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>aic — launch post previews</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #e9edf1;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+          sans-serif;
+        color: #0f1419;
+        padding: 32px 16px 64px;
+        -webkit-font-smoothing: antialiased;
+      }
+      .page {
+        max-width: 620px;
+        margin: 0 auto;
+      }
+      .doc-head {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+      .doc-head h1 {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .doc-head p {
+        color: #536471;
+        font-size: 13px;
+        margin-top: 4px;
+      }
+
+      .platform-block {
+        margin-bottom: 40px;
+      }
+      .platform-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #536471;
+        margin-bottom: 14px;
+        padding-left: 4px;
+      }
+      .platform-label .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+
+      /* ============ X (Twitter) ============ */
+      .x {
+        background: #fff;
+        border: 1px solid #eff3f4;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .x-tweet {
+        position: relative;
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        gap: 12px;
+        padding: 12px 16px 6px;
+        border-bottom: 1px solid #eff3f4;
+      }
+      .x-tweet:last-child {
+        border-bottom: 0;
+      }
+      .x-tweet:not(.x-main)::before {
+        content: '';
+        position: absolute;
+        left: 35px;
+        top: 0;
+        bottom: 50%;
+        width: 2px;
+        background: #eff3f4;
+      }
+      .x-tweet.x-main::before {
+        content: '';
+        position: absolute;
+        left: 35px;
+        top: 52px;
+        bottom: 0;
+        width: 2px;
+        background: #eff3f4;
+      }
+      .av {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #f3b340, #e88a4f);
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        font-size: 18px;
+        color: #1a1408;
+        z-index: 1;
+      }
+      .x-main .av {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+      }
+      .x-main {
+        grid-template-columns: 48px 1fr;
+      }
+      .x-main::before {
+        left: 39px;
+      }
+      .x-tweet:not(.x-main)::before {
+        left: 35px;
+      }
+      .meta-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-wrap: wrap;
+        font-size: 15px;
+        line-height: 1.2;
+        margin-bottom: 4px;
+      }
+      .name {
+        font-weight: 700;
+        color: #0f1419;
+      }
+      .handle,
+      .x-time {
+        color: #536471;
+        font-weight: 400;
+      }
+      .x-text {
+        font-size: 15px;
+        line-height: 1.4;
+        color: #0f1419;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        padding-bottom: 10px;
+      }
+      .x-main .x-text {
+        font-size: 16px;
+        line-height: 1.4;
+      }
+      .x-text .link {
+        color: #1d9bf0;
+      }
+      .x-text .tag {
+        color: #1d9bf0;
+      }
+      .x-img {
+        margin: 4px 0 10px;
+        border: 1px solid #eff3f4;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .x-img img {
+        display: block;
+        width: 100%;
+      }
+      .x-actions {
+        display: flex;
+        justify-content: space-between;
+        max-width: 380px;
+        margin-left: -8px;
+        padding: 2px 0 10px;
+        color: #536471;
+      }
+      .x-act {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+      }
+      .x-act svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .reply-pill {
+        display: inline-block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        color: #1d9bf0;
+        font-weight: 400;
+      }
+
+      /* ============ LinkedIn ============ */
+      .li {
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      }
+      .li-head {
+        display: grid;
+        grid-template-columns: 48px 1fr auto;
+        gap: 8px;
+        padding: 12px 16px 8px;
+        align-items: start;
+      }
+      .li-head .av {
+        width: 48px;
+        height: 48px;
+      }
+      .li-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.9);
+        line-height: 1.2;
+      }
+      .li-name .deg {
+        color: rgba(0, 0, 0, 0.6);
+        font-weight: 400;
+      }
+      .li-headline {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+        line-height: 1.3;
+        margin-top: 2px;
+      }
+      .li-time {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .li-time svg {
+        width: 12px;
+        height: 12px;
+        fill: rgba(0, 0, 0, 0.6);
+      }
+      .li-text {
+        font-size: 14px;
+        line-height: 1.5;
+        color: rgba(0, 0, 0, 0.9);
+        padding: 0 16px 12px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .li-text .tag {
+        color: #0a66c2;
+        font-weight: 600;
+      }
+      .li-img {
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+      }
+      .li-img img {
+        display: block;
+        width: 100%;
+      }
+      .li-counts {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 16px;
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+        border-bottom: 1px solid #e6e9ec;
+      }
+      .li-actions {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 4px 8px;
+      }
+      .li-act {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.6);
+      }
+      .li-act svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 0;
+      }
+      .li-act.like svg,
+      .li-act.send svg {
+        fill: currentColor;
+      }
+
+      /* shared svg path stroke default */
+      .li-act.repost svg,
+      .li-act.comment svg {
+        stroke-width: 1.8;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="doc-head">
+        <h1>aic — launch post preview</h1>
+        <p>How the posts render on each platform</p>
+      </div>
+
+      <!-- ============ X ============ -->
+      <div class="platform-block">
+        <div class="platform-label">
+          <span class="dot" style="background: #1d9bf0"></span>X — main post + thread
+        </div>
+        <div class="x">
+          <!-- main tweet -->
+          <article class="x-tweet x-main">
+            <div class="av">a</div>
+            <div>
+              <div class="meta-row">
+                <span class="name">Caico Leung</span>
+                <span class="handle">@CaicoLeung</span>
+                <span class="x-time">· 2h</span>
+              </div>
+              <div class="x-text">
+                Stop writing commit messages by hand. aic reads your diff → drafts a clean
+                conventional commit → ships it. One command. 6 LLM providers. Your key,
+                your model. Auto-groups unstaged work into logical commits. brew install
+                aic <span class="link">github.com/CaicoLeung/aic</span>
+              </div>
+              <div class="x-img"><img src="aic-intro.png" alt="aic intro" /></div>
+              <div class="x-actions">
+                <span class="x-act"
+                  ><svg viewBox="0 0 24 24">
+                    <path
+                      d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
+                    />
+                  </svg>
+                  28</span
+                >
+                <span class="x-act"
+                  ><svg viewBox="0 0 24 24">
+                    <polyline points="17 1 21 5 17 9" />
+                    <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                    <polyline points="7 23 3 19 7 15" />
+                    <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                  </svg>
+                  14</span
+                >
+                <span class="x-act"
+                  ><svg viewBox="0 0 24 24">
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                    />
+                  </svg>
+                  96</span
+                >
+                <span class="x-act"
+                  ><svg viewBox="0 0 24 24">
+                    <line x1="12" y1="20" x2="12" y2="10" />
+                    <line x1="18" y1="20" x2="18" y2="4" />
+                    <line x1="6" y1="20" x2="6" y2="16" />
+                  </svg>
+                  1.2k</span
+                >
+                <span class="x-act"
+                  ><svg viewBox="0 0 24 24">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg
+                ></span>
+              </div>
+            </div>
+          </article>
+
+          <!-- reply 1 -->
+          <article class="x-tweet">
+            <div class="av">a</div>
+            <div>
+              <div class="reply-pill">Replying to @CaicoLeung</div>
+              <div class="meta-row">
+                <span class="name">Caico Leung</span>
+                <span class="handle">@CaicoLeung</span>
+                <span class="x-time">· 2h</span>
+              </div>
+              <div class="x-text">
+                The worst part of git isn't the workflow — it's writing the message. You
+                staged a clean change, then you're stuck in the editor trying to summarize
+                400 lines of diff into 50 characters. aic does that part for you. 🧵
+              </div>
+            </div>
+          </article>
+
+          <!-- reply 2 -->
+          <article class="x-tweet">
+            <div class="av">a</div>
+            <div>
+              <div class="meta-row">
+                <span class="name">Caico Leung</span>
+                <span class="handle">@CaicoLeung</span>
+                <span class="x-time">· 2h</span>
+              </div>
+              <div class="x-text">
+                Install: brew install aic (or: cargo install aic / one-line installer in
+                the README) Then: aic setup → pick provider · paste key · pick model
+                That's it. You're ready.
+              </div>
+            </div>
+          </article>
+
+          <!-- reply 3 -->
+          <article class="x-tweet">
+            <div class="av">a</div>
+            <div>
+              <div class="meta-row">
+                <span class="name">Caico Leung</span>
+                <span class="handle">@CaicoLeung</span>
+                <span class="x-time">· 2h</span>
+              </div>
+              <div class="x-text">
+                Before: $ git commit &gt; _ ← cursor blinking, you're stuck After: $ aic ✓
+                reading staged diff… ✓ drafted: feat(auth): refresh tokens on session
+                resume ✓ committed abc1234
+              </div>
+            </div>
+          </article>
+
+          <!-- reply 4 -->
+          <article class="x-tweet">
+            <div class="av">a</div>
+            <div>
+              <div class="meta-row">
+                <span class="name">Caico Leung</span>
+                <span class="handle">@CaicoLeung</span>
+                <span class="x-time">· 2h</span>
+              </div>
+              <div class="x-text">
+                ✦ 6 providers: OpenAI · Anthropic · Gemini · DeepSeek · Groq · Ollama ✦
+                Your API key, your model — no middleman, no per-commit markup ✦ Nothing
+                staged? It groups unstaged work into logical commits for you ✦ Rust,
+                single binary, fast
+              </div>
+            </div>
+          </article>
+
+          <!-- reply 5 -->
+          <article class="x-tweet">
+            <div class="av">a</div>
+            <div>
+              <div class="meta-row">
+                <span class="name">Caico Leung</span>
+                <span class="handle">@CaicoLeung</span>
+                <span class="x-time">· 2h</span>
+              </div>
+              <div class="x-text">
+                MIT-licensed. v0.1.6 is the first signed release. Roadmap: more providers,
+                repo-level context, smarter batching. Try it: brew install aic Star it if
+                you ship a lot of commits 👇
+                <span class="link">github.com/CaicoLeung/aic</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- ============ LinkedIn ============ -->
+      <div class="platform-block">
+        <div class="platform-label">
+          <span class="dot" style="background: #0a66c2"></span>LinkedIn — feed post
+        </div>
+        <div class="li">
+          <div class="li-head">
+            <div class="av">a</div>
+            <div>
+              <div class="li-name">Caico Leung <span class="deg">• 1st</span></div>
+              <div class="li-headline">Building aic — open-source dev tools · Rust</div>
+              <div class="li-time">
+                2h ·
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="li-text">
+            I've shipped a lot of commits. And for years, the most tedious part of every
+            single one was the same: writing the message. Not because it's hard — because
+            it breaks flow. You finish a clean change, switch to your terminal, and now
+            you're summarizing 400 lines of diff into a one-liner. So I built aic — an
+            open-source CLI that reads your staged diff and drafts a clean, conventional
+            commit message for you. One command. How it works: → Stage your work (or don't
+            — see below) → Run aic → It reads the diff, drafts the message, commits Three
+            commands, total: • aic — commit staged work, or auto-batch unstaged work into
+            logical commits • aic setup — one-time wizard: provider · API key · model •
+            aic list — inspect resolved config A few things I cared about: ✦ No lock-in —
+            works with OpenAI, Anthropic, Gemini, DeepSeek, Groq, and Ollama ✦ Your key,
+            your model — no per-commit markup, no middleman; it runs locally and calls
+            your provider directly ✦ Smart batching — if you forgot to stage, aic groups
+            unstaged changes into multiple logical commits instead of one messy dump ✦
+            Built in Rust — a single, fast binary Install: brew install aic (or: cargo
+            install aic / one-line installer in the README) MIT-licensed, and v0.1.6 is
+            the first signed release. If you ship a lot of commits, I'd love your
+            feedback: github.com/CaicoLeung/aic
+
+            <span class="tag">#rustlang</span>
+            <span class="tag">#developerexperience</span>
+            <span class="tag">#devtools</span> <span class="tag">#opensource</span>
+            <span class="tag">#git</span>
+          </div>
+          <div class="li-img"><img src="aic-intro.png" alt="aic intro" /></div>
+          <div class="li-counts">
+            <span>👍 142 · ❤️ 88</span>
+            <span>23 comments · 17 reposts</span>
+          </div>
+          <div class="li-actions">
+            <span class="li-act like"
+              ><svg viewBox="0 0 24 24">
+                <path
+                  d="M2 21h2V9H2v12zm20-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L13.17 1 7.59 6.59C7.22 6.95 7 7.45 7 8v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"
+                /></svg
+              >Like</span
+            >
+            <span class="li-act comment"
+              ><svg viewBox="0 0 24 24">
+                <path d="M7 9h10v1H7zm0 4h7v-1H7z" />
+                <path
+                  d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"
+                /></svg
+              >Comment</span
+            >
+            <span class="li-act repost"
+              ><svg viewBox="0 0 24 24">
+                <polyline points="17 1 21 5 17 9" />
+                <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                <polyline points="7 23 3 19 7 15" />
+                <path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg
+              >Repost</span
+            >
+            <span class="li-act send"
+              ><svg viewBox="0 0 24 24">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg
+              >Send</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

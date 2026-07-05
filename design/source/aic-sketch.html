@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1280" />
+    <title>aic — how to use it (sketchnote)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #1c1a17;
+        --ink-soft: #4a4640;
+        --ink-dim: #7a746a;
+        --paper: #fbf8ef;
+        --desk: #e8e0cc;
+        --red: #e8463c;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        background: var(--desk);
+      }
+      body {
+        font-family: 'Kalam', cursive;
+        color: var(--ink);
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 32px 24px;
+        -webkit-font-smoothing: antialiased;
+      }
+      .paper {
+        position: relative;
+        width: 1200px;
+        height: 620px;
+        background: var(--paper);
+        background-image:
+          repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 32px,
+            rgba(86, 132, 188, 0.1) 32px,
+            rgba(86, 132, 188, 0.1) 33px
+          ),
+          radial-gradient(
+            900px 420px at 20% 0%,
+            rgba(255, 240, 190, 0.35),
+            transparent 62%
+          );
+        box-shadow:
+          0 34px 60px -24px rgba(60, 50, 30, 0.45),
+          0 3px 10px -2px rgba(60, 50, 30, 0.15),
+          0 1px 0 rgba(0, 0, 0, 0.04);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .paper::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+        opacity: 0.045;
+        mix-blend-mode: multiply;
+        pointer-events: none;
+        z-index: 5;
+      }
+      .stage {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+      }
+      svg.diagram {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .text-layer {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .title {
+        position: absolute;
+        top: 24px;
+        left: 60px;
+        font-family: 'Caveat', cursive;
+        font-weight: 700;
+        font-size: 58px;
+        line-height: 1;
+        color: var(--ink);
+        letter-spacing: 0.5px;
+      }
+      .title .mark {
+        color: var(--red);
+      }
+      .subtitle {
+        position: absolute;
+        top: 104px;
+        left: 64px;
+        font-family: 'Kalam', cursive;
+        font-weight: 400;
+        font-size: 17px;
+        color: var(--ink-soft);
+        letter-spacing: 0.2px;
+      }
+      .subtitle b {
+        color: var(--ink);
+        font-weight: 700;
+      }
+      .corner {
+        position: absolute;
+        top: 34px;
+        right: 44px;
+        text-align: right;
+        font-family: 'Caveat', cursive;
+      }
+      .corner .a {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--ink);
+        line-height: 1;
+      }
+      .corner .b {
+        font-family: 'Kalam', cursive;
+        font-size: 15px;
+        font-weight: 400;
+        color: var(--ink-dim);
+        margin-top: 4px;
+      }
+      .credit {
+        position: absolute;
+        bottom: 16px;
+        right: 26px;
+        font-family: 'Kalam', cursive;
+        font-size: 13px;
+        color: var(--ink-dim);
+        z-index: 3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="paper">
+      <div class="stage">
+        <svg
+          class="diagram"
+          viewBox="0 0 1200 620"
+          xmlns="http://www.w3.org/2000/svg"
+          role="img"
+          aria-label="How to use aic — sketchnote flowchart"
+        ></svg>
+        <div class="text-layer">
+          <h1 class="title">how to use <span class="mark">aic</span></h1>
+          <p class="subtitle">
+            install once &nbsp;→&nbsp; type <b>aic</b> &nbsp;→&nbsp; clean commit. that's
+            the whole thing.
+          </p>
+          <div class="corner">
+            <div class="a">aic</div>
+            <div class="b">AI-powered git commits</div>
+          </div>
+        </div>
+      </div>
+      <div class="credit">github.com/CaicoLeung/aic</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.js"></script>
+    <script>
+      (function () {
+        const svg = document.querySelector('svg.diagram');
+        const rc = rough.svg(svg);
+        const NS = 'http://www.w3.org/2000/svg';
+        const ink = '#1c1a17';
+
+        const boxOpts = {
+          stroke: ink,
+          strokeWidth: 2.6,
+          roughness: 1.5,
+          bowing: 2.0,
+          seed: 3,
+        };
+        const iconOpts = {
+          stroke: ink,
+          strokeWidth: 2.0,
+          roughness: 1.2,
+          bowing: 1.5,
+          seed: 9,
+        };
+        const arrowOpts = {
+          stroke: ink,
+          strokeWidth: 2.3,
+          roughness: 1.4,
+          bowing: 1.0,
+          seed: 5,
+        };
+        const redOpts = {
+          stroke: '#e8463c',
+          strokeWidth: 2.6,
+          roughness: 1.4,
+          bowing: 1.2,
+          seed: 17,
+        };
+
+        function rect(x, y, w, h, o = iconOpts) {
+          svg.appendChild(rc.rectangle(x, y, w, h, o));
+        }
+        function line(x1, y1, x2, y2, o = iconOpts) {
+          svg.appendChild(rc.line(x1, y1, x2, y2, o));
+        }
+        function circle(cx, cy, r, o = iconOpts) {
+          svg.appendChild(rc.circle(cx, cy, r * 2, o));
+        }
+        function poly(pts, o = iconOpts) {
+          svg.appendChild(rc.polygon(pts, o));
+        }
+        function lpath(pts, o = iconOpts) {
+          svg.appendChild(rc.linearPath(pts, o));
+        }
+        function path(d, o = iconOpts) {
+          svg.appendChild(rc.path(d, o));
+        }
+        function text(x, y, str, opts) {
+          const t = document.createElementNS(NS, 'text');
+          t.setAttribute('x', x);
+          t.setAttribute('y', y);
+          t.setAttribute('text-anchor', opts.anchor || 'middle');
+          t.setAttribute('font-family', opts.font || 'Kalam, cursive');
+          t.setAttribute('font-size', opts.size || 14);
+          t.setAttribute('font-weight', opts.weight || 400);
+          t.setAttribute('fill', opts.color || ink);
+          if (opts.style) t.setAttribute('font-style', opts.style);
+          t.textContent = str;
+          svg.appendChild(t);
+        }
+        function arrow(x1, y1, x2, y2, o = arrowOpts) {
+          line(x1, y1, x2, y2, o);
+          const a = Math.atan2(y2 - y1, x2 - x1);
+          const L = 11;
+          line(x2, y2, x2 - L * Math.cos(a - 0.5), y2 - L * Math.sin(a - 0.5), o);
+          line(x2, y2, x2 - L * Math.cos(a + 0.5), y2 - L * Math.sin(a + 0.5), o);
+        }
+        // translucent highlighter swipe (raw SVG so it reads as marker, not pencil)
+        function highlighter(x, y, w, h, color, rotate = -1.4) {
+          const g = document.createElementNS(NS, 'g');
+          g.setAttribute('transform', `rotate(${rotate} ${x + w / 2} ${y + h / 2})`);
+          const r1 = document.createElementNS(NS, 'rect');
+          r1.setAttribute('x', x);
+          r1.setAttribute('y', y);
+          r1.setAttribute('width', w);
+          r1.setAttribute('height', h);
+          r1.setAttribute('fill', color);
+          r1.setAttribute('opacity', '0.55');
+          g.appendChild(r1);
+          const r2 = document.createElementNS(NS, 'rect');
+          r2.setAttribute('x', x + 2);
+          r2.setAttribute('y', y + 1.5);
+          r2.setAttribute('width', w - 3);
+          r2.setAttribute('height', h - 3);
+          r2.setAttribute('fill', color);
+          r2.setAttribute('opacity', '0.4');
+          g.appendChild(r2);
+          svg.appendChild(g);
+        }
+
+        // ---------- layout ----------
+        const boxLefts = [60, 246, 432, 618, 804, 990];
+        const boxW = 150,
+          boxY = 200,
+          boxH = 142;
+        const cxs = boxLefts.map((x) => x + boxW / 2);
+        const iy = 252; // icon center y
+        const arrowY = boxY + boxH / 2; // = 271
+
+        const steps = [
+          { label: 'install', sub: 'brew install aic' },
+          { label: 'setup', sub: 'provider · key · model' },
+          { label: 'run', sub: 'type:  aic' },
+          { label: 'read', sub: 'reads the diff' },
+          { label: 'draft', sub: 'writes the msg' },
+          { label: 'commit', sub: 'ships it  ✓' },
+        ];
+
+        // ---------- 1) yellow highlighter behind box 3 (the "just type aic" step) ----------
+        highlighter(426, 194, 162, 154, 'rgba(255,225,77,0.5)', -1.3);
+
+        // ---------- 2) title underline (rough wavy) ----------
+        path('M 64 92 Q 130 82 200 90 T 340 88 T 430 92', {
+          stroke: ink,
+          strokeWidth: 3,
+          roughness: 1.3,
+          bowing: 1.2,
+          seed: 2,
+        });
+
+        // ---------- 3) step boxes ----------
+        boxLefts.forEach((x) => rect(x, boxY, boxW, boxH, boxOpts));
+
+        // ---------- 4) arrows between boxes ----------
+        for (let i = 0; i < 5; i++) {
+          const x1 = boxLefts[i] + boxW + 3;
+          const x2 = boxLefts[i + 1] - 3;
+          arrow(x1, arrowY, x2, arrowY);
+        }
+
+        // ---------- 5) icons ----------
+        function iconInstall(cx, cy) {
+          // download into tray
+          line(cx, cy - 22, cx, cy + 4);
+          line(cx - 9, cy - 5, cx, cy + 4);
+          line(cx + 9, cy - 5, cx, cy + 4);
+          line(cx - 18, cy + 13, cx + 18, cy + 13);
+          line(cx - 15, cy + 13, cx - 15, cy + 8);
+          line(cx + 15, cy + 13, cx + 15, cy + 8);
+        }
+        function iconSetup(cx, cy) {
+          // key
+          circle(cx - 13, cy, 9);
+          line(cx - 4, cy, cx + 19, cy);
+          line(cx + 10, cy, cx + 10, cy + 6);
+          line(cx + 16, cy, cx + 16, cy + 7);
+        }
+        function iconRun(cx, cy) {
+          // terminal
+          rect(cx - 23, cy - 16, 46, 32);
+          line(cx - 23, cy - 8, cx + 23, cy - 8);
+          line(cx - 16, cy - 1, cx - 10, cy + 5);
+          line(cx - 10, cy + 5, cx - 16, cy + 11);
+          line(cx - 4, cy + 5, cx + 14, cy + 5);
+        }
+        function iconRead(cx, cy) {
+          // document with diff lines
+          lpath([
+            [cx - 14, cy - 22],
+            [cx + 8, cy - 22],
+            [cx + 16, cy - 14],
+            [cx + 16, cy + 22],
+            [cx - 14, cy + 22],
+            [cx - 14, cy - 22],
+          ]);
+          lpath([
+            [cx + 8, cy - 22],
+            [cx + 8, cy - 14],
+            [cx + 16, cy - 14],
+          ]);
+          line(cx - 8, cy - 6, cx + 10, cy - 6);
+          line(cx - 8, cy, cx + 10, cy);
+          line(cx - 8, cy + 6, cx + 4, cy + 6);
+          line(cx - 8, cy + 12, cx + 10, cy + 12);
+        }
+        function iconDraft(cx, cy) {
+          // pencil writing
+          const A = [cx + 13, cy - 6],
+            B = [cx + 6, cy - 13],
+            C = [cx + 17, cy - 10],
+            D = [cx + 10, cy - 17],
+            T = [cx - 12, cy + 12];
+          poly([A, B, D, C]);
+          lpath([A, T, B, A]);
+          line(cx - 18, cy + 18, cx + 8, cy + 18);
+        }
+        function iconCommit(cx, cy) {
+          // check in circle
+          circle(cx, cy, 20);
+          line(cx - 10, cy + 1, cx - 2, cy + 9);
+          line(cx - 2, cy + 9, cx + 11, cy - 7);
+        }
+        const icons = [iconInstall, iconSetup, iconRun, iconRead, iconDraft, iconCommit];
+        cxs.forEach((cx, i) => icons[i](cx, iy));
+
+        // ---------- 6) step labels + sub-details ----------
+        cxs.forEach((cx, i) => {
+          text(cx, 322, steps[i].label, {
+            font: 'Caveat, cursive',
+            size: 26,
+            weight: 700,
+          });
+          text(cx, 358, steps[i].sub, {
+            font: 'Kalam, cursive',
+            size: 13.5,
+            color: '#4a4640',
+          });
+        });
+
+        // ---------- 7) red sparkle near box 6 (the win) ----------
+        (function sparkle(cx, cy, s) {
+          path(`M ${cx} ${cy - s} L ${cx} ${cy + s}`, redOpts);
+          path(`M ${cx - s} ${cy} L ${cx + s} ${cy}`, redOpts);
+          const q = s * 0.42;
+          path(`M ${cx - q} ${cy - q} L ${cx + q} ${cy + q}`, redOpts);
+          path(`M ${cx - q} ${cy + q} L ${cx + q} ${cy - q}`, redOpts);
+        })(1118, 178, 13);
+
+        // ---------- 8) bottom-left callout: auto-batching ----------
+        const cax = 96,
+          cay = 410,
+          caw = 520,
+          cah = 128;
+        rect(cax, cay, caw, cah, {
+          ...boxOpts,
+          strokeWidth: 2.2,
+          roughness: 1.7,
+          bowing: 1.5,
+          seed: 21,
+        });
+        // stacked-commits icon
+        (function stack(cx, cy) {
+          rect(cx - 18, cy - 14, 38, 11);
+          rect(cx - 12, cy - 2, 38, 11);
+          rect(cx - 6, cy + 10, 38, 11);
+          line(cx - 14, cy - 9, cx - 6, cy - 9);
+        })(150, 474);
+        text(196, 452, 'nothing staged?', {
+          font: 'Caveat, cursive',
+          size: 24,
+          weight: 700,
+          anchor: 'start',
+        });
+        text(196, 480, 'aic groups your unstaged work into', {
+          font: 'Kalam, cursive',
+          size: 15,
+          anchor: 'start',
+        });
+        text(196, 501, 'logical commits — and ships each one.', {
+          font: 'Kalam, cursive',
+          size: 15,
+          anchor: 'start',
+        });
+        text(196, 525, 'auto-batching  ✦', {
+          font: 'Kalam, cursive',
+          size: 13,
+          anchor: 'start',
+          color: '#7a746a',
+          style: 'italic',
+        });
+
+        // doodly connector from callout up toward box 3 (alt path)
+        path('M 300 410 C 290 388, 430 374, 498 372', {
+          stroke: ink,
+          strokeWidth: 1.8,
+          roughness: 1.6,
+          bowing: 1.3,
+          seed: 23,
+        });
+        arrow(491, 372, 500, 372, { ...arrowOpts, strokeWidth: 1.8, seed: 24 });
+
+        // ---------- 9) bottom-right floating note: providers ----------
+        const px = 760;
+        // tiny key doodle
+        (function key(cx, cy) {
+          circle(cx, cy, 5);
+          line(cx + 5, cy, cx + 19, cy);
+          line(cx + 13, cy, cx + 13, cy + 4);
+        })(px - 26, 442);
+        text(px, 450, 'your key · your model', {
+          font: 'Caveat, cursive',
+          size: 26,
+          weight: 700,
+          anchor: 'start',
+        });
+        path(`M ${px} 459 Q ${px + 90} 452 ${px + 205} 458`, {
+          stroke: ink,
+          strokeWidth: 2.2,
+          roughness: 1.3,
+          bowing: 1.2,
+          seed: 31,
+        });
+        text(px, 486, 'OpenAI · Anthropic · Gemini', {
+          font: 'Kalam, cursive',
+          size: 15,
+          anchor: 'start',
+        });
+        text(px, 508, 'DeepSeek · Groq · Ollama', {
+          font: 'Kalam, cursive',
+          size: 15,
+          anchor: 'start',
+        });
+        text(px, 533, 'no middleman · no per-commit markup', {
+          font: 'Kalam, cursive',
+          size: 13.5,
+          anchor: 'start',
+          color: '#7a746a',
+        });
+      })();
+    </script>
+  </body>
+</html>

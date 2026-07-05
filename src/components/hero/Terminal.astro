@@ -1,0 +1,261 @@
+---
+/**
+ * Animated terminal mockup — Tier 1 motion (Q7).
+ *
+ * Static final state is visible without JS / under reduced-motion.
+ * GSAP reveals the steps in sequence under `(prefers-reduced-motion:
+ * no-preference)`.
+ *
+ * `aria-hidden` because the same information is in the hero copy —
+ * this is decorative reinforcement, not primary content.
+ */
+---
+
+<figure class="terminal" aria-hidden="true">
+  <div class="termbar">
+    <div class="dots"><i></i><i></i><i></i></div>
+    <div class="termtitle"><b>~/</b>projects/your-repo</div>
+  </div>
+
+  <div class="termbody" data-term-body>
+    <div class="row">
+      <span class="prompt">$</span>
+      <span class="cmdin" data-typed>aic</span>
+    </div>
+    <div class="row" data-row="spinner">
+      <span class="spin" aria-hidden="true">⠋</span>
+      <span class="out">reading staged diff…</span>
+    </div>
+    <div class="row" data-row="staged">
+      <span class="ok" aria-hidden="true">✓</span>
+      <span class="out">3 files staged · drafting message</span>
+    </div>
+    <div class="message" data-row="message">
+      <div class="label">drafted message</div>
+      <div class="msg-line">
+        <span class="type">feat</span><span class="scope">(auth)</span><span class="subj"
+          >: refresh tokens on session resume</span
+        >
+      </div>
+      <div class="body">rotate on idle, persist via keychain</div>
+    </div>
+    <div class="commitline" data-row="commitline">
+      <span class="ok" aria-hidden="true">✓</span>
+      committed
+      <span class="hash">abc1234</span>
+      <span class="msg">feat(auth): refresh tokens…</span>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .terminal {
+    width: 100%;
+    max-width: 600px;
+    margin: 0;
+    background: linear-gradient(180deg, #14161e, #101219);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    box-shadow:
+      0 44px 90px -32px rgba(0, 0, 0, 0.75),
+      0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+      0 1px 0 rgba(255, 255, 255, 0.04) inset;
+    overflow: hidden;
+    font-size: 0.82rem;
+  }
+  .termbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.018);
+    border-bottom: 1px solid var(--color-line-soft);
+  }
+  .dots {
+    display: flex;
+    gap: 7px;
+  }
+  .dots i {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    display: block;
+  }
+  .dots i:nth-child(1) {
+    background: #f5604d;
+  }
+  .dots i:nth-child(2) {
+    background: #f6bd2f;
+  }
+  .dots i:nth-child(3) {
+    background: #4cce6b;
+  }
+  .termtitle {
+    color: var(--color-ink-dim);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+  .termtitle b {
+    color: var(--color-ink-muted);
+    font-weight: 500;
+  }
+  .termbody {
+    padding: 1.25rem 1.4rem 1.5rem;
+    line-height: 1.7;
+  }
+  .row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    white-space: pre;
+  }
+  .prompt {
+    color: var(--color-amber);
+  }
+  .cmdin {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .out {
+    color: var(--color-ink-muted);
+  }
+  .ok {
+    color: var(--color-mint);
+  }
+  .spin {
+    color: var(--color-amber);
+    display: inline-block;
+  }
+  .message {
+    margin: 0.85rem 0 1rem;
+    border: 1px solid var(--color-line);
+    border-left: 3px solid var(--color-amber);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    background: var(--color-amber-soft);
+  }
+  .message .label {
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-amber);
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+  }
+  .message .type {
+    color: var(--color-amber);
+    font-weight: 600;
+  }
+  .message .scope {
+    color: var(--color-ink-muted);
+  }
+  .message .subj {
+    color: var(--color-ink);
+  }
+  .message .body {
+    color: var(--color-ink-muted);
+    margin-top: 0.2rem;
+    font-size: 0.78rem;
+  }
+  .commitline {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.1rem;
+    color: var(--color-ink-muted);
+  }
+  .commitline .hash {
+    color: var(--color-amber);
+    font-weight: 600;
+  }
+  .commitline .msg {
+    color: var(--color-ink);
+  }
+
+  /* Reduced-motion / no-JS default: everything visible. */
+  :global([data-term-body]) .row,
+  :global([data-term-body]) .message,
+  :global([data-term-body]) .commitline {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  import { gsap, whenMotionOk } from '@/lib/motion';
+
+  whenMotionOk(() => {
+    const terms = document.querySelectorAll<HTMLElement>('[data-term-body]');
+
+    terms.forEach((term) => {
+      const typed = term.querySelector<HTMLElement>('[data-typed]');
+      const spinner = term.querySelector<HTMLElement>('[data-row="spinner"]');
+      const spinGlyph = spinner?.querySelector<HTMLElement>('.spin');
+      const staged = term.querySelector<HTMLElement>('[data-row="staged"]');
+      const message = term.querySelector<HTMLElement>('[data-row="message"]');
+      const commitline = term.querySelector<HTMLElement>('[data-row="commitline"]');
+      if (!typed || !spinner || !spinGlyph || !staged || !message || !commitline) return;
+
+      const fullText = typed.textContent ?? 'aic';
+      typed.textContent = '';
+
+      gsap.set([spinner, staged, message, commitline], { opacity: 0 });
+      gsap.set(message, { y: 8 });
+
+      const spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+      let frame = 0;
+
+      // Repeats indefinitely while the term is on screen; paused except when
+      // the spinner row is visible. Cheap, no ScrollTrigger needed.
+      const spinnerCycle = gsap.to(
+        {},
+        {
+          duration: 0.08,
+          repeat: -1,
+          paused: true,
+          onRepeat: () => {
+            frame = (frame + 1) % spinnerFrames.length;
+            spinGlyph.textContent = spinnerFrames[frame];
+          },
+        },
+      );
+
+      const tl = gsap.timeline({
+        delay: 0.5,
+        repeat: -1,
+        repeatDelay: 4,
+        onReverseComplete: () => spinnerCycle.pause(),
+      });
+
+      // 1. Type "aic"
+      tl.to(
+        {},
+        {
+          duration: 0.45,
+          onUpdate: function () {
+            const progress = this.progress();
+            typed.textContent = fullText.slice(0, Math.ceil(fullText.length * progress));
+          },
+        },
+      );
+
+      // 2. Spinner fades in, glyphs cycle, then fades out
+      tl.call(() => {
+        frame = 0;
+        spinGlyph.textContent = spinnerFrames[0];
+        spinnerCycle.restart();
+      });
+      tl.to(spinner, { opacity: 1, duration: 0.18 });
+      tl.to(spinner, { opacity: 0, duration: 0.18, delay: 0.7 });
+      tl.call(() => spinnerCycle.pause());
+
+      // 3. Staged line
+      tl.to(staged, { opacity: 1, duration: 0.2 });
+
+      // 4. Message card slides up
+      tl.to(message, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }, '+=0.15');
+
+      // 5. Commit line
+      tl.to(commitline, { opacity: 1, duration: 0.2 });
+    });
+  });
+</script>

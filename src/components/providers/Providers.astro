@@ -1,0 +1,101 @@
+---
+/**
+ * Providers & privacy — provider list (live from source repo via
+ * loadAicFacts) + the "your key · your model · no middleman" positioning.
+ */
+import { GITHUB_URL } from '@/config/site';
+import type { ProviderInfo } from '@/config/site';
+
+interface Props {
+  readonly providers: readonly ProviderInfo[];
+}
+const { providers } = Astro.props;
+---
+
+<section id="providers" class="section providers">
+  <div class="container">
+    <p class="eyebrow">
+      <span class="line" aria-hidden="true"></span>04 — Providers &amp; privacy
+    </p>
+    <h2>your key · your model</h2>
+    <p class="lede">
+      Bring your own provider. aic talks straight to your LLM — no middleman, no
+      per-commit markup, no proxy. Your API key never leaves your machine.
+    </p>
+
+    <ul class="provider-list" aria-label="Supported LLM providers">
+      {providers.map((p) => <li class="provider-chip">{p.name}</li>)}
+    </ul>
+
+    <p class="aside">
+      no middleman · no per-commit markup · calls go straight from your machine
+    </p>
+    <a
+      class="link"
+      href={`${GITHUB_URL}/blob/main/src/llm.rs`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      read the provider code →
+    </a>
+  </div>
+</section>
+
+<style>
+  .providers {
+    padding: clamp(3rem, 1rem + 6vw, 6rem) 0;
+    position: relative;
+    z-index: 2;
+  }
+  h2 {
+    font-size: var(--text-h2);
+    line-height: 1.05;
+    margin: 0.75rem 0 0;
+  }
+  .lede {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    margin-top: 1rem;
+    max-width: 40rem;
+    font-size: var(--text-lede);
+  }
+  .provider-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 1rem;
+  }
+  .provider-chip {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: rgba(21, 23, 31, 0.55);
+    color: var(--color-ink);
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition:
+      border-color var(--duration-fast) ease,
+      color var(--duration-fast) ease;
+  }
+  .provider-chip:hover {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+  }
+  .aside {
+    color: var(--color-ink-dim);
+    font-size: 0.82rem;
+    margin: 0.5rem 0 1.5rem;
+  }
+  .link {
+    color: var(--color-amber);
+    text-decoration: none;
+    font-size: 0.88rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--duration-fast) ease;
+  }
+  .link:hover {
+    border-bottom-color: var(--color-amber);
+  }
+</style>

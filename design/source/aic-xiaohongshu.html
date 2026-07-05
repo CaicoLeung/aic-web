@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>aic — 小红书介绍</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #1c1a17;
+        --paper: #fbf8ef;
+        --desk: #e8e0cc;
+        --red: #e8463c;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        background: var(--desk);
+      }
+      body {
+        font-family: 'Noto Sans SC', sans-serif;
+        color: var(--ink);
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 28px;
+        -webkit-font-smoothing: antialiased;
+      }
+      .paper {
+        position: relative;
+        width: 540px;
+        height: 720px;
+        background: var(--paper);
+        background-image:
+          repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 30px,
+            rgba(86, 132, 188, 0.09) 30px,
+            rgba(86, 132, 188, 0.09) 31px
+          ),
+          radial-gradient(
+            560px 320px at 18% 0%,
+            rgba(255, 240, 190, 0.45),
+            transparent 62%
+          );
+        box-shadow:
+          0 30px 56px -22px rgba(60, 50, 30, 0.45),
+          0 2px 8px -1px rgba(60, 50, 30, 0.15);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .paper::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+        opacity: 0.05;
+        mix-blend-mode: multiply;
+        pointer-events: none;
+        z-index: 5;
+      }
+      .stage {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+      }
+      svg.diagram {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="paper">
+      <div class="stage">
+        <svg
+          class="diagram"
+          viewBox="0 0 540 720"
+          xmlns="http://www.w3.org/2000/svg"
+          role="img"
+          aria-label="aic 小红书介绍图"
+        ></svg>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.js"></script>
+    <script>
+      (function () {
+        const svg = document.querySelector('svg.diagram');
+        const rc = rough.svg(svg);
+        const NS = 'http://www.w3.org/2000/svg';
+        const ink = '#1c1a17';
+        const red = '#e8463c';
+        const amber = '#c8821b';
+        const green = '#5aa469';
+
+        const boxOpts = {
+          stroke: ink,
+          strokeWidth: 2.4,
+          roughness: 1.5,
+          bowing: 2.0,
+          seed: 3,
+        };
+        const iconOpts = {
+          stroke: ink,
+          strokeWidth: 2.0,
+          roughness: 1.2,
+          bowing: 1.5,
+          seed: 9,
+        };
+        const thinOpts = {
+          stroke: ink,
+          strokeWidth: 1.6,
+          roughness: 1.5,
+          bowing: 1.3,
+          seed: 13,
+        };
+        const redOpts = {
+          stroke: red,
+          strokeWidth: 2.4,
+          roughness: 1.4,
+          bowing: 1.2,
+          seed: 17,
+        };
+
+        function rect(x, y, w, h, o = iconOpts) {
+          svg.appendChild(rc.rectangle(x, y, w, h, o));
+        }
+        function line(x1, y1, x2, y2, o = iconOpts) {
+          svg.appendChild(rc.line(x1, y1, x2, y2, o));
+        }
+        function circle(cx, cy, r, o = iconOpts) {
+          svg.appendChild(rc.circle(cx, cy, r * 2, o));
+        }
+        function path(d, o = iconOpts) {
+          svg.appendChild(rc.path(d, o));
+        }
+        function dot(cx, cy, r, fill) {
+          const c = document.createElementNS(NS, 'circle');
+          c.setAttribute('cx', cx);
+          c.setAttribute('cy', cy);
+          c.setAttribute('r', r);
+          c.setAttribute('fill', fill);
+          svg.appendChild(c);
+        }
+        function text(x, y, str, opts) {
+          const t = document.createElementNS(NS, 'text');
+          t.setAttribute('x', x);
+          t.setAttribute('y', y);
+          t.setAttribute('text-anchor', opts.anchor || 'start');
+          t.setAttribute('font-family', opts.font || 'Noto Sans SC, sans-serif');
+          t.setAttribute('font-size', opts.size || 14);
+          t.setAttribute('font-weight', opts.weight || 400);
+          t.setAttribute('fill', opts.color || ink);
+          if (opts.style) t.setAttribute('font-style', opts.style);
+          t.textContent = str;
+          svg.appendChild(t);
+        }
+        function highlighter(x, y, w, h, color, rotate = -0.7) {
+          const g = document.createElementNS(NS, 'g');
+          g.setAttribute('transform', `rotate(${rotate} ${x + w / 2} ${y + h / 2})`);
+          const r1 = document.createElementNS(NS, 'rect');
+          r1.setAttribute('x', x);
+          r1.setAttribute('y', y);
+          r1.setAttribute('width', w);
+          r1.setAttribute('height', h);
+          r1.setAttribute('fill', color);
+          r1.setAttribute('opacity', '0.55');
+          g.appendChild(r1);
+          const r2 = document.createElementNS(NS, 'rect');
+          r2.setAttribute('x', x + 2);
+          r2.setAttribute('y', y + 1.5);
+          r2.setAttribute('width', w - 3);
+          r2.setAttribute('height', h - 3);
+          r2.setAttribute('fill', color);
+          r2.setAttribute('opacity', '0.4');
+          g.appendChild(r2);
+          svg.appendChild(g);
+        }
+
+        // ===== background: install-command yellow highlighter (drawn first, behind text) =====
+        highlighter(40, 534, 282, 40, 'rgba(255,225,77,0.5)', -0.6);
+
+        // ===== header underlines =====
+        // hook underline
+        path('M 44 138 Q 130 130 220 136 T 360 134 T 432 138', {
+          stroke: ink,
+          strokeWidth: 3,
+          roughness: 1.3,
+          bowing: 1.2,
+          seed: 2,
+        });
+        // eyebrow underline
+        path('M 44 66 Q 90 60 140 64 T 196 64', {
+          stroke: ink,
+          strokeWidth: 2,
+          roughness: 1.4,
+          bowing: 1.2,
+          seed: 4,
+        });
+
+        // ===== terminal =====
+        rect(44, 196, 452, 188, boxOpts);
+        // header divider
+        line(44, 224, 496, 224, thinOpts);
+        // traffic-light dots
+        dot(60, 213, 3.6, '#f5604d');
+        dot(74, 213, 3.6, '#f6bd2f');
+        dot(88, 213, 3.6, '#4cce6b');
+        text(270, 217, '~/your-repo', {
+          font: "ui-monospace, 'SF Mono', Menlo, monospace",
+          size: 11,
+          color: '#9a948a',
+          anchor: 'middle',
+        });
+
+        // ===== feature badges =====
+        const fcy = 462,
+          fcxs = [110, 270, 430];
+        fcxs.forEach((cx) => circle(cx, fcy, 24, thinOpts));
+        // icons
+        (function fSparkle(cx, cy) {
+          line(cx, cy - 13, cx, cy + 13);
+          line(cx - 13, cy, cx + 13, cy);
+          line(cx - 5, cy - 5, cx + 5, cy + 5);
+          line(cx - 5, cy + 5, cx + 5, cy - 5);
+        })(fcxs[0], fcy);
+        (function fStack(cx, cy) {
+          rect(cx - 14, cy - 10, 28, 8, iconOpts);
+          rect(cx - 9, cy - 1, 28, 8, iconOpts);
+          rect(cx - 4, cy + 8, 28, 8, iconOpts);
+          line(cx - 11, cy - 6, cx - 4, cy - 6, iconOpts);
+        })(fcxs[1], fcy);
+        (function fKey(cx, cy) {
+          circle(cx - 8, cy, 6, iconOpts);
+          line(cx - 2, cy, cx + 13, cy, iconOpts);
+          line(cx + 7, cy, cx + 7, cy + 4, iconOpts);
+          line(cx + 12, cy, cx + 12, cy + 5, iconOpts);
+        })(fcxs[2], fcy);
+
+        // ===== AI red note: little up-arrow pointing at terminal =====
+        line(54, 402, 54, 390, { ...redOpts, strokeWidth: 2.2, seed: 19 });
+        line(54, 390, 49, 396, { ...redOpts, strokeWidth: 2.2, seed: 19 });
+        line(54, 390, 59, 396, { ...redOpts, strokeWidth: 2.2, seed: 19 });
+
+        // ===== TEXT =====
+        // eyebrow
+        text(44, 58, '✦  AI 开发者工具', {
+          font: 'ZCOOL KuaiLe',
+          size: 15,
+          color: '#7a746a',
+        });
+        // top-right wordmark
+        text(496, 60, 'aic', {
+          font: 'Caveat, cursive',
+          size: 30,
+          weight: 700,
+          anchor: 'end',
+        });
+        text(496, 77, 'AI git 提交工具', {
+          font: 'Noto Sans SC',
+          size: 11,
+          color: '#9a948a',
+          anchor: 'end',
+        });
+
+        // hook (mixed font via tspans)
+        (function () {
+          const t = document.createElementNS(NS, 'text');
+          t.setAttribute('x', 44);
+          t.setAttribute('y', 124);
+          t.setAttribute('text-anchor', 'start');
+          t.setAttribute('font-family', 'ZCOOL KuaiLe');
+          t.setAttribute('font-size', 54);
+          t.setAttribute('fill', ink);
+          const a = document.createElementNS(NS, 'tspan');
+          a.textContent = '告别手写 ';
+          const b = document.createElementNS(NS, 'tspan');
+          b.textContent = 'commit';
+          b.setAttribute('font-family', 'Caveat, cursive');
+          b.setAttribute('font-style', 'italic');
+          t.appendChild(a);
+          t.appendChild(b);
+          svg.appendChild(t);
+        })();
+
+        // sub
+        text(44, 168, 'aic 读完你的 diff  ·  秒出规范的提交信息', {
+          font: 'Noto Sans SC',
+          size: 15.5,
+          weight: 500,
+          color: '#4a4640',
+        });
+
+        // terminal rows
+        function termRow(x, y, parts) {
+          const t = document.createElementNS(NS, 'text');
+          t.setAttribute('x', x);
+          t.setAttribute('y', y);
+          t.setAttribute('text-anchor', 'start');
+          t.setAttribute('font-family', "ui-monospace, 'SF Mono', Menlo, monospace");
+          t.setAttribute('font-size', 14);
+          t.setAttribute('fill', ink);
+          t.setAttribute('xml:space', 'preserve');
+          parts.forEach((p) => {
+            const ts = document.createElementNS(NS, 'tspan');
+            if (p.c) ts.setAttribute('fill', p.c);
+            ts.textContent = p.s;
+            t.appendChild(ts);
+          });
+          svg.appendChild(t);
+        }
+        termRow(64, 250, [{ s: '$ ', c: amber }, { s: 'aic' }]);
+        termRow(64, 276, [{ s: '✦ ', c: amber }, { s: '读取 diff…' }]);
+        termRow(64, 304, [
+          { s: '✓ ', c: green },
+          { s: 'feat(auth): 会话恢复时刷新令牌' },
+        ]);
+        termRow(64, 330, [
+          { s: '✓ ', c: green },
+          { s: '已提交  ' },
+          { s: 'abc1234', c: amber },
+        ]);
+
+        // AI note text
+        text(66, 406, '这条提交信息由 AI 生成 ✦', {
+          font: 'ZCOOL KuaiLe',
+          size: 16,
+          color: red,
+        });
+
+        // feature labels
+        text(fcxs[0], 509, 'AI 写提交', {
+          font: 'ZCOOL KuaiLe',
+          size: 16,
+          anchor: 'middle',
+        });
+        text(fcxs[1], 509, '自动分组', {
+          font: 'ZCOOL KuaiLe',
+          size: 16,
+          anchor: 'middle',
+        });
+        text(fcxs[2], 509, '你的模型', {
+          font: 'ZCOOL KuaiLe',
+          size: 16,
+          anchor: 'middle',
+        });
+
+        // install
+        text(52, 561, 'brew install aic', {
+          font: "ui-monospace, 'SF Mono', Menlo, monospace",
+          size: 19,
+          weight: 700,
+        });
+        text(44, 592, '(或  cargo install aic)', {
+          font: 'Noto Sans SC',
+          size: 13,
+          color: '#7a746a',
+        });
+
+        // providers
+        text(44, 618, 'OpenAI · Claude · Gemini · DeepSeek · Groq · Ollama', {
+          font: 'Noto Sans SC',
+          size: 12.5,
+          color: '#4a4640',
+        });
+        // github
+        text(44, 642, 'github.com/CaicoLeung/aic   ·   MIT   ·   v0.1.6', {
+          font: 'Noto Sans SC',
+          size: 12.5,
+          color: '#7a746a',
+        });
+        // hashtags
+        text(44, 670, '#程序员  #git  #AI工具  #开发效率  #开源', {
+          font: 'ZCOOL KuaiLe',
+          size: 14.5,
+          color: '#5b7a9e',
+        });
+      })();
+    </script>
+  </body>
+</html>

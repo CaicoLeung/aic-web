@@ -1,0 +1,206 @@
+@import 'tailwindcss';
+
+/* ──────────────────────────────────────────────────────────────────
+   Design tokens — lifted from aic-intro.html and codified as a
+   single source of truth (web/coding-style.md: do not hardcode palette).
+   Suffix mapping → Tailwind utility (bg-*, text-*, border-*):
+     --color-base        → bg-base
+     --color-ink         → text-ink
+     --color-line        → border-line
+     --color-amber       → text-amber / bg-amber
+   ────────────────────────────────────────────────────────────────── */
+@theme {
+  /* surfaces */
+  --color-base: #0e0f14;
+  --color-base-deep: #0a0b0f;
+  --color-surface: #15171f;
+  --color-surface-raised: #1a1d27;
+
+  /* lines */
+  --color-line: #262a38;
+  --color-line-soft: #1e2230;
+
+  /* ink (text) */
+  --color-ink: #ece9e1;
+  --color-ink-muted: #8a8f9f;
+  --color-ink-dim: #54586a;
+
+  /* accents — amber product accent + mint success */
+  --color-amber: #f3b340;
+  --color-amber-warm: #e88a4f;
+  --color-amber-soft: rgba(243, 179, 64, 0.12);
+  --color-mint: #74c98a;
+  --color-mint-soft: rgba(116, 201, 138, 0.14);
+
+  /* type — display stays system (Q12 hybrid); mono is the only web font. */
+  --font-display:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:
+    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Liberation Mono',
+    monospace;
+
+  /* rhythm */
+  --text-hero: clamp(2.75rem, 1rem + 7vw, 4.5rem);
+  --text-h2: clamp(2rem, 1.4rem + 2.4vw, 2.75rem);
+  --text-lede: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
+
+  /* motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+}
+
+/* ── Font face — JetBrains Mono, self-hosted, latin subset only ── */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/aic-web/fonts/JetBrainsMono-Regular.woff2') format('woff2');
+  unicode-range: U+0000-007F, U+00A0-00FF, U+2000-206F, U+2190-21FF, U+2500-259F;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/aic-web/fonts/JetBrainsMono-Bold.woff2') format('woff2');
+  unicode-range: U+0000-007F, U+00A0-00FF, U+2000-206F, U+2190-21FF, U+2500-259F;
+}
+
+/* ── Base layer ── */
+@layer base {
+  html {
+    background-color: var(--color-base-deep);
+    color-scheme: dark;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: var(--color-base);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* global atmosphere — amber + mint radial glows from intro.png */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1000px 640px at 82% 10%, rgba(243, 179, 64, 0.1), transparent 62%),
+      radial-gradient(820px 560px at 6% 94%, rgba(116, 201, 138, 0.055), transparent 60%),
+      linear-gradient(180deg, var(--color-base) 0%, var(--color-base-deep) 100%);
+  }
+
+  /* subtle film grain — signature of the intro.png look */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* visible focus for keyboard nav (a11y bar, Q14) */
+  :focus-visible {
+    outline: 2px solid var(--color-amber);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-amber-soft);
+    color: var(--color-ink);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+  }
+}
+
+/* ── Skip link (a11y) ── */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-amber);
+  color: #1a1408;
+  font-weight: 700;
+  border-radius: 0 0 8px 0;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* ── Shared layout & primitives — used across section components ── */
+@layer components {
+  /* Centered max-width column with responsive horizontal padding. */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 0.4rem + 2vw, 3rem);
+  }
+
+  /* Section rhythm — uniform vertical breathing room. */
+  .section {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Eyebrow label — small amber uppercase line + 0N — label pattern. */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-amber);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .eyebrow .line {
+    width: 28px;
+    height: 1px;
+    background: var(--color-amber);
+    opacity: 0.6;
+  }
+
+  /* Code-styled inline text used in headings and ledes. */
+  .section code,
+  .lede code {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+    padding: 0.1rem 0.45rem;
+    border-radius: 6px;
+    font-size: 0.85em;
+  }
+}

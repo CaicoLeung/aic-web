@@ -1,0 +1,135 @@
+---
+/**
+ * How it works — 6-step flow translated from aic-sketch.png.
+ * Horizontal stepper on lg+, vertical on mobile. Amber emphasis on
+ * step 03 ("run" — the sketch's yellow-highlighter gag).
+ */
+import { HOW_IT_WORKS_STEPS } from '@/config/site';
+---
+
+<section id="how" class="section how">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">
+        <span class="line" aria-hidden="true"></span>02 — How it works
+      </p>
+      <h2>install once → type <code>aic</code> → clean commit.</h2>
+    </header>
+
+    <ol class="flow" role="list">
+      {
+        HOW_IT_WORKS_STEPS.map((step, i) => (
+          <li class:list={['step', { 'is-run': step.n === '03' }]} data-step={step.n}>
+            <span class="step-num">{step.n}</span>
+            <div class="step-body">
+              <span class="step-label">{step.label}</span>
+              <span class="step-detail">{step.detail}</span>
+            </div>
+            {i < HOW_IT_WORKS_STEPS.length - 1 && (
+              <span class="step-arrow" aria-hidden="true">
+                →
+              </span>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .how {
+    padding: clamp(3rem, 1rem + 6vw, 6rem) 0;
+    position: relative;
+    z-index: 2;
+  }
+  .section-head {
+    margin-bottom: clamp(2rem, 1rem + 2vw, 3rem);
+    max-width: 48rem;
+  }
+  h2 {
+    font-size: var(--text-h2);
+    line-height: 1.05;
+    margin: 0.75rem 0 0;
+  }
+  h2 code {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+    padding: 0.1rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.85em;
+  }
+  .flow {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .step {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--color-line-soft);
+    border-radius: 14px;
+    background: rgba(21, 23, 31, 0.4);
+    transition:
+      border-color var(--duration-fast) ease,
+      background var(--duration-fast) ease;
+  }
+  .step.is-run {
+    border-color: var(--color-amber);
+    background: var(--color-amber-soft);
+    box-shadow: 0 16px 50px -22px rgba(243, 179, 64, 0.45);
+  }
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-ink-dim);
+    letter-spacing: 0.12em;
+    min-width: 1.6rem;
+  }
+  .step.is-run .step-num {
+    color: var(--color-amber);
+  }
+  .step-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .step-label {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .step-detail {
+    color: var(--color-ink-muted);
+    font-size: 0.8rem;
+  }
+  .step-arrow {
+    color: var(--color-ink-dim);
+    font-size: 1.1rem;
+  }
+  @media (min-width: 768px) {
+    .flow {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .step {
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+    }
+    .step-arrow {
+      display: none;
+    }
+  }
+  @media (min-width: 1280px) {
+    .flow {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+</style>

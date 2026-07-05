@@ -1,0 +1,32 @@
+---
+/**
+ * aic-web — single page composing the 7-section spine (Q5):
+ *   Topbar · Hero · How it works · Auto-batching · Providers · Install · Footer
+ *
+ * Build-time fact fetch (ADR-0003): version + providers are pulled from
+ * the aic source repo `main` branch on every build, with safe fallbacks.
+ */
+import { loadAicFacts } from '@/data/aic';
+import Base from '@/layouts/Base.astro';
+import Topbar from '@/components/topbar/Topbar.astro';
+import Hero from '@/components/hero/Hero.astro';
+import HowItWorks from '@/components/how-it-works/HowItWorks.astro';
+import Batching from '@/components/batching/Batching.astro';
+import Providers from '@/components/providers/Providers.astro';
+import Install from '@/components/install/Install.astro';
+import Footer from '@/components/footer/Footer.astro';
+
+const facts = await loadAicFacts();
+---
+
+<Base version={facts.version}>
+  <Topbar version={facts.version} />
+  <main id="main">
+    <Hero />
+    <HowItWorks />
+    <Batching />
+    <Providers providers={facts.providers} />
+    <Install />
+  </main>
+  <Footer />
+</Base>
