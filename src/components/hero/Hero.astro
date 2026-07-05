@@ -1,7 +1,12 @@
 ---
 /**
  * Hero — eyebrow + H1 + lede + commands table + primary CTA, with the
- * animated terminal to the right. Reflows to single-column on mobile.
+ * animated terminal.
+ *
+ * Mobile order is a narrative: eyebrow → H1 → terminal (the hook) → lede
+ * → CTA → commands reference. Desktop restores the two-column copy/terminal
+ * split via grid-template-areas, so DOM order (mobile) and desktop placement
+ * can differ without CSS `order` hacks. See ADR-0004 for the type system.
  */
 import CommandsTable from './CommandsTable.astro';
 import Terminal from './Terminal.astro';
@@ -11,39 +16,38 @@ import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
 
 <section class="hero" id="top">
   <div class="hero-grid container">
-    <div class="hero-copy">
-      <p class="eyebrow" data-reveal>
-        <span class="line" aria-hidden="true"></span>01 — Introduction
-      </p>
-      <h1 data-reveal>
-        Stop writing<br />
-        <em class="ital">commit</em>
-        <span class="pop">messages.</span>
-      </h1>
-      <p class="lede" data-reveal>
-        <b>aic</b> reads your diff, drafts a conventional commit, and commits it — one command.
-        Nothing staged? It groups your work into logical commits for you.
-      </p>
-
-      <div data-reveal>
-        <CommandsTable />
-      </div>
-
-      <div class="hero-cta" data-reveal>
-        <CopyButton
-          text={PRIMARY_INSTALL_COMMAND}
-          label="brew tap CaicoLeung/aic && brew install aic"
-          variant="primary"
-        />
-        <span class="cta-hint">
-          <span class="arrow" aria-hidden="true">→</span> then run
-          <code>aic setup</code>
-        </span>
-      </div>
-    </div>
+    <p class="eyebrow hero-eyebrow" data-reveal>
+      <span class="line" aria-hidden="true"></span>01 — Introduction
+    </p>
+    <h1 class="hero-h1" data-reveal>
+      Stop writing<br />
+      <em class="ital">commit</em>
+      <span class="pop">messages.</span>
+    </h1>
 
     <div class="hero-terminal" data-reveal>
       <Terminal />
+    </div>
+
+    <p class="lede hero-lede" data-reveal>
+      <b>aic</b> reads your diff, drafts a conventional commit, and commits it — one command.
+      Nothing staged? It groups your work into logical commits for you.
+    </p>
+
+    <div class="hero-cta" data-reveal>
+      <CopyButton
+        text={PRIMARY_INSTALL_COMMAND}
+        label="brew tap CaicoLeung/aic && brew install aic"
+        variant="primary"
+      />
+      <span class="cta-hint">
+        <span class="arrow" aria-hidden="true">→</span> then run
+        <code>aic setup</code>
+      </span>
+    </div>
+
+    <div class="hero-commands" data-reveal>
+      <CommandsTable />
     </div>
   </div>
 </section>
@@ -54,21 +58,51 @@ import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
     z-index: 2;
     padding: clamp(2rem, 1rem + 5vw, 5rem) 0 clamp(3rem, 1rem + 6vw, 6rem);
   }
+  /* Mobile-first: single column in narrative order —
+     eyebrow → h1 → terminal → lede → CTA → commands reference. */
   .hero-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: clamp(2.5rem, 1rem + 3vw, 4rem);
-    align-items: center;
-  }
-  @media (min-width: 1024px) {
-    .hero-grid {
-      grid-template-columns: 5fr 7fr;
-    }
-  }
-  .hero-copy {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
+  }
+  .hero-terminal {
+    margin-block: 0.5rem;
+  }
+  /* Desktop: two columns — copy left, terminal right (spanning). The copy
+     column reads eyebrow → h1 → lede → commands → cta, restored via
+     grid-template-areas regardless of DOM order. */
+  @media (min-width: 1024px) {
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      grid-template-areas:
+        'eyebrow  terminal'
+        'h1       terminal'
+        'lede     terminal'
+        'commands terminal'
+        'cta      terminal';
+      gap: 1.25rem 2.5rem;
+      align-items: center;
+    }
+    .hero-eyebrow {
+      grid-area: eyebrow;
+    }
+    .hero-h1 {
+      grid-area: h1;
+    }
+    .hero-terminal {
+      grid-area: terminal;
+      margin-block: 0;
+    }
+    .hero-lede {
+      grid-area: lede;
+    }
+    .hero-commands {
+      grid-area: commands;
+    }
+    .hero-cta {
+      grid-area: cta;
+    }
   }
   h1 {
     font-size: var(--text-hero);
@@ -89,20 +123,20 @@ import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
     color: var(--color-ink-muted);
     line-height: 1.65;
     max-width: 32rem;
+    margin: 0;
   }
   .lede b {
     color: var(--color-ink);
     font-weight: 600;
   }
   .hero-cta {
-    margin-top: 0.5rem;
     display: inline-flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 1rem;
   }
   .cta-hint {
-    font-size: 0.85rem;
+    font-size: 0.9375rem;
     color: var(--color-ink-muted);
   }
   .cta-hint .arrow {
