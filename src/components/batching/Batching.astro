@@ -46,7 +46,9 @@
     grid-template-columns: 1fr;
     gap: clamp(2rem, 1rem + 3vw, 4rem);
     align-items: center;
-    padding: clamp(2rem, 1rem + 3vw, 3.5rem);
+    /* Vertical padding only — inline gutter inherits from .container
+       so the card's content aligns with sibling sections. */
+    padding-block: clamp(2rem, 1rem + 3vw, 3.5rem);
     border: 1px solid var(--color-line-soft);
     border-radius: 20px;
     background:
@@ -71,6 +73,7 @@
     max-width: 360px;
   }
   .pill {
+    font-family: var(--font-mono);
     padding: 0.75rem 1rem;
     border: 1px solid var(--color-line);
     border-radius: 10px;
@@ -88,6 +91,14 @@
   }
   .pill:nth-child(3) {
     transform: translateX(1.2rem);
+  }
+  /* Reclaim the right gutter on narrow screens — the fanned stack is a
+     desktop flourish (mobile reading-experience pass). */
+  @media (max-width: 480px) {
+    .pill:nth-child(2),
+    .pill:nth-child(3) {
+      transform: none;
+    }
   }
   .pill .hash {
     color: var(--color-amber);
@@ -118,7 +129,7 @@
   .aside {
     margin-top: 1rem;
     font-style: italic;
-    color: var(--color-ink-dim);
-    font-size: 0.82rem;
+    color: var(--color-ink-muted);
+    font-size: 0.9375rem;
   }
 </style>

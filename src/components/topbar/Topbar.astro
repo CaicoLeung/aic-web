@@ -15,8 +15,10 @@ const { version } = Astro.props;
   <a class="brand" href="#top" aria-label="aic — home">
     <span class="mark" aria-hidden="true">
       <svg class="mark-svg" viewBox="0 0 24 24" width="22" height="22" focusable="false">
-        <path d="M10,5 Q10,13 18,13 Q10,13 10,21 Q10,13 2,13 Q10,13 10,5 Z" fill="#1a1408" />
-        <path d="M18,2 Q18,6 22,6 Q18,6 18,10 Q18,6 14,6 Q18,6 18,2 Z" fill="#1a1408" />
+        <path d="M10,5 Q10,13 18,13 Q10,13 10,21 Q10,13 2,13 Q10,13 10,5 Z" fill="#1a1408"
+        ></path>
+        <path d="M18,2 Q18,6 22,6 Q18,6 18,10 Q18,6 14,6 Q18,6 18,2 Z" fill="#1a1408"
+        ></path>
       </svg>
     </span>
     <span class="brand-text">
@@ -113,6 +115,10 @@ const { version } = Astro.props;
   .brand-tag {
     font-size: 0.72rem;
     color: var(--color-ink-muted);
+  }
+  .nav,
+  .meta {
+    font-family: var(--font-mono);
   }
   .nav {
     display: none;

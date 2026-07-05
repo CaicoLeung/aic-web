@@ -32,9 +32,12 @@
   --color-mint: #74c98a;
   --color-mint-soft: rgba(116, 201, 138, 0.14);
 
-  /* type — display stays system (Q12 hybrid); mono is the only web font. */
+  /* type — three registers (ADR-0004):
+     display = headings, body = prose, mono = code/chrome. */
   --font-display:
     -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+  --font-body:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
   --font-mono:
     'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Liberation Mono',
     monospace;
@@ -87,12 +90,20 @@
   body {
     background-color: var(--color-base);
     color: var(--color-ink);
-    font-family: var(--font-mono);
-    font-size: 14px;
+    font-family: var(--font-body);
+    font-size: 16px;
     line-height: 1.5;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  /* code register — mono regardless of ancestor (ADR-0004) */
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
   }
 
   /* global atmosphere — amber + mint radial glows from intro.png */
@@ -160,12 +171,13 @@
 
 /* ── Shared layout & primitives — used across section components ── */
 @layer components {
-  /* Centered max-width column with responsive horizontal padding. */
+  /* Centered max-width column with responsive horizontal padding.
+     Floor raised to 1.25rem (20px) so mobile copy doesn't run edge-to-edge. */
   .container {
     width: 100%;
     max-width: 1200px;
     margin-inline: auto;
-    padding-inline: clamp(1rem, 0.4rem + 2vw, 3rem);
+    padding-inline: clamp(1.25rem, 0.4rem + 2vw, 3rem);
   }
 
   /* Section rhythm — uniform vertical breathing room. */
@@ -174,11 +186,13 @@
     z-index: 2;
   }
 
-  /* Eyebrow label — small amber uppercase line + 0N — label pattern. */
+  /* Eyebrow label — small amber uppercase line + 0N — label pattern.
+     Mono register: a chrome label, not prose (ADR-0004). */
   .eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
+    font-family: var(--font-mono);
     font-size: 0.7rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
