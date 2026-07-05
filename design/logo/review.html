@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>aic — logo concepts</title>
+    <style>
+      :root {
+        --base: #0e0f14;
+        --base-deep: #0a0b0f;
+        --surface: #15171f;
+        --line: #262a38;
+        --line-soft: #1e2230;
+        --ink: #ece9e1;
+        --muted: #8a8f9f;
+        --dim: #54586a;
+        --amber: #f3b340;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { background: var(--base-deep); }
+      body {
+        background:
+          radial-gradient(1000px 640px at 82% 8%, rgba(243, 179, 64, 0.09), transparent 62%),
+          radial-gradient(820px 560px at 4% 96%, rgba(116, 201, 138, 0.05), transparent 60%),
+          linear-gradient(180deg, var(--base) 0%, var(--base-deep) 100%);
+        color: var(--ink);
+        font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Monaco, monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        min-height: 100vh;
+        padding: 56px clamp(20px, 4vw, 56px) 80px;
+      }
+      .wrap { max-width: 1080px; margin: 0 auto; }
+      .eyebrow {
+        display: inline-flex; align-items: center; gap: 10px;
+        font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+        color: var(--amber); font-weight: 600;
+      }
+      .eyebrow .line { width: 28px; height: 1px; background: var(--amber); opacity: 0.6; }
+      h1 {
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+        font-weight: 800; font-size: 40px; letter-spacing: -0.035em; line-height: 1.05;
+        margin: 14px 0 8px;
+      }
+      .lede { color: var(--muted); max-width: 620px; margin-bottom: 44px; }
+      .lede b { color: var(--ink); font-weight: 600; }
+
+      .grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 18px;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: 14px;
+        padding: 22px;
+        display: flex; flex-direction: column; gap: 18px;
+      }
+      .card.recommend {
+        border-color: rgba(243, 179, 64, 0.5);
+        box-shadow: 0 0 0 1px rgba(243, 179, 64, 0.15), 0 20px 50px -28px rgba(243, 179, 64, 0.35);
+      }
+      .card h2 {
+        font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        font-size: 16px; font-weight: 700; letter-spacing: -0.01em;
+        display: flex; align-items: baseline; gap: 10px;
+      }
+      .card h2 .num { color: var(--amber); font-size: 12px; font-weight: 600; letter-spacing: 0.1em; }
+      .card .why { color: var(--muted); font-size: 12.5px; line-height: 1.6; }
+      .card .tag {
+        align-self: flex-start;
+        font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+        color: var(--amber); border: 1px solid rgba(243, 179, 64, 0.4);
+        border-radius: 999px; padding: 3px 9px;
+      }
+
+      .swatches { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; }
+      .sw {
+        display: flex; flex-direction: column; align-items: center; gap: 6px;
+        font-size: 10px; color: var(--dim); letter-spacing: 0.08em;
+      }
+      .sw img { display: block; background: transparent; border-radius: 6px; }
+      .stage-dark {
+        background:
+          radial-gradient(circle at 50% 30%, rgba(243,179,64,0.08), transparent 60%),
+          #0e0f14;
+        border: 1px solid var(--line-soft);
+        border-radius: 10px;
+        padding: 14px;
+      }
+      .stage-light {
+        background: #f4f1ea;
+        border: 1px solid #ddd6c7;
+        border-radius: 10px;
+        padding: 14px;
+      }
+      .stage-light img { background: transparent; }
+
+      .sizes { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+      .sizes .sw img { background: transparent; }
+
+      .lockup-row {
+        display: flex; gap: 22px; flex-wrap: wrap; align-items: center;
+        background: var(--surface); border: 1px solid var(--line-soft);
+        border-radius: 14px; padding: 28px 26px; margin-top: 18px;
+      }
+      .lockup-row img { display: block; }
+
+      .meta {
+        display: flex; gap: 16px; align-items: center;
+        font-size: 11px; color: var(--dim); letter-spacing: 0.16em; text-transform: uppercase;
+        margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--line-soft);
+      }
+      code { color: var(--amber); background: rgba(243, 179, 64, 0.12); padding: 1px 6px; border-radius: 5px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="eyebrow"><span class="line"></span>Logo exploration</div>
+      <h1>Four directions for the <span style="color: var(--amber)">aic</span> mark.</h1>
+      <p class="lede">
+        <b>aic</b> reads a diff, drafts a conventional commit, ships it. The mark should read
+        instantly at <b>16px</b> (favicon / terminal title) and carry at <b>256px</b> (hero).
+        Direction <b>01 — Spark</b> is the recommended primary: it is the clearest "AI" signal,
+        scales the best, and drops the generic letter-in-a-box placeholder for something ownable.
+      </p>
+
+      <div class="grid">
+        <!-- 01 SPARK -->
+        <div class="card recommend">
+          <span class="tag">★ recommended</span>
+          <h2><span class="num">01</span> Spark</h2>
+          <div class="swatches">
+            <div class="sw">
+              <div class="stage-dark"><img src="concepts/01-spark-mark.svg" width="96" height="96" alt="" /></div>
+              <span>mark · dark</span>
+            </div>
+            <div class="sw">
+              <div class="stage-light"><img src="concepts/01-spark-mark.svg" width="64" height="64" alt="" /></div>
+              <span>mark · light</span>
+            </div>
+          </div>
+          <div class="sizes">
+            <div class="sw"><img src="concepts/01-spark-app-icon.svg" width="64" height="64" alt="" /><span>64</span></div>
+            <div class="sw"><img src="concepts/01-spark-app-icon.svg" width="32" height="32" alt="" /><span>32</span></div>
+            <div class="sw"><img src="concepts/01-spark-app-icon.svg" width="16" height="16" alt="" /><span>16</span></div>
+          </div>
+          <p class="why">
+            Concave 4-point sparkle pair in the amber gradient. The universal "AI" glyph, executed in
+            the product palette. Reads at 16px, owns the app-icon slot, replaces the placeholder
+            <code>a</code> with intent. The companion spark adds rhythm without noise.
+          </p>
+        </div>
+
+        <!-- 02 BRANCH -->
+        <div class="card">
+          <h2><span class="num">02</span> Branch</h2>
+          <div class="swatches">
+            <div class="sw">
+              <div class="stage-dark"><img src="concepts/02-branch-mark.svg" width="96" height="96" alt="" /></div>
+              <span>mark · dark</span>
+            </div>
+            <div class="sw">
+              <div class="stage-light"><img src="concepts/02-branch-mark.svg" width="64" height="64" alt="" /></div>
+              <span>mark · light</span>
+            </div>
+          </div>
+          <p class="why">
+            Most literal: a git-graph branch with a prior commit node, topped by the spark — "AI
+            writes your next commit." Strongest story, slightly busier at favicon size. Good as a
+            secondary/marketing glyph.
+          </p>
+        </div>
+
+        <!-- 03 CHEVRON -->
+        <div class="card">
+          <h2><span class="num">03</span> Prompt</h2>
+          <div class="swatches">
+            <div class="sw">
+              <div class="stage-dark"><img src="concepts/03-chevron-mark.svg" width="96" height="96" alt="" /></div>
+              <span>mark · dark</span>
+            </div>
+            <div class="sw">
+              <div class="stage-light"><img src="concepts/03-chevron-mark.svg" width="64" height="64" alt="" /></div>
+              <span>mark · light</span>
+            </div>
+          </div>
+          <p class="why">
+            A <code>&gt;</code> prompt chevron discharging into a spark. Pure CLI body language —
+            "type, then AI generates." Bold stroke holds up tiny. Less git-specific than 02, more
+            terminal-native than 01.
+          </p>
+        </div>
+
+        <!-- 04 WORDMARK -->
+        <div class="card">
+          <h2><span class="num">04</span> Wordmark lockup</h2>
+          <div class="swatches">
+            <div class="sw">
+              <div class="stage-dark"><img src="concepts/04-wordmark-lockup.svg" width="168" height="64" alt="" /></div>
+              <span>lockup · dark</span>
+            </div>
+          </div>
+          <p class="why">
+            Spark + <code>aic</code> in JetBrains Mono Bold — the working topbar lockup. The spark
+            carries the meaning; the wordmark carries the name. Pairs with any of the three marks
+            above (shown here with 01).
+          </p>
+        </div>
+      </div>
+
+      <div class="lockup-row">
+        <img src="concepts/01-spark-mark.svg" width="56" height="56" alt="" />
+        <img src="concepts/04-wordmark-lockup.svg" width="210" height="80" alt="" />
+        <span style="color: var(--dim); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;">
+          primary lockup · topbar / hero / OG image
+        </span>
+      </div>
+
+      <div class="meta">
+        <span>palette · #f3b340 → #e88a4f</span>
+        <span>·</span>
+        <span>ink · #1a1408 on amber</span>
+        <span>·</span>
+        <span>type · JetBrains Mono Bold</span>
+      </div>
+    </div>
+  </body>
+</html>
