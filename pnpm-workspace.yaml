@@ -5,3 +5,11 @@
 allowBuilds:
   esbuild: true
   sharp: true
+
+# Pin sitemap@9.0.1's transitive @types/node (^24.9.2) to the latest release
+# old enough to pass the minimumReleaseAge supply-chain policy — 24.13.3
+# (published the same day) trips it and fails the CI frozen install. Scoped
+# so the direct @types/node@^26 devDep is unaffected. pnpm v11 reads
+# overrides here, not from package.json's "pnpm" field.
+overrides:
+  '@types/node@^24.9.2': 24.13.2
