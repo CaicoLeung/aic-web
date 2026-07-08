@@ -15,6 +15,7 @@
     "axe": "axe-preview"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "@fontsource/jetbrains-mono": "^5.2.8",
     "astro": "^5.0.0",
     "gsap": "^3.12.5"

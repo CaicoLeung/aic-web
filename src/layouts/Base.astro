@@ -10,13 +10,32 @@ interface Props {
   readonly version: string;
   readonly title?: string;
   readonly description?: string;
+  /** Per-page structured data. Omit on the home page to keep the default
+   *  SoftwareApplication schema. Pass an Article-shaped object on content
+   *  pages so a comparison page isn't mistagged as the app itself. */
+  readonly schema?: Record<string, unknown> | readonly Record<string, unknown>[];
 }
 
 const {
   version,
   title = 'aic — AI-powered git commits',
   description = 'aic reads your diff, drafts a conventional commit, and commits it — one command. Nothing staged? It groups your work into logical commits for you.',
+  schema,
 } = Astro.props;
+
+// Home keeps SoftwareApplication; content pages pass their own schema.
+const jsonLd =
+  schema ??
+  ({
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'aic',
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'macOS, Linux, Windows',
+    softwareVersion: `v${version}`,
+    description,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  });
 
 const site = Astro.site?.toString() ?? 'https://caicoleung.github.io';
 const canonical = new URL(Astro.url.pathname, site).toString();
@@ -32,6 +51,10 @@ const themeColor = '#0e0f14';
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content={themeColor} />
+    <meta
+      name="google-site-verification"
+      content="Ih8LNd1hTZy3EI4Hx-_wx21ruZj5gR6eosSk1l47b5A"
+    />
     <link rel="canonical" href={canonical} />
 
     <!-- icons -->
@@ -64,25 +87,8 @@ const themeColor = '#0e0f14';
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <!-- structured data — software application -->
-    <script
-      type="application/ld+json"
-      is:inline
-      set:html={JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'SoftwareApplication',
-        name: 'aic',
-        applicationCategory: 'DeveloperApplication',
-        operatingSystem: 'macOS, Linux, Windows',
-        softwareVersion: `v${version}`,
-        description,
-        offers: {
-          '@type': 'Offer',
-          price: '0',
-          priceCurrency: 'USD',
-        },
-      })}
-    />
+    <!-- structured data — SoftwareApplication (home) or per-page schema -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
 
     <!-- PWA: register service worker (progressive enhancement — fails silently) -->
     <script>
