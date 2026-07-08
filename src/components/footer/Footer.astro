@@ -4,6 +4,11 @@
  */
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import CopyButton from '@/components/ui/CopyButton.astro';
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const compareBase = `${base}vs/aicommits/`;
 ---
 
 <footer class="footer">
@@ -34,6 +39,9 @@ import CopyButton from '@/components/ui/CopyButton.astro';
       <a class="repo" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
         {GITHUB_URL.replace('https://', '')}
       </a>
+      <nav class="footer-links" aria-label="Comparisons">
+        <a href={compareBase}>aic vs aicommits</a>
+      </nav>
       <p>MIT licensed · built with Astro + Tailwind + GSAP</p>
     </div>
   </div>
@@ -94,6 +102,19 @@ import CopyButton from '@/components/ui/CopyButton.astro';
     width: fit-content;
   }
   .repo:hover {
+    color: var(--color-amber);
+  }
+  .footer-links {
+    display: inline-flex;
+    gap: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+  }
+  .footer-links a {
+    color: var(--color-ink-muted);
+    text-decoration: none;
+  }
+  .footer-links a:hover {
     color: var(--color-amber);
   }
 </style>
