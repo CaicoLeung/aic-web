@@ -1,0 +1,330 @@
+---
+/**
+ * /best-ai-commit-tools — roundup page (ADR-0006).
+ *
+ * Fair survey of the field (CONTEXT.md → "Roundup page"): aic is disclosed
+ * as the home team and positioned honestly, not declared the winner in a
+ * vacuum. Each one-liner is a verified editorial judgment
+ * (src/config/competitors.ts → ROUNDUP). Targets the "best AI commit
+ * message tools" / comparison cluster.
+ */
+import { loadAicFacts } from '@/data/aic';
+import Base from '@/layouts/Base.astro';
+import ContentHeader from '@/components/content/ContentHeader.astro';
+import Footer from '@/components/footer/Footer.astro';
+import CopyButton from '@/components/ui/CopyButton.astro';
+import { ROUNDUP } from '@/config/competitors';
+import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
+
+const facts = await loadAicFacts();
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const vsAicommits = `${base}vs/aicommits/`;
+
+const title = `Best AI commit message tools in 2026`;
+const description = `An honest roundup of AI-powered git commit tools — aic, aicommits, ai-commit, git-ai, and llmc — with a fair, feature-verified take on when to pick each one.`;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  datePublished: '2026-07-08',
+  dateModified: '2026-07-08',
+  author: { '@type': 'Organization', name: 'aic' },
+  publisher: { '@type': 'Organization', name: 'aic' },
+  about: ['AI commit message tools', 'git', 'conventional commits'],
+};
+---
+
+<Base version={facts.version} title={title} description={description} schema={schema}>
+  <ContentHeader version={facts.version} />
+
+  <main id="main">
+    <article class="container article">
+      <p class="eyebrow"><span class="line" aria-hidden="true"></span>Roundup · best AI commit tools</p>
+      <h1>The best AI commit message tools</h1>
+      <p class="lede">
+        There’s no shortage of CLIs that will read your <code>git diff</code> and draft a commit
+        message. The honest answer to “which is best?” is “depends what you want.” Here’s a fair,
+        feature-verified survey of the field — and a quick way to pick.
+      </p>
+
+      <aside class="callout">
+        <strong>Disclosure.</strong> <code>aic</code> is our tool, so it’s on this list. We’ve kept
+        every one-liner honest about what each tool is genuinely best at — including where the
+        others beat us.
+      </aside>
+
+      <!-- How to choose -->
+      <section class="block">
+        <h2>How to choose</h2>
+        <ul class="chooser">
+          <li><span class="need">You want unstaged work split into logical commits</span><span class="pick">→ aic</span></li>
+          <li><span class="need">You want the popular, well-supported default</span><span class="pick">→ aicommits</span></li>
+          <li><span class="need">You already live in Claude Code</span><span class="pick">→ ai-commit</span></li>
+          <li><span class="need">You want free, local, offline — and PR descriptions too</span><span class="pick">→ git-ai</span></li>
+          <li><span class="need">You want maximum providers and a polished TUI</span><span class="pick">→ llmc</span></li>
+        </ul>
+      </section>
+
+      <!-- Cards -->
+      <section class="block">
+        <h2>The field</h2>
+        <ul class="cards">
+          {ROUNDUP.map((tool) => (
+            <li class:list={['card', { home: tool.homeTeam }]}>
+              <div class="card-head">
+                <h3>{tool.name}</h3>
+                {tool.homeTeam && <span class="badge">that’s us</span>}
+              </div>
+              <p class="runtime">{tool.runtime}</p>
+              <p class="strength">{tool.strength}</p>
+              <div class="card-links">
+                {tool.homeTeam ? (
+                  <>
+                    <CopyButton text={PRIMARY_INSTALL_COMMAND} label="brew install aic" variant="primary" />
+                    <a class="card-link" href={vsAicommits}>vs aicommits →</a>
+                  </>
+                ) : (
+                  <>
+                    <a class="card-link" href={tool.repo} target="_blank" rel="noopener noreferrer">
+                      repository ↗
+                    </a>
+                    {tool.vsPath && <a class="card-link" href={`${base}${tool.vsPath}`}>full comparison →</a>}
+                  </>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+        <p class="field-note">
+          Not exhaustive — the space is crowded (add <code>commitizen</code>, <code>cz-git</code>,
+          and a dozen more). These five cover the distinct approaches: auto-batching, the incumbent,
+          Claude-Code-native, local-first, and max-provider.
+        </p>
+      </section>
+
+      <!-- Closing -->
+      <section class="verdict">
+        <h2>Our honest take</h2>
+        <p>
+          If your work piles up unstaged and you want it committed as clean, atomic, conventional
+          commits — without installing Node.js — <strong>aic</strong> is purpose-built for that.
+          Otherwise, aicommits remains the safe default, and the others each own a clear niche.
+        </p>
+        <div class="cta">
+          <CopyButton text={PRIMARY_INSTALL_COMMAND} label="brew tap CaicoLeung/aic && brew install aic" variant="primary" />
+          <a class="cta-link" href={vsAicommits}>see aic vs aicommits →</a>
+          <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">★ Star on GitHub</a>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .article {
+    max-width: 880px;
+    padding-block: clamp(2.5rem, 1rem + 4vw, 4.5rem) clamp(3rem, 1rem + 5vw, 5rem);
+    position: relative;
+    z-index: 2;
+  }
+  h1 {
+    font-size: var(--text-h2);
+    line-height: 1.05;
+    margin: 0.75rem 0 0;
+  }
+  .lede {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    margin-top: 1rem;
+    font-size: var(--text-lede);
+  }
+  .lede code {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+    padding: 0.1rem 0.45rem;
+    border-radius: 6px;
+    font-size: 0.85em;
+  }
+
+  .callout {
+    margin-top: 1.75rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-line);
+    border-left: 3px solid var(--color-amber);
+    border-radius: 10px;
+    background: var(--color-amber-soft);
+    color: var(--color-ink);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .callout code {
+    color: var(--color-amber);
+    font-family: var(--font-mono);
+  }
+
+  .block {
+    margin-top: 2.75rem;
+  }
+  .block h2 {
+    font-size: 1.5rem;
+    margin: 0 0 1.1rem;
+  }
+
+  /* Chooser */
+  .chooser {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .chooser li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--color-line-soft);
+    border-radius: 10px;
+    background: var(--color-surface);
+  }
+  .need {
+    color: var(--color-ink);
+  }
+  .pick {
+    font-family: var(--font-mono);
+    color: var(--color-amber);
+    font-size: 0.92rem;
+  }
+
+  /* Cards */
+  .cards {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    border: 1px solid var(--color-line-soft);
+    border-radius: 14px;
+    background: var(--color-surface);
+  }
+  .card.home {
+    border-color: var(--color-amber);
+    background: color-mix(in oklch, var(--color-surface) 82%, var(--color-amber-soft));
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .card h3 {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #1a1408;
+    background: var(--color-amber);
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+    font-weight: 700;
+  }
+  .runtime {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--color-ink-dim);
+    margin: 0;
+  }
+  .strength {
+    color: var(--color-ink-muted);
+    line-height: 1.6;
+    font-size: 0.94rem;
+    margin: 0.25rem 0 0.75rem;
+    flex: 1;
+  }
+  .card-links {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.85rem;
+  }
+  .card-link {
+    color: var(--color-amber);
+    text-decoration: none;
+    font-size: 0.85rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--duration-fast) ease;
+  }
+  .card-link:hover {
+    border-bottom-color: var(--color-amber);
+  }
+  .field-note {
+    color: var(--color-ink-dim);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-top: 1.25rem;
+  }
+  .field-note code {
+    font-family: var(--font-mono);
+    color: var(--color-ink-muted);
+  }
+
+  /* Verdict */
+  .verdict {
+    margin-top: 2.75rem;
+    padding: 1.75rem;
+    border: 1px solid var(--color-line-soft);
+    border-radius: 14px;
+    background: var(--color-surface);
+  }
+  .verdict h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.75rem;
+  }
+  .verdict p {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+  }
+  .cta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .cta-link {
+    color: var(--color-ink);
+    text-decoration: none;
+    padding: 0.55rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition:
+      border-color var(--duration-fast) ease,
+      color var(--duration-fast) ease;
+  }
+  .cta-link:hover {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+  }
+</style>

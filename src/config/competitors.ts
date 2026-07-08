@@ -14,6 +14,8 @@
  *   aicommits — https://github.com/Nutlope/aicommits (v3.x README)
  */
 
+import { GITHUB_URL } from '@/config/site';
+
 /** Metadata for a rival tool. Reused by the roundup page (wave 2). */
 export interface CompetitorMeta {
   /** URL-safe id, matches the `/vs/{id}` route. */
@@ -145,3 +147,66 @@ export const AICOMMITS_COMPARISON: CompetitorComparison = {
 export const COMPARISONS: Readonly<Record<string, CompetitorComparison>> = {
   [AICOMMITS.id]: AICOMMITS_COMPARISON,
 };
+
+/* ──────────────────────────────────────────────────────────────────
+   Roundup — the "best AI commit tools" survey.
+   One fair, verified one-liner per tool. aic is disclosed as home team.
+   Sources verified 2026-07-08 (each tool's README). Re-check on ship.
+   ────────────────────────────────────────────────────────────────── */
+export interface RoundupEntry {
+  readonly id: string;
+  readonly name: string;
+  readonly repo: string;
+  readonly runtime: string;
+  /** Fair, verified one-liner — the tool's genuine distinct strength. */
+  readonly strength: string;
+  /** True for aic (disclosed). */
+  readonly homeTeam?: boolean;
+  /** Relative path to a dedicated /vs/{id} page, when one exists. */
+  readonly vsPath?: string;
+}
+
+export const ROUNDUP: readonly RoundupEntry[] = [
+  {
+    id: 'aic',
+    name: 'aic',
+    repo: GITHUB_URL,
+    runtime: 'Rust · brew / installer',
+    homeTeam: true,
+    strength:
+      'The only tool here that auto-batches unstaged work into separate logical commits — and ships as a dependency-free Rust binary with first-class Anthropic, Gemini, and DeepSeek.',
+  },
+  {
+    id: 'aicommits',
+    name: 'aicommits',
+    repo: 'https://github.com/Nutlope/aicommits',
+    runtime: 'Node.js · npm',
+    vsPath: 'vs/aicommits/',
+    strength:
+      'The entrenched default — broadest reach via OpenRouter, a prepare-commit-msg hook, gitmoji support, and the largest community.',
+  },
+  {
+    id: 'ai-commit',
+    name: 'ai-commit',
+    repo: 'https://github.com/lifedever/ai-commit',
+    runtime: 'Node.js · brew / npm',
+    strength:
+      'Stands out with a Claude Code provider that reads your source files for richer context — a natural fit if you already use Claude Code.',
+  },
+  {
+    id: 'git-ai',
+    name: 'git-ai',
+    repo: 'https://github.com/DaleSeo/git-ai',
+    runtime: 'Node.js · npm / npx',
+    strength:
+      'Defaults to local Ollama (free, offline) and also drafts PR descriptions, not just commit messages.',
+  },
+  {
+    id: 'llmc',
+    name: 'llmc',
+    repo: 'https://github.com/marclove/llmc',
+    runtime: 'Node.js · npx / npm',
+    strength:
+      'The broadest provider list (13) with a polished terminal UI, TOML config, custom prompts, and auto-commit.',
+  },
+];
