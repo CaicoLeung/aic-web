@@ -16,26 +16,53 @@ export const GITHUB_URL = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`;
 export const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main`;
 
 /** Visible across the site; overwritten by loadAicFacts() when reachable. */
-export const FALLBACK_VERSION = '0.1.6';
+export const FALLBACK_VERSION = '0.1.7';
 
 export interface ProviderInfo {
   /** Lowercase id as used in config/env (`openai`, `anthropic`, …). */
   readonly id: string;
   /** Human-facing display name (`OpenAI`, `Anthropic`, …). */
   readonly name: string;
+  /**
+   * Default model id used when the user sets none. Omitted for providers
+   * that have no default (OpenRouter, OpenAI-compatible).
+   */
+  readonly defaultModel?: string;
 }
 
 /**
- * Fallback provider list. Order is presentation order — matches the
- * intro.png footer (`OpenAI · Anthropic · Gemini · DeepSeek · Groq · Ollama`).
+ * Brand-casing overrides the live-fetch parser cannot derive from an enum
+ * variant name (`xAI`, `OpenAI-compatible`). Lookup is by provider id; an
+ * absent id falls back to the raw variant string.
+ */
+export const PROVIDER_DISPLAY_NAMES: Readonly<Record<string, string>> = {
+  xai: 'xAI',
+  // Live-fetch derives the id from the enum variant `OpenAiCompatible`
+  // (Rust idents can't hold a hyphen), so override that derived id. The
+  // FALLBACK_PROVIDERS entry below already carries the correct display name.
+  openaicompatible: 'OpenAI-compatible',
+};
+
+/**
+ * Fallback provider list (presentation order). Reflects the upcoming aic
+ * expansion to 12 providers plus a refreshed default-model table. Used only
+ * when the build-time fetch from the source repo fails (ADR-0003).
  */
 export const FALLBACK_PROVIDERS: readonly ProviderInfo[] = [
-  { id: 'openai', name: 'OpenAI' },
-  { id: 'anthropic', name: 'Anthropic' },
-  { id: 'gemini', name: 'Gemini' },
-  { id: 'deepseek', name: 'DeepSeek' },
-  { id: 'groq', name: 'Groq' },
-  { id: 'ollama', name: 'Ollama' },
+  { id: 'openai', name: 'OpenAI', defaultModel: 'gpt-5-mini' },
+  { id: 'anthropic', name: 'Anthropic', defaultModel: 'claude-haiku-4-5' },
+  { id: 'gemini', name: 'Gemini', defaultModel: 'gemini-2.5-flash' },
+  { id: 'deepseek', name: 'DeepSeek', defaultModel: 'deepseek-chat' },
+  { id: 'groq', name: 'Groq', defaultModel: 'llama-3.3-70b-versatile' },
+  { id: 'ollama', name: 'Ollama', defaultModel: 'llama3.3' },
+  { id: 'xai', name: 'xAI', defaultModel: 'grok-4.3' },
+  { id: 'mistral', name: 'Mistral', defaultModel: 'mistral-small-latest' },
+  // OpenRouter routes to many vendors — there is no single default model.
+  { id: 'openrouter', name: 'OpenRouter' },
+  { id: 'perplexity', name: 'Perplexity', defaultModel: 'sonar' },
+  { id: 'together', name: 'Together', defaultModel: 'meta-llama/Llama-3.3-70B-Instruct-Turbo' },
+  // OpenAI-compatible escape hatch — the user supplies base_url + model.
+  { id: 'openai-compatible', name: 'OpenAI-compatible' },
 ] as const;
 
 export interface InstallMethod {
