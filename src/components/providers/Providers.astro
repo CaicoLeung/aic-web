@@ -27,6 +27,19 @@ const { providers } = Astro.props;
       {providers.map((p) => <li class="provider-chip">{p.name}</li>)}
     </ul>
 
+    <dl class="default-models" aria-label="Default model per provider">
+      {
+        providers.map((p) => (
+          <div class="model-row">
+            <dt>{p.name}</dt>
+            <dd>
+              {p.defaultModel ?? <span class="muted">(your model)</span>}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+
     <p class="aside">
       no middleman · no per-commit markup · calls go straight from your machine
     </p>
@@ -83,6 +96,35 @@ const { providers } = Astro.props;
   .provider-chip:hover {
     border-color: var(--color-amber);
     color: var(--color-amber);
+  }
+  .default-models {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 0.35rem 1.5rem;
+    margin: 1.25rem 0 1.5rem;
+    border-top: 1px solid var(--color-line);
+    padding-top: 1.25rem;
+  }
+  .model-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+  .model-row dt {
+    font-family: var(--font-mono);
+    color: var(--color-ink-muted);
+    font-size: 0.8rem;
+    min-width: 7rem;
+  }
+  .model-row dd {
+    font-family: var(--font-mono);
+    color: var(--color-ink);
+    font-size: 0.8rem;
+    margin: 0;
+    word-break: break-all;
+  }
+  .model-row .muted {
+    color: var(--color-ink-muted);
   }
   .aside {
     color: var(--color-ink-muted);

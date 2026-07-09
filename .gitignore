@@ -27,6 +27,7 @@ pnpm-debug.log*
 # agent tooling local state
 .omc/
 .claude/
+.pi-subagents/
 
 # Lighthouse CI
 .lighthouseci/
