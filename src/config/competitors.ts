@@ -9,8 +9,10 @@
  * Every claim below was verified against the rival's current README before
  * publishing. Re-check when a rival ships a relevant feature.
  *
- * Sources verified 2026-07-08:
- *   aic       — https://github.com/CaicoLeung/aic (main README)
+ * Sources verified 2026-07-09:
+ *   aic       — https://github.com/CaicoLeung/aic (main README); provider count
+ *               per ADR-0003 registry expansion (11 first-class + OpenAI-compatible
+ *               escape hatch).
  *   aicommits — https://github.com/Nutlope/aicommits (v3.x README)
  */
 
@@ -34,7 +36,7 @@ export interface CompetitorMeta {
 
 /** One side of a comparison row. */
 export interface FeatureCell {
-  /** Short display text, e.g. "Yes", "6 first-class", "Node.js v22+". */
+  /** Short display text, e.g. "Yes", "11 first-class", "Node.js v22+". */
   readonly text: string;
   /** Renders a ✓ when true, ✗ when false, plain text when undefined. */
   readonly supported?: boolean;
@@ -65,7 +67,7 @@ export const AICOMMITS: CompetitorMeta = {
   runtime: 'Node.js v22+ · npm',
   install: 'npm install -g aicommits',
   strength:
-    'The entrenched default — huge install base, first-mover by @Nutlope, and the broadest provider reach via OpenRouter.',
+    'The entrenched default — huge install base, first-mover by @Nutlope, a `git commit` hook, and the largest community.',
 };
 
 /**
@@ -79,7 +81,10 @@ export const AICOMMITS_COMPARISON: CompetitorComparison = {
   axes: [
     {
       feature: 'Auto-batch unstaged work into multiple commits',
-      aic: { text: 'Yes — splits unstaged changes into logical atomic commits', supported: true },
+      aic: {
+        text: 'Yes — splits unstaged changes into logical atomic commits',
+        supported: true,
+      },
       rival: { text: 'No — one message per staged diff', supported: false },
       winner: 'aic',
       note: 'aic’s signature feature. aicommits’ `--generate N` produces N candidate messages for ONE commit, not N commits.',
@@ -95,15 +100,15 @@ export const AICOMMITS_COMPARISON: CompetitorComparison = {
       feature: 'Runtime & dependencies',
       aic: { text: 'Rust binary — no Node.js' },
       rival: { text: 'Node.js v22+ — npm' },
-      winner: 'tie',
-      note: 'aic needs nothing but the binary; aicommits is natural if you already live in a JS toolchain.',
+      winner: 'aic',
+      note: "aic is one static binary — no `node_modules`, transitive dependency tree, or global-install breakage when you switch Node versions. (Rust's faster cold-start helps too, though the LLM call dominates either way.) aicommits is friction-free only when Node.js is already in your path.",
     },
     {
       feature: 'Provider reach',
-      aic: { text: '6 first-class providers' },
+      aic: { text: '11 first-class + OpenAI-compatible' },
       rival: { text: '8 + OpenRouter/custom (any model)' },
-      winner: 'rival',
-      note: 'aicommits covers xAI, TogetherAI, LM Studio and any OpenAI-compatible endpoint out of the box.',
+      winner: 'aic',
+      note: 'Both reach any model via OpenRouter, but aic now ships more first-class providers — xAI, Together, Perplexity, Mistral included — plus an OpenAI-compatible escape hatch for LM Studio, vLLM, and gateways.',
     },
     {
       feature: 'Commit message formats',
@@ -183,7 +188,7 @@ export const ROUNDUP: readonly RoundupEntry[] = [
     runtime: 'Node.js · npm',
     vsPath: 'vs/aicommits/',
     strength:
-      'The entrenched default — broadest reach via OpenRouter, a prepare-commit-msg hook, gitmoji support, and the largest community.',
+      'The entrenched default — a prepare-commit-msg hook, gitmoji support, the largest community, and any model via OpenRouter.',
   },
   {
     id: 'ai-commit',
