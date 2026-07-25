@@ -15,6 +15,9 @@ export const GITHUB_REPO = 'aic';
 export const GITHUB_URL = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`;
 export const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main`;
 
+/** Build-time HTTP fetch timeout (ADR-0003). Window before degrading to `FALLBACK_*`. */
+export const FETCH_TIMEOUT_MS = 8000;
+
 /** Visible across the site; overwritten by loadAicFacts() when reachable. */
 export const FALLBACK_VERSION = '0.1.7';
 
