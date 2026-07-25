@@ -17,6 +17,7 @@ import {
   PROVIDER_DISPLAY_NAMES,
   type ProviderInfo,
 } from '@/config/site';
+import { fetchBuildTime } from '@/data/fetch';
 
 export interface AicFacts {
   /** Semver version string, e.g. "0.1.6". No leading "v". */
@@ -25,17 +26,10 @@ export interface AicFacts {
   readonly providers: readonly ProviderInfo[];
 }
 
-/** Fetch with hard timeout + graceful fallback. Build-time only. */
+/** Fetch a source-repo file. Build-time only; null degrades to FALLBACK_* (ADR-0003). */
 async function fetchSource(path: string): Promise<string | null> {
-  try {
-    const res = await fetch(`${GITHUB_RAW_BASE}/${path}`, {
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!res.ok) return null;
-    return await res.text();
-  } catch {
-    return null;
-  }
+  const res = await fetchBuildTime(`${GITHUB_RAW_BASE}/${path}`);
+  return res ? await res.text() : null;
 }
 
 async function loadVersion(): Promise<string> {
