@@ -9,6 +9,11 @@ interface Props {
   readonly version: string;
 }
 const { version } = Astro.props;
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const changelog = `${base}changelog/`;
+const versionTitle = `Latest release: v${version} — view changelog`;
 ---
 
 <header class="topbar" data-topbar>
@@ -35,10 +40,10 @@ const { version } = Astro.props;
   </nav>
 
   <div class="meta">
-    <span class="version" title={`Latest release: v${version}`}>
+    <a class="version" href={changelog} title={versionTitle}>
       <span class="version-dot" aria-hidden="true"></span>
       v{version}
-    </span>
+    </a>
     <a class="github" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
       GitHub
       <span aria-hidden="true">↗</span>
@@ -149,6 +154,14 @@ const { version } = Astro.props;
     border-radius: 999px;
     color: var(--color-ink-muted);
     font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    transition:
+      color var(--duration-fast) ease,
+      border-color var(--duration-fast) ease;
+  }
+  .version:hover {
+    color: var(--color-ink);
+    border-color: var(--color-amber);
   }
   .version-dot {
     width: 6px;
