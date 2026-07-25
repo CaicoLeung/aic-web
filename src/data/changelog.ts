@@ -18,6 +18,7 @@
  */
 
 import { GITHUB_OWNER, GITHUB_RAW_BASE, GITHUB_REPO, GITHUB_URL } from '@/config/site';
+import { fetchBuildTime } from '@/data/fetch';
 
 export interface ChangelogSection {
   /** Category name verbatim from source — `Features`, `Bug Fixes`, etc. */
@@ -38,7 +39,6 @@ export interface ChangelogEntry {
 
 const RAW_CHANGELOG_URL = `${GITHUB_RAW_BASE}/CHANGELOG.md`;
 const RELEASES_API_URL = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/releases`;
-const FETCH_TIMEOUT_MS = 8000;
 
 /**
  * Walk `### Kind` subheads and the `- item` bullets under each. Source
@@ -113,44 +113,56 @@ interface GithubRelease {
 }
 
 async function fetchChangelogMarkdown(): Promise<string | null> {
-  try {
-    const res = await fetch(RAW_CHANGELOG_URL, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
-    if (!res.ok) return null;
-    return await res.text();
-  } catch {
-    return null;
-  }
+  const res = await fetchBuildTime(RAW_CHANGELOG_URL);
+  return res ? await res.text() : null;
 }
 
+/**
+ * Fetch every release from the GitHub Releases API, following the
+ * `rel="next"` Link header across pages so the fallback path renders the
+ * full history (not just the first 30). Returns `null` on any failure so
+ * the loader can fail loud (ADR-0008).
+ */
 async function fetchReleasesEntries(): Promise<ChangelogEntry[] | null> {
-  try {
-    const res = await fetch(RELEASES_API_URL, {
-      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  const entries: ChangelogEntry[] = [];
+  let pageUrl: string | null = `${RELEASES_API_URL}?per_page=100`;
+  while (pageUrl) {
+    const res = await fetchBuildTime(pageUrl, {
       headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'aic-web' },
     });
-    if (!res.ok) return null;
-    const data = (await res.json()) as readonly GithubRelease[];
-    const entries: ChangelogEntry[] = [];
+    if (!res) return null;
+    let data: readonly GithubRelease[];
+    try {
+      data = (await res.json()) as readonly GithubRelease[];
+    } catch {
+      return null;
+    }
     for (const r of data) {
       if (r.prerelease) continue; // hide prereleases (design decision)
       const version = r.tag_name.replace(/^v/, '').trim();
       const date = (r.published_at ?? '').slice(0, 10);
       if (!version || !date) continue;
       const notes = sliceReleaseNotes(r.body ?? '');
-      entries.push({
-        version,
-        date,
-        url: r.html_url,
-        sections: parseSections(notes),
-      });
+      entries.push({ version, date, url: r.html_url, sections: parseSections(notes) });
     }
-    return entries;
-  } catch {
-    return null;
+    // Follow the GitHub `Link: <url>; rel="next"` header for the next page.
+    const next = res.headers.get('link')?.match(/<([^>]+)>;\s*rel="next"/);
+    pageUrl = next?.[1] ?? null;
   }
+  return entries;
 }
 
 let cached: readonly ChangelogEntry[] | null = null;
+
+/**
+ * Order entries newest-first by ISO date. Lexicographic compare on
+ * `YYYY-MM-DD` is chronological, so the first entry is always the latest
+ * release regardless of source order — the `Latest` badge never relies on
+ * the source happening to return newest-first. (Test seam.)
+ */
+export function sortNewestFirst(entries: readonly ChangelogEntry[]): ChangelogEntry[] {
+  return [...entries].sort((a, b) => b.date.localeCompare(a.date));
+}
 
 /**
  * Load the changelog at build time. Throws if both sources fail — see
@@ -161,17 +173,17 @@ export async function loadChangelog(): Promise<readonly ChangelogEntry[]> {
 
   const md = await fetchChangelogMarkdown();
   if (md) {
-    const entries = parseChangelogMarkdown(md);
-    if (entries.length > 0) {
-      cached = entries;
-      return entries;
+    const parsed = parseChangelogMarkdown(md);
+    if (parsed.length > 0) {
+      cached = sortNewestFirst(parsed);
+      return cached;
     }
   }
 
   const fromReleases = await fetchReleasesEntries();
   if (fromReleases && fromReleases.length > 0) {
-    cached = fromReleases;
-    return fromReleases;
+    cached = sortNewestFirst(fromReleases);
+    return cached;
   }
 
   throw new Error(
