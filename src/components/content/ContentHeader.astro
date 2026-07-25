@@ -7,14 +7,14 @@
  * Brand links home via BASE_URL (base-path safe). Reuses the Topbar mark.
  */
 import { GITHUB_URL } from '@/config/site';
+import { baseHref } from '@/lib/href';
 
 interface Props {
   readonly version?: string;
 }
 const { version } = Astro.props;
-const home = import.meta.env.BASE_URL.endsWith('/')
-  ? import.meta.env.BASE_URL
-  : `${import.meta.env.BASE_URL}/`;
+const home = baseHref(import.meta.env.BASE_URL);
+const changelog = `${home}changelog/`;
 ---
 
 <header class="content-header">
@@ -29,8 +29,17 @@ const home = import.meta.env.BASE_URL.endsWith('/')
   </a>
 
   <nav class="content-nav" aria-label="Site">
-    {version && <span class="version">v{version}</span>}
+    {version && (
+      <a
+        class="version"
+        href={changelog}
+        title={`Latest release: v${version} — view changelog`}
+      >
+        v{version}
+      </a>
+    )}
     <a href={home}>home</a>
+    <a href={changelog}>changelog</a>
     <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
       GitHub<span aria-hidden="true"> ↗</span>
     </a>
@@ -90,12 +99,16 @@ const home = import.meta.env.BASE_URL.endsWith('/')
   .content-nav a:hover {
     color: var(--color-amber);
   }
-  .version {
+  .content-nav a.version {
     color: var(--color-ink-dim);
     font-variant-numeric: tabular-nums;
+    text-decoration: none;
+  }
+  .content-nav a.version:hover {
+    color: var(--color-amber);
   }
   @media (max-width: 480px) {
-    .version {
+    .content-nav a.version {
       display: none;
     }
   }

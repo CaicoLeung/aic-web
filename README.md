@@ -27,6 +27,12 @@ Version and provider list are **fetched at build time** from
 release. Every fact has a `FALLBACK_*` constant in `src/config/site.ts`
 so a parse failure never breaks a deploy.
 
+The `/changelog/` page is the one carve-out (ADR-0008): its build-time
+fetch of `CHANGELOG.md` (primary) and the GitHub Releases API (fallback)
+intentionally **fails the build** if both sources are unreachable — a
+stale changelog that contradicts the live Topbar version is worse than a
+blocked deploy, and GitHub Pages keeps serving the last good build.
+
 Install methods, GitHub URL, and the 6-step "how it works" copy are
 low-drift and live as constants in `src/config/site.ts`.
 
@@ -48,6 +54,8 @@ src/
 ├── components/    # one folder per section (topbar/, hero/, how-it-works/, …)
 ├── config/site.ts # PROVIDERS, INSTALL_METHODS, FALLBACK_*, COMMANDS, etc.
 ├── data/aic.ts    # loadAicFacts() — build-time fetch + parse
+├── data/changelog.ts # loadChangelog() — build-time changelog fetch + parse (ADR-0008)
+├── data/fetch.ts     # fetchBuildTime() — shared build-time fetch primitive (ADR-0003)
 ├── lib/motion.ts  # GSAP matchMedia / reduced-motion gate
 ├── layouts/Base.astro
 ├── pages/index.astro

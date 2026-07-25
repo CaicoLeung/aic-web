@@ -1,0 +1,99 @@
+---
+/**
+ * /changelog — release-by-release history for aic.
+ *
+ * Rendered from build-time `loadChangelog()` (ADR-0003 pattern; ADR-0008
+ * carve-out for the failure contract). Fails the whole build if both the
+ * raw CHANGELOG.md and the GitHub Releases API are unreachable.
+ */
+import { loadAicFacts } from '@/data/aic';
+import { loadChangelog } from '@/data/changelog';
+import Base from '@/layouts/Base.astro';
+import ContentHeader from '@/components/content/ContentHeader.astro';
+import Footer from '@/components/footer/Footer.astro';
+import Changelog from '@/components/changelog/Changelog.astro';
+import { GITHUB_URL } from '@/config/site';
+
+const facts = await loadAicFacts();
+const entries = await loadChangelog();
+
+const latest = entries[0];
+const earliest = entries[entries.length - 1];
+
+const title = 'aic changelog — every release';
+const description = `Every aic release in order — features, fixes, and notes as they shipped. Latest: v${latest?.version}.`;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  datePublished: earliest?.date,
+  dateModified: latest?.date,
+  author: { '@type': 'Organization', name: 'aic' },
+  publisher: { '@type': 'Organization', name: 'aic' },
+  about: ['aic', 'changelog', 'release notes', 'git'],
+};
+---
+
+<Base version={facts.version} title={title} description={description} schema={schema}>
+  <ContentHeader version={facts.version} />
+
+  <main id="main">
+    <article class="container article">
+      <p class="eyebrow"><span class="line" aria-hidden="true"></span>Changelog · release notes</p>
+      <h1>Every aic release, in order.</h1>
+      <p class="lede">
+        New versions of <code>aic</code> as they shipped — pulled at build time from
+        the source repo's
+        <a
+          class="inline-link"
+          href={`${GITHUB_URL}/blob/main/CHANGELOG.md`}
+          target="_blank"
+          rel="noopener noreferrer">CHANGELOG.md</a
+        >, with GitHub Releases as a fallback if that fetch is briefly unreachable.
+        Newest at the top.
+      </p>
+
+      <Changelog entries={entries} />
+    </article>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .article {
+    max-width: 880px;
+    padding-block: clamp(2.5rem, 1rem + 4vw, 4.5rem) clamp(3rem, 1rem + 5vw, 5rem);
+    position: relative;
+    z-index: 2;
+  }
+  h1 {
+    font-size: var(--text-h2);
+    line-height: 1.05;
+    margin: 0.75rem 0 0;
+  }
+  .lede {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    margin-top: 1rem;
+    font-size: var(--text-lede);
+  }
+  .lede code {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+    padding: 0.1rem 0.45rem;
+    border-radius: 6px;
+    font-size: 0.85em;
+  }
+  .inline-link {
+    color: var(--color-amber);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-amber) 40%, transparent);
+    transition: border-color var(--duration-fast) ease;
+  }
+  .inline-link:hover {
+    border-bottom-color: var(--color-amber);
+  }
+</style>

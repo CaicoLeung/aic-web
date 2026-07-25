@@ -3,13 +3,13 @@
  * Footer — final CTA + repo credit.
  */
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
+import { baseHref } from '@/lib/href';
 import CopyButton from '@/components/ui/CopyButton.astro';
 
-const base = import.meta.env.BASE_URL.endsWith('/')
-  ? import.meta.env.BASE_URL
-  : `${import.meta.env.BASE_URL}/`;
+const base = baseHref(import.meta.env.BASE_URL);
 const compareBase = `${base}vs/aicommits/`;
 const roundupBase = `${base}best-ai-commit-tools/`;
+const changelogBase = `${base}changelog/`;
 ---
 
 <footer class="footer">
@@ -43,6 +43,7 @@ const roundupBase = `${base}best-ai-commit-tools/`;
       <nav class="footer-links" aria-label="Comparisons">
         <a href={roundupBase}>best AI commit tools</a>
         <a href={compareBase}>aic vs aicommits</a>
+        <a href={changelogBase}>changelog</a>
       </nav>
       <p>MIT licensed · built with Astro + Tailwind + GSAP</p>
     </div>
