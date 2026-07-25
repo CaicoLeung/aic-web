@@ -4,6 +4,8 @@ import {
   parseChangelogMarkdown,
   parseSections,
   sliceReleaseNotes,
+  sortNewestFirst,
+  type ChangelogEntry,
 } from '../src/data/changelog.ts';
 
 // ── Keep-a-Changelog fixture modeled on the live aic CHANGELOG.md ──
@@ -158,5 +160,27 @@ describe('sliceReleaseNotes', () => {
 `;
     const sliced = sliceReleaseNotes(body);
     assert.ok(sliced.includes('only note'));
+  });
+});
+
+describe('sortNewestFirst', () => {
+  // Deliberately out of date order — proves the sort, not the source, decides "latest".
+  const fixture: readonly ChangelogEntry[] = [
+    { version: '0.1.7', date: '2026-07-08', url: 'https://example/0.1.7', sections: [] },
+    { version: '0.2.0', date: '2026-07-09', url: 'https://example/0.2.0', sections: [] },
+    { version: '0.1.6', date: '2026-07-01', url: 'https://example/0.1.6', sections: [] },
+  ];
+
+  it('orders entries newest-first regardless of input order', () => {
+    const sorted = sortNewestFirst(fixture);
+    assert.deepEqual(
+      sorted.map((e) => e.version),
+      ['0.2.0', '0.1.7', '0.1.6'],
+    );
+  });
+
+  it('does not mutate the input', () => {
+    sortNewestFirst(fixture);
+    assert.equal(fixture[0]!.version, '0.1.7', 'input order preserved');
   });
 });
