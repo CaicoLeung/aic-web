@@ -19,7 +19,7 @@ export const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${GITHUB_OWNER
 export const FETCH_TIMEOUT_MS = 8000;
 
 /** Visible across the site; overwritten by loadAicFacts() when reachable. */
-export const FALLBACK_VERSION = '0.1.7';
+export const FALLBACK_VERSION = '0.2.2';
 
 export interface ProviderInfo {
   /** Lowercase id as used in config/env (`openai`, `anthropic`, …). */
@@ -55,7 +55,7 @@ export const FALLBACK_PROVIDERS: readonly ProviderInfo[] = [
   { id: 'openai', name: 'OpenAI', defaultModel: 'gpt-5-mini' },
   { id: 'anthropic', name: 'Anthropic', defaultModel: 'claude-haiku-4-5' },
   { id: 'gemini', name: 'Gemini', defaultModel: 'gemini-2.5-flash' },
-  { id: 'deepseek', name: 'DeepSeek', defaultModel: 'deepseek-chat' },
+  { id: 'deepseek', name: 'DeepSeek', defaultModel: 'deepseek-v4-flash' },
   { id: 'groq', name: 'Groq', defaultModel: 'llama-3.3-70b-versatile' },
   { id: 'ollama', name: 'Ollama', defaultModel: 'llama3.3' },
   { id: 'xai', name: 'xAI', defaultModel: 'grok-4.3' },
