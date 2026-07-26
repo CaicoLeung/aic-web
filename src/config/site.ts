@@ -19,7 +19,7 @@ export const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${GITHUB_OWNER
 export const FETCH_TIMEOUT_MS = 8000;
 
 /** Visible across the site; overwritten by loadAicFacts() when reachable. */
-export const FALLBACK_VERSION = '0.2.2';
+export const FALLBACK_VERSION = '0.2.3';
 
 export interface ProviderInfo {
   /** Lowercase id as used in config/env (`openai`, `anthropic`, …). */
