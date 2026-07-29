@@ -90,6 +90,16 @@ export const AICOMMITS_COMPARISON: CompetitorComparison = {
       note: 'aic’s signature feature. aicommits’ `--generate N` produces N candidate messages for ONE commit, not N commits.',
     },
     {
+      feature: 'Resolve merge conflicts',
+      aic: {
+        text: 'Yes — `aic resolve` proposes a diff, asks per file',
+        supported: true,
+      },
+      rival: { text: 'No — commit messages only', supported: false },
+      winner: 'aic',
+      note: 'aic’s second signature workflow (v0.3.0). It walks every conflicted file, removes the markers, and shows one combined diff — you approve each file before anything lands. aicommits has no conflict story: it only writes the message after you’ve already merged by hand.',
+    },
+    {
       feature: 'First-class Anthropic · Gemini · DeepSeek',
       aic: { text: 'Yes — native providers', supported: true },
       rival: { text: 'Only via OpenRouter / custom endpoint', supported: false },
@@ -179,7 +189,7 @@ export const ROUNDUP: readonly RoundupEntry[] = [
     runtime: 'Rust · brew / installer',
     homeTeam: true,
     strength:
-      'The only tool here that auto-batches unstaged work into separate logical commits — and ships as a dependency-free Rust binary with first-class Anthropic, Gemini, and DeepSeek.',
+      'The only tool here that auto-batches unstaged work into separate commits and resolves merge conflicts (`aic resolve`) — and ships as a dependency-free Rust binary with first-class Anthropic, Gemini, and DeepSeek.',
   },
   {
     id: 'aicommits',
