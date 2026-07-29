@@ -12,6 +12,11 @@ import CommandsTable from './CommandsTable.astro';
 import Terminal from './Terminal.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
 import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
+import { baseHref } from '@/lib/href';
+
+// Two-verb reframe (v0.3.0): commit + resolve. The lede links the resolve
+// pillar to its Capability page (ADR-0009).
+const resolveUrl = `${baseHref(import.meta.env.BASE_URL)}resolve/`;
 ---
 
 <section class="hero" id="top">
@@ -22,7 +27,10 @@ import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
     <h1 class="hero-h1" data-reveal>
       Stop writing<br />
       <em class="ital">commit</em>
-      <span class="pop">messages.</span>
+      <span class="pop">messages.</span><br />
+      Stop untangling<br />
+      <em class="ital">merge</em>
+      <span class="pop">conflicts.</span>
     </h1>
 
     <div class="hero-terminal" data-reveal>
@@ -31,7 +39,9 @@ import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
 
     <p class="lede hero-lede" data-reveal>
       <b>aic</b> reads your diff, drafts a conventional commit, and commits it — one command.
-      Nothing staged? It groups your work into logical commits for you.
+      Mid-merge? It <a href={resolveUrl}>resolves your conflicts</a> file-by-file, with a diff
+      to approve before anything lands. Nothing staged? It groups your work into logical commits
+      for you.
     </p>
 
     <div class="hero-cta" data-reveal>
@@ -128,6 +138,18 @@ import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
   .lede b {
     color: var(--color-ink);
     font-weight: 600;
+  }
+  .hero-lede a {
+    color: var(--color-amber);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-amber) 40%, transparent);
+    transition:
+      color var(--duration-fast) ease,
+      border-color var(--duration-fast) ease;
+  }
+  .hero-lede a:hover {
+    color: var(--color-amber-warm);
+    border-bottom-color: var(--color-amber-warm);
   }
   .hero-cta {
     display: inline-flex;
