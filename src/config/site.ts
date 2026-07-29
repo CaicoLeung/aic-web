@@ -19,7 +19,7 @@ export const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${GITHUB_OWNER
 export const FETCH_TIMEOUT_MS = 8000;
 
 /** Visible across the site; overwritten by loadAicFacts() when reachable. */
-export const FALLBACK_VERSION = '0.2.3';
+export const FALLBACK_VERSION = '0.3.0';
 
 export interface ProviderInfo {
   /** Lowercase id as used in config/env (`openai`, `anthropic`, …). */
@@ -63,7 +63,11 @@ export const FALLBACK_PROVIDERS: readonly ProviderInfo[] = [
   // OpenRouter routes to many vendors — there is no single default model.
   { id: 'openrouter', name: 'OpenRouter' },
   { id: 'perplexity', name: 'Perplexity', defaultModel: 'sonar' },
-  { id: 'together', name: 'Together', defaultModel: 'meta-llama/Llama-3.3-70B-Instruct-Turbo' },
+  {
+    id: 'together',
+    name: 'Together',
+    defaultModel: 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+  },
   // OpenAI-compatible escape hatch — the user supplies base_url + model.
   { id: 'openai-compatible', name: 'OpenAI-compatible' },
 ] as const;

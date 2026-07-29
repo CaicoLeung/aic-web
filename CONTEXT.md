@@ -2,8 +2,9 @@
 
 Marketing site for **aic** (AI-powered git commits) — a developer CLI.
 A marketing home page plus keyword-targeted content pages. Built with Astro + Tailwind
-+ GSAP; facts (version, providers) fetched at build time from the source
-repo (ADR-0003).
+
+- GSAP; facts (version, providers) fetched at build time from the source
+  repo (ADR-0003).
 
 ## Language
 
@@ -25,6 +26,19 @@ A decorative in-page graphic that reinforces copy — the animated
 `<img>`s, so the word "image" in briefs maps to one of these.
 _Avoid_: screenshot, picture, photo (there are none).
 
+**Section**:
+A permanent anchored block of the homepage spine (the fixed seven: Topbar ·
+Hero · How it works · Auto-batching · Providers · Install · Footer). A
+co-equal pillar of the product story that survives version churn. Adding an
+eighth is a deliberate, ADR-grade break of the fixed-spine decision.
+_Avoid_: block, panel (generic — say section when naming a spine unit).
+
+**Feature highlight**:
+A version-scoped, point-in-time callout tied to a single release — the
+`/changelog/` emphasis or a transient Topbar chip. Decays as the release
+ages; distinct from a Section, which is permanent.
+_Avoid_: banner, promo.
+
 **Page** (indexable):
 A URL with its own content that a search engine can rank — the unit of SEO.
 Distinct from a **route**, the Astro source file that renders it.
@@ -39,6 +53,13 @@ _Avoid_: listicle (informal — say roundup).
 **vs page**:
 A head-to-head comparison of aic against one named competitor, targeting
 "{competitor} alternative" migration intent.
+
+**Capability page**:
+A content page that owns the narrative for one aic capability (e.g.
+_resolve_), targeting tool-finder intent ("AI merge conflict resolver").
+Hand-maintained prose (ADR-0006); distinct from a roundup (survey intent)
+or a vs page (migration intent). `/resolve/` is the first.
+_Avoid_: feature page (generic — say capability).
 
 **Editorial comparison**:
 A human judgment about a competitor (e.g. "aicommits has no auto-batching"),
