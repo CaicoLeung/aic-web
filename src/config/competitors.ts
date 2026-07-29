@@ -9,11 +9,12 @@
  * Every claim below was verified against the rival's current README before
  * publishing. Re-check when a rival ships a relevant feature.
  *
- * Sources verified 2026-07-09:
+ * Sources verified 2026-07-29:
  *   aic       — https://github.com/CaicoLeung/aic (main README); provider count
  *               per ADR-0003 registry expansion (11 first-class + OpenAI-compatible
- *               escape hatch).
- *   aicommits — https://github.com/Nutlope/aicommits (v3.x README)
+ *               escape hatch); `aic resolve` (v0.3.0) per the resolve capability page.
+ *   aicommits — https://github.com/Nutlope/aicommits (v3.x README) — commit-message
+ *               generation (+ `pr` descriptions) only; no merge-conflict resolution.
  */
 
 import { GITHUB_URL } from '@/config/site';
@@ -90,6 +91,16 @@ export const AICOMMITS_COMPARISON: CompetitorComparison = {
       note: 'aic’s signature feature. aicommits’ `--generate N` produces N candidate messages for ONE commit, not N commits.',
     },
     {
+      feature: 'Resolve merge conflicts',
+      aic: {
+        text: 'Yes — `aic resolve` proposes a diff, asks per file',
+        supported: true,
+      },
+      rival: { text: 'No — commit messages only', supported: false },
+      winner: 'aic',
+      note: 'aic’s second signature workflow (`v0.3.0`). aicommits has no conflict story — it only writes the message after you’ve merged by hand.',
+    },
+    {
       feature: 'First-class Anthropic · Gemini · DeepSeek',
       aic: { text: 'Yes — native providers', supported: true },
       rival: { text: 'Only via OpenRouter / custom endpoint', supported: false },
@@ -156,7 +167,8 @@ export const COMPARISONS: Readonly<Record<string, CompetitorComparison>> = {
 /* ──────────────────────────────────────────────────────────────────
    Roundup — the "best AI commit tools" survey.
    One fair, verified one-liner per tool. aic is disclosed as home team.
-   Sources verified 2026-07-08 (each tool's README). Re-check on ship.
+   Sources verified 2026-07-29 (each tool's README; none resolve merge
+   conflicts — commit messages / PR descriptions only). Re-check on ship.
    ────────────────────────────────────────────────────────────────── */
 export interface RoundupEntry {
   readonly id: string;
@@ -179,7 +191,7 @@ export const ROUNDUP: readonly RoundupEntry[] = [
     runtime: 'Rust · brew / installer',
     homeTeam: true,
     strength:
-      'The only tool here that auto-batches unstaged work into separate logical commits — and ships as a dependency-free Rust binary with first-class Anthropic, Gemini, and DeepSeek.',
+      'The only tool here that auto-batches unstaged work into separate logical commits and resolves merge conflicts (`aic resolve`) — and ships as a dependency-free Rust binary with first-class Anthropic, Gemini, and DeepSeek.',
   },
   {
     id: 'aicommits',
