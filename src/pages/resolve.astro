@@ -1,0 +1,461 @@
+---
+/**
+ * /resolve/ — Capability page for `aic resolve` (ADR-0009, CONTEXT.md).
+ *
+ * First content page to use the Hybrid Hero template (product register):
+ * two-column copy + ResolveTerminal on top of an article body. The body is
+ * narrative-only (prose register) per the v0.3.0 content-provenance decision
+ * — the full command reference lives in the aic README; this page links to
+ * the v0.3.0 release as the interim reference until the README documents
+ * `aic resolve`.
+ *
+ * Targets tool-finder intent: "AI merge conflict resolver".
+ */
+import { loadAicFacts } from '@/data/aic';
+import Base from '@/layouts/Base.astro';
+import ContentHeader from '@/components/content/ContentHeader.astro';
+import Footer from '@/components/footer/Footer.astro';
+import CopyButton from '@/components/ui/CopyButton.astro';
+import ResolveTerminal from '@/components/resolve/ResolveTerminal.astro';
+import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
+
+const facts = await loadAicFacts();
+const releaseUrl = `${GITHUB_URL}/releases/tag/v0.3.0`;
+
+const title = 'aic resolve — AI merge conflict resolver';
+const description =
+  'aic reads every conflicted file, proposes a clean resolution, and shows you the diff. Approve each file — nothing lands without your say-so — then it finalizes the merge. An AI merge conflict resolver that never touches your work blind.';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  datePublished: '2026-07-29',
+  dateModified: '2026-07-29',
+  author: { '@type': 'Organization', name: 'aic' },
+  publisher: { '@type': 'Organization', name: 'aic' },
+  about: ['aic', 'merge conflicts', 'AI merge conflict resolver', 'git'],
+};
+---
+
+<Base version={facts.version} title={title} description={description} schema={schema}>
+  <ContentHeader version={facts.version} />
+
+  <main id="main">
+    <!-- Hybrid Hero (ADR-0009): two-column copy + Terminal, full container width. -->
+    <section class="hero-resolve container" aria-labelledby="resolve-h1">
+      <p class="eyebrow resolve-eyebrow">
+        <span class="line" aria-hidden="true"></span>Capability · merge conflicts
+      </p>
+      <h1 id="resolve-h1" class="resolve-h1">
+        Resolve merge conflicts.<br />
+        <em class="ital">Without</em> the <span class="pop">manual merge.</span>
+      </h1>
+
+      <div class="resolve-terminal">
+        <ResolveTerminal />
+      </div>
+
+      <p class="lede resolve-lede">
+        <b>aic</b> reads every conflicted file, proposes a clean resolution, and shows you the
+        diff. You approve each file — nothing lands without your say-so — then it finalizes
+        the merge for you.
+      </p>
+
+      <div class="resolve-cta">
+        <CopyButton
+          text={PRIMARY_INSTALL_COMMAND}
+          label="brew tap CaicoLeung/aic && brew install aic"
+          variant="primary"
+        />
+        <span class="cta-hint">
+          <span class="arrow" aria-hidden="true">→</span> then run
+          <code>aic resolve</code>
+        </span>
+      </div>
+    </section>
+
+    <!-- Article body: narrower prose column. -->
+    <article class="article container">
+      <!-- The workflow -->
+      <section class="block">
+        <h2>How aic resolves a conflict</h2>
+        <p class="block-lede">
+          Resolve is a workflow, not a magic wand. aic walks each conflicted file,
+          proposes a fix, and stops for your approval at every step.
+        </p>
+        <ol class="steps">
+          <li>
+            <span class="step-h">Detect</span>
+            <span class="step-n">
+              <code>aic resolve</code> reads the repo state. If you're mid-merge with unmerged
+              files, it lists them.
+            </span>
+          </li>
+          <li>
+            <span class="step-h">Resolve, per file</span>
+            <span class="step-n">
+              For each file, aic sends the conflicted content to your model and gets back
+              a marker-free version. If any conflict markers slip through, it retries
+              once.
+            </span>
+          </li>
+          <li>
+            <span class="step-h">Review the diff</span>
+            <span class="step-n">
+              aic builds one combined diff of every proposed resolution — the markers
+              removed, both sides reconciled — so you see exactly what will change.
+            </span>
+          </li>
+          <li>
+            <span class="step-h">Approve, per file</span>
+            <span class="step-n">
+              Each file gets its own <code>apply?</code> prompt. Say yes and aic writes the
+              resolution and stages it. Say no and that file stays untouched.
+            </span>
+          </li>
+          <li>
+            <span class="step-h">Finalize</span>
+            <span class="step-n">
+              When nothing is left unmerged, aic runs the merge's <code>--continue</code> for
+              you. Mid-flow blockers are reported with a clear hand-off, not a mystery count.
+            </span>
+          </li>
+        </ol>
+      </section>
+
+      <!-- Two ways in -->
+      <section class="block">
+        <h2>Two ways in</h2>
+        <p class="block-lede">
+          You don't have to remember a command. There's an explicit verb, and a guard that
+          catches you when you forget.
+        </p>
+        <ul class="points">
+          <li>
+            <span class="point-h"><code>aic resolve</code></span>
+            <span class="point-n">
+              The explicit verb. Run it any time your repo is mid-merge and aic takes it
+              from the detection step above.
+            </span>
+          </li>
+          <li>
+            <span class="point-h">The commit guard</span>
+            <span class="point-n">
+              Run plain <code>aic</code> in a conflicted repo and it notices, offers to hand
+              off to resolve, and a deeper guard blocks any commit that still carries conflict
+              markers. The friendly front door, plus the safety net.
+            </span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Review before apply -->
+      <section class="block">
+        <h2>Nothing lands without your say-so</h2>
+        <p class="block-lede">
+          The whole point: aic proposes, you decide. It never writes a resolution you
+          haven't seen and approved.
+        </p>
+        <aside class="callout">
+          <strong>Review before apply.</strong> Every proposed resolution is shown as a diff
+          <em>before</em> it touches disk. Each file is a separate <code>y/n</code> — approve
+          the ones you trust, reject the ones you don't, and the rejected files stay exactly
+          as you left them.
+        </aside>
+      </section>
+
+      <!-- v1 limits -->
+      <section class="block">
+        <h2>What aic leaves to you</h2>
+        <p class="block-lede">
+          Honesty up front, so you know where the tool ends and you begin. These are the
+          v1 limits.
+        </p>
+        <ul class="points">
+          <li>
+            <span class="point-h">Merge conflicts only</span>
+            <span class="point-n">
+              aic handles conflicted <em>merge</em> state. A rebase or <code>am</code> in flight
+              is detected and refused in v1 — finish or abort it, then resolve.
+            </span>
+          </li>
+          <li>
+            <span class="point-h">Some conflicts can't be auto-resolved</span>
+            <span class="point-n">
+              Binary files, oversized files, and delete/modify conflicts are skipped with
+              a reason — aic points you at them to resolve by hand.
+            </span>
+          </li>
+          <li>
+            <span class="point-h">Finalize is all-or-nothing</span>
+            <span class="point-n">
+              <code>--continue</code> blocks on any unmerged path regardless, so a single remaining
+              blocker holds finalize. aic's hand-off tells you exactly what's left.
+            </span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Verdict + CTA -->
+      <section class="verdict">
+        <h2>The short version</h2>
+        <p>
+          <code>aic resolve</code> reads your conflicted files, proposes resolutions you can
+          actually review, and writes only what you approve — then finishes the merge. It's
+          the same "read the diff, draft the fix, ship it" loop aic uses for commits, pointed
+          at the ugliest part of git.
+        </p>
+        <div class="cta">
+          <CopyButton
+            text={PRIMARY_INSTALL_COMMAND}
+            label="brew tap CaicoLeung/aic && brew install aic"
+            variant="primary"
+          />
+          <a class="cta-link" href={releaseUrl} target="_blank" rel="noopener noreferrer">
+            v0.3.0 release notes<span aria-hidden="true"> ↗</span>
+          </a>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  /* ── Hybrid Hero — two-column copy + Terminal, mirroring the home Hero grid ── */
+  .hero-resolve {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-block: clamp(2rem, 1rem + 5vw, 5rem) clamp(2rem, 1rem + 3vw, 3rem);
+  }
+  .resolve-h1 {
+    font-size: var(--text-hero);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    margin: 0;
+  }
+  .resolve-h1 .ital {
+    font-style: italic;
+    font-weight: 700;
+    color: var(--color-ink-muted);
+  }
+  .resolve-h1 .pop {
+    color: var(--color-amber);
+  }
+  .resolve-terminal {
+    margin-block: 0.5rem;
+  }
+  .resolve-lede {
+    font-size: var(--text-lede);
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    max-width: 32rem;
+    margin: 0;
+  }
+  .resolve-lede b {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .resolve-cta {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .cta-hint {
+    font-size: 0.9375rem;
+    color: var(--color-ink-muted);
+  }
+  .cta-hint .arrow {
+    color: var(--color-amber);
+  }
+  .cta-hint code {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.78rem;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-resolve {
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      grid-template-areas:
+        'eyebrow  terminal'
+        'h1       terminal'
+        'lede     terminal'
+        'cta      terminal';
+      gap: 1.25rem 2.5rem;
+      align-items: center;
+    }
+    .resolve-eyebrow {
+      grid-area: eyebrow;
+    }
+    .resolve-h1 {
+      grid-area: h1;
+    }
+    .resolve-terminal {
+      grid-area: terminal;
+      margin-block: 0;
+    }
+    .resolve-lede {
+      grid-area: lede;
+    }
+    .resolve-cta {
+      grid-area: cta;
+    }
+  }
+
+  /* ── Article body — narrower prose column ── */
+  .article {
+    max-width: 820px;
+    padding-block: clamp(1rem, 0.5rem + 2vw, 2rem) clamp(3rem, 1rem + 5vw, 5rem);
+    position: relative;
+    z-index: 2;
+  }
+  .block {
+    margin-top: 2.75rem;
+  }
+  .block h2 {
+    font-size: 1.5rem;
+    margin: 0 0 1rem;
+  }
+  .block-lede {
+    color: var(--color-ink-muted);
+    margin: -0.25rem 0 1.25rem;
+    line-height: 1.6;
+    font-size: 0.975rem;
+  }
+  .article :global(code) {
+    color: var(--color-amber);
+    font-family: var(--font-mono);
+    background: var(--color-amber-soft);
+    padding: 0.1rem 0.4rem;
+    border-radius: 5px;
+    font-size: 0.85em;
+  }
+
+  /* Numbered workflow steps */
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    counter-reset: step;
+  }
+  .steps li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem 0.85rem;
+    align-items: baseline;
+  }
+  .steps li::before {
+    counter-increment: step;
+    content: counter(step, decimal-leading-zero);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--color-ink-dim);
+    padding-top: 0.15rem;
+  }
+  .step-h {
+    grid-column: 2;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  .step-n {
+    grid-column: 2;
+    color: var(--color-ink-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  /* Point lists */
+  .points {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  .points li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .point-h {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  .point-n {
+    color: var(--color-ink-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  /* Callout */
+  .callout {
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-line);
+    border-left: 3px solid var(--color-amber);
+    border-radius: 10px;
+    background: var(--color-amber-soft);
+    color: var(--color-ink);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .callout :global(code) {
+    color: var(--color-amber);
+  }
+
+  /* Verdict + CTA */
+  .verdict {
+    margin-top: 2.75rem;
+    padding: 1.75rem;
+    border: 1px solid var(--color-line-soft);
+    border-radius: 14px;
+    background: var(--color-surface);
+  }
+  .verdict h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.75rem;
+  }
+  .verdict p {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+  }
+  .cta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .cta-link {
+    color: var(--color-ink);
+    text-decoration: none;
+    padding: 0.55rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition:
+      border-color var(--duration-fast) ease,
+      color var(--duration-fast) ease;
+  }
+  .cta-link:hover {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+  }
+</style>

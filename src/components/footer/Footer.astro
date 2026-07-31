@@ -7,6 +7,7 @@ import { baseHref } from '@/lib/href';
 import CopyButton from '@/components/ui/CopyButton.astro';
 
 const base = baseHref(import.meta.env.BASE_URL);
+const resolveBase = `${base}resolve/`;
 const compareBase = `${base}vs/aicommits/`;
 const roundupBase = `${base}best-ai-commit-tools/`;
 const changelogBase = `${base}changelog/`;
@@ -40,7 +41,8 @@ const changelogBase = `${base}changelog/`;
       <a class="repo" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
         {GITHUB_URL.replace('https://', '')}
       </a>
-      <nav class="footer-links" aria-label="Comparisons">
+      <nav class="footer-links" aria-label="Explore">
+        <a href={resolveBase}>resolve merge conflicts</a>
         <a href={roundupBase}>best AI commit tools</a>
         <a href={compareBase}>aic vs aicommits</a>
         <a href={changelogBase}>changelog</a>

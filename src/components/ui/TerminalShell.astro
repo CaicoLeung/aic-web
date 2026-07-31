@@ -1,0 +1,125 @@
+---
+/**
+ * TerminalShell — shared chrome for the site's animated terminal mockups
+ * (hero/Terminal.astro and resolve/ResolveTerminal.astro).
+ *
+ * Owns the window frame (titlebar, traffic-light dots, body) and the shared
+ * monospace text primitives so the two mocks don't re-declare ~80 identical
+ * lines. Page-specific body content comes in via the default slot; each mock
+ * keeps its own distinct classes and its GSAP timeline.
+ *
+ * The body hook (`bodyAttr`) is the data-attribute the mock's motion script
+ * queries, e.g. `data-term-body` / `data-resolve-body`.
+ *
+ * Static final state is visible without JS / under `prefers-reduced-motion`;
+ * the mocks animate under `(prefers-reduced-motion: no-preference)` only.
+ * `aria-hidden` — decorative reinforcement of page copy, not primary content.
+ * No raster (CONTEXT.md → Visual mockup).
+ */
+interface Props {
+  /** Path shown in the titlebar after `~/`. */
+  readonly title?: string;
+  /** data-attribute hook the consuming mock's motion script queries. */
+  readonly bodyAttr?: string;
+}
+
+const { title = 'projects/your-repo', bodyAttr = 'data-term-body' } = Astro.props;
+---
+
+<figure class="terminal" aria-hidden="true">
+  <div class="termbar">
+    <div class="dots"><i></i><i></i><i></i></div>
+    <div class="termtitle"><b>~/</b>{title}</div>
+  </div>
+
+  <div class="termbody" {...{ [bodyAttr]: '' }}>
+    <slot />
+  </div>
+</figure>
+
+<style>
+  .terminal {
+    width: 100%;
+    max-width: 600px;
+    margin: 0;
+    font-family: var(--font-mono);
+    background: linear-gradient(180deg, #14161e, #101219);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    box-shadow:
+      0 44px 90px -32px rgba(0, 0, 0, 0.75),
+      0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+      0 1px 0 rgba(255, 255, 255, 0.04) inset;
+    overflow: hidden;
+    font-size: 0.82rem;
+  }
+  .termbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.018);
+    border-bottom: 1px solid var(--color-line-soft);
+  }
+  .dots {
+    display: flex;
+    gap: 7px;
+  }
+  .dots i {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    display: block;
+  }
+  .dots i:nth-child(1) {
+    background: #f5604d;
+  }
+  .dots i:nth-child(2) {
+    background: #f6bd2f;
+  }
+  .dots i:nth-child(3) {
+    background: #4cce6b;
+  }
+  .termtitle {
+    color: var(--color-ink-dim);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+  .termtitle b {
+    color: var(--color-ink-muted);
+    font-weight: 500;
+  }
+  .termbody {
+    padding: 1.25rem 1.4rem 1.5rem;
+    line-height: 1.7;
+  }
+
+  /*
+   * Shared monospace text primitives. Declared global so they reach the mock's
+   * slotted body content; scoped under `.terminal` (only ever rendered here)
+   * so they can't leak onto the rest of the page.
+   */
+  :global(.terminal .row) {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    white-space: pre;
+  }
+  :global(.terminal .prompt) {
+    color: var(--color-amber);
+  }
+  :global(.terminal .cmdin) {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  :global(.terminal .out) {
+    color: var(--color-ink-muted);
+  }
+  :global(.terminal .ok) {
+    color: var(--color-mint);
+  }
+  :global(.terminal .spin) {
+    color: var(--color-amber);
+    display: inline-block;
+  }
+</style>
