@@ -1,10 +1,18 @@
 /**
  * The Messages shape — derived from the canonical `en` module (ADR-0010 / Q6=A).
  *
- * Every locale module `satisfies Messages` against this type, so adding a key
- * to `en.ts` forces every locale to acknowledge it (a stub to the en value is
- * allowed under soft parity — Q7=B — but the key cannot silently vanish).
+ * `MessageShape` widens every leaf string literal to `string` (and drops
+ * `readonly`), so a locale module may carry *translated* values while still
+ * being checked for key parity: a missing or extra key is a type error, but
+ * the string content is free to differ. This is what lets `zh.ts` hold real
+ * Chinese translations against a shape derived from the English source.
  */
 import type * as en from './en';
 
-export type Messages = typeof en.messages;
+type MessageShape<T> =
+  T extends string ? string
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<MessageShape<U>>
+  : T extends object ? { -readonly [K in keyof T]: MessageShape<T[K]> }
+  : T;
+
+export type Messages = MessageShape<typeof en.messages>;

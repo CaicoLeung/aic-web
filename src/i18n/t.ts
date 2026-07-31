@@ -12,6 +12,7 @@
  */
 import { DEFAULT_LOCALE, type Locale } from '@/i18n/config';
 import { messagesByLocale } from './messages';
+import type { Messages } from './messages/types';
 
 export type TranslateFn = (
   path: string,
@@ -57,6 +58,6 @@ export function useTranslations(locale: Locale): TranslateFn {
  * (arrays of steps/points) that `t()` (scalar-only) can't return. Prefer
  * `t()` for plain strings; use this only for list-shaped messages.
  */
-export function useMessages(locale: Locale): typeof import('./messages/en').messages {
+export function useMessages(locale: Locale): Messages {
   return messagesByLocale[locale];
 }

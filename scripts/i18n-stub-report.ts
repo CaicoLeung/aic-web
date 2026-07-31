@@ -15,6 +15,7 @@ import { messages as zh } from '../src/i18n/messages/zh';
 import { messages as ja } from '../src/i18n/messages/ja';
 import { messages as ko } from '../src/i18n/messages/ko';
 import { LOCALES, DEFAULT_LOCALE, type Locale } from '../src/i18n/config';
+import type { Messages } from '../src/i18n/messages/types';
 
 interface Leaf {
   readonly path: string;
@@ -35,7 +36,7 @@ function leaves(obj: unknown, prefix = ''): Leaf[] {
   return [];
 }
 
-const mods: Readonly<Record<Locale, typeof en>> = { en, zh, ja, ko };
+const mods: Readonly<Record<Locale, Messages>> = { en, zh, ja, ko };
 const enPaths = new Map(leaves(en).map((l) => [l.path, l.value]));
 const total = enPaths.size;
 
