@@ -22,8 +22,8 @@ export interface HreflangAlternate {
 
 /**
  * Strip the base path + any leading locale prefix, returning the shared slug
- * (locale-invariant per ADR-0010 / Q9=A). Exported so the Switcher and the
- * soft-redirect derive the same localized path from the same slug.
+ * (locale-invariant per ADR-0010 / Q9=A). Exported so the Switcher
+ * derives the same localized path from the same slug.
  *
  * Astro emits the root route's pathname WITHOUT a trailing slash
  * (`/aic-web` vs `/aic-web/zh/`), so we normalize before stripping the base.

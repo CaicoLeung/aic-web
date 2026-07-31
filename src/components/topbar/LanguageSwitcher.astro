@@ -3,9 +3,9 @@
  * Language switcher (ADR-0010 / Q8).
  *
  * Native-language labels (`English · 中文 · 日本語 · 한국어`) per Q8. Selecting
- * a locale persists the choice to `localStorage` (so the Base soft-redirect
- * honors it next visit) and navigates to the localized equivalent of the
- * current path. ASCII slugs (Q9=A) mean only the locale prefix changes.
+ * a locale navigates to the localized equivalent of the current path —
+ * it does not persist a preference, so each page honors its own URL.
+ * ASCII slugs (Q9=A) mean only the locale prefix changes.
  */
 import { LOCALES, LOCALE_LABELS, localeFromUrl } from '@/i18n/config';
 import { baseHref } from '@/lib/href';
@@ -44,9 +44,6 @@ const slug = sharedSlug(Astro.url.pathname, import.meta.env.BASE_URL);
     var slug = sel.getAttribute('data-slug') || '';
     sel.addEventListener('change', function () {
       var pref = sel.value;
-      try {
-        localStorage.setItem('aic-web.locale', pref);
-      } catch (e) {}
       var prefix = pref === 'en' ? '' : pref + '/';
       var tail = slug ? slug + '/' : '';
       location.href = base + prefix + tail;

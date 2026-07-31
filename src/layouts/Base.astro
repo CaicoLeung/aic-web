@@ -6,11 +6,11 @@
  *
  * i18n (ADR-0010): locale is self-determined from the URL — no prop
  * threading. `<html lang>`, title/description, hreflang alternates, and
- * og:locale all derive from it. A pre-paint soft-redirect honors a saved
- * locale preference for returning visitors (Q8=B).
+ * og:locale all derive from it. Navigation chrome uses locale-aware
+ * hrefs, so visitors stay in their locale across page transitions.
  */
 import '@/styles/global.css';
-import { LOCALE_HREFLANG, LOCALE_PREFIXES, localeFromUrl } from '@/i18n/config';
+import { LOCALE_HREFLANG, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 import { buildHreflangAlternates } from '@/i18n/hreflang';
 import CjkFontsZh from '@/components/i18n/CjkFontsZh.astro';
@@ -91,33 +91,6 @@ const cjkFamily =
     {hreflangAlternates.map((alt) => (
       <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
     ))}
-
-    {/* Returning-visitor soft-redirect (ADR-0010 / Q8=B): if a non-en
-        locale preference is saved and we're on an English path that has a
-        localized equivalent, hop to it before first paint. Crawlers don't
-        run JS and have no localStorage, so they get the English HTML. */}
-    <script
-      is:inline
-      define:vars={{ base: import.meta.env.BASE_URL, localizedLocales: LOCALE_PREFIXES }}
-    >
-      (function () {
-        try {
-          var pref = localStorage.getItem('aic-web.locale');
-          if (!pref || pref === 'en' || localizedLocales.indexOf(pref) === -1) return;
-          var p = location.pathname;
-          // Astro emits the root pathname without a trailing slash — normalize
-          // so the base-strip + rebuild land on the right localized URL.
-          var pn = p.endsWith('/') ? p : p + '/';
-          if (!pn.startsWith(base)) return;
-          var rest = pn.slice(base.length);
-          var segs = rest.split('/').filter(Boolean);
-          if (segs.length && localizedLocales.indexOf(segs[0]) !== -1) return;
-          var last = segs.length ? segs[segs.length - 1] : '';
-          if (last.indexOf('.') !== -1) return;
-          location.replace(base + pref + '/' + rest);
-        } catch (e) {}
-      })();
-    </script>
 
     {/* icons */}
     <link rel="icon" href="/aic-web/favicon.svg" type="image/svg+xml" />
