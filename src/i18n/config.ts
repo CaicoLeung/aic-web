@@ -69,3 +69,27 @@ export function localeFromUrl(
   const first = rest.split('/').filter(Boolean)[0] ?? '';
   return isLocale(first) ? first : DEFAULT_LOCALE;
 }
+
+/**
+ * Build a base-path- and locale-aware internal href from a locale-invariant
+ * slug — the inverse of `sharedSlug` (hreflang.ts). The default locale (`en`)
+ * carries no prefix; every other locale is prefixed (`/aic-web/zh/...`), so
+ * in-page chrome links keep visitors in their own locale instead of escaping
+ * to the English pages.
+ *
+ * `slug` is the locale-invariant tail; leading/trailing slashes are normalized.
+ * `''` resolves to the locale's home.
+ *   localizedHref('en', 'changelog')  → '/aic-web/changelog/'
+ *   localizedHref('zh', 'changelog')  → '/aic-web/zh/changelog/'
+ *   localizedHref('zh', '')           → '/aic-web/zh/'
+ */
+export function localizedHref(
+  locale: Locale,
+  slug: string,
+  baseUrl: string = import.meta.env.BASE_URL,
+): string {
+  const base = baseHref(baseUrl);
+  const prefix = locale === DEFAULT_LOCALE ? '' : `${locale}/`;
+  const tail = slug.replace(/^\/+|\/+$/g, '');
+  return `${base}${prefix}${tail}${tail ? '/' : ''}`;
+}

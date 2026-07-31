@@ -20,17 +20,14 @@ import Footer from '@/components/footer/Footer.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
 import { ROUNDUP } from '@/config/competitors';
 import { GITHUB_URL, HUNK_SPLITTING, PRIMARY_INSTALL_COMMAND } from '@/config/site';
-import { localeFromUrl } from '@/i18n/config';
+import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer, useMessages } from '@/i18n/t';
 
 const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const m = useMessages(locale);
-const base = import.meta.env.BASE_URL.endsWith('/')
-  ? import.meta.env.BASE_URL
-  : `${import.meta.env.BASE_URL}/`;
-const vsAicommits = `${base}vs/aicommits/`;
+const vsAicommits = localizedHref(locale, 'vs/aicommits');
 
 const title = t('meta.roundup.title', { year: '2026' });
 const description = t('meta.roundup.description');
@@ -99,7 +96,7 @@ const schema = {
                     <a class="card-link" href={tool.repo} target="_blank" rel="noopener noreferrer">
                       {t('roundup.field.repoLink')}
                     </a>
-                    {tool.vsPath && <a class="card-link" href={`${base}${tool.vsPath}`}>{t('roundup.field.compareLink')}</a>}
+                    {tool.vsPath && <a class="card-link" href={localizedHref(locale, tool.vsPath)}>{t('roundup.field.compareLink')}</a>}
                   </>
                 )}
               </div>

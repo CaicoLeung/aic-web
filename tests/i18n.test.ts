@@ -1,6 +1,11 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { DEFAULT_LOCALE, isLocalePrefix, localeFromUrl } from '../src/i18n/config.ts';
+import {
+  DEFAULT_LOCALE,
+  isLocalePrefix,
+  localeFromUrl,
+  localizedHref,
+} from '../src/i18n/config.ts';
 import { buildHreflangAlternates, sharedSlug } from '../src/i18n/hreflang.ts';
 
 const ORIGIN = 'https://caicoleung.github.io';
@@ -72,5 +77,26 @@ describe('buildHreflangAlternates', () => {
     assert.equal(byCode['zh-CN'], `${ORIGIN}${BASE}zh/resolve/`);
     assert.equal(byCode['ja-JP'], `${ORIGIN}${BASE}ja/resolve/`);
     assert.equal(byCode['ko-KR'], `${ORIGIN}${BASE}ko/resolve/`);
+  });
+});
+
+describe('localizedHref', () => {
+  it('prefixes non-default locales and leaves en unprefixed', () => {
+    assert.equal(localizedHref('en', 'changelog', BASE), '/aic-web/changelog/');
+    assert.equal(localizedHref('zh', 'changelog', BASE), '/aic-web/zh/changelog/');
+    assert.equal(localizedHref('ja', 'vs/aicommits', BASE), '/aic-web/ja/vs/aicommits/');
+    assert.equal(
+      localizedHref('ko', 'best-ai-commit-tools', BASE),
+      '/aic-web/ko/best-ai-commit-tools/',
+    );
+  });
+
+  it('resolves the locale home from an empty slug', () => {
+    assert.equal(localizedHref('en', '', BASE), '/aic-web/');
+    assert.equal(localizedHref('zh', '', BASE), '/aic-web/zh/');
+  });
+
+  it('normalizes stray slashes in the slug', () => {
+    assert.equal(localizedHref('zh', '/changelog/', BASE), '/aic-web/zh/changelog/');
   });
 });

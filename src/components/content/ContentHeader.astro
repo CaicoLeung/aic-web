@@ -11,8 +11,7 @@
  * editing the URL.
  */
 import { GITHUB_URL } from '@/config/site';
-import { baseHref } from '@/lib/href';
-import { localeFromUrl } from '@/i18n/config';
+import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 import LanguageSwitcher from '@/components/topbar/LanguageSwitcher.astro';
 
@@ -22,8 +21,8 @@ interface Props {
 const { version } = Astro.props;
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
-const home = baseHref(import.meta.env.BASE_URL);
-const changelog = `${home}changelog/`;
+const home = localizedHref(locale, '');
+const changelog = localizedHref(locale, 'changelog');
 const versionTitle = version ? t('contentHeader.versionTitle', { version }) : undefined;
 ---
 

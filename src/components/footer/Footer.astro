@@ -3,18 +3,16 @@
  * Footer — final CTA + repo credit.
  */
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
-import { baseHref } from '@/lib/href';
-import { localeFromUrl } from '@/i18n/config';
+import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 import CopyButton from '@/components/ui/CopyButton.astro';
 
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
-const base = baseHref(import.meta.env.BASE_URL);
-const resolveBase = `${base}resolve/`;
-const compareBase = `${base}vs/aicommits/`;
-const roundupBase = `${base}best-ai-commit-tools/`;
-const changelogBase = `${base}changelog/`;
+const resolveBase = localizedHref(locale, 'resolve');
+const compareBase = localizedHref(locale, 'vs/aicommits');
+const roundupBase = localizedHref(locale, 'best-ai-commit-tools');
+const changelogBase = localizedHref(locale, 'changelog');
 ---
 
 <footer class="footer">
