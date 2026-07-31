@@ -1,40 +1,102 @@
 ---
 /**
- * Auto-batching — the differentiator callout from aic-sketch.png.
- * "Nothing staged? → aic groups your unstaged work into logical commits."
+ * Auto-batching (#03) — the differentiator section.
+ *
+ * Headline claim: aic splits work at the hunk level, so one file can become
+ * several focused commits by intent. Visual = a decomposition (one source
+ * file → N commit pills on a git-graph rail) plus a reasoning strip that
+ * traces each hunk (@@N) to its commit intent. Both reinforce "per-hunk"
+ * without prose.
+ *
+ * Data is the low-drift `HUNK_SPLITTING` constant (src/config/site.ts), not a
+ * build-time fetch — feature claims are editorial, and the shipped-in version
+ * is historical/immutable. See CONTEXT.md · ADR-0003.
  */
-const roundup = `${
-  import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`
-}best-ai-commit-tools/`;
+import { gsap, ScrollTrigger, whenMotionOk } from '@/lib/motion';
+import { HUNK_SPLITTING } from '@/config/site';
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const roundup = `${base}best-ai-commit-tools/`;
+const changelog = `${base}changelog/#${HUNK_SPLITTING.shippedIn}`;
+
+// Map a commit type to an accent token — varied hues make the three intents
+// visually distinct in the decomposition. Defaults to amber (product accent).
+const typeAccent: Record<string, string> = {
+  feat: 'var(--color-amber)',
+  fix: 'var(--color-mint)',
+  refactor: 'var(--color-amber-warm)',
+  docs: 'var(--color-ink-muted)',
+  chore: 'var(--color-ink-muted)',
+};
 ---
 
 <section id="batching" class="section batching">
   <div class="batching-card container">
     <div class="batching-visual" aria-hidden="true">
-      <div class="stack">
-        <div class="pill">
-          <span class="hash">abc1234</span> feat(auth): refresh tokens…
+      <div class="decomp">
+        <div class="source-card" data-reveal>
+          <span class="file-label">{HUNK_SPLITTING.file}</span>
+          <span class="file-meta">1 file · {HUNK_SPLITTING.hunks.length} hunks</span>
         </div>
-        <div class="pill">
-          <span class="hash">def5678</span> docs(api): endpoint reference
+        <div class="connector" data-reveal></div>
+        <div class="stack" data-reveal>
+          {
+            HUNK_SPLITTING.commits.map((c) => (
+              <div class="pill">
+                <span class="hash">{c.hash}</span>
+                <span class="msg">
+                  <span class="ctype" style={`--accent: ${typeAccent[c.type] ?? 'var(--color-amber)'}`}>
+                    {c.type}
+                  </span>
+                  <span class="scope">({c.scope})</span>
+                  <span class="summary">{c.summary}</span>
+                </span>
+              </div>
+            ))
+          }
         </div>
-        <div class="pill">
-          <span class="hash">ghi9012</span> chore(deps): bump rig-core
+        <div class="reason-strip" data-reveal>
+          <p class="strip-label">reasoning · per hunk</p>
+          {
+            HUNK_SPLITTING.hunks.map((h) => (
+              <div class="hunk-line" data-stream>
+                <span class="at">@@{h.at}</span>
+                <span class="arrow" aria-hidden="true">→</span>
+                <span
+                  class="ctype"
+                  style={`--accent: ${typeAccent[h.type] ?? 'var(--color-amber)'}`}
+                >
+                  {h.type}
+                </span>
+                <span class="summ">{h.summary}</span>
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>
+
     <div class="batching-copy">
-      <p class="eyebrow">
+      <p class="eyebrow" data-reveal>
         <span class="line" aria-hidden="true"></span>03 — Auto-batching
       </p>
-      <h2>nothing staged?</h2>
-      <p class="lede">
-        aic groups your unstaged work into logical commits — and ships each one. One <code
-          >aic</code
-        > command becomes a clean, reviewable history without you staging a single file.
+      <p class="kicker" data-reveal>nothing staged?</p>
+      <h2 data-reveal>one file, many commits</h2>
+      <p class="lede" data-reveal>
+        aic reads your diff at the hunk level — so a single file can become several
+        focused commits, each one idea. Nothing staged, one command, a clean history.
       </p>
-      <p class="aside">auto-batching ✦</p>
-      <a class="cmp-link" href={roundup}>see aic among the best AI commit tools →</a>
+      <p class="aside" data-reveal>per-hunk batching ✦</p>
+      <p class="meta-row" data-reveal>
+        <a class="ship-badge" href={changelog}>
+          shipped in v{HUNK_SPLITTING.shippedIn}<span class="ship-arrow" aria-hidden="true">→</span>
+        </a>
+      </p>
+      <a class="cmp-link" href={roundup} data-reveal>
+        see aic among the best AI commit tools →
+      </a>
     </div>
   </div>
 </section>
@@ -64,53 +126,166 @@ const roundup = `${
       grid-template-columns: 1fr 1fr;
     }
   }
+
+  /* ── Visual: decomposition ────────────────────────────────────────────
+     One source card → a git-graph rail of commit pills → a reasoning strip.
+     The rail (vertical line + dots) reuses the .pill primitive so the new
+     visual reads as one family with the rest of the site. */
+
   .batching-visual {
     display: grid;
     place-items: center;
-    min-height: 200px;
+    min-height: 240px;
   }
+  .decomp {
+    width: 100%;
+    max-width: 380px;
+  }
+
+  /* Source file card — the "one file" that becomes many commits. */
+  .source-card {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    background: var(--color-surface-raised);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    box-shadow: 0 12px 28px -18px rgba(0, 0, 0, 0.6);
+  }
+  .source-card .file-label {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .source-card .file-meta {
+    color: var(--color-ink-dim);
+    font-size: 0.72rem;
+  }
+
+  /* Vertical segment dropping from the source card to the rail. */
+  .connector {
+    height: 0.85rem;
+    margin-left: 16px; /* aligns with the rail x-position below */
+    border-left: 1px solid var(--color-line);
+  }
+
+  /* Commit pills on a left rail. */
   .stack {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    width: 100%;
-    max-width: 360px;
+  }
+  /* The rail itself — a single vertical line the dots sit on. */
+  .stack::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-line);
   }
   .pill {
-    font-family: var(--font-mono);
-    padding: 0.75rem 1rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 0.9rem 0.65rem 2.35rem; /* left room for the dot + rail */
     border: 1px solid var(--color-line);
     border-radius: 10px;
     background: var(--color-surface);
-    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
     color: var(--color-ink);
     box-shadow: 0 12px 28px -18px rgba(0, 0, 0, 0.6);
-    transition: transform var(--duration-normal) var(--ease-out-expo);
   }
-  .pill:nth-child(1) {
-    transform: translateX(0);
-  }
-  .pill:nth-child(2) {
-    transform: translateX(0.6rem);
-  }
-  .pill:nth-child(3) {
-    transform: translateX(1.2rem);
-  }
-  /* Reclaim the right gutter on narrow screens — the fanned stack is a
-     desktop flourish (mobile reading-experience pass). */
-  @media (max-width: 480px) {
-    .pill:nth-child(2),
-    .pill:nth-child(3) {
-      transform: none;
-    }
+  /* The node dot — sits on the rail (git-graph metaphor). */
+  .pill::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--color-amber);
+    border: 2px solid var(--color-base);
+    z-index: 2;
   }
   .pill .hash {
     color: var(--color-amber);
     font-weight: 600;
-    margin-right: 0.5rem;
+    flex-shrink: 0;
   }
-  .eyebrow {
+  .pill .msg {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+  .pill .summary {
+    color: var(--color-ink);
+  }
+  /* Conventional-commit type chip — colored by intent. */
+  .ctype {
+    color: var(--accent, var(--color-amber));
+    font-weight: 600;
+  }
+  .pill .scope {
+    color: var(--color-ink-muted);
+  }
+
+  /* ── Reasoning strip: hunk @@N → intent ──────────────────────────────
+     A teaser for the live reasoning view (#12), not a full demo. Terse mono
+     trace that makes "per-hunk" literal via real unified-diff @@N syntax. */
+  .reason-strip {
+    margin-top: 1.4rem;
+    padding-top: 0.9rem;
+    border-top: 1px dashed var(--color-line-soft);
+    font-family: var(--font-mono);
+  }
+  .strip-label {
+    margin: 0 0 0.5rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ink-dim);
+  }
+  .hunk-line {
+    display: grid;
+    grid-template-columns: auto auto auto 1fr;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.18rem 0;
+    font-size: 0.74rem;
+    color: var(--color-ink-muted);
+  }
+  .hunk-line .at {
+    color: var(--color-ink-dim);
+  }
+  .hunk-line .arrow {
+    color: var(--color-ink-dim);
+  }
+  .hunk-line .summ {
+    color: var(--color-ink);
+  }
+
+  /* ── Copy column ───────────────────────────────────────────────────── */
+  .batching-copy .eyebrow {
     margin-bottom: 0.5rem;
+  }
+  .kicker {
+    margin: 0 0 0.4rem;
+    color: var(--color-amber);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
   }
   h2 {
     font-size: var(--text-h2);
@@ -136,6 +311,32 @@ const roundup = `${
     color: var(--color-ink-muted);
     font-size: 0.9375rem;
   }
+  .meta-row {
+    margin: 1.1rem 0 0;
+  }
+  .ship-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.7rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-decoration: none;
+    transition:
+      border-color var(--duration-fast) ease,
+      color var(--duration-fast) ease;
+  }
+  .ship-badge:hover {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+  }
+  .ship-arrow {
+    color: var(--color-amber);
+  }
   .cmp-link {
     display: inline-block;
     margin-top: 1rem;
@@ -148,4 +349,56 @@ const roundup = `${
   .cmp-link:hover {
     border-bottom-color: var(--color-amber);
   }
+
+  /* Reduced-motion / no-JS default: visible & in place. GSAP only runs
+     under prefers-reduced-motion: no-preference (see script + motion lib). */
+  [data-reveal],
+  [data-stream] {
+    opacity: 1;
+    transform: none;
+  }
 </style>
+
+<script>
+  import { gsap, whenMotionOk } from '@/lib/motion';
+
+  whenMotionOk(() => {
+    const section = document.querySelector<HTMLElement>('#batching');
+    if (!section) return;
+
+    // Reveal the section's structural elements on scroll-in.
+    const reveals = gsap.utils.toArray<HTMLElement>('#batching [data-reveal]');
+    if (reveals.length > 0) {
+      gsap.set(reveals, { opacity: 0, y: 14 });
+      gsap.to(reveals, {
+        opacity: 1,
+        y: 0,
+        duration: 0.55,
+        stagger: 0.08,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 78%',
+        },
+      });
+    }
+
+    // Stream the reasoning trace in, line by line — reinforces the
+    // "live reasoning" idea without animating under reduced-motion.
+    const lines = gsap.utils.toArray<HTMLElement>('#batching [data-stream]');
+    if (lines.length > 0) {
+      gsap.set(lines, { opacity: 0, x: -10 });
+      gsap.to(lines, {
+        opacity: 1,
+        x: 0,
+        duration: 0.4,
+        stagger: 0.12,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#batching .reason-strip',
+          start: 'top 85%',
+        },
+      });
+    }
+  });
+</script>

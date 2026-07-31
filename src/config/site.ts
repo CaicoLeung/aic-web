@@ -145,3 +145,54 @@ export const COMMANDS: readonly CommandRow[] = [
     description: 'show resolved config + masked API key',
   },
 ] as const;
+
+/**
+ * Per-hunk batch splitting — the differentiator behind the #03 Auto-batching
+ * section. Shipped in v0.3.5 (#12, per-hunk split + live reasoning view) and
+ * v0.3.6 (#13, streaming multi-batch).
+ *
+ * Editorial / low-drift: this is illustrative copy for the decomposition
+ * visual + reasoning strip, NOT a build-time fetch (ADR-0003 fetches current
+ * version + providers; feature-intro versions are historical and immutable).
+ * `shippedIn` doubles as the changelog anchor (`#0.3.5`).
+ */
+export type HunkCommitType = 'feat' | 'fix' | 'refactor' | 'docs' | 'chore';
+
+export interface HunkCommit {
+  /** Short hash shown in the commit pill. */
+  readonly hash: string;
+  readonly type: HunkCommitType;
+  readonly scope: string;
+  readonly summary: string;
+}
+
+export interface HunkTrace {
+  /** Source line where the hunk starts — rendered as a `@@N` unified-diff header. */
+  readonly at: number;
+  readonly type: HunkCommitType;
+  readonly summary: string;
+}
+
+export interface HunkSplitting {
+  /** Semver (no leading "v") when per-hunk splitting shipped — doubles as changelog anchor. */
+  readonly shippedIn: string;
+  /** The single source file the commits are decomposed from. */
+  readonly file: string;
+  readonly commits: readonly HunkCommit[];
+  readonly hunks: readonly HunkTrace[];
+}
+
+export const HUNK_SPLITTING: HunkSplitting = {
+  shippedIn: '0.3.5',
+  file: 'src/auth.rs',
+  commits: [
+    { hash: 'abc1234', type: 'feat', scope: 'auth', summary: 'refresh tokens' },
+    { hash: 'def5678', type: 'fix', scope: 'auth', summary: 'redirect on expiry' },
+    { hash: 'ghi9012', type: 'refactor', scope: 'auth', summary: 'extract token store' },
+  ],
+  hunks: [
+    { at: 42, type: 'feat', summary: 'refresh tokens' },
+    { at: 87, type: 'fix', summary: 'redirect on expiry' },
+    { at: 134, type: 'refactor', summary: 'extract token store' },
+  ],
+} as const;
