@@ -5,14 +5,20 @@
  */
 import { INSTALL_METHODS } from '@/config/site';
 import CopyButton from '@/components/ui/CopyButton.astro';
+import { localeFromUrl } from '@/i18n/config';
+import { useLocalizer, useMessages } from '@/i18n/t';
+
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useLocalizer(locale);
+const m = useMessages(locale);
 ---
 
 <section id="install" class="section install">
   <div class="container">
     <p class="eyebrow">
-      <span class="line" aria-hidden="true"></span>05 — Install
+      <span class="line" aria-hidden="true"></span>{t('install.eyebrow')}
     </p>
-    <h2>install aic in one line.</h2>
+    <h2>{t('install.h2')}</h2>
 
     <div class="tabs-row" role="tablist" aria-label="Install method" data-tabs>
       {
@@ -26,34 +32,34 @@ import CopyButton from '@/components/ui/CopyButton.astro';
             tabindex={i === 0 ? 0 : -1}
             data-tab={method.id}
           >
-            {method.label}
+            {m.install.methods[method.id].label}
           </button>
         ))
       }
     </div>
 
     {
-      INSTALL_METHODS.map((method, i) => (
-        <div
-          role="tabpanel"
-          id={`panel-${method.id}`}
-          class:list={['panel', { 'is-hidden': i !== 0 }]}
-          aria-labelledby={`tab-${method.id}`}
-          data-panel={method.id}
-        >
-          <div class="cmd-line-row">
-            <code class="cmd-line">{method.command}</code>
-            <CopyButton text={method.command} label={method.label} variant="primary" />
+      INSTALL_METHODS.map((method, i) => {
+        const info = m.install.methods[method.id];
+        return (
+          <div
+            role="tabpanel"
+            id={`panel-${method.id}`}
+            class:list={['panel', { 'is-hidden': i !== 0 }]}
+            aria-labelledby={`tab-${method.id}`}
+            data-panel={method.id}
+          >
+            <div class="cmd-line-row">
+              <code class="cmd-line">{method.command}</code>
+              <CopyButton text={method.command} label={info.label} variant="primary" />
+            </div>
+            {info.note && <p class="note">{info.note}</p>}
           </div>
-          {method.note && <p class="note">{method.note}</p>}
-        </div>
-      ))
+        );
+      })
     }
 
-    <p class="postinstall">
-      <span class="arrow" aria-hidden="true">→</span> then run
-      <code>aic setup</code> to pick provider, key, and model.
-    </p>
+    <p class="postinstall" set:html={t('install.postinstall', { cmd: 'aic setup' })} />
   </div>
 </section>
 

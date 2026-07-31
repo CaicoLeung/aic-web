@@ -1,0 +1,50 @@
+---
+/**
+ * Localized home — `/zh/`, `/ja/`, `/ko/` (ADR-0010).
+ *
+ * English lives at `/` (`src/pages/index.astro`); this dynamic route handles
+ * the prefixed locales. The `locale` param is validated against
+ * `LOCALE_PREFIXES` so unknown segments 404 rather than render as a fake
+ * locale. Sections self-determine locale from the URL, so the composition is
+ * identical to the English home.
+ *
+ * NOTE: all section components wire `t()`/`useMessages` (ADR-0010); on a
+ * stubbed key they render the EN source via the soft-parity fallback
+ * (Q7=B) — never empty.
+ */
+import { isLocalePrefix, LOCALE_PREFIXES } from '@/i18n/config';
+import { loadAicFacts } from '@/data/aic';
+import Base from '@/layouts/Base.astro';
+import Topbar from '@/components/topbar/Topbar.astro';
+import Hero from '@/components/hero/Hero.astro';
+import HowItWorks from '@/components/how-it-works/HowItWorks.astro';
+import Batching from '@/components/batching/Batching.astro';
+import Providers from '@/components/providers/Providers.astro';
+import Install from '@/components/install/Install.astro';
+import Footer from '@/components/footer/Footer.astro';
+
+export function getStaticPaths() {
+  return LOCALE_PREFIXES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params;
+// getStaticPaths enumerates only valid prefixes, so this is belt-and-suspenders
+// — shared guard: unknown segments 404 instead of rendering a fake locale.
+if (!isLocalePrefix(locale)) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+
+const facts = await loadAicFacts();
+---
+
+<Base version={facts.version}>
+  <Topbar version={facts.version} />
+  <main id="main">
+    <Hero />
+    <HowItWorks />
+    <Batching />
+    <Providers providers={facts.providers} />
+    <Install />
+  </main>
+  <Footer />
+</Base>

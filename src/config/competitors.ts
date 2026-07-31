@@ -35,24 +35,20 @@ export interface CompetitorMeta {
   readonly strength: string;
 }
 
-/** One side of a comparison row. */
+/** One side of a comparison row. `supported` drives the ✓/✗ glyph; the
+ *  text is localized in `messages.vs.aicommits.axes[id]` (ADR-0010). */
 export interface FeatureCell {
-  /** Short display text, e.g. "Yes", "11 first-class", "Node.js v22+". */
-  readonly text: string;
-  /** Renders a ✓ when true, ✗ when false, plain text when undefined. */
   readonly supported?: boolean;
 }
 
-/** A single row in the feature matrix: aic vs one rival. */
+/** A single row in the feature matrix: aic vs one rival. `id` keys the
+ *  localized feature/aic/rival/note in `messages.vs.aicommits.axes` (ADR-0010). */
 export interface ComparisonAxis {
-  /** Row label, e.g. "Auto-batch unstaged work". */
-  readonly feature: string;
+  readonly id: string;
   readonly aic: FeatureCell;
   readonly rival: FeatureCell;
   /** Honest verdict — `rival` means the competitor wins this row. */
   readonly winner: 'aic' | 'rival' | 'tie';
-  /** Editorial justification / nuance. */
-  readonly note: string;
 }
 
 /** A full comparison of aic against one named rival. */
@@ -81,90 +77,70 @@ export const AICOMMITS_COMPARISON: CompetitorComparison = {
   rival: AICOMMITS,
   axes: [
     {
-      feature: 'Auto-batch unstaged work into multiple commits',
-      aic: {
-        text: 'Yes — splits unstaged changes into logical atomic commits',
-        supported: true,
-      },
-      rival: { text: 'No — one message per staged diff', supported: false },
+      id: 'auto-batch',
+      aic: { supported: true },
+      rival: { supported: false },
       winner: 'aic',
-      note: 'aic’s signature feature. aicommits’ `--generate N` produces N candidate messages for ONE commit, not N commits.',
     },
     {
-      feature: 'Split a single file across commits (per-hunk)',
-      aic: {
-        text: 'Yes — routes each hunk to its own commit by intent',
-        supported: true,
-      },
-      rival: { text: 'No — file-granular at most', supported: false },
+      id: 'per-hunk',
+      aic: { supported: true },
+      rival: { supported: false },
       winner: 'aic',
-      note: 'Shipped in aic v0.3.5. aicommits (and every tool in the roundup) splits at the file boundary at most; aic reads the diff at the hunk level, so one file touching three concerns becomes three focused commits.',
     },
     {
-      feature: 'Resolve merge conflicts',
-      aic: {
-        text: 'Yes — `aic resolve` proposes a diff, asks per file',
-        supported: true,
-      },
-      rival: { text: 'No — commit messages only', supported: false },
+      id: 'resolve',
+      aic: { supported: true },
+      rival: { supported: false },
       winner: 'aic',
-      note: 'aic’s second signature workflow (`v0.3.0`). aicommits has no conflict story — it only writes the message after you’ve merged by hand.',
     },
     {
-      feature: 'First-class Anthropic · Gemini · DeepSeek',
-      aic: { text: 'Yes — native providers', supported: true },
-      rival: { text: 'Only via OpenRouter / custom endpoint', supported: false },
+      id: 'anthropic',
+      aic: { supported: true },
+      rival: { supported: false },
       winner: 'aic',
-      note: 'aicommits reaches them indirectly; aic ships them as first-class with sensible default models.',
     },
     {
-      feature: 'Runtime & dependencies',
-      aic: { text: 'Rust binary — no Node.js' },
-      rival: { text: 'Node.js v22+ — npm' },
+      id: 'runtime',
+      aic: {},
+      rival: {},
       winner: 'aic',
-      note: "aic is one static binary — no `node_modules`, transitive dependency tree, or global-install breakage when you switch Node versions. (Rust's faster cold-start helps too, though the LLM call dominates either way.) aicommits is friction-free only when Node.js is already in your path.",
     },
     {
-      feature: 'Provider reach',
-      aic: { text: '11 first-class + OpenAI-compatible' },
-      rival: { text: '8 + OpenRouter/custom (any model)' },
+      id: 'reach',
+      aic: {},
+      rival: {},
       winner: 'aic',
-      note: 'Both reach any model via OpenRouter, but aic now ships more first-class providers — xAI, Together, Perplexity, Mistral included — plus an OpenAI-compatible escape hatch for LM Studio, vLLM, and gateways.',
     },
     {
-      feature: 'Commit message formats',
-      aic: { text: 'Conventional Commits' },
-      rival: { text: 'plain · conventional · gitmoji' },
+      id: 'formats',
+      aic: {},
+      rival: {},
       winner: 'rival',
-      note: 'aic is conventional-only by design; aicommits lets you pick, including a plain unstructured mode.',
     },
     {
-      feature: 'Git hook integration',
-      aic: { text: 'No', supported: false },
-      rival: { text: 'Yes — prepare-commit-msg hook', supported: true },
+      id: 'hook',
+      aic: { supported: false },
+      rival: { supported: true },
       winner: 'rival',
-      note: 'aicommits wires into your normal `git commit` flow via a hook; aic is run explicitly.',
     },
     {
-      feature: 'Multiple message candidates',
-      aic: { text: 'No', supported: false },
-      rival: { text: 'Yes — `--generate N`', supported: true },
+      id: 'candidates',
+      aic: { supported: false },
+      rival: { supported: true },
       winner: 'rival',
-      note: 'aicommits can offer several messages to pick from before committing.',
     },
     {
-      feature: 'Prompt & locale control',
-      aic: { text: 'System prompt via env' },
-      rival: { text: '`--prompt`, locale, max-length', supported: true },
+      id: 'prompt',
+      aic: {},
+      rival: { supported: true },
       winner: 'rival',
-      note: 'aicommits exposes richer knobs. aic supports an `AIC_SYSTEM_PROMPT` override but fewer surface options.',
     },
     {
-      feature: 'Popularity & ecosystem',
-      aic: { text: 'New, small' },
-      rival: { text: 'Entrenched first-mover' },
+      id: 'popularity',
+      aic: {},
+      rival: {},
       winner: 'rival',
-      note: 'aicommits is the known quantity with the larger community. If momentum matters most, stay with it.',
     },
   ],
 };
@@ -185,8 +161,6 @@ export interface RoundupEntry {
   readonly name: string;
   readonly repo: string;
   readonly runtime: string;
-  /** Fair, verified one-liner — the tool's genuine distinct strength. */
-  readonly strength: string;
   /** True for aic (disclosed). */
   readonly homeTeam?: boolean;
   /** Relative path to a dedicated /vs/{id} page, when one exists. */
@@ -200,8 +174,6 @@ export const ROUNDUP: readonly RoundupEntry[] = [
     repo: GITHUB_URL,
     runtime: 'Rust · brew / installer',
     homeTeam: true,
-    strength:
-      'The only tool here that splits unstaged work into logical commits at the hunk level — so even a single file can become several focused commits — and resolves merge conflicts (`aic resolve`). Ships as a dependency-free Rust binary with first-class Anthropic, Gemini, and DeepSeek.',
   },
   {
     id: 'aicommits',
@@ -209,31 +181,23 @@ export const ROUNDUP: readonly RoundupEntry[] = [
     repo: 'https://github.com/Nutlope/aicommits',
     runtime: 'Node.js · npm',
     vsPath: 'vs/aicommits/',
-    strength:
-      'The entrenched default — a prepare-commit-msg hook, gitmoji support, the largest community, and any model via OpenRouter.',
   },
   {
     id: 'ai-commit',
     name: 'ai-commit',
     repo: 'https://github.com/lifedever/ai-commit',
     runtime: 'Node.js · brew / npm',
-    strength:
-      'Stands out with a Claude Code provider that reads your source files for richer context — a natural fit if you already use Claude Code.',
   },
   {
     id: 'git-ai',
     name: 'git-ai',
     repo: 'https://github.com/DaleSeo/git-ai',
     runtime: 'Node.js · npm / npx',
-    strength:
-      'Defaults to local Ollama (free, offline) and also drafts PR descriptions, not just commit messages.',
   },
   {
     id: 'llmc',
     name: 'llmc',
     repo: 'https://github.com/marclove/llmc',
     runtime: 'Node.js · npx / npm',
-    strength:
-      'The broadest provider list (13) with a polished terminal UI, TOML config, custom prompts, and auto-commit.',
   },
 ];

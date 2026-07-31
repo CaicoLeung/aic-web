@@ -14,7 +14,11 @@
  */
 import { HUNK_SPLITTING, HUNK_TYPE_ACCENT } from '@/config/site';
 import HunkTraceLine from './HunkTraceLine.astro';
+import { localeFromUrl } from '@/i18n/config';
+import { useLocalizer } from '@/i18n/t';
 
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useLocalizer(locale);
 const base = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
@@ -48,7 +52,7 @@ const changelog = `${base}changelog/#${HUNK_SPLITTING.shippedIn}`;
           }
         </div>
         <div class="reason-strip" data-reveal>
-          <p class="strip-label">reasoning · per hunk</p>
+          <p class="strip-label">{t('batching.stripLabel')}</p>
           {HUNK_SPLITTING.hunks.map((h) => <HunkTraceLine h={h} />)}
         </div>
       </div>
@@ -56,22 +60,21 @@ const changelog = `${base}changelog/#${HUNK_SPLITTING.shippedIn}`;
 
     <div class="batching-copy">
       <p class="eyebrow" data-reveal>
-        <span class="line" aria-hidden="true"></span>03 — Auto-batching
+        <span class="line" aria-hidden="true"></span>{t('batching.eyebrow')}
       </p>
-      <p class="kicker" data-reveal>nothing staged?</p>
-      <h2 data-reveal>one file, many commits</h2>
+      <p class="kicker" data-reveal>{t('batching.kicker')}</p>
+      <h2 data-reveal>{t('batching.h2')}</h2>
       <p class="lede" data-reveal>
-        aic reads your diff at the hunk level — so a single file can become several
-        focused commits, each one idea. Nothing staged, one command, a clean history.
+        {t('batching.lede')}
       </p>
-      <p class="aside" data-reveal>per-hunk batching ✦</p>
+      <p class="aside" data-reveal>{t('batching.aside')}</p>
       <p class="meta-row" data-reveal>
         <a class="ship-badge" href={changelog}>
-          shipped in v{HUNK_SPLITTING.shippedIn}<span class="ship-arrow" aria-hidden="true">→</span>
+          {t('batching.shipBadge', { version: HUNK_SPLITTING.shippedIn })}<span class="ship-arrow" aria-hidden="true">→</span>
         </a>
       </p>
       <a class="cmp-link" href={roundup} data-reveal>
-        see aic among the best AI commit tools →
+        {t('batching.cmpLink')}
       </a>
     </div>
   </div>

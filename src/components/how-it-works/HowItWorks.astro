@@ -5,33 +5,40 @@
  * step 03 ("run" — the sketch's yellow-highlighter gag).
  */
 import { HOW_IT_WORKS_STEPS } from '@/config/site';
+import { localeFromUrl } from '@/i18n/config';
+import { useLocalizer, useMessages } from '@/i18n/t';
+
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useLocalizer(locale);
+const m = useMessages(locale);
 ---
 
 <section id="how" class="section how">
   <div class="container">
     <header class="section-head">
       <p class="eyebrow">
-        <span class="line" aria-hidden="true"></span>02 — How it works
+        <span class="line" aria-hidden="true"></span>{t('how.eyebrow')}
       </p>
-      <h2>install once → type <code>aic</code> → clean commit.</h2>
+      <h2 set:html={t('how.h2', { cmd: 'aic' })} />
     </header>
 
     <ol class="flow" role="list">
       {
-        HOW_IT_WORKS_STEPS.map((step, i) => (
-          <li class:list={['step', { 'is-run': step.n === '03' }]} data-step={step.n}>
-            <span class="step-num">{step.n}</span>
-            <div class="step-body">
-              <span class="step-label">{step.label}</span>
-              <span class="step-detail">{step.detail}</span>
-            </div>
-            {i < HOW_IT_WORKS_STEPS.length - 1 && (
-              <span class="step-arrow" aria-hidden="true">
-                ↓
-              </span>
-            )}
-          </li>
-        ))
+        HOW_IT_WORKS_STEPS.map((n, i) => {
+          const s = m.how.steps[n];
+          return (
+            <li class:list={['step', { 'is-run': n === '03' }]} data-step={n}>
+              <span class="step-num">{n}</span>
+              <div class="step-body">
+                <span class="step-label">{s.label}</span>
+                <span class="step-detail">{s.detail}</span>
+              </div>
+              {i < HOW_IT_WORKS_STEPS.length - 1 && (
+                <span class="step-arrow" aria-hidden="true">↓</span>
+              )}
+            </li>
+          );
+        })
       }
     </ol>
   </div>

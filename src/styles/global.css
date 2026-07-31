@@ -33,14 +33,20 @@
   --color-mint-soft: rgba(116, 201, 138, 0.14);
 
   /* type — three registers (ADR-0004):
-     display = headings, body = prose, mono = code/chrome. */
+     display = headings, body = prose, mono = code/chrome.
+     Each stack carries a CJK slot via `--font-cjk` (ADR-0012): set to the
+     bundled Noto family on locale pages (Base), else falls back to the
+     system CJK families — which cover the rare CJK glyph in EN content
+     without loading a webfont. */
   --font-display:
-    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui,
+    var(--font-cjk, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei'), sans-serif;
   --font-body:
-    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui,
+    var(--font-cjk, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei'), sans-serif;
   --font-mono:
     'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Liberation Mono',
-    monospace;
+    var(--font-cjk, 'PingFang SC', 'Hiragino Sans'), monospace;
 
   /* rhythm */
   --text-hero: clamp(2.75rem, 1rem + 7vw, 4.5rem);

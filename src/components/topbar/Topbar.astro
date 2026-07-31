@@ -1,17 +1,27 @@
 ---
 /**
- * Sticky topbar — brand left, anchor nav center, version + GitHub right.
- * Background blur kicks in after the hero scrolls past (Tier 2 motion).
+ * Sticky topbar — brand left, anchor nav center, version + GitHub + locale
+ * switcher right. Background blur kicks in after the hero scrolls past
+ * (Tier 2 motion).
+ *
+ * i18n (ADR-0010): locale is read from the URL; all visible strings come
+ * from the message module via `t()`. This component is the reference
+ * wiring pattern for every other section.
  */
 import { GITHUB_URL } from '@/config/site';
 import { baseHref } from '@/lib/href';
+import { localeFromUrl } from '@/i18n/config';
+import { useLocalizer } from '@/i18n/t';
+import LanguageSwitcher from './LanguageSwitcher.astro';
 
 interface Props {
   readonly version: string;
 }
 const { version } = Astro.props;
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useLocalizer(locale);
 const changelog = `${baseHref(import.meta.env.BASE_URL)}changelog/`;
-const versionTitle = `Latest release: v${version} — view changelog`;
+const versionTitle = t('topbar.versionTitle', { version });
 ---
 
 <header class="topbar" data-topbar>
@@ -26,15 +36,15 @@ const versionTitle = `Latest release: v${version} — view changelog`;
     </span>
     <span class="brand-text">
       <span class="brand-name">aic</span>
-      <span class="brand-tag">AI-powered git commits</span>
+      <span class="brand-tag">{t('topbar.brandTag')}</span>
     </span>
   </a>
 
   <nav class="nav" aria-label="Sections">
-    <a href="#how">how</a>
-    <a href="#batching">batching</a>
-    <a href="#providers">providers</a>
-    <a href="#install">install</a>
+    <a href="#how">{t('topbar.nav.how')}</a>
+    <a href="#batching">{t('topbar.nav.batching')}</a>
+    <a href="#providers">{t('topbar.nav.providers')}</a>
+    <a href="#install">{t('topbar.nav.install')}</a>
   </nav>
 
   <div class="meta">
@@ -43,9 +53,10 @@ const versionTitle = `Latest release: v${version} — view changelog`;
       v{version}
     </a>
     <a class="github" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
-      GitHub
+      {t('topbar.github')}
       <span aria-hidden="true">↗</span>
     </a>
+    <LanguageSwitcher />
   </div>
 </header>
 

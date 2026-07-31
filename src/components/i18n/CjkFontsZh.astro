@@ -1,0 +1,14 @@
+---
+/**
+ * ZH CJK webfont (ADR-0012). The `?url` import emits the fontsource CSS as
+ * its own standalone asset instead of bundling it into the shared page CSS,
+ * and this component links it only on `/zh/` pages — English and the other
+ * locales carry zero zh font CSS (verified in build output). Inside the CSS,
+ * `unicode-range` subsets mean the browser fetches only the glyph ranges a
+ * page actually uses; `--font-cjk` (set on `<html>` by Base) applies the
+ * family to the type stacks on zh pages only.
+ */
+import zhCssUrl from '@fontsource-variable/noto-sans-sc/index.css?url';
+---
+
+<link rel="stylesheet" href={zhCssUrl} />
