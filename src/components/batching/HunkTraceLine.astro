@@ -1,0 +1,56 @@
+---
+/**
+ * One line of the per-hunk reasoning trace: `@@{at} → {type} {summary}`.
+ *
+ * Shared by the #03 decomposition (Batching.astro) and the hero terminal
+ * (Terminal.astro) so both tell the hunk-splitting story with a single
+ * visual voice (ADR-0004 code/chrome register). The intent chip is colored
+ * by the shared `HUNK_TYPE_ACCENT` map (src/config/site.ts) — no local
+ * copy, no fallback.
+ *
+ * Emits a stable `data-hunk-line` attribute that each consumer's animation
+ * script targets for the stream-in (GSAP). Parent containers own the
+ * surrounding frame (label / box / rhythm); this component owns only the
+ * row. Default-visible (opacity 1) — reveal is orchestrated by the parent
+ * under `whenMotionOk`.
+ */
+import type { HunkTrace } from '@/config/site';
+import { HUNK_TYPE_ACCENT } from '@/config/site';
+
+interface Props {
+  h: HunkTrace;
+}
+
+const { h } = Astro.props;
+---
+
+<div class="hunk-trace-line" data-hunk-line>
+  <span class="ht-at">@@{h.at}</span>
+  <span class="ht-arrow" aria-hidden="true">→</span>
+  <span class="ht-type" style={`--accent: ${HUNK_TYPE_ACCENT[h.type]}`}>{h.type}</span>
+  <span class="ht-sum">{h.summary}</span>
+</div>
+
+<style>
+  .hunk-trace-line {
+    display: grid;
+    grid-template-columns: auto auto auto 1fr;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.55;
+    color: var(--color-ink-muted);
+  }
+  .ht-at,
+  .ht-arrow {
+    color: var(--color-ink-dim);
+  }
+  .ht-type {
+    color: var(--accent, var(--color-amber));
+    font-weight: 600;
+  }
+  .ht-sum {
+    color: var(--color-ink);
+  }
+</style>
