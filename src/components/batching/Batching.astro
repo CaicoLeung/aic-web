@@ -12,24 +12,14 @@
  * build-time fetch — feature claims are editorial, and the shipped-in version
  * is historical/immutable. See CONTEXT.md · ADR-0003.
  */
-import { gsap, ScrollTrigger, whenMotionOk } from '@/lib/motion';
-import { HUNK_SPLITTING } from '@/config/site';
+import { HUNK_SPLITTING, HUNK_TYPE_ACCENT } from '@/config/site';
+import HunkTraceLine from './HunkTraceLine.astro';
 
 const base = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
 const roundup = `${base}best-ai-commit-tools/`;
 const changelog = `${base}changelog/#${HUNK_SPLITTING.shippedIn}`;
-
-// Map a commit type to an accent token — varied hues make the three intents
-// visually distinct in the decomposition. Defaults to amber (product accent).
-const typeAccent: Record<string, string> = {
-  feat: 'var(--color-amber)',
-  fix: 'var(--color-mint)',
-  refactor: 'var(--color-amber-warm)',
-  docs: 'var(--color-ink-muted)',
-  chore: 'var(--color-ink-muted)',
-};
 ---
 
 <section id="batching" class="section batching">
@@ -47,7 +37,7 @@ const typeAccent: Record<string, string> = {
               <div class="pill">
                 <span class="hash">{c.hash}</span>
                 <span class="msg">
-                  <span class="ctype" style={`--accent: ${typeAccent[c.type] ?? 'var(--color-amber)'}`}>
+                  <span class="ctype" style={`--accent: ${HUNK_TYPE_ACCENT[c.type]}`}>
                     {c.type}
                   </span>
                   <span class="scope">({c.scope})</span>
@@ -59,21 +49,7 @@ const typeAccent: Record<string, string> = {
         </div>
         <div class="reason-strip" data-reveal>
           <p class="strip-label">reasoning · per hunk</p>
-          {
-            HUNK_SPLITTING.hunks.map((h) => (
-              <div class="hunk-line" data-stream>
-                <span class="at">@@{h.at}</span>
-                <span class="arrow" aria-hidden="true">→</span>
-                <span
-                  class="ctype"
-                  style={`--accent: ${typeAccent[h.type] ?? 'var(--color-amber)'}`}
-                >
-                  {h.type}
-                </span>
-                <span class="summ">{h.summary}</span>
-              </div>
-            ))
-          }
+          {HUNK_SPLITTING.hunks.map((h) => <HunkTraceLine h={h} />)}
         </div>
       </div>
     </div>
@@ -129,8 +105,8 @@ const typeAccent: Record<string, string> = {
 
   /* ── Visual: decomposition ────────────────────────────────────────────
      One source card → a git-graph rail of commit pills → a reasoning strip.
-     The rail (vertical line + dots) reuses the .pill primitive so the new
-     visual reads as one family with the rest of the site. */
+     The pills carry this section's design language (mono, raised surface,
+     amber node) so the decomposition reads as one family. */
 
   .batching-visual {
     display: grid;
@@ -257,35 +233,16 @@ const typeAccent: Record<string, string> = {
     text-transform: uppercase;
     color: var(--color-ink-dim);
   }
-  .hunk-line {
-    display: grid;
-    grid-template-columns: auto auto auto 1fr;
-    align-items: baseline;
-    gap: 0.5rem;
-    padding: 0.18rem 0;
-    font-size: 0.74rem;
-    color: var(--color-ink-muted);
-  }
-  .hunk-line .at {
-    color: var(--color-ink-dim);
-  }
-  .hunk-line .arrow {
-    color: var(--color-ink-dim);
-  }
-  .hunk-line .summ {
-    color: var(--color-ink);
-  }
-
   /* ── Copy column ───────────────────────────────────────────────────── */
   .batching-copy .eyebrow {
     margin-bottom: 0.5rem;
   }
+  /* Prose register (ADR-0004) — a reader-addressed hook, not a chrome
+     label like .eyebrow. Stays amber for emphasis, set in sans. */
   .kicker {
     margin: 0 0 0.4rem;
     color: var(--color-amber);
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    letter-spacing: 0.02em;
+    font-size: 0.95rem;
   }
   h2 {
     font-size: var(--text-h2);
@@ -353,7 +310,7 @@ const typeAccent: Record<string, string> = {
   /* Reduced-motion / no-JS default: visible & in place. GSAP only runs
      under prefers-reduced-motion: no-preference (see script + motion lib). */
   [data-reveal],
-  [data-stream] {
+  [data-hunk-line] {
     opacity: 1;
     transform: none;
   }
@@ -385,7 +342,7 @@ const typeAccent: Record<string, string> = {
 
     // Stream the reasoning trace in, line by line — reinforces the
     // "live reasoning" idea without animating under reduced-motion.
-    const lines = gsap.utils.toArray<HTMLElement>('#batching [data-stream]');
+    const lines = gsap.utils.toArray<HTMLElement>('#batching [data-hunk-line]');
     if (lines.length > 0) {
       gsap.set(lines, { opacity: 0, x: -10 });
       gsap.to(lines, {

@@ -156,7 +156,19 @@ export const COMMANDS: readonly CommandRow[] = [
  * version + providers; feature-intro versions are historical and immutable).
  * `shippedIn` doubles as the changelog anchor (`#0.3.5`).
  */
-export type HunkCommitType = 'feat' | 'fix' | 'refactor' | 'docs' | 'chore';
+export type HunkCommitType = 'feat' | 'fix' | 'refactor';
+
+/**
+ * Accent token per commit intent — varied hues make the three intents
+ * visually distinct in both the #03 decomposition and the hero terminal.
+ * Single source of truth shared by `HunkTraceLine` and the commit chips.
+ * Kept complete over `HunkCommitType`, so lookups never need a fallback.
+ */
+export const HUNK_TYPE_ACCENT: Readonly<Record<HunkCommitType, string>> = {
+  feat: 'var(--color-amber)',
+  fix: 'var(--color-mint)',
+  refactor: 'var(--color-amber-warm)',
+};
 
 export interface HunkCommit {
   /** Short hash shown in the commit pill. */

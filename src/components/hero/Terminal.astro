@@ -11,19 +11,11 @@
  * same story (process here, result there). `aria-hidden` because the same
  * information is in the hero copy — decorative reinforcement.
  */
-import { HUNK_SPLITTING } from '@/config/site';
+import { HUNK_SPLITTING, HUNK_TYPE_ACCENT } from '@/config/site';
+import HunkTraceLine from '@/components/batching/HunkTraceLine.astro';
 
 const hunks = HUNK_SPLITTING.hunks;
 const commits = HUNK_SPLITTING.commits;
-
-// Intent → accent token, shared with #03 for visual continuity.
-const typeAccent: Record<string, string> = {
-  feat: 'var(--color-amber)',
-  fix: 'var(--color-mint)',
-  refactor: 'var(--color-amber-warm)',
-  docs: 'var(--color-ink-muted)',
-  chore: 'var(--color-ink-muted)',
-};
 ---
 
 <figure class="terminal" aria-hidden="true">
@@ -44,21 +36,7 @@ const typeAccent: Record<string, string> = {
 
     <div class="reasoning" data-reasoning>
       <div class="re-head">reasoning · per hunk</div>
-      {
-        hunks.map((h) => (
-          <div class="re-line" data-re-line>
-            <span class="re-at">@@{h.at}</span>
-            <span class="re-arrow" aria-hidden="true">→</span>
-            <span
-              class="re-type"
-              style={`--accent: ${typeAccent[h.type] ?? 'var(--color-amber)'}`}
-            >
-              {h.type}
-            </span>
-            <span class="re-sum">{h.summary}</span>
-          </div>
-        ))
-      }
+      {hunks.map((h) => <HunkTraceLine h={h} />)}
     </div>
 
     <div class="planline" data-plan>
@@ -75,7 +53,7 @@ const typeAccent: Record<string, string> = {
             <span class="msg">
               <span
                 class="ctype"
-                style={`--accent: ${typeAccent[c.type] ?? 'var(--color-amber)'}`}
+                style={`--accent: ${HUNK_TYPE_ACCENT[c.type]}`}
               >
                 {c.type}
               </span>
@@ -188,30 +166,6 @@ const typeAccent: Record<string, string> = {
     color: var(--color-ink-dim);
     margin-bottom: 0.3rem;
   }
-  .re-line {
-    display: grid;
-    grid-template-columns: auto auto auto 1fr;
-    align-items: baseline;
-    gap: 0.45rem;
-    font-size: 0.75rem;
-    color: var(--color-ink-muted);
-    line-height: 1.55;
-    white-space: normal;
-  }
-  .re-at {
-    color: var(--color-ink-dim);
-  }
-  .re-arrow {
-    color: var(--color-ink-dim);
-  }
-  .re-type {
-    color: var(--accent, var(--color-amber));
-    font-weight: 600;
-  }
-  .re-sum {
-    color: var(--color-ink);
-  }
-
   /* ── Plan line: the pivot from thinking to shipping ──────────────── */
   .planline {
     display: flex;
@@ -262,8 +216,7 @@ const typeAccent: Record<string, string> = {
   :global([data-term-body]) .reasoning,
   :global([data-term-body]) .planline,
   :global([data-term-body]) .commits,
-  :global([data-term-body]) .commitrow,
-  :global([data-term-body]) .re-line {
+  :global([data-term-body]) .commitrow {
     opacity: 1;
   }
 </style>
@@ -280,7 +233,7 @@ const typeAccent: Record<string, string> = {
       const spinGlyph = spinner?.querySelector<HTMLElement>('.spin');
       const reasoning = term.querySelector<HTMLElement>('[data-reasoning]');
       const reLines =
-        term.querySelectorAll<HTMLElement>('[data-re-line]');
+        term.querySelectorAll<HTMLElement>('[data-hunk-line]');
       const plan = term.querySelector<HTMLElement>('[data-plan]');
       const commitRows =
         term.querySelectorAll<HTMLElement>('[data-commit]');
