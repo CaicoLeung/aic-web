@@ -255,6 +255,7 @@ export const messages = {
       // Contains <strong>/<code>; render via set:html.
       callout: '<strong>Small world.</strong> aicommits\' own README suggests aliasing it to <code>aic</code> if the name is too long. We shipped <code>aic</code> as its own thing — and it splits your unstaged work into logical commits at the hunk level, so even one file can become several.',
       matrix: {
+        heading: 'Feature-by-feature',
         capability: 'Capability',
         aic: 'aic',
       },

@@ -15,11 +15,11 @@ export const messages: Messages = {
   meta: {
     title: 'aic — AI 기반 git 커밋',
     description:
-      'aic가 diff를 읽고, 컨벤션 커밋을 초안해 커밋합니다 — 명령 한 번. 스테이지된 게 없으면? 작업을 논리적인 커밋으로 묶어줍니다.',
+      'aic가 diff를 읽고, 컨벤셔널 커밋을 초안해 커밋합니다 — 명령 한 번. 스테이지된 게 없으면? 작업을 논리적인 커밋으로 묶어줍니다.',
     resolve: {
       title: 'aic resolve — AI 병합 충돌 해결 도구',
       description:
-        'aic는 충돌하는 모든 파일을 읽고, 깔끔한 해결을 제안하며, diff를 보여줍니다. 파일마다 승인 — 당신의 허락 없이는 아무것도 적용되지 않고 — 그런 다음 병합을 마무리합니다. 당신의 작업을 무단으로 건드리지 않는 AI 병합 충돌 해결 도구.',
+        'aic는 충돌하는 모든 파일을 읽고, 깔끔한 해결을 제안하며, diff를 보여줍니다. 파일마다 승인 — 당신의 허락 없이는 아무것도 적용되지 않고 — 그런 다음 병합을 마무리합니다. 당신의 작업을 보지도 않고 건드리지 않는 AI 병합 충돌 해결 도구.',
     },
     roundup: {
       title: '{year}년 최고의 AI 커밋 메시지 도구',
@@ -62,8 +62,8 @@ export const messages: Messages = {
 
   copyButton: {
     copyAria: '{label} 복사',
-    copiedAria: '{label} 복사됨',
-    copied: '복사됨 ✓',
+    copiedAria: '{label} 복사되었습니다',
+    copied: '복사되었습니다 ✓',
   },
 
   hero: {
@@ -77,7 +77,7 @@ export const messages: Messages = {
       conflicts: '충돌.',
     },
     ledeBefore:
-      '<b>aic</b>가 diff를 읽고, 컨벤션 커밋을 초안해 커밋합니다 — 명령 한 번. 병합 중이라? ',
+      '<b>aic</b>가 diff를 읽고, 컨벤셔널 커밋을 초안해 커밋합니다 — 명령 한 번. 병합 중이라? ',
     ledeLink: '충돌을 해결',
     ledeAfter:
       '합니다 — 파일 단위로, 무엇이든 적용되기 전에 diff를 확인. 스테이지된 게 없으면? 작업을 논리적인 커밋으로 쪼갭니다 — 한 파일 안에서도.',
@@ -173,7 +173,7 @@ export const messages: Messages = {
         { h: '감지', n: '<code>aic resolve</code>가 저장소 상태를 읽습니다. 병합 중이고 미해결 파일이 있으면 나열합니다.' },
         { h: '파일별 해결', n: '각 파일마다 aic는 충돌 내용을 모델에 보내 마커 없는 버전을 받습니다. 마커가 빠져나오면 한 번 재시도합니다.' },
         { h: 'diff 검토', n: 'aic는 제안된 모든 해결을 하나의 diff로 묶습니다 — 마커는 제거, 양쪽은 조정 — 무엇이 바뀔지 정확히 보입니다.' },
-        { h: '파일별 승인', n: '각 파일은 자체 <code>apply?</code> 프롬프트를 갖습니다. yes면 aic가 해결을 쓰고 스테이지합니다. no면 그 파일은 그대로입니다.' },
+        { h: '파일별 승인', n: '각 파일은 자체 <code>apply?</code> 프롬프트를 갖습니다. yes면 aic가 해결안을 작성하고 스테이지합니다. no면 그 파일은 그대로입니다.' },
         { h: '마무리', n: '미해결이 없으면 aic가 병합의 <code>--continue</code>를 실행합니다. 진행 중 막힌 부분은 명확한 인수인계로 보고되고, 정체 모를 카운트가 아닙니다.' },
       ],
     },
@@ -188,20 +188,20 @@ export const messages: Messages = {
     review: {
       h2: '당신의 허락 없이는 아무것도 적용되지 않는다',
       lede: '요점은 이것: aic는 제안하고, 당신이 결정합니다. 당신이 보고 승인하지 않은 해결은 결코 쓰지 않습니다.',
-      callout: '<strong>적용 전에 검토.</strong>제안된 모든 해결은 디스크에 닿기<em>전에</em> diff로 보여집니다. 각 파일은 별도의 <code>y/n</code> — 신뢰하는 것은 승인, 아닌 것은 거부, 거부된 파일은 당신이 둔 그대로 남습니다.',
+      callout: '<strong>적용 전에 검토.</strong> 제안된 모든 해결은 디스크에 닿기 <em>전에</em> diff로 표시됩니다. 각 파일은 별도의 <code>y/n</code> — 신뢰하는 것은 승인, 아닌 것은 거부, 거부된 파일은 당신이 둔 그대로 남습니다.',
     },
     limits: {
       h2: 'aic가 당신에게 남기는 것',
       lede: '앞서 정직하게, 도구가 끝나고 당신이 시작하는 지점을 알도록. 이것은 v1의 한계입니다.',
       points: [
         { h: '병합 충돌만', n: 'aic가 다루는 것은 충돌된<em>병합</em> 상태. 진행 중인 rebase나 <code>am</code>은 v1에서 감지되어 거부됩니다 — 완료하거나 중단한 뒤 resolve하세요.' },
-        { h: '자동 해결이 안 되는 충돌도', n: '바이너리 파일, 과도하게 큰 파일, delete/modify 충돌은 이유와 함께 건너뜁니다 — aic가 수동 해결을 위해 가리킵니다.' },
+        { h: '자동 해결이 안 되는 충돌도', n: '바이너리 파일, 과도하게 큰 파일, delete/modify 충돌은 이유와 함께 건너뜁니다 — aic가 수동 해결이 필요한 지점을 짚어 줍니다.' },
         { h: '마무리는 전부 아니면 전무', n: '어찌 됐든 <code>--continue</code>는 미해결 경로가 있으면 막히므로, 남은 한 블로커가 마무리를 잡습니다. aic의 인수인계는 무엇이 남았는지 정확히 알려줍니다.' },
       ],
     },
     verdict: {
       h2: '한 줄 요약',
-      body: '<code>aic resolve</code>는 충돌한 파일을 읽고, 실제로 검토할 수 있는 해결을 제안하며, 당신이 승인한 것만 씁니다 — 그런 다음 병합을 마무리합니다. aic가 커밋에 쓰는 것과 같은 "diff를 읽고, 수정을 초안하고, 출하하라" 루프가 git에서 가장 보기 흉한 부분을 향하고 있습니다.',
+      body: '<code>aic resolve</code>는 충돌한 파일을 읽고, 실제로 검토할 수 있는 해결을 제안하며, 당신이 승인한 것만 씁니다 — 그런 다음 병합을 마무리합니다. aic가 커밋에 쓰는 것과 같은 "diff를 읽고, 수정을 초안하고, 출시하라" 루프가 git에서 가장 보기 흉한 부분을 향하고 있습니다.',
       releaseNotes: 'v0.3.0 릴리스 노트',
     },
   },
@@ -210,9 +210,10 @@ export const messages: Messages = {
     aicommits: {
       eyebrow: '비교 · aicommits 대안',
       h1: 'aic vs aicommits',
-      ledeAfter: ' 는 AI 커밋 메시지 도구에서 자리 잡은 기본 선택 — 설치 기반, 생태계, 선발의 추진력. 이 페이지는 그렇지 않은 척하려는 게 아닙니다. <strong>aic</strong>가 언제 더 나은 선택인지 — 그리고 언제 그냥 aicommits에 머물러야 하는지 정확히 알려줍니다.',
-      callout: '<strong>좁은 업계.</strong>aicommits 자체 README도 이름이 너무 길면 <code>aic</code>로 별칭하길 권합니다. 우리는 <code>aic</code>를 별개의 것으로 출하했습니다 — 그리고 hunk 단위로 미스테이지 작업을 논리적인 커밋으로 쪼개, 한 파일도 여러 개가 될 수 있습니다.',
+      ledeAfter: '는 AI 커밋 메시지 도구에서 자리 잡은 기본 선택 — 설치 기반, 생태계, 선발주자로서의 추진력. 이 페이지는 그렇지 않은 척하려는 게 아닙니다. <strong>aic</strong>가 언제 더 나은 선택인지 — 그리고 언제 그냥 aicommits에 머물러야 하는지 정확히 알려줍니다.',
+      callout: '<strong>좁은 세상이네요.</strong> aicommits 자체 README도 이름이 너무 길면 <code>aic</code>로 별칭하길 권합니다. 우리는 <code>aic</code>를 독자적인 도구로 출시했습니다 — 그리고 hunk 단위로 미스테이지 작업을 논리적인 커밋으로 쪼개, 한 파일도 여러 개가 될 수 있습니다.',
       matrix: {
+        heading: '기능별 비교',
         capability: '기능',
         aic: 'aic',
       },
@@ -222,7 +223,7 @@ export const messages: Messages = {
       tieTag: '트레이드오프',
       verdict: {
         h2: '한 줄 요약',
-        body: '미스테이지 작업이 쌓이고 깔끔하고 논리적인 커밋으로 쪼개고 싶거나 — Node.js 의존 없이 Claude, Gemini, DeepSeek을 일급 프로바이더로 — 원한다면 <strong>aic</strong>로 전환하세요. <code>git commit</code> 훅, gitmoji 커밋, 고를 수 있는 여러 후보, 또는 그저 인기 있는 선택의 편안함을 원한다면, aicommits도 여전히 훌륭한 도구입니다.',
+        body: '미스테이지 작업이 쌓이고 깔끔하고 논리적인 커밋으로 쪼개고 싶거나, Node.js 의존 없이 Claude, Gemini, DeepSeek을 일급 프로바이더로 쓰고 싶다면 <strong>aic</strong>로 전환하세요. <code>git commit</code> 훅, gitmoji 커밋, 고를 수 있는 여러 후보, 또는 그저 인기 있는 선택의 편안함을 원한다면, aicommits도 여전히 훌륭한 도구입니다.',
       },
       axes: {
         'auto-batch': {
@@ -265,7 +266,7 @@ export const messages: Messages = {
           feature: '커밋 메시지 형식',
           aic: 'Conventional Commits',
           rival: '일반 · 컨벤셔널 · gitmoji',
-          note: 'aic는 설계상 conventional만; aicommits는 plain 비구조 모드를 포함해 고를 수 있게 합니다.',
+          note: 'aic는 설계상 컨벤셔널만 지원합니다. aicommits는 일반 비구조 모드를 포함해 고를 수 있게 합니다.',
         },
         hook: {
           feature: 'Git 훅 통합',
@@ -282,8 +283,8 @@ export const messages: Messages = {
         prompt: {
           feature: '프롬프트와 로케일 제어',
           aic: '환경변수로 시스템 프롬프트',
-          rival: '`--prompt`、locale、max-length',
-          note: 'aicommits가 더 풍부한 노브를 노출. aic는 `AIC_SYSTEM_PROMPT` 재정의를 지원하지만 표면 옵션은 더 적습니다.',
+          rival: '`--prompt`, locale, max-length',
+          note: 'aicommits가 더 풍부한 조절 옵션을 제공합니다. aic는 `AIC_SYSTEM_PROMPT` 재정의를 지원하지만 사용할 수 있는 옵션은 더 적습니다.',
         },
         popularity: {
           feature: '인기와 생태계',
@@ -298,13 +299,13 @@ export const messages: Messages = {
   roundup: {
     eyebrow: '라운드업 · 최고 AI 커밋 도구',
     h1: '최고의 AI 커밋 메시지 도구',
-    lede: '<code>git diff</code>를 읽고 커밋 메시지를 초안하는 CLI는 넘쳐납니다. "어떤 게 최고?"에 대한 정직한 대답은 "무엇을 원하느냐에 따라"입니다. 다음은 공정하고, 기능을 검증한 분야 조사 — 와 빠르게 고르는 방법입니다.',
+    lede: '<code>git diff</code>를 읽고 커밋 메시지를 초안하는 CLI는 넘쳐납니다. "어떤 게 최고?"에 대한 정직한 대답은 "무엇을 원하느냐에 따라"입니다. 다음은 기능을 하나하나 검증한 공정한 분야 조사와, 빠르게 고르는 방법입니다.',
     callout: '<strong>공개.</strong><code>aic</code>는 우리 도구라 이 목록에 있습니다. 각 도구가 진정으로 잘하는 것에 대해 모든 한 줄평을 정직하게 유지 — 다른 도구가 우리를 이기는 부분도 포함해.',
     choose: {
       h2: '선택 방법',
       items: [
         { need: '미스테이지 작업을 논리적인 커밋으로 쪼개고 싶다 — 한 파일 안에서도', pick: '→ aic' },
-        { need: '병합 충돌을 대신 해결해 줄 누군가가 필요, 나중에 메시지만이 아니라', pick: '→ aic' },
+        { need: '병합 충돌을 대신 해결해 주길 원한다 — 나중에 메시지만이 아니라', pick: '→ aic' },
         { need: '인기 있고 잘 지원되는 기본값을 원한다', pick: '→ aicommits' },
         { need: '이미 Claude Code에서 일하고 있다', pick: '→ ai-commit' },
         { need: '무료, 로컬, 오프라인 — 그리고 PR 설명도', pick: '→ git-ai' },
@@ -324,7 +325,7 @@ export const messages: Messages = {
     },
     verdict: {
       h2: '우리의 정직한 평가',
-      body: '미스테이지 작업이 쌓이고 깔끔하고, 원자적이고, 컨벤션 커밋으로 커밋하고 싶다 — Node.js 설치 없이 — 면 <strong>aic</strong>가 그것을 위해 만들어졌습니다. 그렇지 않다면, aicommits가 안전한 기본값이고, 나머지는 각자 명확한 틈새를 차지합니다.',
+      body: '미스테이지 작업이 쌓이고 깔끔하고, 원자적이고, 컨벤셔널 커밋으로 커밋하고 싶다면 — Node.js 설치 없이 — <strong>aic</strong>가 바로 그 목적을 위해 만들어졌습니다. 그렇지 않다면, aicommits가 안전한 기본값이고, 나머지는 각자 명확한 틈새를 차지합니다.',
       seeVs: 'aic vs aicommits 보기 →',
     },
     tools: {
@@ -354,7 +355,7 @@ export const messages: Messages = {
   changelog: {
     eyebrow: '변경 이력 · 릴리스 노트',
     h1: '모든 aic 릴리스를 순서대로.',
-    ledeBefore: '출하된 <code>aic</code>의 각 버전 — 빌드 시 소스 저장소의 ',
+    ledeBefore: '출시된 <code>aic</code>의 각 버전 — 빌드 시 소스 저장소의 ',
     ledeLink: 'CHANGELOG.md',
     ledeAfter: ' 에서 가져오며, 그 가져오기가 잠시 닿지 않으면 GitHub Releases를 폴백으로 씁니다. 최신이 위.',
     englishNote: '릴리스 노트는 영어로 유지됩니다.',

@@ -22,7 +22,7 @@ export const messages: Messages = {
     resolve: {
       title: 'aic resolve — AI 合并冲突解决器',
       description:
-        'aic 读取每一个冲突文件，提出干净的解决方案，并把 diff 给你看。你逐文件确认——没有你的点头什么都不落地——然后它替你完成合并。一款绝不会未经你同意就改动你工作的 AI 合并冲突解决器。',
+        'aic 读取每一个冲突文件，提出干净的解决方案，并把 diff 给你看。你逐文件确认——没有你的点头什么都不落地——然后它替你完成合并。一款绝不会盲目改动你的工作的 AI 合并冲突解决器。',
     },
     roundup: {
       title: '{year} 年最佳 AI 提交信息工具',
@@ -75,7 +75,7 @@ export const messages: Messages = {
       stopWriting: '别再写',
       commit: '提交',
       messages: '信息。',
-      stopUntangling: '别再拆解',
+      stopUntangling: '别再费力解开',
       merge: '合并',
       conflicts: '冲突。',
     },
@@ -148,7 +148,7 @@ export const messages: Messages = {
   },
 
   footer: {
-    eyebrow: '今天就提交更干净的提交',
+    eyebrow: '今天就交出更干净的提交',
     h2: '别再手写提交信息了。',
     star: '★ 在 GitHub 上加星',
     nav: {
@@ -212,9 +212,10 @@ export const messages: Messages = {
     aicommits: {
       eyebrow: '对比 · aicommits 的替代方案',
       h1: 'aic 对比 aicommits',
-      ledeAfter: ' 是 AI 提交信息工具里根深蒂固的默认选择——装机量、生态、先发优势都在它那边。本页不是来假装不是这样的。它要准确告诉你 <strong>aic</strong> 何时更值得选——以及你何时就该继续用 aicommits。',
+      ledeAfter: ' 是 AI 提交信息工具里根深蒂固的默认选择——装机量、生态、先发优势都在它那边。本页无意粉饰这一点。它要准确告诉你 <strong>aic</strong> 何时更值得选——以及你何时就该继续用 aicommits。',
       callout: '<strong>巧了。</strong>aicommits 自己的 README 就建议，如果名字太长，可以把它别名成 <code>aic</code>。我们把 <code>aic</code> 作为独立的东西发布了——而且它在 hunk 层级把你的未暂存改动拆成多个逻辑提交，所以哪怕一个文件也能变成好几个。',
       matrix: {
+        heading: '逐特性对比',
         capability: '能力',
         aic: 'aic',
       },
@@ -285,7 +286,7 @@ export const messages: Messages = {
           feature: '提示词与语言控制',
           aic: '通过环境变量设系统提示词',
           rival: '`--prompt`、locale、max-length',
-          note: 'aicommits 暴露的旋钮更丰富。aic 支持 `AIC_SYSTEM_PROMPT` 覆盖，但界面选项更少。',
+          note: 'aicommits 提供的可调项更丰富。aic 支持 `AIC_SYSTEM_PROMPT` 覆盖，但界面选项更少。',
         },
         popularity: {
           feature: '人气与生态',

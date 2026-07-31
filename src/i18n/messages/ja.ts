@@ -15,14 +15,14 @@ export const messages: Messages = {
   meta: {
     title: 'aic — AI 駆動の git コミット',
     description:
-      'aic は diff を読み、コンベンショナルコミットを起草してコミットします — コマンド1つ。ステージ済みがない？作業を論理的なコミットにまとめます。',
+      'aic は diff を読み、コンベンショナルコミットを起草してコミットします — コマンド1つ。何もステージしていない？作業を論理的なコミットにまとめます。',
     resolve: {
       title: 'aic resolve — AI マージコンフリクト解決',
       description:
         'aic はコンフリクトしたすべてのファイルを読み、クリーンな解決を提案し、diff を見せます。ファイルごとに承認 — あなたの許可なしには何も適用されず — その後マージを完了します。あなたの作業を盲目的に変更することのない AI マージコンフリクト解決ツール。',
     },
     roundup: {
-      title: '{year}年 最高のAIコミットメッセージツール',
+      title: '{year}年最高の AI コミットメッセージツール',
       description:
         'AI による git コミットツールの正直な総まとめ — aic、aicommits、ai-commit、git-ai、llmc — と、いつどれを選ぶべきかについての公平で機能検証済みの見解。',
     },
@@ -80,7 +80,7 @@ export const messages: Messages = {
       '<b>aic</b> は diff を読み、コンベンショナルコミットを起草してコミットします — コマンド1つ。マージ中なら、',
     ledeLink: 'コンフリクトを解決',
     ledeAfter:
-      'します — ファイルごとに、何も適用される前に diff を確認。ステージ済みがない？作業を論理的なコミットに分割します — 1つのファイル内でも。',
+      'します — ファイルごとに、何も適用される前に diff を確認。何もステージしていない？作業を論理的なコミットに分割します — 1つのファイル内でも。',
     ctaHint: 'そして <code>{cmd}</code> を実行',
   },
 
@@ -98,14 +98,14 @@ export const messages: Messages = {
   },
 
   commands: {
-    aic: { description: 'ステージ済みをコミット · または未ステージをバッチ計画' },
+    aic: { description: 'ステージ済みをコミット · または未ステージの作業をまとめて計画' },
     'aic-setup': { description: '一度だけのウィザード — プロバイダ → キー → モデル' },
     'aic-list': { description: '解決済みの設定 + マスク済み API キーを表示' },
   },
 
   batching: {
     eyebrow: '03 — 自動バッチ処理',
-    kicker: 'ステージ済みがない？',
+    kicker: '何もステージしていない？',
     h2: '1つのファイル、複数のコミット',
     lede: 'aic は hunk レベルで diff を読みます — だから1つのファイルでも複数の焦点を絞ったコミットになり、それぞれが1つのアイデア。ステージなし、コマンド1つ、クリーンな履歴。',
     aside: 'hunk ごとのバッチ処理 ✦',
@@ -174,7 +174,7 @@ export const messages: Messages = {
         { h: 'ファイルごとに解決', n: '各ファイルについて、aic はコンフリクトした内容をモデルに送り、マーカーのないバージョンを受け取ります。マーカーが漏れていれば、一度再試行します。' },
         { h: 'diff を確認', n: 'aic はすべての提案された解決を1つの diff にまとめます — マーカーは除去、両側は調和 — 何が変わるか正確に分かります。' },
         { h: 'ファイルごとに承認', n: '各ファイルには独自の <code>apply?</code> プロンプトがあります。yes なら aic は解決を書き込んでステージします。no ならそのファイルは触られません。' },
-        { h: '完了', n: '未解決がなくなると、aic はマージの <code>--continue</code> を実行します。途中のブロッカーは明確な引き継ぎで報告され、謎のカウントではありません。' },
+        { h: '完了', n: '未解決がなくなると、aic はマージの <code>--continue</code> を実行します。途中のブロッカーは明確な案内とともに報告され、謎のカウントではありません。' },
       ],
     },
     twoWays: {
@@ -182,7 +182,7 @@ export const messages: Messages = {
       lede: 'コマンドを覚える必要はありません。明示的な動詞と、忘れた時にキャッチするガードがあります。',
       points: [
         { h: '<code>aic resolve</code>', n: '明示的な動詞。リポジトリがマージ中ならいつでも実行でき、aic は上の検出ステップから引き継ぎます。' },
-        { h: 'コミットガード', n: 'コンフリクトしたリポジトリで plain な <code>aic</code> を実行すると、それは気づき、resolve への引き継ぎを提案し、さらに深いガードがコンフリクトマーカーを含むコミットをブロックします。親切な玄関、プラス安全網。' },
+        { h: 'コミットガード', n: 'コンフリクトしたリポジトリで素の <code>aic</code> を実行すると、aic はそれに気づき、resolve への引き継ぎを提案します。さらに深いガードが、コンフリクトマーカーを含むコミットをブロックします。親しみやすい入り口、そして安全網。' },
       ],
     },
     review: {
@@ -192,11 +192,11 @@ export const messages: Messages = {
     },
     limits: {
       h2: 'aic があなたに残すもの',
-      lede: '先に正直に。ツールが終わり、あなたが始まる場所を知るため。これらは v1 の制限です。',
+      lede: '先に正直に言っておきます。ツールがどこまでできて、どこからはあなた次第なのかを把握するためです。これらは v1 の制限です。',
       points: [
         { h: 'マージコンフリクトのみ', n: 'aic が扱うのはコンフリクトした<em>マージ</em>状態。進行中の rebase や <code>am</code> は v1 では検出されて拒否されます — 完了または中止してから resolve してください。' },
         { h: '自動解決できないコンフリクトも', n: 'バイナリファイル、巨大ファイル、delete/modify コンフリクトは理由付きでスキップされます — aic は手動で解決できるようそれらを指し示します。' },
-        { h: '完了はオールオアナッシング', n: 'どのみち <code>--continue</code> は未解決のパスがあるとブロックするので、残り1つのブロッカーが完了を止めます。aic の引き継ぎは何が残っているか正確に伝えます。' },
+        { h: '完了はオールオアナッシング', n: 'どのみち <code>--continue</code> は未解決のパスがあるとブロックするので、残り1つのブロッカーが完了を止めます。aic の案内は何が残っているか正確に伝えます。' },
       ],
     },
     verdict: {
@@ -210,9 +210,10 @@ export const messages: Messages = {
     aicommits: {
       eyebrow: '比較 · aicommits の代替',
       h1: 'aic vs aicommits',
-      ledeAfter: ' は AI コミットメッセージツールとして定着したデフォルト — インストールベース、エコシステム、先発の勢い。このページはそうでないふりをするためのものではありません。いつ <strong>aic</strong> がより良い選択か — そしていつ aicommits に留まるべきかを正確に伝えます。',
-      callout: '<strong>狭い業界ですね。</strong>aicommits 自身の README も、名前が長すぎる場合は <code>aic</code> にエイリアスすることを提案しています。私たちは <code>aic</code> を独立したものとして出荷しました — そしてそれは hunk レベルで未ステージの作業を論理的なコミットに分割するので、1つのファイルでも複数になり得ます。',
+      ledeAfter: ' は AI コミットメッセージツールとして定着したデフォルト — 導入実績、エコシステム、先発の勢い。このページはそうでないふりをするためのものではありません。いつ <strong>aic</strong> がより良い選択か — そしていつ aicommits に留まるべきかを正確に伝えます。',
+      callout: '<strong>世間は狭いですね。</strong>aicommits 自身の README も、名前が長すぎる場合は <code>aic</code> にエイリアスすることを提案しています。私たちは <code>aic</code> を独立したツールとして出荷しました — そしてそれは hunk レベルで未ステージの作業を論理的なコミットに分割するので、1つのファイルでも複数になり得ます。',
       matrix: {
+        heading: '機能ごとの比較',
         capability: '能力',
         aic: 'aic',
       },
@@ -235,7 +236,7 @@ export const messages: Messages = {
           feature: '1つのファイルを複数コミットに分割（hunk ごと）',
           aic: 'はい — インテントごとに各 hunk を独自のコミットへ',
           rival: 'いいえ — 多くてファイル粒度',
-          note: 'aic v0.3.5 で搭載。aicommits（および roundup のすべてのツール）は多くてもファイル境界で分割; aic は hunk レベルで diff を読むので、3つの関心事を抱える1ファイルが3つのフォーカスされたコミットになります。',
+          note: 'aic v0.3.5 で搭載。aicommits（および roundup のすべてのツール）は多くてもファイル境界で分割。aic は hunk レベルで diff を読むので、3つの関心事を抱える1ファイルが3つの焦点を絞ったコミットになります。',
         },
         resolve: {
           feature: 'マージコンフリクトを解決',
@@ -247,7 +248,7 @@ export const messages: Messages = {
           feature: 'ファーストクラスの Anthropic · Gemini · DeepSeek',
           aic: 'はい — ネイティブプロバイダ',
           rival: 'OpenRouter / カスタムエンドポイント経由のみ',
-          note: 'aicommits は間接的にしか到達しません; aic はそれらをファーストクラスとして出荷し、理にかなったデフォルトモデルを付けます。',
+          note: 'aicommits は間接的にしか到達しません。aic はそれらをファーストクラスとして出荷し、理にかなったデフォルトモデルを付けます。',
         },
         runtime: {
           feature: 'ランタイムと依存',
@@ -265,7 +266,7 @@ export const messages: Messages = {
           feature: 'コミットメッセージの形式',
           aic: 'Conventional Commits',
           rival: 'プレーン · コンベンショナル · gitmoji',
-          note: 'aic は設計上 conventional のみ; aicommits は plain な非構造モードを含め選べます。',
+          note: 'aic は設計上コンベンショナルのみ。aicommits はプレーンな非構造モードも含めて選べます。',
         },
         hook: {
           feature: 'Git フック統合',
@@ -283,7 +284,7 @@ export const messages: Messages = {
           feature: 'プロンプトとロケール制御',
           aic: '環境変数でシステムプロンプト',
           rival: '`--prompt`、locale、max-length',
-          note: 'aicommits はより豊富なノブを公開します。aic は `AIC_SYSTEM_PROMPT` の上書きをサポートしますが、表面のオプションはより少ないです。',
+          note: 'aicommits はより多くの調整オプションを提供します。aic は `AIC_SYSTEM_PROMPT` の上書きをサポートしますが、選択できるオプションはより少ないです。',
         },
         popularity: {
           feature: '人気とエコシステム',
@@ -298,8 +299,8 @@ export const messages: Messages = {
   roundup: {
     eyebrow: 'ラウンドアップ · ベスト AI コミットツール',
     h1: 'ベストな AI コミットメッセージツール',
-    lede: '<code>git diff</code> を読んでコミットメッセージを起草する CLI はいくらでもあります。「どれがベスト？」への正直な答えは「あなたが何を欲しいかによる」です。以下は公正で、機能を検証したツールの調査 — と、素早く選ぶ方法です。',
-    callout: '<strong>開示。</strong><code>aic</code> は私たちのツールなので、このリストに含まれています。各ツールが本当に得意なことについて、すべての一言を正直に保ちました — 他が私たちに勝つ点も含めて。',
+    lede: '<code>git diff</code> を読んでコミットメッセージを起草する CLI はいくらでもあります。「どれがベスト？」への正直な答えは「何が欲しいかによる」です。以下は公正で、機能を検証したツールの調査 — と、素早く選ぶ方法です。',
+    callout: '<strong>開示。</strong><code>aic</code> は私たちのツールなので、このリストに含まれています。各ツールが本当に得意なことについて、紹介文をすべて正直に保ちました — 他が私たちに勝つ点も含めて。',
     choose: {
       h2: '選び方',
       items: [
@@ -330,7 +331,7 @@ export const messages: Messages = {
     tools: {
       aic: {
         strength:
-          'ここで唯一、未ステージの作業を hunk レベルで論理的なコミットに分割するツール — だから1つのファイルでも複数のフォーカスされたコミットになり得る — そしてマージコンフリクトを解決します（`aic resolve`）。依存関係のない Rust バイナリとして出荷し、Anthropic、Gemini、DeepSeek をファーストクラスでサポートします。',
+          'ここで唯一、未ステージの作業を hunk レベルで論理的なコミットに分割するツール — だから1つのファイルでも複数の焦点を絞ったコミットになり得る — そしてマージコンフリクトを解決します（`aic resolve`）。依存関係のない Rust バイナリとして出荷し、Anthropic、Gemini、DeepSeek をファーストクラスでサポートします。',
       },
       aicommits: {
         strength:
@@ -338,7 +339,7 @@ export const messages: Messages = {
       },
       'ai-commit': {
         strength:
-          'ソースファイルを読む Claude Code プロバイダで際立ちます — すでに Claude Code を使っているなら自然な fit。',
+          'ソースファイルを読む Claude Code プロバイダで際立ちます — すでに Claude Code を使っているならぴったりです。',
       },
       'git-ai': {
         strength:
