@@ -9,11 +9,11 @@
  */
 import { LOCALES, LOCALE_LABELS, localeFromUrl } from '@/i18n/config';
 import { baseHref } from '@/lib/href';
-import { useTranslations } from '@/i18n/t';
+import { useLocalizer } from '@/i18n/t';
 import { sharedSlug } from '@/i18n/hreflang';
 
 const locale = localeFromUrl(Astro.url.pathname);
-const t = useTranslations(locale);
+const t = useLocalizer(locale);
 const base = baseHref(import.meta.env.BASE_URL);
 
 // Locale-invariant slug shared across all localized paths (ADR-0010 / Q9=A).

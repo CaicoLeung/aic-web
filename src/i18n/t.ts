@@ -1,5 +1,5 @@
 /**
- * Translation primitive (ADR-0010 / Q6=A).
+ * Localized-copy primitive (ADR-0010 / Q6=A).
  *
  * `t(path, params?)` does a dot-key lookup against the current locale's
  * message module and substitutes `{param}` placeholders. On a miss it falls
@@ -9,12 +9,17 @@
  *
  * Soft parity (Q7=B): a stubbed value === the en source, so a half-done
  * locale renders the en string at runtime — never an empty cell.
+ *
+ * Naming follows CONTEXT.md → Localized copy: the copy is a human-owned
+ * Localized rendering of the Canonical locale; this lookup only renders it
+ * ("translation" would imply the mechanical word-swap the vocabulary
+ * explicitly avoids).
  */
 import { DEFAULT_LOCALE, type Locale } from '@/i18n/config';
 import { messagesByLocale } from './messages';
 import type { Messages } from './messages/types';
 
-export type TranslateFn = (
+export type LocalizeFn = (
   path: string,
   params?: Record<string, string | number>,
 ) => string;
@@ -38,7 +43,7 @@ function substitute(template: string, params?: Record<string, string | number>):
   );
 }
 
-export function translate(
+export function localize(
   locale: Locale,
   path: string,
   params?: Record<string, string | number>,
@@ -49,8 +54,8 @@ export function translate(
 }
 
 /** Bind a locale to `t` for ergonomic use inside an Astro component. */
-export function useTranslations(locale: Locale): TranslateFn {
-  return (path, params) => translate(locale, path, params);
+export function useLocalizer(locale: Locale): LocalizeFn {
+  return (path, params) => localize(locale, path, params);
 }
 
 /**

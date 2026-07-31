@@ -28,6 +28,29 @@ export const messages = {
     title: 'aic — AI-powered git commits',
     description:
       'aic reads your diff, drafts a conventional commit, and commits it — one command. Nothing staged? It groups your work into logical commits for you.',
+    /** Per-page titles/descriptions — ADR-0010: translate <title>, meta, JSON-LD. */
+    resolve: {
+      title: 'aic resolve — AI merge conflict resolver',
+      description:
+        'aic reads every conflicted file, proposes a clean resolution, and shows you the diff. Approve each file — nothing lands without your say-so — then it finalizes the merge. An AI merge conflict resolver that never touches your work blind.',
+    },
+    roundup: {
+      /** `{year}` substituted at render. */
+      title: 'Best AI commit message tools in {year}',
+      description:
+        'An honest roundup of AI-powered git commit tools — aic, aicommits, ai-commit, git-ai, and llmc — with a fair, feature-verified take on when to pick each one.',
+    },
+    vs: {
+      title: 'aic vs aicommits — AI commit tool comparison',
+      description:
+        'aicommits is the established default. aic is the pick if you want auto-batching, first-class Anthropic/Gemini/DeepSeek, and no Node.js dependency. An honest, feature-by-feature comparison.',
+    },
+    changelog: {
+      title: 'aic changelog — every release',
+      /** `{version}` substituted at render. */
+      description:
+        'Every aic release in order — features, fixes, and notes as they shipped. Latest: v{version}.',
+    },
   },
 
   topbar: {
@@ -167,8 +190,12 @@ export const messages = {
     eyebrow: 'Capability · merge conflicts',
     h1: {
       main: 'Resolve merge conflicts.',
-      without: 'Without',
-      manualMerge: 'manual merge.',
+      // Second line, per-locale word order + connector. Rendered as
+      // <em>{0}</em>{1}<span>{2}</span> — the connector ("the") and the order
+      // of the two emphasized words are language-specific, so the whole
+      // phrase lives here instead of being spliced around a hardcoded EN
+      // word in the component.
+      sub: ['Without', ' the ', 'manual merge.'],
     },
     // Contains <b>; render via set:html.
     lede: '<b>aic</b> reads every conflicted file, proposes a clean resolution, and shows you the diff. You approve each file — nothing lands without your say-so — then it finalizes the merge for you.',

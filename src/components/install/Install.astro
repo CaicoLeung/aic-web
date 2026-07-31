@@ -6,10 +6,10 @@
 import { INSTALL_METHODS } from '@/config/site';
 import CopyButton from '@/components/ui/CopyButton.astro';
 import { localeFromUrl } from '@/i18n/config';
-import { useTranslations, useMessages } from '@/i18n/t';
+import { useLocalizer, useMessages } from '@/i18n/t';
 
 const locale = localeFromUrl(Astro.url.pathname);
-const t = useTranslations(locale);
+const t = useLocalizer(locale);
 const m = useMessages(locale);
 ---
 

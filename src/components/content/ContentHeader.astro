@@ -13,7 +13,7 @@
 import { GITHUB_URL } from '@/config/site';
 import { baseHref } from '@/lib/href';
 import { localeFromUrl } from '@/i18n/config';
-import { useTranslations } from '@/i18n/t';
+import { useLocalizer } from '@/i18n/t';
 import LanguageSwitcher from '@/components/topbar/LanguageSwitcher.astro';
 
 interface Props {
@@ -21,7 +21,7 @@ interface Props {
 }
 const { version } = Astro.props;
 const locale = localeFromUrl(Astro.url.pathname);
-const t = useTranslations(locale);
+const t = useLocalizer(locale);
 const home = baseHref(import.meta.env.BASE_URL);
 const changelog = `${home}changelog/`;
 const versionTitle = version ? t('contentHeader.versionTitle', { version }) : undefined;

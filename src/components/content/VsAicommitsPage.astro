@@ -10,8 +10,8 @@
  * (not SoftwareApplication) since this is content, not the app listing.
  *
  * Rendered by both `/vs/aicommits/` and `/[locale]/vs/aicommits/`
- * (ADR-0010). Base self-determines locale; prose is inline EN pending the
- * t()-wiring pass (soft parity, Q7=B).
+ * (ADR-0010). Base self-determines locale; all prose + meta wire
+ * `t()`/`useMessages`; stubbed keys fall back to EN (soft parity, Q7=B).
  */
 import { loadAicFacts } from '@/data/aic';
 import Base from '@/layouts/Base.astro';
@@ -21,11 +21,11 @@ import CopyButton from '@/components/ui/CopyButton.astro';
 import { AICOMMITS_COMPARISON } from '@/config/competitors';
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { localeFromUrl } from '@/i18n/config';
-import { useTranslations, useMessages } from '@/i18n/t';
+import { useLocalizer, useMessages } from '@/i18n/t';
 
 const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
-const t = useTranslations(locale);
+const t = useLocalizer(locale);
 const m = useMessages(locale);
 const L = m.vs.aicommits.axes;
 const { rival, axes } = AICOMMITS_COMPARISON;
@@ -33,8 +33,8 @@ const aicWins = axes.filter((a) => a.winner === 'aic');
 const rivalWins = axes.filter((a) => a.winner === 'rival');
 const ties = axes.filter((a) => a.winner === 'tie');
 
-const title = `aic vs aicommits — AI commit tool comparison`;
-const description = `aicommits is the established default. aic is the pick if you want auto-batching, first-class Anthropic/Gemini/DeepSeek, and no Node.js dependency. An honest, feature-by-feature comparison.`;
+const title = t('meta.vs.title');
+const description = t('meta.vs.description');
 
 const schema = {
   '@context': 'https://schema.org',

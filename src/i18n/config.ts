@@ -6,9 +6,11 @@
  *   - the `x-default` hreflang target
  *   - the narrative source every Localized copy is derived from
  *
- * zh/ja/ko are prefixed (`/zh/`, `/ja/`, `/ko/`) and currently soft-parity
- * stubs (ADR-0010 / Q7=B): keys exist, values pending machine-draft +
- * human review (CONTEXT.md → Localized copy).
+ * zh/ja/ko are prefixed (`/zh/`, `/ja/`, `/ko/`) Localized copies
+ * (CONTEXT.md → Localized copy): machine-drafted, human-review-pending.
+ * Keys still equal to the EN source are intentional invariants (brands,
+ * literal commands, tool names) — soft parity (ADR-0010 / Q7=B) covers
+ * the rest at runtime.
  */
 import { baseHref } from '@/lib/href';
 
@@ -18,8 +20,10 @@ export const LOCALES = ['en', 'zh', 'ja', 'ko'] as const;
 export type Locale = (typeof LOCALES)[number];
 
 /** Locales that carry a path prefix (every locale except the default). */
-export const LOCALE_PREFIXES = LOCALES.filter(
-  (l): l is Exclude<Locale, typeof DEFAULT_LOCALE> => l !== DEFAULT_LOCALE,
+export type LocalePrefix = Exclude<Locale, typeof DEFAULT_LOCALE>;
+
+export const LOCALE_PREFIXES: readonly LocalePrefix[] = LOCALES.filter(
+  (l): l is LocalePrefix => l !== DEFAULT_LOCALE,
 );
 
 /** Native-language labels for the Switcher (ADR-0010 / Q8). */
@@ -40,6 +44,13 @@ export const LOCALE_HREFLANG: Readonly<Record<Locale, string>> = {
 
 export function isLocale(value: string): value is Locale {
   return (LOCALES as readonly string[]).includes(value);
+}
+
+/** Guard for `/[locale]` dynamic routes: only prefixed locales are valid
+ *  route params — unknown segments 404 instead of rendering a fake locale
+ *  (ADR-0010). Shared so all five `[locale]` pages use the same check. */
+export function isLocalePrefix(value: string | undefined): value is LocalePrefix {
+  return value !== undefined && (LOCALE_PREFIXES as readonly string[]).includes(value);
 }
 
 /**

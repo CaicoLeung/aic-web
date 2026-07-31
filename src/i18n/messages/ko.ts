@@ -16,6 +16,26 @@ export const messages: Messages = {
     title: 'aic — AI 기반 git 커밋',
     description:
       'aic가 diff를 읽고, 컨벤션 커밋을 초안해 커밋합니다 — 명령 한 번. 스테이지된 게 없으면? 작업을 논리적인 커밋으로 묶어줍니다.',
+    resolve: {
+      title: 'aic resolve — AI 병합 충돌 해결 도구',
+      description:
+        'aic는 충돌하는 모든 파일을 읽고, 깔끔한 해결을 제안하며, diff를 보여줍니다. 파일마다 승인 — 당신의 허락 없이는 아무것도 적용되지 않고 — 그런 다음 병합을 마무리합니다. 당신의 작업을 무단으로 건드리지 않는 AI 병합 충돌 해결 도구.',
+    },
+    roundup: {
+      title: '{year}년 최고의 AI 커밋 메시지 도구',
+      description:
+        'AI 기반 git 커밋 도구에 대한 정직한 정리 — aic, aicommits, ai-commit, git-ai, llmc — 그리고 언제 무엇을 골라야 하는지에 대한 공정하고 기능이 검증된 견해.',
+    },
+    vs: {
+      title: 'aic vs aicommits — AI 커밋 도구 비교',
+      description:
+        'aicommits는 확립된 기본 선택입니다. 자동 배칭, 일급 Anthropic/Gemini/DeepSeek 지원, Node.js 불필요를 원한다면 aic를 고르세요. 정직하고 기능별로 비교한 리뷰입니다.',
+    },
+    changelog: {
+      title: 'aic 체인지로그 — 모든 릴리스',
+      description:
+        'aic의 모든 릴리스를 순서대로 — 기능, 수정, 릴리스 노트. 최신: v{version}.',
+    },
   },
 
   topbar: {
@@ -141,8 +161,8 @@ export const messages: Messages = {
     eyebrow: '기능 · 병합 충돌',
     h1: {
       main: '병합 충돌을 해결.',
-      without: '수동',
-      manualMerge: '병합 없이.',
+      // 한국어는 어순이 반대 + 공백 필요: 수동 + ' ' + 병합 없이.
+      sub: ['수동', ' ', '병합 없이.'],
     },
     lede: '<b>aic</b>는 충돌하는 모든 파일을 읽고, 깔끔한 해결을 제안하며, diff를 보여줍니다. 파일마다 승인 — 당신의 허락 없이는 아무것도 적용되지 않고 — 그런 다음 병합을 마무리합니다.',
     ctaHint: '그런 다음 <code>aic resolve</code> 실행',
@@ -244,7 +264,7 @@ export const messages: Messages = {
         formats: {
           feature: '커밋 메시지 형식',
           aic: 'Conventional Commits',
-          rival: 'plain · conventional · gitmoji',
+          rival: '일반 · 컨벤셔널 · gitmoji',
           note: 'aic는 설계상 conventional만; aicommits는 plain 비구조 모드를 포함해 고를 수 있게 합니다.',
         },
         hook: {
@@ -262,7 +282,7 @@ export const messages: Messages = {
         prompt: {
           feature: '프롬프트와 로케일 제어',
           aic: '환경변수로 시스템 프롬프트',
-          rival: '`--prompt`, locale, max-length',
+          rival: '`--prompt`、locale、max-length',
           note: 'aicommits가 더 풍부한 노브를 노출. aic는 `AIC_SYSTEM_PROMPT` 재정의를 지원하지만 표면 옵션은 더 적습니다.',
         },
         popularity: {

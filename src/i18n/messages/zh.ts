@@ -19,6 +19,26 @@ export const messages: Messages = {
     title: 'aic — AI 驱动的 git 提交',
     description:
       'aic 读取你的 diff，起草一条约定式提交并提交——只需一条命令。没有暂存内容？它会自动把你的改动归组为多个逻辑提交。',
+    resolve: {
+      title: 'aic resolve — AI 合并冲突解决器',
+      description:
+        'aic 读取每一个冲突文件，提出干净的解决方案，并把 diff 给你看。你逐文件确认——没有你的点头什么都不落地——然后它替你完成合并。一款绝不会未经你同意就改动你工作的 AI 合并冲突解决器。',
+    },
+    roundup: {
+      title: '{year} 年最佳 AI 提交信息工具',
+      description:
+        '一份诚实的 AI 版 git 提交工具盘点——aic、aicommits、ai-commit、git-ai 和 llmc——以及一份公平、逐项核实过的选购建议。',
+    },
+    vs: {
+      title: 'aic 对比 aicommits — AI 提交工具对比',
+      description:
+        'aicommits 是公认的默认之选。如果你想要自动分批、一流的 Anthropic/Gemini/DeepSeek 支持，并且不想依赖 Node.js，那就选 aic。一份诚实、逐特性对比的评测。',
+    },
+    changelog: {
+      title: 'aic 更新日志 — 每一个版本',
+      description:
+        '按时间顺序列出 aic 的每一次发布——功能、修复与发布说明。最新：v{version}。',
+    },
   },
 
   topbar: {
@@ -144,8 +164,7 @@ export const messages: Messages = {
     eyebrow: '能力 · 合并冲突',
     h1: {
       main: '解决合并冲突。',
-      without: '无需',
-      manualMerge: '手动合并。',
+      sub: ['无需', '', '手动合并。'],
     },
     lede: '<b>aic</b> 读取每一个冲突文件，提出干净的解决方案，并把 diff 给你看。你逐文件确认——没有你的点头什么都不落地——然后它替你完成合并。',
     ctaHint: '然后运行 <code>aic resolve</code>',

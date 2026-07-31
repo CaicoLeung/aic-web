@@ -10,7 +10,8 @@
  *
  * Rendered by both `/best-ai-commit-tools/` and
  * `/[locale]/best-ai-commit-tools/` (ADR-0010). Base self-determines
- * locale; prose is inline EN pending the t()-wiring pass (soft parity, Q7=B).
+ * locale; all prose + meta wire `t()`/`useMessages`; stubbed keys fall
+ * back to EN (soft parity, Q7=B).
  */
 import { loadAicFacts } from '@/data/aic';
 import Base from '@/layouts/Base.astro';
@@ -20,19 +21,19 @@ import CopyButton from '@/components/ui/CopyButton.astro';
 import { ROUNDUP } from '@/config/competitors';
 import { GITHUB_URL, HUNK_SPLITTING, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { localeFromUrl } from '@/i18n/config';
-import { useTranslations, useMessages } from '@/i18n/t';
+import { useLocalizer, useMessages } from '@/i18n/t';
 
 const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
-const t = useTranslations(locale);
+const t = useLocalizer(locale);
 const m = useMessages(locale);
 const base = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
 const vsAicommits = `${base}vs/aicommits/`;
 
-const title = `Best AI commit message tools in 2026`;
-const description = `An honest roundup of AI-powered git commit tools — aic, aicommits, ai-commit, git-ai, and llmc — with a fair, feature-verified take on when to pick each one.`;
+const title = t('meta.roundup.title', { year: '2026' });
+const description = t('meta.roundup.description');
 
 const schema = {
   '@context': 'https://schema.org',

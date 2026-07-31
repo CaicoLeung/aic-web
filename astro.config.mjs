@@ -29,8 +29,10 @@ export default defineConfig({
     sitemap({
       i18n: {
         defaultLocale: 'en',
+        // hreflang codes — must match `LOCALE_HREFLANG` in src/i18n/config.ts
+        // so sitemap alternates agree with the per-page hreflang tags.
         locales: {
-          en: 'en-US',
+          en: 'en',
           zh: 'zh-CN',
           ja: 'ja-JP',
           ko: 'ko-KR',

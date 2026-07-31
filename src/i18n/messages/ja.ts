@@ -16,6 +16,26 @@ export const messages: Messages = {
     title: 'aic — AI 駆動の git コミット',
     description:
       'aic は diff を読み、コンベンショナルコミットを起草してコミットします — コマンド1つ。ステージ済みがない？作業を論理的なコミットにまとめます。',
+    resolve: {
+      title: 'aic resolve — AI マージコンフリクト解決',
+      description:
+        'aic はコンフリクトしたすべてのファイルを読み、クリーンな解決を提案し、diff を見せます。ファイルごとに承認 — あなたの許可なしには何も適用されず — その後マージを完了します。あなたの作業を盲目的に変更することのない AI マージコンフリクト解決ツール。',
+    },
+    roundup: {
+      title: '{year}年 最高のAIコミットメッセージツール',
+      description:
+        'AI による git コミットツールの正直な総まとめ — aic、aicommits、ai-commit、git-ai、llmc — と、いつどれを選ぶべきかについての公平で機能検証済みの見解。',
+    },
+    vs: {
+      title: 'aic vs aicommits — AI コミットツール比較',
+      description:
+        'aicommits は定番のデフォルト。自動バッチング、第一級の Anthropic/Gemini/DeepSeek サポート、Node.js 不要を求めるなら aic が選択肢。正直で機能ごとの比較です。',
+    },
+    changelog: {
+      title: 'aic チェンジログ — すべてのリリース',
+      description:
+        'aic の全リリースを順に — 機能、修正、リリースノート。最新：v{version}。',
+    },
   },
 
   topbar: {
@@ -141,8 +161,8 @@ export const messages: Messages = {
     eyebrow: '機能 · マージコンフリクト',
     h1: {
       main: 'マージコンフリクトを解決。',
-      without: '手動マージ',
-      manualMerge: 'なしで。',
+      // 日本語は語順が逆: 手動マージ + なしで。
+      sub: ['手動マージ', '', 'なしで。'],
     },
     lede: '<b>aic</b> はコンフリクトしたすべてのファイルを読み、クリーンな解決を提案し、diff を見せます。ファイルごとに承認 — あなたの許可なしには何も適用されず — その後マージを完了します。',
     ctaHint: 'そして <code>aic resolve</code> を実行',
@@ -244,7 +264,7 @@ export const messages: Messages = {
         formats: {
           feature: 'コミットメッセージの形式',
           aic: 'Conventional Commits',
-          rival: 'plain · conventional · gitmoji',
+          rival: 'プレーン · コンベンショナル · gitmoji',
           note: 'aic は設計上 conventional のみ; aicommits は plain な非構造モードを含め選べます。',
         },
         hook: {

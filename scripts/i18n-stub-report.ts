@@ -2,13 +2,14 @@
  * i18n translation-status report (ADR-0010 / Q7=B).
  *
  * Walks each non-default locale's message module and counts leaf strings
- * still identical to the EN canonical source (= stubbed / untranslated).
- * Printed on every build so translation debt is visible in CI + deploy
- * logs instead of hidden behind soft-parity fallback. Informational only —
- * never exits non-zero (wrapped `|| true` in the build script).
+ * still identical to the EN canonical source (= stubbed). Printed on every
+ * build so translation debt is visible in CI + deploy logs instead of
+ * hidden behind soft-parity fallback. Informational only — never exits
+ * non-zero (wrapped `|| true` in the build script).
  *
- * A locale module that still aliases `en` (the current stubs) reports 100%
- * stubbed; as real translations replace the alias, the stubbed count drops.
+ * Keys that stay stubbed by design (brands, literal commands, tool names)
+ * remain visible here on purpose — the report makes the intentional
+ * invariants explicit rather than silently asserting they're translated.
  */
 import { messages as en } from '../src/i18n/messages/en';
 import { messages as zh } from '../src/i18n/messages/zh';
@@ -66,7 +67,7 @@ for (const r of rows) {
 }
 if (rows.some((r) => r.stubbed > 0)) {
   console.log(
-    '\nstubbed = keys still rendering the EN source (soft-parity fallback).\nTranslate them in src/i18n/messages/{locale}.ts to clear the debt.\n',
+    '\nstubbed = keys still rendering the EN source — intentional invariants\n(brands, literal commands, tool names) stay stubbed by design; translate\nthe rest in src/i18n/messages/{locale}.ts to clear the debt.\n',
   );
 } else {
   console.log('\nAll locales fully translated — zero stubbed keys.\n');

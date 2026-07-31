@@ -11,7 +11,7 @@
  */
 import '@/styles/global.css';
 import { LOCALE_HREFLANG, LOCALE_PREFIXES, localeFromUrl } from '@/i18n/config';
-import { useTranslations } from '@/i18n/t';
+import { useLocalizer } from '@/i18n/t';
 import { buildHreflangAlternates } from '@/i18n/hreflang';
 import CjkFontsZh from '@/components/i18n/CjkFontsZh.astro';
 import CjkFontsJa from '@/components/i18n/CjkFontsJa.astro';
@@ -36,7 +36,7 @@ const {
 
 // Locale self-determined from the URL (ADR-0010).
 const locale = localeFromUrl(Astro.url.pathname);
-const t = useTranslations(locale);
+const t = useLocalizer(locale);
 const resolvedTitle = title ?? t('meta.title');
 const resolvedDescription = description ?? t('meta.description');
 
@@ -138,9 +138,10 @@ const cjkFamily =
       crossorigin
     />
 
-    {/* CJK webfont (ADR-0012): render only the matching locale's fontsource
-        CSS so English loads zero CJK @font-face. Astro scopes imported CSS
-        per-page; verification confirms `/` carries no Noto rules. */}
+    {/* CJK webfont (ADR-0012): each font's CSS ships as its own asset
+        (`?url` import in CjkFonts*), linked only on the matching locale's
+        pages — English carries zero CJK @font-face rules (verified in the
+        built output). unicode-range subsets cap the actual font downloads. */}
     {locale === 'zh' && <CjkFontsZh />}
     {locale === 'ja' && <CjkFontsJa />}
     {locale === 'ko' && <CjkFontsKo />}

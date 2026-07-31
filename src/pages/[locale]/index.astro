@@ -8,12 +8,11 @@
  * locale. Sections self-determine locale from the URL, so the composition is
  * identical to the English home.
  *
- * NOTE: section components (Hero, HowItWorks, …) still carry inline English
- * prose pending the section-by-section wiring pass that follows the Topbar
- * reference pattern (ADR-0010). On a stubbed locale they render the EN source
- * via `t()` fallback (soft parity, Q7=B) — never empty.
+ * NOTE: all section components wire `t()`/`useMessages` (ADR-0010); on a
+ * stubbed key they render the EN source via the soft-parity fallback
+ * (Q7=B) — never empty.
  */
-import { LOCALE_PREFIXES } from '@/i18n/config';
+import { isLocalePrefix, LOCALE_PREFIXES } from '@/i18n/config';
 import { loadAicFacts } from '@/data/aic';
 import Base from '@/layouts/Base.astro';
 import Topbar from '@/components/topbar/Topbar.astro';
@@ -29,8 +28,9 @@ export function getStaticPaths() {
 }
 
 const { locale } = Astro.params;
-// getStaticPaths enumerates only valid prefixes, so this is belt-and-suspenders.
-if (!locale || !(LOCALE_PREFIXES as readonly string[]).includes(locale)) {
+// getStaticPaths enumerates only valid prefixes, so this is belt-and-suspenders
+// — shared guard: unknown segments 404 instead of rendering a fake locale.
+if (!isLocalePrefix(locale)) {
   return new Response(null, { status: 404, statusText: 'Not Found' });
 }
 

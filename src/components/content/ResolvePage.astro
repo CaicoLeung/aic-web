@@ -13,8 +13,8 @@
  *
  * Rendered by both `/resolve/` and `/[locale]/resolve/` (ADR-0010). Base
  * self-determines locale from the URL, so the same component serves every
- * locale — prose is inline EN pending the t()-wiring pass (soft parity,
- * Q7=B).
+ * locale — all prose + meta wire `t()`/`useMessages`; keys a locale leaves
+ * stubbed render the EN source via soft parity (Q7=B).
  */
 import { loadAicFacts } from '@/data/aic';
 import Base from '@/layouts/Base.astro';
@@ -24,17 +24,16 @@ import CopyButton from '@/components/ui/CopyButton.astro';
 import ResolveTerminal from '@/components/resolve/ResolveTerminal.astro';
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { localeFromUrl } from '@/i18n/config';
-import { useTranslations, useMessages } from '@/i18n/t';
+import { useLocalizer, useMessages } from '@/i18n/t';
 
 const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
-const t = useTranslations(locale);
+const t = useLocalizer(locale);
 const m = useMessages(locale);
 const releaseUrl = `${GITHUB_URL}/releases/tag/v0.3.0`;
 
-const title = 'aic resolve — AI merge conflict resolver';
-const description =
-  'aic reads every conflicted file, proposes a clean resolution, and shows you the diff. Approve each file — nothing lands without your say-so — then it finalizes the merge. An AI merge conflict resolver that never touches your work blind.';
+const title = t('meta.resolve.title');
+const description = t('meta.resolve.description');
 
 const schema = {
   '@context': 'https://schema.org',
@@ -60,7 +59,7 @@ const schema = {
       </p>
       <h1 id="resolve-h1" class="resolve-h1">
         {t('resolve.h1.main')}<br />
-        <em class="ital">{t('resolve.h1.without')}</em> the <span class="pop">{t('resolve.h1.manualMerge')}</span>
+        <em class="ital">{m.resolve.h1.sub[0]}</em>{m.resolve.h1.sub[1]}<span class="pop">{m.resolve.h1.sub[2]}</span>
       </h1>
 
       <div class="resolve-terminal">

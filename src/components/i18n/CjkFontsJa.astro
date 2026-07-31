@@ -1,7 +1,9 @@
 ---
 /**
  * JA CJK webfont (ADR-0012). See `CjkFontsZh.astro` — same pattern, JA
- * subset. Rendered only on `/ja/` pages.
+ * subset, linked only on `/ja/` pages.
  */
-import '@fontsource-variable/noto-sans-jp';
+import jaCssUrl from '@fontsource-variable/noto-sans-jp/index.css?url';
 ---
+
+<link rel="stylesheet" href={jaCssUrl} />

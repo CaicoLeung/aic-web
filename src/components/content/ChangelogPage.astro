@@ -9,8 +9,8 @@
  * Rendered by both `/changelog/` and `/[locale]/changelog/` (ADR-0010).
  * The body is fetched EN markdown and stays EN in every locale (ADR-0011);
  * Base self-determines locale for chrome + hreflang. The localized
- * "release notes are in English" note (ADR-0011) is pending the
- * t()-wiring pass.
+ * "release notes are in English" note (ADR-0011) renders via
+ * `t('changelog.englishNote')` on non-en locales.
  */
 import { loadAicFacts } from '@/data/aic';
 import { loadChangelog } from '@/data/changelog';
@@ -20,19 +20,21 @@ import Footer from '@/components/footer/Footer.astro';
 import Changelog from '@/components/changelog/Changelog.astro';
 import { GITHUB_URL } from '@/config/site';
 import { localeFromUrl, DEFAULT_LOCALE } from '@/i18n/config';
-import { useTranslations } from '@/i18n/t';
+import { useLocalizer } from '@/i18n/t';
 
 const facts = await loadAicFacts();
 const entries = await loadChangelog();
 
 const locale = localeFromUrl(Astro.url.pathname);
-const t = useTranslations(locale);
+const t = useLocalizer(locale);
 
 const latest = entries[0];
 const earliest = entries[entries.length - 1];
 
-const title = 'aic changelog — every release';
-const description = `Every aic release in order — features, fixes, and notes as they shipped. Latest: v${latest?.version}.`;
+const title = t('meta.changelog.title');
+const description = t('meta.changelog.description', {
+  version: latest?.version ?? '',
+});
 
 const schema = {
   '@context': 'https://schema.org',

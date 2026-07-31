@@ -9,14 +9,14 @@
 import type { ChangelogEntry } from '@/data/changelog';
 import { localeFromUrl } from '@/i18n/config';
 import { LOCALE_HREFLANG } from '@/i18n/config';
-import { useTranslations } from '@/i18n/t';
+import { useLocalizer } from '@/i18n/t';
 
 interface Props {
   readonly entries: readonly ChangelogEntry[];
 }
 const { entries } = Astro.props;
 const locale = localeFromUrl(Astro.url.pathname);
-const t = useTranslations(locale);
+const t = useLocalizer(locale);
 // Date format follows the page locale (ADR-0010) — zh → zh-CN, etc.
 const fmtDate = new Intl.DateTimeFormat(LOCALE_HREFLANG[locale], {
   month: 'short',

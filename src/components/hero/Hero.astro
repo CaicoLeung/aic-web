@@ -14,10 +14,10 @@ import CopyButton from '@/components/ui/CopyButton.astro';
 import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { baseHref } from '@/lib/href';
 import { localeFromUrl } from '@/i18n/config';
-import { useTranslations } from '@/i18n/t';
+import { useLocalizer } from '@/i18n/t';
 
 const locale = localeFromUrl(Astro.url.pathname);
-const t = useTranslations(locale);
+const t = useLocalizer(locale);
 // Two-verb reframe (v0.3.0): commit + resolve. The lede links the resolve
 // pillar to its Capability page (ADR-0009).
 const resolveUrl = `${baseHref(import.meta.env.BASE_URL)}resolve/`;

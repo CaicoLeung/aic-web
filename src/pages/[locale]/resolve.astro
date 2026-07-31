@@ -3,10 +3,10 @@
  * /[locale]/resolve/ — localized resolve page (ADR-0010).
  *
  * Renders the same `ResolvePage` component as the English route; Base
- * self-determines locale from the URL. Prose is inline EN pending the
- * t()-wiring pass (soft parity, Q7=B).
+ * self-determines locale from the URL. Stubbed keys fall back to the EN
+ * source (soft parity, Q7=B).
  */
-import { LOCALE_PREFIXES } from '@/i18n/config';
+import { isLocalePrefix, LOCALE_PREFIXES } from '@/i18n/config';
 import ResolvePage from '@/components/content/ResolvePage.astro';
 
 export function getStaticPaths() {
@@ -14,8 +14,9 @@ export function getStaticPaths() {
 }
 
 const { locale } = Astro.params;
-// getStaticPaths enumerates only valid prefixes; this is belt-and-suspenders.
-if (!locale || !(LOCALE_PREFIXES as readonly string[]).includes(locale)) {
+// getStaticPaths enumerates only valid prefixes; this is belt-and-suspenders
+// — shared guard: unknown segments 404 instead of rendering a fake locale.
+if (!isLocalePrefix(locale)) {
   return new Response(null, { status: 404, statusText: 'Not Found' });
 }
 ---

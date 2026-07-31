@@ -5,11 +5,11 @@
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { baseHref } from '@/lib/href';
 import { localeFromUrl } from '@/i18n/config';
-import { useTranslations } from '@/i18n/t';
+import { useLocalizer } from '@/i18n/t';
 import CopyButton from '@/components/ui/CopyButton.astro';
 
 const locale = localeFromUrl(Astro.url.pathname);
-const t = useTranslations(locale);
+const t = useLocalizer(locale);
 const base = baseHref(import.meta.env.BASE_URL);
 const resolveBase = `${base}resolve/`;
 const compareBase = `${base}vs/aicommits/`;

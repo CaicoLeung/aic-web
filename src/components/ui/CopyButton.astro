@@ -11,7 +11,7 @@
  * The `{label}` (the command shown) is locale-invariant code-register.
  */
 import { localeFromUrl } from '@/i18n/config';
-import { useTranslations } from '@/i18n/t';
+import { useLocalizer } from '@/i18n/t';
 
 interface Props {
   readonly text: string;
@@ -28,7 +28,7 @@ const {
 } = Astro.props;
 
 const locale = localeFromUrl(Astro.url.pathname);
-const t = useTranslations(locale);
+const t = useLocalizer(locale);
 ---
 
 <button
