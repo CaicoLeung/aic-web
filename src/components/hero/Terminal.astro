@@ -1,14 +1,29 @@
 ---
 /**
- * Animated terminal mockup — Tier 1 motion (Q7).
+ * Animated terminal mockup — the batching story, live.
  *
- * Static final state is visible without JS / under reduced-motion.
- * GSAP reveals the steps in sequence under `(prefers-reduced-motion:
- * no-preference)`.
+ * Narrative: type `aic` → spinner reads the unstaged hunks → reasoning
+ * streams in per hunk (`@@N → intent`) → condenses to a plan line →
+ * commits ship in sequence. Loops. Static final state is visible
+ * without JS / under reduced-motion.
  *
- * `aria-hidden` because the same information is in the hero copy —
- * this is decorative reinforcement, not primary content.
+ * Data reuses the `HUNK_SPLITTING` constant so the hero and #03 tell the
+ * same story (process here, result there). `aria-hidden` because the same
+ * information is in the hero copy — decorative reinforcement.
  */
+import { HUNK_SPLITTING } from '@/config/site';
+
+const hunks = HUNK_SPLITTING.hunks;
+const commits = HUNK_SPLITTING.commits;
+
+// Intent → accent token, shared with #03 for visual continuity.
+const typeAccent: Record<string, string> = {
+  feat: 'var(--color-amber)',
+  fix: 'var(--color-mint)',
+  refactor: 'var(--color-amber-warm)',
+  docs: 'var(--color-ink-muted)',
+  chore: 'var(--color-ink-muted)',
+};
 ---
 
 <figure class="terminal" aria-hidden="true">
@@ -18,32 +33,58 @@
   </div>
 
   <div class="termbody" data-term-body>
-    <div class="row">
+    <div class="row cmdrow">
       <span class="prompt">$</span>
       <span class="cmdin" data-typed>aic</span>
     </div>
     <div class="row" data-row="spinner">
       <span class="spin" aria-hidden="true">⠋</span>
-      <span class="out">reading staged diff…</span>
+      <span class="out">reading {hunks.length} unstaged hunks…</span>
     </div>
-    <div class="row" data-row="staged">
-      <span class="ok" aria-hidden="true">✓</span>
-      <span class="out">3 files staged · drafting message</span>
+
+    <div class="reasoning" data-reasoning>
+      <div class="re-head">reasoning · per hunk</div>
+      {
+        hunks.map((h) => (
+          <div class="re-line" data-re-line>
+            <span class="re-at">@@{h.at}</span>
+            <span class="re-arrow" aria-hidden="true">→</span>
+            <span
+              class="re-type"
+              style={`--accent: ${typeAccent[h.type] ?? 'var(--color-amber)'}`}
+            >
+              {h.type}
+            </span>
+            <span class="re-sum">{h.summary}</span>
+          </div>
+        ))
+      }
     </div>
-    <div class="message" data-row="message">
-      <div class="label">drafted message</div>
-      <div class="msg-line">
-        <span class="type">feat</span><span class="scope">(auth)</span><span class="subj"
-          >: refresh tokens on session resume</span
-        >
-      </div>
-      <div class="body">rotate on idle, persist via keychain</div>
+
+    <div class="planline" data-plan>
+      <span class="plan-icon" aria-hidden="true">✦</span>
+      <span class="plan-text">plan · {commits.length} commits</span>
     </div>
-    <div class="commitline" data-row="commitline">
-      <span class="ok" aria-hidden="true">✓</span>
-      committed
-      <span class="hash">abc1234</span>
-      <span class="msg">feat(auth): refresh tokens…</span>
+
+    <div class="commits" data-commits>
+      {
+        commits.map((c) => (
+          <div class="row commitrow" data-commit>
+            <span class="ok" aria-hidden="true">✓</span>
+            <span class="hash">{c.hash}</span>
+            <span class="msg">
+              <span
+                class="ctype"
+                style={`--accent: ${typeAccent[c.type] ?? 'var(--color-amber)'}`}
+              >
+                {c.type}
+              </span>
+              <span class="scope">({c.scope})</span>
+              <span class="summary">: {c.summary}</span>
+            </span>
+          </div>
+        ))
+      }
     </div>
   </div>
 </figure>
@@ -62,7 +103,7 @@
       0 0 0 1px rgba(255, 255, 255, 0.02) inset,
       0 1px 0 rgba(255, 255, 255, 0.04) inset;
     overflow: hidden;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
   }
   .termbar {
     display: flex;
@@ -101,14 +142,17 @@
     font-weight: 500;
   }
   .termbody {
-    padding: 1.25rem 1.4rem 1.5rem;
-    line-height: 1.7;
+    padding: 1.15rem 1.4rem 1.4rem;
+    line-height: 1.6;
   }
   .row {
     display: flex;
     align-items: baseline;
     gap: 0.5rem;
     white-space: pre;
+  }
+  .cmdrow {
+    margin-bottom: 0.1rem;
   }
   .prompt {
     color: var(--color-amber);
@@ -122,61 +166,104 @@
   }
   .ok {
     color: var(--color-mint);
+    flex-shrink: 0;
   }
   .spin {
     color: var(--color-amber);
     display: inline-block;
   }
-  .message {
-    margin: 0.85rem 0 1rem;
-    border: 1px solid var(--color-line);
-    border-left: 3px solid var(--color-amber);
+
+  /* ── Reasoning block: terse hunk → intent trace ──────────────────── */
+  .reasoning {
+    margin: 0.6rem 0 0.5rem;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--color-line-soft);
     border-radius: 8px;
-    padding: 0.8rem 1rem;
-    background: var(--color-amber-soft);
+    background: rgba(255, 255, 255, 0.015);
   }
-  .message .label {
-    font-size: 0.66rem;
-    letter-spacing: 0.18em;
+  .re-head {
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--color-amber);
-    margin-bottom: 0.4rem;
-    font-weight: 600;
+    color: var(--color-ink-dim);
+    margin-bottom: 0.3rem;
   }
-  .message .type {
-    color: var(--color-amber);
-    font-weight: 600;
-  }
-  .message .scope {
+  .re-line {
+    display: grid;
+    grid-template-columns: auto auto auto 1fr;
+    align-items: baseline;
+    gap: 0.45rem;
+    font-size: 0.75rem;
     color: var(--color-ink-muted);
+    line-height: 1.55;
+    white-space: normal;
   }
-  .message .subj {
+  .re-at {
+    color: var(--color-ink-dim);
+  }
+  .re-arrow {
+    color: var(--color-ink-dim);
+  }
+  .re-type {
+    color: var(--accent, var(--color-amber));
+    font-weight: 600;
+  }
+  .re-sum {
     color: var(--color-ink);
   }
-  .message .body {
-    color: var(--color-ink-muted);
-    margin-top: 0.2rem;
-    font-size: 0.78rem;
-  }
-  .commitline {
+
+  /* ── Plan line: the pivot from thinking to shipping ──────────────── */
+  .planline {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    margin-top: 0.1rem;
-    color: var(--color-ink-muted);
-  }
-  .commitline .hash {
+    gap: 0.45rem;
+    margin: 0.5rem 0 0.55rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--color-line-soft);
     color: var(--color-amber);
     font-weight: 600;
+    font-size: 0.82rem;
   }
-  .commitline .msg {
+  .plan-icon {
+    color: var(--color-amber);
+  }
+
+  /* ── Commits ─────────────────────────────────────────────────────── */
+  .commits {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .commitrow {
+    align-items: baseline;
+  }
+  .commitrow .hash {
+    color: var(--color-amber);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .commitrow .msg {
+    color: var(--color-ink);
+    white-space: normal;
+  }
+  .commitrow .ctype {
+    color: var(--accent, var(--color-amber));
+    font-weight: 600;
+  }
+  .commitrow .scope {
+    color: var(--color-ink-muted);
+  }
+  .commitrow .summary {
     color: var(--color-ink);
   }
 
   /* Reduced-motion / no-JS default: everything visible. */
   :global([data-term-body]) .row,
-  :global([data-term-body]) .message,
-  :global([data-term-body]) .commitline {
+  :global([data-term-body]) .reasoning,
+  :global([data-term-body]) .planline,
+  :global([data-term-body]) .commits,
+  :global([data-term-body]) .commitrow,
+  :global([data-term-body]) .re-line {
     opacity: 1;
   }
 </style>
@@ -191,22 +278,28 @@
       const typed = term.querySelector<HTMLElement>('[data-typed]');
       const spinner = term.querySelector<HTMLElement>('[data-row="spinner"]');
       const spinGlyph = spinner?.querySelector<HTMLElement>('.spin');
-      const staged = term.querySelector<HTMLElement>('[data-row="staged"]');
-      const message = term.querySelector<HTMLElement>('[data-row="message"]');
-      const commitline = term.querySelector<HTMLElement>('[data-row="commitline"]');
-      if (!typed || !spinner || !spinGlyph || !staged || !message || !commitline) return;
+      const reasoning = term.querySelector<HTMLElement>('[data-reasoning]');
+      const reLines =
+        term.querySelectorAll<HTMLElement>('[data-re-line]');
+      const plan = term.querySelector<HTMLElement>('[data-plan]');
+      const commitRows =
+        term.querySelectorAll<HTMLElement>('[data-commit]');
+      if (
+        !typed ||
+        !spinner ||
+        !spinGlyph ||
+        !reasoning ||
+        !plan ||
+        commitRows.length === 0
+      )
+        return;
 
       const fullText = typed.textContent ?? 'aic';
-      typed.textContent = '';
-
-      gsap.set([spinner, staged, message, commitline], { opacity: 0 });
-      gsap.set(message, { y: 8 });
 
       const spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
       let frame = 0;
 
-      // Repeats indefinitely while the term is on screen; paused except when
-      // the spinner row is visible. Cheap, no ScrollTrigger needed.
+      // Glyph cycle — paused except while the spinner row is visible.
       const spinnerCycle = gsap.to(
         {},
         {
@@ -223,11 +316,22 @@
       const tl = gsap.timeline({
         delay: 0.5,
         repeat: -1,
-        repeatDelay: 4,
+        repeatDelay: 3.2,
         onReverseComplete: () => spinnerCycle.pause(),
       });
 
-      // 1. Type "aic"
+      // Reset to the pre-animation state at the start of every loop so the
+      // replay reads cleanly (typed emptied, downstream hidden).
+      tl.set(typed, { opacity: 1 });
+      tl.set(
+        [spinner, reasoning, ...Array.from(reLines), plan, ...Array.from(commitRows)],
+        { opacity: 0 },
+      );
+      tl.set(reLines, { x: -8 });
+      tl.set(plan, { y: 6 });
+      tl.set(commitRows, { x: 6 });
+
+      // 1. Type "aic".
       tl.to(
         {},
         {
@@ -239,24 +343,37 @@
         },
       );
 
-      // 2. Spinner fades in, glyphs cycle, then fades out
+      // 2. Spinner: read the hunks. Glyph cycles while visible.
       tl.call(() => {
         frame = 0;
         spinGlyph.textContent = spinnerFrames[0];
         spinnerCycle.restart();
       });
       tl.to(spinner, { opacity: 1, duration: 0.18 });
-      tl.to(spinner, { opacity: 0, duration: 0.18, delay: 0.7 });
+      tl.to(spinner, { opacity: 0, duration: 0.2, delay: 0.75 });
       tl.call(() => spinnerCycle.pause());
 
-      // 3. Staged line
-      tl.to(staged, { opacity: 1, duration: 0.2 });
+      // 3. Reasoning block container, then lines stream in one-by-one.
+      tl.to(reasoning, { opacity: 1, duration: 0.2 });
+      tl.to(reLines, {
+        opacity: 1,
+        x: 0,
+        duration: 0.3,
+        stagger: 0.16,
+        ease: 'power2.out',
+      });
 
-      // 4. Message card slides up
-      tl.to(message, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }, '+=0.15');
+      // 4. Plan line — the pivot.
+      tl.to(plan, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, '+=0.12');
 
-      // 5. Commit line
-      tl.to(commitline, { opacity: 1, duration: 0.2 });
+      // 5. Commits ship, in sequence.
+      tl.to(commitRows, {
+        opacity: 1,
+        x: 0,
+        duration: 0.3,
+        stagger: 0.22,
+        ease: 'power2.out',
+      });
     });
   });
 </script>
