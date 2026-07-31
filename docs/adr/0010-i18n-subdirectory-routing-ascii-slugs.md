@@ -44,6 +44,19 @@ Concretely:
   `location.replace`s to the equivalent localized path before first paint.
   Crawlers receive the English HTML unchanged (no server redirect).
 
+## Amendment (2026-08-01)
+
+The `localStorage` locale-preference + pre-paint soft-redirect (the last
+Decision bullet and its Consequence below) is **reversed**. Locale now
+follows the URL exclusively: nothing is persisted and no redirect is
+forced. The switcher still navigates to the localized equivalent of the
+current path, and all navigation chrome uses locale-aware hrefs
+(`localizedHref`), so visitors stay in their locale across page
+transitions. Rationale: the soft-redirect was misfiring (e.g. an English
+visit with a stale `zh` preference redirected to a malformed localized
+URL), and a static multilingual site is better served by honoring the
+URL the visitor actually requested.
+
 ## Consequences
 
 - **Pro:** Existing English URLs are untouched. `/vs/aicommits`,
@@ -62,9 +75,9 @@ Concretely:
 - **Con:** Subdirectory locales inherit the `/aic-web/` base-path
   depth (`/aic-web/zh/vs/aicommits`). Already accepted by ADR-0001 for
   English; locales inherit the same trade-off uniformly.
-- **Con:** The soft-redirect adds ~10 lines of inline head JS. Mitigated
-  by running pre-paint (no FOUC, no CLS) and only acting when a saved
-  non-en preference exists — first-time visitors and crawlers get English.
+- **Con (resolved by 2026-08-01 amendment):** The soft-redirect added ~10
+  lines of inline head JS, acting only when a saved non-en preference
+  existed. Removed — see Amendment above.
 
 ## Alternatives considered
 

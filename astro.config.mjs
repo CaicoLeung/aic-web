@@ -12,8 +12,9 @@ export default defineConfig({
   trailingSlash: 'ignore',
   // i18n routing (ADR-0010): `/` stays English (default, no prefix);
   // zh/ja/ko live under path prefixes. redirectToDefaultLocale:false → no
-  // server redirect; returning-visitor routing is client-side (Base.astro
-  // pre-paint soft-redirect honoring a localStorage preference).
+  // server redirect. Locale follows the URL only — navigation chrome uses
+  // locale-aware hrefs so visitors stay in their locale across pages;
+  // no localStorage preference is stored or forced.
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'zh', 'ja', 'ko'],

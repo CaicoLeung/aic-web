@@ -119,9 +119,8 @@ _Avoid_: untranslated (ambiguous — say stubbed when naming the acknowledged
 placeholder state).
 
 **Switcher**:
-The Topbar locale selector with native-language labels
-(`English · 中文 · 日本語 · 한국어`). Persists choice to `localStorage`; a
-client-side pre-paint script soft-redirects returning visitors from `/` to
-their saved locale (ADR-0010).
+(`English · 中文 · 日本語 · 한국어`). Selecting a locale navigates to the
+localized equivalent of the current path; it does not persist a
+preference — each page honors its own URL (ADR-0010).
 _Avoid_: language picker, dropdown (generic — say switcher when naming this
 element).
