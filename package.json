@@ -13,7 +13,8 @@
     "format": "prettier --write .",
     "lint": "eslint . --ext .ts,.astro",
     "axe": "axe-preview",
-    "i18n:report": "node --import tsx scripts/i18n-stub-report.ts"
+    "i18n:report": "node --import tsx scripts/i18n-stub-report.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -29,6 +30,8 @@
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^26.1.0",
     "axe-core": "^4.10.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0",
     "prettier": "^3.3.0",
     "prettier-plugin-astro": "^0.14.0",
     "prettier-plugin-tailwindcss": "^0.6.0",
@@ -36,5 +39,9 @@
     "tailwindcss": "^4.0.0",
     "tsx": "^4.19.0",
     "typescript": "^7.0.2"
+  },
+  "lint-staged": {
+    "*.{ts,js,mjs,astro,json,md,css}": "prettier --write",
+    "*": "sh -c 'pnpm check && pnpm test'"
   }
 }
