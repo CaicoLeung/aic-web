@@ -91,6 +91,16 @@ export const AICOMMITS_COMPARISON: CompetitorComparison = {
       note: 'aic’s signature feature. aicommits’ `--generate N` produces N candidate messages for ONE commit, not N commits.',
     },
     {
+      feature: 'Split a single file across commits (per-hunk)',
+      aic: {
+        text: 'Yes — routes each hunk to its own commit by intent',
+        supported: true,
+      },
+      rival: { text: 'No — file-granular at most', supported: false },
+      winner: 'aic',
+      note: 'Shipped in aic v0.3.5. aicommits (and every tool in the roundup) splits at the file boundary at most; aic reads the diff at the hunk level, so one file touching three concerns becomes three focused commits.',
+    },
+    {
       feature: 'Resolve merge conflicts',
       aic: {
         text: 'Yes — `aic resolve` proposes a diff, asks per file',
@@ -191,7 +201,7 @@ export const ROUNDUP: readonly RoundupEntry[] = [
     runtime: 'Rust · brew / installer',
     homeTeam: true,
     strength:
-      'The only tool here that auto-batches unstaged work into separate logical commits and resolves merge conflicts (`aic resolve`) — and ships as a dependency-free Rust binary with first-class Anthropic, Gemini, and DeepSeek.',
+      'The only tool here that splits unstaged work into logical commits at the hunk level — so even a single file can become several focused commits — and resolves merge conflicts (`aic resolve`). Ships as a dependency-free Rust binary with first-class Anthropic, Gemini, and DeepSeek.',
   },
   {
     id: 'aicommits',
