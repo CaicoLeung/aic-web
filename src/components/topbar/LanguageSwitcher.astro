@@ -2,12 +2,17 @@
 /**
  * Language switcher (ADR-0010 / Q8).
  *
- * Native-language labels (`English · 中文 · 日本語 · 한국어`) per Q8. Selecting
- * a locale navigates to the localized equivalent of the current path —
- * it does not persist a preference, so each page honors its own URL.
- * ASCII slugs (Q9=A) mean only the locale prefix changes.
+ * A custom menu-button dropdown (the native `<select>` couldn't carry the
+ * design language). The closed trigger shows the current locale as a
+ * native-script glyph (`EN · 中 · 日 · 한`); the open menu lists each
+ * locale's full endonym. Selecting one navigates to the localized
+ * equivalent of the current path — nothing is persisted, so each page
+ * honors its own URL. ASCII slugs (Q9=A) mean only the prefix changes.
+ *
+ * Accessibility: ARIA `menu` + `menuitemradio` pattern — Arrow/Home/End
+ * move focus, Enter/Space selects, Escape closes, click-outside closes.
  */
-import { LOCALES, LOCALE_LABELS, localeFromUrl } from '@/i18n/config';
+import { LOCALES, LOCALE_LABELS, LOCALE_SHORT, localeFromUrl } from '@/i18n/config';
 import { baseHref } from '@/lib/href';
 import { useLocalizer } from '@/i18n/t';
 import { sharedSlug } from '@/i18n/hreflang';
@@ -20,64 +25,288 @@ const base = baseHref(import.meta.env.BASE_URL);
 const slug = sharedSlug(Astro.url.pathname, import.meta.env.BASE_URL);
 ---
 
-<div class="lang">
-  <label for="lang-switch" class="sr-only">{t('topbar.switcher.label')}</label>
-  <select
-    id="lang-switch"
-    class="lang-select"
-    data-lang-switch
-    data-base={base}
-    data-slug={slug}
+<div class="lang" data-lang data-base={base} data-slug={slug}>
+  <button
+    type="button"
+    class="lang-trigger"
+    data-lang-trigger
+    aria-haspopup="menu"
+    aria-expanded="false"
+    aria-controls="lang-menu"
     aria-label={t('topbar.switcher.label')}
   >
-    {LOCALES.map((l) => (
-      <option value={l} selected={l === locale}>{LOCALE_LABELS[l]}</option>
-    ))}
-  </select>
+    <span class="lang-glyph">{LOCALE_SHORT[locale]}</span>
+    <svg class="lang-caret" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+      <path
+        d="M2 3.5 5 6.5 8 3.5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></path>
+    </svg>
+  </button>
+
+  <ul class="lang-menu" id="lang-menu" role="menu" data-lang-menu>
+    {
+      LOCALES.map((l) => (
+        <li role="none">
+          <button
+            type="button"
+            role="menuitemradio"
+            class="lang-option"
+            data-lang-option
+            data-locale={l}
+            aria-checked={l === locale ? 'true' : 'false'}
+          >
+            <span class="lang-option-glyph">{LOCALE_SHORT[l]}</span>
+            <span class="lang-option-name">{LOCALE_LABELS[l]}</span>
+            <svg
+              class="lang-option-check"
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              aria-hidden="true"
+            >
+              <path
+                d="M2.5 6.5 5 9 9.5 3.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
 </div>
 
 <script is:inline>
   (function () {
-    var sel = document.querySelector('[data-lang-switch]');
-    if (!sel) return;
-    var base = sel.getAttribute('data-base') || '/';
-    var slug = sel.getAttribute('data-slug') || '';
-    sel.addEventListener('change', function () {
-      var pref = sel.value;
-      var prefix = pref === 'en' ? '' : pref + '/';
+    var root = document.querySelector('[data-lang]');
+    if (!root) return;
+    var trigger = root.querySelector('[data-lang-trigger]');
+    var menu = root.querySelector('[data-lang-menu]');
+    if (!trigger || !menu) return;
+    var base = root.getAttribute('data-base') || '/';
+    var slug = root.getAttribute('data-slug') || '';
+    var items = Array.prototype.slice.call(
+      menu.querySelectorAll('[data-lang-option]'),
+    );
+
+    function navigate(locale) {
+      var prefix = locale === 'en' ? '' : locale + '/';
       var tail = slug ? slug + '/' : '';
       location.href = base + prefix + tail;
+    }
+    function open() {
+      root.setAttribute('data-open', '');
+      trigger.setAttribute('aria-expanded', 'true');
+      var current = menu.querySelector('[aria-checked="true"]');
+      (current || items[0]).focus();
+    }
+    function close(returnFocus) {
+      root.removeAttribute('data-open');
+      trigger.setAttribute('aria-expanded', 'false');
+      if (returnFocus) trigger.focus();
+    }
+    function toggle() {
+      root.hasAttribute('data-open') ? close() : open();
+    }
+
+    trigger.addEventListener('click', toggle);
+    trigger.addEventListener('keydown', function (e) {
+      if (root.hasAttribute('data-open')) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter') {
+        e.preventDefault();
+        open();
+      }
+    });
+
+    items.forEach(function (item) {
+      item.addEventListener('click', function () {
+        navigate(item.getAttribute('data-locale'));
+      });
+    });
+
+    menu.addEventListener('keydown', function (e) {
+      var idx = items.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        items[(idx + 1) % items.length].focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        items[(idx - 1 + items.length) % items.length].focus();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        items[0].focus();
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        items[items.length - 1].focus();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        close(true);
+      } else if (e.key === 'Tab') {
+        close(false);
+      }
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!root.contains(e.target)) close(false);
     });
   })();
 </script>
 
 <style>
-  .lang-select {
+  .lang {
+    position: relative;
+  }
+
+  /* Trigger — mirrors the sibling `.version` pill (Topbar) so the two
+     chrome chips read as a set. */
+  .lang-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     font-family: var(--font-mono);
     font-size: 0.78rem;
     color: var(--color-ink-muted);
     background: transparent;
     border: 1px solid var(--color-line);
     border-radius: 999px;
-    padding: 0.3rem 0.6rem;
+    padding: 0.3rem 0.55rem 0.3rem 0.65rem;
     cursor: pointer;
     transition:
       color var(--duration-fast) ease,
-      border-color var(--duration-fast) ease;
+      border-color var(--duration-fast) ease,
+      background var(--duration-fast) ease;
   }
-  .lang-select:hover {
+  .lang-trigger:hover,
+  .lang-trigger[aria-expanded='true'] {
     color: var(--color-ink);
     border-color: var(--color-amber);
   }
-  .sr-only {
+  .lang-trigger[aria-expanded='true'] {
+    background: var(--color-amber-soft);
+  }
+  .lang-trigger:focus-visible {
+    outline: none;
+    border-color: var(--color-amber);
+    box-shadow: 0 0 0 3px var(--color-amber-soft);
+  }
+  .lang-glyph {
+    min-width: 1.5em;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .lang-caret {
+    color: var(--color-ink-dim);
+    transition: transform var(--duration-fast) var(--ease-out-expo),
+      color var(--duration-fast) ease;
+  }
+  .lang-trigger:hover .lang-caret,
+  .lang-trigger[aria-expanded='true'] .lang-caret {
+    color: var(--color-amber);
+  }
+  .lang-trigger[aria-expanded='true'] .lang-caret {
+    transform: rotate(180deg);
+  }
+
+  /* Menu — dark raised surface, right-aligned under the trigger. */
+  .lang-menu {
     position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 60;
+    min-width: 11rem;
+    list-style: none;
+    margin: 0;
+    padding: 0.35rem;
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.65);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition:
+      visibility var(--duration-fast) var(--ease-out-expo),
+      opacity var(--duration-fast) var(--ease-out-expo),
+      transform var(--duration-fast) var(--ease-out-expo);
+  }
+  .lang[data-open] .lang-menu {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .lang-option {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.5rem 0.65rem;
     border: 0;
+    background: transparent;
+    color: var(--color-ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 8px;
+    transition:
+      background var(--duration-fast) ease,
+      color var(--duration-fast) ease;
+  }
+  .lang-option:hover,
+  .lang-option:focus-visible {
+    background: var(--color-amber-soft);
+    color: var(--color-ink);
+    outline: none;
+  }
+  .lang-option-glyph {
+    min-width: 1.5em;
+    text-align: center;
+    font-weight: 600;
+    color: var(--color-ink-dim);
+    transition: color var(--duration-fast) ease;
+  }
+  .lang-option:hover .lang-option-glyph,
+  .lang-option:focus-visible .lang-option-glyph {
+    color: var(--color-amber);
+  }
+  .lang-option-name {
+    flex: 1;
+  }
+  .lang-option-check {
+    color: var(--color-amber);
+    opacity: 0;
+    transition: opacity var(--duration-fast) ease;
+  }
+  .lang-option[aria-checked='true'] {
+    color: var(--color-ink);
+    background: var(--color-amber-soft);
+  }
+  .lang-option[aria-checked='true'] .lang-option-glyph {
+    color: var(--color-amber);
+  }
+  .lang-option[aria-checked='true'] .lang-option-check {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lang-trigger,
+    .lang-caret,
+    .lang-menu,
+    .lang-option,
+    .lang-option-glyph,
+    .lang-option-check {
+      transition: none;
+    }
   }
 </style>

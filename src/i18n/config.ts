@@ -34,6 +34,16 @@ export const LOCALE_LABELS: Readonly<Record<Locale, string>> = {
   ko: '한국어',
 };
 
+/** Compact trigger glyphs for the Switcher — each in its own writing
+ *  system so a locale reads natively on the closed button (ADR-0010 / Q8):
+ *  English in Latin, Chinese/Japanese in Han, Korean in Hangul. */
+export const LOCALE_SHORT: Readonly<Record<Locale, string>> = {
+  en: 'EN',
+  zh: '中',
+  ja: '日',
+  ko: '한',
+};
+
 /** BCP-47 tags for hreflang + `<html lang>`. */
 export const LOCALE_HREFLANG: Readonly<Record<Locale, string>> = {
   en: 'en',
