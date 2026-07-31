@@ -14,7 +14,7 @@ import ContentHeader from '@/components/content/ContentHeader.astro';
 import Footer from '@/components/footer/Footer.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
 import { ROUNDUP } from '@/config/competitors';
-import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
+import { GITHUB_URL, HUNK_SPLITTING, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 
 const facts = await loadAicFacts();
 const base = import.meta.env.BASE_URL.endsWith('/')
@@ -61,7 +61,7 @@ const schema = {
       <section class="block">
         <h2>How to choose</h2>
         <ul class="chooser">
-          <li><span class="need">You want unstaged work split into logical commits</span><span class="pick">→ aic</span></li>
+          <li><span class="need">You want unstaged work split into logical commits — even within a single file</span><span class="pick">→ aic</span></li>
           <li><span class="need">You want merge conflicts resolved for you, not just a message afterward</span><span class="pick">→ aic</span></li>
           <li><span class="need">You want the popular, well-supported default</span><span class="pick">→ aicommits</span></li>
           <li><span class="need">You already live in Claude Code</span><span class="pick">→ ai-commit</span></li>
@@ -78,9 +78,18 @@ const schema = {
             <li class:list={['card', { home: tool.homeTeam }]}>
               <div class="card-head">
                 <h3>{tool.name}</h3>
-                {tool.homeTeam && <span class="badge">that’s us</span>}
+                {tool.homeTeam && <span class="badge">that's us</span>}
               </div>
               <p class="runtime">{tool.runtime}</p>
+              {tool.homeTeam && (
+                <div class="hl">
+                  <span class="hl-eyebrow">new · v{HUNK_SPLITTING.shippedIn}</span>
+                  <p class="hl-head">one file, many commits</p>
+                  <p class="hl-sub">
+                    per-hunk splitting — the only tool here that goes below the file boundary.
+                  </p>
+                </div>
+              )}
               <p class="strength">{tool.strength}</p>
               <div class="card-links">
                 {tool.homeTeam ? (
@@ -254,6 +263,37 @@ const schema = {
     font-size: 0.78rem;
     color: var(--color-ink-dim);
     margin: 0;
+  }
+  /* Per-hunk highlight — pulled forward so the differentiator is scannable,
+     not buried in the strength paragraph. Home card only. */
+  .hl {
+    margin: 0.6rem 0;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--color-line);
+    border-left: 3px solid var(--color-amber);
+    border-radius: 8px;
+    background: rgba(243, 179, 64, 0.06);
+  }
+  .hl-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-amber);
+    font-weight: 600;
+  }
+  .hl-head {
+    margin: 0.3rem 0 0.2rem;
+    color: var(--color-ink);
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .hl-sub {
+    margin: 0;
+    color: var(--color-ink-muted);
+    font-size: 0.82rem;
+    line-height: 1.5;
   }
   .strength {
     color: var(--color-ink-muted);
