@@ -7,12 +7,18 @@
  * Build-time only: entries come pre-parsed from `loadChangelog()`.
  */
 import type { ChangelogEntry } from '@/data/changelog';
+import { localeFromUrl } from '@/i18n/config';
+import { LOCALE_HREFLANG } from '@/i18n/config';
+import { useTranslations } from '@/i18n/t';
 
 interface Props {
   readonly entries: readonly ChangelogEntry[];
 }
 const { entries } = Astro.props;
-const fmtDate = new Intl.DateTimeFormat('en-US', {
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useTranslations(locale);
+// Date format follows the page locale (ADR-0010) — zh → zh-CN, etc.
+const fmtDate = new Intl.DateTimeFormat(LOCALE_HREFLANG[locale], {
   month: 'short',
   day: 'numeric',
   year: 'numeric',
@@ -29,7 +35,7 @@ const fmtDate = new Intl.DateTimeFormat('en-US', {
         <div class="body">
           <div class="node-head">
             <h2 class="version">v{entry.version}</h2>
-            {i === 0 && <span class="latest-badge">Latest</span>}
+            {i === 0 && <span class="latest-badge">{t('changelog.timeline.latest')}</span>}
             <time class="date" datetime={entry.date}>
               {fmtDate.format(new Date(entry.date))}
             </time>
@@ -39,12 +45,12 @@ const fmtDate = new Intl.DateTimeFormat('en-US', {
               target="_blank"
               rel="noopener noreferrer"
             >
-              GitHub release<span aria-hidden="true"> ↗</span>
+              {t('changelog.timeline.githubRelease')}<span aria-hidden="true"> ↗</span>
             </a>
           </div>
 
           {entry.sections.length === 0 ? (
-            <p class="no-notes">No release notes published.</p>
+            <p class="no-notes">{t('changelog.timeline.noNotes')}</p>
           ) : (
             entry.sections.map((section) => (
               <section class="change-section">

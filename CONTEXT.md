@@ -66,3 +66,62 @@ A human judgment about a competitor (e.g. "aicommits has no auto-batching"),
 not a machine-readable fact. Hand-maintained because it cannot be fetched —
 it is an assessment, not data. Distinct from a fetched fact (ADR-0003) and a
 low-drift constant (`src/config/site.ts`).
+
+### Localization
+
+**Canonical locale (EN)**:
+The single source of truth for the site's narrative — the one locale whose
+prose every other locale is derived from. English, matching the build-time
+fact sources (ADR-0003/0008). The site's narrative is authored here first and
+once; other locales are renderings of it.
+_Avoid_: source language, default language (those will name the URL/default
+behavior — a separate concern).
+
+**Localized copy**:
+A human-gated, independently-maintained rendering of the Canonical locale in
+another language (ZH/JA/KO). First draft is machine-produced, then a human
+reviews before it ships; once committed it is a hand-maintained asset, not a
+live derivation. Distinct from the Canonical locale, which authors intent;
+the copy renders it.
+_Avoid_: translation (too thin — implies a mechanical word-swap, not a
+human-owned narrative that can diverge).
+
+**Translation drift**:
+The expected gap between a Localized copy and the Canonical locale that opens
+whenever EN changes and widens until the copy is re-synced. A steady-state
+property of the EN-canonical model, not a defect to eliminate.
+_Avoid_: staleness (implies decay toward uselessness; drift is bounded and
+intentional).
+
+**Locale**:
+A published language variant the site emits — `en`, `zh`, `ja`, `ko`. The
+unit `hreflang` alternates and sitemap entries are produced per. One
+Canonical locale (EN) and several Localized copies; a copy in progress may
+carry Stubbed messages until it reaches parity.
+_Avoid_: language (too generic), translation (an activity, not the variant).
+
+**Default locale**:
+`en`, for URL and crawl behavior — served at `/` with no path prefix, and the
+`x-default` hreflang target (ADR-0010). Distinct from the Canonical locale,
+which names narrative authorship; Default locale names URL/default behavior
+only.
+_Avoid_: base language, fallback locale (fallback is runtime behavior, not
+this concept).
+
+**Stubbed message**:
+A translatable string whose key exists in a locale module (so the type is
+satisfied) but whose value is still the EN source — the pre-copy placeholder
+state of a Localized copy in progress. Distinct from missing (the key is
+absent, a type error) and from a committed Localized copy (which has diverged
+into human-owned prose). The steady-state gap named by Translation drift is
+measured in Stubbed messages.
+_Avoid_: untranslated (ambiguous — say stubbed when naming the acknowledged
+placeholder state).
+
+**Switcher**:
+The Topbar locale selector with native-language labels
+(`English · 中文 · 日本語 · 한국어`). Persists choice to `localStorage`; a
+client-side pre-paint script soft-redirects returning visitors from `/` to
+their saved locale (ADR-0010).
+_Avoid_: language picker, dropdown (generic — say switcher when naming this
+element).

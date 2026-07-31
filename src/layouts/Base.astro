@@ -3,8 +3,19 @@
  * Base layout — HTML shell, head, font preloads, OG metadata.
  * Spiritual-adaptation (ADR-0002): palette + grain + glows come from
  * the design tokens in global.css, not hardcoded here.
+ *
+ * i18n (ADR-0010): locale is self-determined from the URL — no prop
+ * threading. `<html lang>`, title/description, hreflang alternates, and
+ * og:locale all derive from it. A pre-paint soft-redirect honors a saved
+ * locale preference for returning visitors (Q8=B).
  */
 import '@/styles/global.css';
+import { LOCALE_HREFLANG, LOCALE_PREFIXES, localeFromUrl } from '@/i18n/config';
+import { useTranslations } from '@/i18n/t';
+import { buildHreflangAlternates } from '@/i18n/hreflang';
+import CjkFontsZh from '@/components/i18n/CjkFontsZh.astro';
+import CjkFontsJa from '@/components/i18n/CjkFontsJa.astro';
+import CjkFontsKo from '@/components/i18n/CjkFontsKo.astro';
 
 interface Props {
   readonly version: string;
@@ -18,10 +29,16 @@ interface Props {
 
 const {
   version,
-  title = 'aic — AI-powered git commits',
-  description = 'aic reads your diff, drafts a conventional commit, and commits it — one command. Nothing staged? It groups your work into logical commits for you.',
+  title,
+  description,
   schema,
 } = Astro.props;
+
+// Locale self-determined from the URL (ADR-0010).
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useTranslations(locale);
+const resolvedTitle = title ?? t('meta.title');
+const resolvedDescription = description ?? t('meta.description');
 
 // Home keeps SoftwareApplication; content pages pass their own schema.
 const jsonLd =
@@ -33,7 +50,7 @@ const jsonLd =
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'macOS, Linux, Windows',
     softwareVersion: `v${version}`,
-    description,
+    description: resolvedDescription,
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   });
 
@@ -41,15 +58,24 @@ const site = Astro.site?.toString() ?? 'https://caicoleung.github.io';
 const canonical = new URL(Astro.url.pathname, site).toString();
 const ogImage = new URL('/aic-web/og.png', site).toString();
 const themeColor = '#0e0f14';
+const ogLocale = LOCALE_HREFLANG[locale].replace('-', '_').replace(/^en$/, 'en_US');
+const hreflangAlternates = buildHreflangAlternates(Astro.url.pathname, site);
+// CJK webfont family for the locale (ADR-0012). Undefined on `en` → the
+// type stacks fall back to system CJK families (no webfont loaded).
+const cjkFamily =
+  locale === 'zh' ? 'Noto Sans SC Variable'
+  : locale === 'ja' ? 'Noto Sans JP Variable'
+  : locale === 'ko' ? 'Noto Sans KR Variable'
+  : undefined;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={LOCALE_HREFLANG[locale]} style={cjkFamily ? `--font-cjk:'${cjkFamily}'` : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <title>{resolvedTitle}</title>
+    <meta name="description" content={resolvedDescription} />
     <meta name="theme-color" content={themeColor} />
     <meta
       name="google-site-verification"
@@ -61,17 +87,49 @@ const themeColor = '#0e0f14';
     />
     <link rel="canonical" href={canonical} />
 
-    <!-- icons -->
+    {/* hreflang alternates + x-default → en (ADR-0010) */}
+    {hreflangAlternates.map((alt) => (
+      <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+    ))}
+
+    {/* Returning-visitor soft-redirect (ADR-0010 / Q8=B): if a non-en
+        locale preference is saved and we're on an English path that has a
+        localized equivalent, hop to it before first paint. Crawlers don't
+        run JS and have no localStorage, so they get the English HTML. */}
+    <script
+      is:inline
+      define:vars={{ base: import.meta.env.BASE_URL, localizedLocales: LOCALE_PREFIXES }}
+    >
+      (function () {
+        try {
+          var pref = localStorage.getItem('aic-web.locale');
+          if (!pref || pref === 'en' || localizedLocales.indexOf(pref) === -1) return;
+          var p = location.pathname;
+          // Astro emits the root pathname without a trailing slash — normalize
+          // so the base-strip + rebuild land on the right localized URL.
+          var pn = p.endsWith('/') ? p : p + '/';
+          if (!pn.startsWith(base)) return;
+          var rest = pn.slice(base.length);
+          var segs = rest.split('/').filter(Boolean);
+          if (segs.length && localizedLocales.indexOf(segs[0]) !== -1) return;
+          var last = segs.length ? segs[segs.length - 1] : '';
+          if (last.indexOf('.') !== -1) return;
+          location.replace(base + pref + '/' + rest);
+        } catch (e) {}
+      })();
+    </script>
+
+    {/* icons */}
     <link rel="icon" href="/aic-web/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/aic-web/icons/apple-touch-icon.png" />
     <link rel="manifest" href="/aic-web/manifest.webmanifest" />
 
-    <!-- apple web app -->
+    {/* apple web app */}
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="aic" />
 
-    <!-- fonts — preload only regular weight (Q12 hybrid) -->
+    {/* fonts — preload only regular weight (Q12 hybrid) */}
     <link
       rel="preload"
       href="/aic-web/fonts/JetBrainsMono-Regular.woff2"
@@ -80,21 +138,29 @@ const themeColor = '#0e0f14';
       crossorigin
     />
 
-    <!-- open graph / twitter -->
+    {/* CJK webfont (ADR-0012): render only the matching locale's fontsource
+        CSS so English loads zero CJK @font-face. Astro scopes imported CSS
+        per-page; verification confirms `/` carries no Noto rules. */}
+    {locale === 'zh' && <CjkFontsZh />}
+    {locale === 'ja' && <CjkFontsJa />}
+    {locale === 'ko' && <CjkFontsKo />}
+
+    {/* open graph / twitter */}
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:title" content={resolvedTitle} />
+    <meta property="og:description" content={resolvedDescription} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:title" content={resolvedTitle} />
+    <meta name="twitter:description" content={resolvedDescription} />
     <meta name="twitter:image" content={ogImage} />
 
-    <!-- structured data — SoftwareApplication (home) or per-page schema -->
+    {/* structured data — SoftwareApplication (home) or per-page schema */}
     <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
 
-    <!-- PWA: register service worker (progressive enhancement — fails silently) -->
+    {/* PWA: register service worker (progressive enhancement — fails silently) */}
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {

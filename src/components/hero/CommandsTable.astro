@@ -2,8 +2,15 @@
 /**
  * Commands table — three rows mapping each `aic` subcommand to its purpose.
  * Lifted verbatim in shape from aic-intro.png, content from CLAUDE.md.
+ *
+ * i18n (ADR-0010): `command`/`args` are literal; the `description` is
+ * localized in `messages.commands`, keyed by row id.
  */
 import { COMMANDS } from '@/config/site';
+import { localeFromUrl } from '@/i18n/config';
+import { useMessages } from '@/i18n/t';
+
+const m = useMessages(localeFromUrl(Astro.url.pathname));
 ---
 
 <div class="commands" aria-label="aic commands">
@@ -14,7 +21,7 @@ import { COMMANDS } from '@/config/site';
           <span class="cmd-name">{row.command}</span>
           {row.args && <span class="args"> {row.args}</span>}
         </span>
-        <span class="d">{row.description}</span>
+        <span class="d">{m.commands[row.id].description}</span>
       </div>
     ))
   }

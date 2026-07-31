@@ -1,0 +1,23 @@
+---
+/**
+ * /[locale]/resolve/ — localized resolve page (ADR-0010).
+ *
+ * Renders the same `ResolvePage` component as the English route; Base
+ * self-determines locale from the URL. Prose is inline EN pending the
+ * t()-wiring pass (soft parity, Q7=B).
+ */
+import { LOCALE_PREFIXES } from '@/i18n/config';
+import ResolvePage from '@/components/content/ResolvePage.astro';
+
+export function getStaticPaths() {
+  return LOCALE_PREFIXES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params;
+// getStaticPaths enumerates only valid prefixes; this is belt-and-suspenders.
+if (!locale || !(LOCALE_PREFIXES as readonly string[]).includes(locale)) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+---
+
+<ResolvePage />

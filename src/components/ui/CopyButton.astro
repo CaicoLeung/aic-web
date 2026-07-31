@@ -6,7 +6,13 @@
  * - `<button>` with descriptive `aria-label`
  * - On success, label briefly becomes "Copied" so screen-reader users know
  * - Falls back to execCommand for insecure (non-HTTPS /w) contexts
+ *
+ * i18n (ADR-0010): the copy/copied aria labels + done text come from `t()`.
+ * The `{label}` (the command shown) is locale-invariant code-register.
  */
+import { localeFromUrl } from '@/i18n/config';
+import { useTranslations } from '@/i18n/t';
+
 interface Props {
   readonly text: string;
   readonly label?: string;
@@ -20,13 +26,18 @@ const {
   variant = 'ghost',
   class: className = '',
 } = Astro.props;
+
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useTranslations(locale);
 ---
 
 <button
   type="button"
   class:list={['copy-btn', `copy-btn--${variant}`, className]}
   data-copy={text}
-  aria-label={`Copy ${label}`}
+  data-aria-copy={t('copyButton.copyAria', { label })}
+  data-aria-copied={t('copyButton.copiedAria', { label })}
+  aria-label={t('copyButton.copyAria', { label })}
 >
   <span class="copy-btn__label" data-label>{label}</span>
   <svg
@@ -44,7 +55,7 @@ const {
     <rect x="9" y="9" width="11" height="11" rx="2.5"></rect>
     <path d="M5 15V5a2 2 0 0 1 2-2h10"></path>
   </svg>
-  <span class="copy-btn__done" aria-hidden="true">Copied ✓</span>
+  <span class="copy-btn__done" aria-hidden="true" set:html={t('copyButton.copied')} />
 </button>
 
 <style>
@@ -114,6 +125,9 @@ const {
 
     const text = btn.dataset.copy ?? '';
     const label = btn.querySelector('[data-label]')?.textContent ?? 'command';
+    // Localized aria templates, server-rendered per locale (ADR-0010).
+    const ariaCopy = btn.dataset.ariaCopy ?? `Copy ${label}`;
+    const ariaCopied = btn.dataset.ariaCopied ?? `Copied ${label}`;
 
     try {
       await navigator.clipboard.writeText(text);
@@ -135,10 +149,10 @@ const {
     }
 
     btn.dataset.state = 'copied';
-    btn.setAttribute('aria-label', `Copied ${label}`);
+    btn.setAttribute('aria-label', ariaCopied);
     window.setTimeout(() => {
       delete btn.dataset.state;
-      btn.setAttribute('aria-label', `Copy ${label}`);
+      btn.setAttribute('aria-label', ariaCopy);
     }, 1800);
   });
 </script>

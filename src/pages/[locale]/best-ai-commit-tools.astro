@@ -1,0 +1,20 @@
+---
+/**
+ * /[locale]/best-ai-commit-tools/ — localized roundup page (ADR-0010).
+ * Renders the same `RoundupPage` as the English route; Base
+ * self-determines locale. Prose is inline EN pending t()-wiring (Q7=B).
+ */
+import { LOCALE_PREFIXES } from '@/i18n/config';
+import RoundupPage from '@/components/content/RoundupPage.astro';
+
+export function getStaticPaths() {
+  return LOCALE_PREFIXES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params;
+if (!locale || !(LOCALE_PREFIXES as readonly string[]).includes(locale)) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+---
+
+<RoundupPage />

@@ -4,8 +4,12 @@
  */
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { baseHref } from '@/lib/href';
+import { localeFromUrl } from '@/i18n/config';
+import { useTranslations } from '@/i18n/t';
 import CopyButton from '@/components/ui/CopyButton.astro';
 
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useTranslations(locale);
 const base = baseHref(import.meta.env.BASE_URL);
 const resolveBase = `${base}resolve/`;
 const compareBase = `${base}vs/aicommits/`;
@@ -17,9 +21,9 @@ const changelogBase = `${base}changelog/`;
   <div class="footer-inner container">
     <div class="footer-cta">
       <p class="eyebrow">
-        <span class="line" aria-hidden="true"></span>ship cleaner commits today
+        <span class="line" aria-hidden="true"></span>{t('footer.eyebrow')}
       </p>
-      <h2>stop writing commit messages.</h2>
+      <h2>{t('footer.h2')}</h2>
       <div class="footer-actions">
         <CopyButton
           text={PRIMARY_INSTALL_COMMAND}
@@ -32,7 +36,7 @@ const changelogBase = `${base}changelog/`;
           target="_blank"
           rel="noopener noreferrer"
         >
-          ★ Star on GitHub
+          {t('footer.star')}
         </a>
       </div>
     </div>
@@ -42,12 +46,12 @@ const changelogBase = `${base}changelog/`;
         {GITHUB_URL.replace('https://', '')}
       </a>
       <nav class="footer-links" aria-label="Explore">
-        <a href={resolveBase}>resolve merge conflicts</a>
-        <a href={roundupBase}>best AI commit tools</a>
-        <a href={compareBase}>aic vs aicommits</a>
-        <a href={changelogBase}>changelog</a>
+        <a href={resolveBase}>{t('footer.nav.resolve')}</a>
+        <a href={roundupBase}>{t('footer.nav.roundup')}</a>
+        <a href={compareBase}>{t('footer.nav.compare')}</a>
+        <a href={changelogBase}>{t('footer.nav.changelog')}</a>
       </nav>
-      <p>MIT licensed · built with Astro + Tailwind + GSAP</p>
+      <p>{t('footer.meta')}</p>
     </div>
   </div>
 </footer>

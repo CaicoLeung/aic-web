@@ -10,10 +10,33 @@ export default defineConfig({
   site: 'https://caicoleung.github.io',
   base: '/aic-web',
   trailingSlash: 'ignore',
+  // i18n routing (ADR-0010): `/` stays English (default, no prefix);
+  // zh/ja/ko live under path prefixes. redirectToDefaultLocale:false → no
+  // server redirect; returning-visitor routing is client-side (Base.astro
+  // pre-paint soft-redirect honoring a localStorage preference).
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'zh', 'ja', 'ko'],
+    routing: {
+      prefixDefaultLocale: false,
+      redirectToDefaultLocale: false,
+    },
+  },
   integrations: [
     // Emits sitemap-index.xml at the base path — matches the existing
-    // robots.txt reference. Required now that the site is multi-page.
-    sitemap(),
+    // robots.txt reference. The `i18n` option emits per-locale
+    // <xhtml:link rel="alternate"> blocks (ADR-0010).
+    sitemap({
+      i18n: {
+        defaultLocale: 'en',
+        locales: {
+          en: 'en-US',
+          zh: 'zh-CN',
+          ja: 'ja-JP',
+          ko: 'ko-KR',
+        },
+      },
+    }),
   ],
   vite: {
     plugins: [tailwindcss()],

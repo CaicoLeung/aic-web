@@ -1,0 +1,13 @@
+---
+/**
+ * ZH CJK webfont (ADR-0012). Importing the fontsource variable package
+ * injects its unicode-range `@font-face` rules; the browser fetches only
+ * the glyph ranges a page actually uses. Base renders this component only
+ * on `/zh/` pages, so English (and ja/ko) pages load zero zh font CSS.
+ *
+ * `--font-cjk` is set to the family name on `<html>` (Base) so the global
+ * type stacks pick it up; on non-zh pages it's unset and the stacks fall
+ * back to the system CJK families.
+ */
+import '@fontsource-variable/noto-sans-sc';
+---

@@ -1,0 +1,22 @@
+---
+/**
+ * /[locale]/changelog/ — localized changelog route (ADR-0010 / ADR-0011).
+ * Renders the same `ChangelogPage`; the fetched body is EN markdown and
+ * stays EN in every locale (ADR-0011). Base self-determines locale for
+ * chrome + hreflang. The localized "release notes are in English" note is
+ * pending the t()-wiring pass.
+ */
+import { LOCALE_PREFIXES } from '@/i18n/config';
+import ChangelogPage from '@/components/content/ChangelogPage.astro';
+
+export function getStaticPaths() {
+  return LOCALE_PREFIXES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params;
+if (!locale || !(LOCALE_PREFIXES as readonly string[]).includes(locale)) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+---
+
+<ChangelogPage />

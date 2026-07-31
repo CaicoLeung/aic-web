@@ -73,81 +73,58 @@ export const FALLBACK_PROVIDERS: readonly ProviderInfo[] = [
 ] as const;
 
 export interface InstallMethod {
-  readonly id: string;
-  readonly label: string;
+  readonly id: 'brew' | 'unix' | 'windows';
   readonly command: string;
-  readonly note?: string;
 }
 
 /**
- * Install methods. Sourced from the aic README — stable across releases.
- * Homebrew is the primary hero CTA (Q10); the rest live in the install
- * section's tabbed view.
+ * Install methods (ADR-0010). `command` is literal (locale-invariant). The
+ * tab `label` and `note` are localized in `messages.install.methods`, keyed
+ * by `id`. Sourced from the aic README — stable across releases. Homebrew is
+ * the primary hero CTA; the rest live in the install section's tabbed view.
  */
 export const INSTALL_METHODS: readonly InstallMethod[] = [
   {
     id: 'brew',
-    label: 'Homebrew',
     command: 'brew tap CaicoLeung/aic && brew install aic',
-    note: 'Update with `brew upgrade aic`. Homebrew installs are detected automatically, so `aic update` will redirect you to brew.',
   },
   {
     id: 'unix',
-    label: 'Installer · macOS / Linux',
     command:
       "curl --proto '=https' --tlsv1.2 -sSfL https://github.com/CaicoLeung/aic/releases/latest/download/aic-installer.sh | sh",
-    note: 'Downloads the latest release binary from GitHub Releases.',
   },
   {
     id: 'windows',
-    label: 'Installer · Windows',
     command:
       'irm https://github.com/CaicoLeung/aic/releases/latest/download/aic-installer.ps1 | iex',
-    note: 'PowerShell. Downloads the latest release binary.',
   },
 ] as const;
 
 /** The single primary CTA command used in the hero (Q10). */
 export const PRIMARY_INSTALL_COMMAND = 'brew tap CaicoLeung/aic && brew install aic';
 
-/** Step labels for the "How it works" flow — sourced from aic-sketch.png. */
-export interface HowItWorksStep {
-  readonly n: string;
-  readonly label: string;
-  readonly detail: string;
-}
+/**
+ * Ordered step ids for the "How it works" flow (ADR-0010). The visible
+ * label/detail are localized — they live in `messages.how.steps`, keyed by
+ * these ids. Structure (order + the highlight on `03`) stays here.
+ */
+export const HOW_IT_WORKS_STEPS = ['01', '02', '03', '04', '05', '06'] as const;
 
-export const HOW_IT_WORKS_STEPS: readonly HowItWorksStep[] = [
-  { n: '01', label: 'install', detail: 'brew install aic' },
-  { n: '02', label: 'setup', detail: 'provider · key · model' },
-  { n: '03', label: 'run', detail: 'type:  aic' },
-  { n: '04', label: 'read', detail: 'reads the diff' },
-  { n: '05', label: 'draft', detail: 'writes the message' },
-  { n: '06', label: 'commit', detail: 'ships it  ✓' },
-] as const;
-
-/** Commands table rows for the hero — from intro.png. */
+/**
+ * Commands table rows for the hero (ADR-0010). `command`/`args` are literal
+ * (locale-invariant); the human-facing `description` is localized in
+ * `messages.commands`, keyed by `id`.
+ */
 export interface CommandRow {
+  readonly id: 'aic' | 'aic-setup' | 'aic-list';
   readonly command: string;
   readonly args?: string;
-  readonly description: string;
 }
 
 export const COMMANDS: readonly CommandRow[] = [
-  {
-    command: 'aic',
-    description: 'commit staged work · or batch-plan unstaged',
-  },
-  {
-    command: 'aic',
-    args: 'setup',
-    description: 'one-time wizard — provider → key → model',
-  },
-  {
-    command: 'aic',
-    args: 'list',
-    description: 'show resolved config + masked API key',
-  },
+  { id: 'aic', command: 'aic' },
+  { id: 'aic-setup', command: 'aic', args: 'setup' },
+  { id: 'aic-list', command: 'aic', args: 'list' },
 ] as const;
 
 /**

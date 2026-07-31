@@ -5,22 +5,25 @@
  */
 import { GITHUB_URL } from '@/config/site';
 import type { ProviderInfo } from '@/config/site';
+import { localeFromUrl } from '@/i18n/config';
+import { useTranslations } from '@/i18n/t';
 
 interface Props {
   readonly providers: readonly ProviderInfo[];
 }
 const { providers } = Astro.props;
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useTranslations(locale);
 ---
 
 <section id="providers" class="section providers">
   <div class="container">
     <p class="eyebrow">
-      <span class="line" aria-hidden="true"></span>04 — Providers &amp; privacy
+      <span class="line" aria-hidden="true"></span>{t('providers.eyebrow')}
     </p>
-    <h2>your key · your model</h2>
+    <h2>{t('providers.h2')}</h2>
     <p class="lede">
-      Bring your own provider. aic talks straight to your LLM — no middleman, no
-      per-commit markup, no proxy. Your API key never leaves your machine.
+      {t('providers.lede')}
     </p>
 
     <ul class="provider-list" aria-label="Supported LLM providers">
@@ -33,7 +36,7 @@ const { providers } = Astro.props;
           <div class="model-row">
             <dt>{p.name}</dt>
             <dd>
-              {p.defaultModel ?? <span class="muted">(your model)</span>}
+              {p.defaultModel ?? <span class="muted">{t('providers.yourModel')}</span>}
             </dd>
           </div>
         ))
@@ -41,7 +44,7 @@ const { providers } = Astro.props;
     </dl>
 
     <p class="aside">
-      no middleman · no per-commit markup · calls go straight from your machine
+      {t('providers.aside')}
     </p>
     <a
       class="link"
@@ -49,7 +52,7 @@ const { providers } = Astro.props;
       target="_blank"
       rel="noopener noreferrer"
     >
-      read the provider code →
+      {t('providers.link')}
     </a>
   </div>
 </section>

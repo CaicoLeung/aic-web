@@ -13,7 +13,11 @@ import Terminal from './Terminal.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
 import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { baseHref } from '@/lib/href';
+import { localeFromUrl } from '@/i18n/config';
+import { useTranslations } from '@/i18n/t';
 
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useTranslations(locale);
 // Two-verb reframe (v0.3.0): commit + resolve. The lede links the resolve
 // pillar to its Capability page (ADR-0009).
 const resolveUrl = `${baseHref(import.meta.env.BASE_URL)}resolve/`;
@@ -22,27 +26,22 @@ const resolveUrl = `${baseHref(import.meta.env.BASE_URL)}resolve/`;
 <section class="hero" id="top">
   <div class="hero-grid container">
     <p class="eyebrow hero-eyebrow" data-reveal>
-      <span class="line" aria-hidden="true"></span>01 — Introduction
+      <span class="line" aria-hidden="true"></span>{t('hero.eyebrow')}
     </p>
     <h1 class="hero-h1" data-reveal>
-      Stop writing<br />
-      <em class="ital">commit</em>
-      <span class="pop">messages.</span><br />
-      Stop untangling<br />
-      <em class="ital">merge</em>
-      <span class="pop">conflicts.</span>
+      {t('hero.h1.stopWriting')}<br />
+      <em class="ital">{t('hero.h1.commit')}</em>
+      <span class="pop">{t('hero.h1.messages')}</span><br />
+      {t('hero.h1.stopUntangling')}<br />
+      <em class="ital">{t('hero.h1.merge')}</em>
+      <span class="pop">{t('hero.h1.conflicts')}</span>
     </h1>
 
     <div class="hero-terminal" data-reveal>
       <Terminal />
     </div>
 
-    <p class="lede hero-lede" data-reveal>
-      <b>aic</b> reads your diff, drafts a conventional commit, and commits it — one command.
-      Mid-merge? It <a href={resolveUrl}>resolves your conflicts</a> file-by-file, with a diff
-      to approve before anything lands. Nothing staged? It splits your work into logical commits
-      — even within a single file.
-    </p>
+    <p class="lede hero-lede" data-reveal><Fragment set:html={t('hero.ledeBefore')} /><a href={resolveUrl}>{t('hero.ledeLink')}</a><Fragment set:html={t('hero.ledeAfter')} /></p>
 
     <div class="hero-cta" data-reveal>
       <CopyButton
@@ -51,8 +50,7 @@ const resolveUrl = `${baseHref(import.meta.env.BASE_URL)}resolve/`;
         variant="primary"
       />
       <span class="cta-hint">
-        <span class="arrow" aria-hidden="true">→</span> then run
-        <code>aic setup</code>
+        <span class="arrow" aria-hidden="true">→</span> <Fragment set:html={t('hero.ctaHint', { cmd: 'aic setup' })} />
       </span>
     </div>
 

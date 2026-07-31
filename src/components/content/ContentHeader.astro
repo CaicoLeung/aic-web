@@ -5,16 +5,26 @@
  * article pages use this simpler, page-safe header instead.
  *
  * Brand links home via BASE_URL (base-path safe). Reuses the Topbar mark.
+ *
+ * i18n (ADR-0010): strings via `t()`; locale self-determined from URL.
+ * Includes the LanguageSwitcher so content pages can switch locale without
+ * editing the URL.
  */
 import { GITHUB_URL } from '@/config/site';
 import { baseHref } from '@/lib/href';
+import { localeFromUrl } from '@/i18n/config';
+import { useTranslations } from '@/i18n/t';
+import LanguageSwitcher from '@/components/topbar/LanguageSwitcher.astro';
 
 interface Props {
   readonly version?: string;
 }
 const { version } = Astro.props;
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useTranslations(locale);
 const home = baseHref(import.meta.env.BASE_URL);
 const changelog = `${home}changelog/`;
+const versionTitle = version ? t('contentHeader.versionTitle', { version }) : undefined;
 ---
 
 <header class="content-header">
@@ -30,19 +40,16 @@ const changelog = `${home}changelog/`;
 
   <nav class="content-nav" aria-label="Site">
     {version && (
-      <a
-        class="version"
-        href={changelog}
-        title={`Latest release: v${version} — view changelog`}
-      >
+      <a class="version" href={changelog} title={versionTitle}>
         v{version}
       </a>
     )}
-    <a href={home}>home</a>
-    <a href={changelog}>changelog</a>
+    <a href={home}>{t('contentHeader.home')}</a>
+    <a href={changelog}>{t('contentHeader.changelog')}</a>
     <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
-      GitHub<span aria-hidden="true"> ↗</span>
+      {t('contentHeader.github')}<span aria-hidden="true"> ↗</span>
     </a>
+    <LanguageSwitcher />
   </nav>
 </header>
 
