@@ -6,13 +6,14 @@
   "description": "Marketing site for aic — AI-powered git commits. Built with Astro + Tailwind v4 + GSAP.",
   "scripts": {
     "dev": "astro dev",
-    "build": "tsc --noEmit && astro build",
+    "build": "tsc --noEmit && astro build && (node --import tsx scripts/i18n-stub-report.ts || true)",
     "preview": "astro preview",
     "check": "tsc --noEmit",
     "test": "node --import tsx --test tests/*.test.ts",
     "format": "prettier --write .",
     "lint": "eslint . --ext .ts,.astro",
-    "axe": "axe-preview"
+    "axe": "axe-preview",
+    "i18n:report": "node --import tsx scripts/i18n-stub-report.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
