@@ -159,6 +159,10 @@ const schema = [articleSchema, faqSchema];
         </div>
       </section>
 
+      <p class="inline-cta">
+        <a href="#cta">{m.vs.more.installCta}</a>
+      </p>
+
       <!-- Where aic wins -->
       <section class="block">
         <h2>{vsBlock.winsH2}</h2>
@@ -264,7 +268,7 @@ const schema = [articleSchema, faqSchema];
       </section>
 
       <!-- Verdict + CTA -->
-      <section class="verdict">
+      <section class="verdict" id="cta">
         <h2>{vsBlock.verdict.h2}</h2>
         <p set:html={vsBlock.verdict.body} />
         <div class="cta">
@@ -529,5 +533,19 @@ const schema = [articleSchema, faqSchema];
   .cta-link:hover {
     border-color: var(--color-amber);
     color: var(--color-amber);
+  }
+
+  .inline-cta {
+    margin-top: 1.5rem;
+  }
+  .inline-cta a {
+    color: var(--color-amber);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-amber) 40%, transparent);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .inline-cta a:hover {
+    color: var(--color-ink);
   }
 </style>

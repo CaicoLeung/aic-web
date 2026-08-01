@@ -831,6 +831,7 @@ export const messages: Messages = {
       gitAi: 'aic vs git-ai',
       opencommit: 'aic vs OpenCommit',
       roundup: 'aic をベスト AI コミットツールの総まとめで見る →',
+      installCta: 'aic をインストール →',
     },
   },
 

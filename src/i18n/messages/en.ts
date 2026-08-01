@@ -885,6 +885,7 @@ export const messages = {
       gitAi: 'aic vs git-ai',
       opencommit: 'aic vs OpenCommit',
       roundup: 'See aic among the best AI commit tools →',
+      installCta: 'Install aic →',
     },
   },
 
