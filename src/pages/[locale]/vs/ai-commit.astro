@@ -1,0 +1,22 @@
+---
+/**
+ * /[locale]/vs/ai-commit/ — localized comparison page (ADR-0010).
+ * Renders the same `VsCompetitorPage` as the English route; Base
+ * self-determines locale. Stubbed keys fall back to the EN source
+ * (soft parity, Q7=B).
+ */
+import { isLocalePrefix, LOCALE_PREFIXES } from '@/i18n/config';
+import VsCompetitorPage from '@/components/content/VsCompetitorPage.astro';
+import { AI_COMMIT_COMPARISON } from '@/config/competitors';
+
+export function getStaticPaths() {
+  return LOCALE_PREFIXES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params;
+if (!isLocalePrefix(locale)) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+---
+
+<VsCompetitorPage id="ai-commit" comparison={AI_COMMIT_COMPARISON} />
