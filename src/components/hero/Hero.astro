@@ -15,6 +15,11 @@ import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 
+interface Props {
+  readonly version?: string;
+}
+const { version } = Astro.props;
+
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 // Two-verb reframe (v0.3.0): commit + resolve. The lede links the resolve
@@ -40,7 +45,11 @@ const resolveUrl = localizedHref(locale, 'resolve');
       <Terminal />
     </div>
 
-    <p class="lede hero-lede" data-reveal><Fragment set:html={t('hero.ledeBefore')} /><a href={resolveUrl}>{t('hero.ledeLink')}</a><Fragment set:html={t('hero.ledeAfter')} /></p>
+    <p class="lede hero-lede" data-reveal>
+      <Fragment set:html={t('hero.ledeBefore')} /><a href={resolveUrl}
+        >{t('hero.ledeLink')}</a
+      ><Fragment set:html={t('hero.ledeAfter')} />
+    </p>
 
     <div class="hero-cta" data-reveal>
       <CopyButton
@@ -49,9 +58,18 @@ const resolveUrl = localizedHref(locale, 'resolve');
         variant="primary"
       />
       <span class="cta-hint">
-        <span class="arrow" aria-hidden="true">→</span> <Fragment set:html={t('hero.ctaHint', { cmd: 'aic setup' })} />
+        <span class="arrow" aria-hidden="true">→</span>
+        <Fragment set:html={t('hero.ctaHint', { cmd: 'aic setup' })} />
       </span>
     </div>
+
+    {
+      version && (
+        <p class="hero-trust" data-reveal>
+          {t('hero.trust', { version })}
+        </p>
+      )
+    }
 
     <div class="hero-commands" data-reveal>
       <CommandsTable />
@@ -87,7 +105,8 @@ const resolveUrl = localizedHref(locale, 'resolve');
         'h1       terminal'
         'lede     terminal'
         'commands terminal'
-        'cta      terminal';
+        'cta      terminal'
+        'trust    terminal';
       gap: 1.25rem 2.5rem;
       align-items: center;
     }
@@ -109,6 +128,9 @@ const resolveUrl = localizedHref(locale, 'resolve');
     }
     .hero-cta {
       grid-area: cta;
+    }
+    .hero-trust {
+      grid-area: trust;
     }
   }
   h1 {
@@ -174,6 +196,16 @@ const resolveUrl = localizedHref(locale, 'resolve');
   [data-reveal] {
     opacity: 1;
     transform: none;
+  }
+
+  .hero-trust {
+    grid-area: trust;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-dim);
+    margin: 0;
   }
 </style>
 
