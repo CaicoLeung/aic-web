@@ -31,3 +31,8 @@ pnpm-debug.log*
 
 # Lighthouse CI
 .lighthouseci/
+
+# local changes
+.agents/
+.pnpm-store/
+competitor-profiles/
