@@ -155,11 +155,7 @@ const schema = {
       <!-- CTA + full comparison -->
       <section class="verdict" id="cta">
         <div class="cta">
-          <CopyButton
-            text={PRIMARY_INSTALL_COMMAND}
-            label="brew tap CaicoLeung/aic && brew install aic"
-            variant="primary"
-          />
+          <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
           <a class="cta-link" href={vsPage}>{m.vs[id].h1}</a>
           <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
             {t('footer.star')}

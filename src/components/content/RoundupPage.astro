@@ -142,11 +142,7 @@ const schema = {
         <h2>{t('roundup.verdict.h2')}</h2>
         <p set:html={t('roundup.verdict.body')} />
         <div class="cta">
-          <CopyButton
-            text={PRIMARY_INSTALL_COMMAND}
-            label="brew tap CaicoLeung/aic && brew install aic"
-            variant="primary"
-          />
+          <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
           <a class="cta-link" href={resolve}>{t('footer.nav.resolve')}</a>
           <a class="cta-link" href={vsAicommits}>{t('roundup.verdict.seeVs')}</a>
           <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer"

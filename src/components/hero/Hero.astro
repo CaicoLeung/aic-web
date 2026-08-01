@@ -55,11 +55,7 @@ const resolveUrl = localizedHref(locale, 'resolve');
     <div class="hero-cta" data-reveal>
       <div class="cta-stack">
         <span class="cta-label">{t('hero.ctaLabel')}</span>
-        <CopyButton
-          text={PRIMARY_INSTALL_COMMAND}
-          label="brew tap CaicoLeung/aic && brew install aic"
-          variant="primary"
-        />
+        <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
         <span class="cta-hint">
           <span class="arrow" aria-hidden="true">→</span>
           <Fragment set:html={t('hero.ctaHint', { cmd: 'aic setup' })} />

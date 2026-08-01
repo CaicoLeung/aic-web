@@ -72,11 +72,7 @@ const schema = {
       <p class="lede resolve-lede" set:html={t('resolve.lede')} />
 
       <div class="resolve-cta">
-        <CopyButton
-          text={PRIMARY_INSTALL_COMMAND}
-          label="brew tap CaicoLeung/aic && brew install aic"
-          variant="primary"
-        />
+        <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
         <span class="cta-hint">
           <span class="arrow" aria-hidden="true">→</span>
           <Fragment set:html={t('resolve.ctaHint')} />
@@ -146,11 +142,7 @@ const schema = {
         <h2>{t('resolve.verdict.h2')}</h2>
         <p set:html={t('resolve.verdict.body')} />
         <div class="cta">
-          <CopyButton
-            text={PRIMARY_INSTALL_COMMAND}
-            label="brew tap CaicoLeung/aic && brew install aic"
-            variant="primary"
-          />
+          <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
           <a class="cta-link" href={roundup}>
             {t('batching.cmpLink')}
           </a>

@@ -25,11 +25,7 @@ const deepseekBase = localizedHref(locale, 'deepseek');
       </p>
       <h2>{t('footer.h2')}</h2>
       <div class="footer-actions">
-        <CopyButton
-          text={PRIMARY_INSTALL_COMMAND}
-          label="brew tap CaicoLeung/aic && brew install aic"
-          variant="primary"
-        />
+        <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
         <a
           class="footer-link"
           href={GITHUB_URL}
