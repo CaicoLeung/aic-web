@@ -13,9 +13,10 @@ import Base from '@/layouts/Base.astro';
 import ContentHeader from '@/components/content/ContentHeader.astro';
 import Footer from '@/components/footer/Footer.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
-import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
+import { GITHUB_URL, PRIMARY_INSTALL_COMMAND, SITE_ORIGIN } from '@/config/site';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer, useMessages } from '@/i18n/t';
+import { articleSchema, breadcrumbSchema, canonicalUrl, type Crumb } from '@/lib/schema';
 
 const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
@@ -25,17 +26,26 @@ const hub = m.alt.hub;
 const title = t('meta.alt.hub.title');
 const description = t('meta.alt.hub.description');
 
-const schema = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: title,
-  description,
-  datePublished: '2026-08-01',
-  dateModified: '2026-08-01',
-  author: { '@type': 'Organization', name: 'aic' },
-  publisher: { '@type': 'Organization', name: 'aic' },
-  about: ['aic', 'AI commit message tools', 'alternatives'],
-};
+// Canonical URL + absolute crumb URLs for Article.url / BreadcrumbList.
+const site = Astro.site ?? SITE_ORIGIN;
+const canonical = canonicalUrl(Astro.url.pathname, site);
+const abs = (slug: string) => canonicalUrl(localizedHref(locale, slug), site);
+const crumbs: readonly Crumb[] = [
+  { name: t('contentHeader.home'), url: abs('') },
+  { name: hub.eyebrow, url: canonical },
+];
+
+const schema = [
+  articleSchema({
+    headline: title,
+    description,
+    datePublished: '2026-08-01',
+    about: ['aic', 'AI commit message tools', 'alternatives'],
+    url: canonical,
+    site,
+  }),
+  breadcrumbSchema(crumbs),
+];
 ---
 
 <Base version={facts.version} title={title} description={description} schema={schema}>

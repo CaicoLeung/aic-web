@@ -26,9 +26,16 @@ import {
   COMPARISON_RIVALS,
   type CompetitorComparison,
 } from '@/config/competitors';
-import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
+import { GITHUB_URL, PRIMARY_INSTALL_COMMAND, SITE_ORIGIN } from '@/config/site';
 import { localeFromUrl, localizedHref } from '@/i18n/config';
 import { useLocalizer, useMessages } from '@/i18n/t';
+import {
+  articleSchema,
+  breadcrumbSchema,
+  canonicalUrl,
+  faqSchema,
+  type Crumb,
+} from '@/lib/schema';
 
 interface Props {
   /**
@@ -66,29 +73,29 @@ const ties = axes.filter((a) => a.winner === 'tie');
 const title = t(`meta.vs.${id}.title`);
 const description = t(`meta.vs.${id}.description`);
 
-const articleSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: title,
-  description,
-  datePublished,
-  dateModified,
-  author: { '@type': 'Organization', name: 'aic' },
-  publisher: { '@type': 'Organization', name: 'aic' },
-  about: ['aic', rival.name, 'AI commit message tools'],
-};
+// Canonical URL + absolute crumb URLs for Article.url / BreadcrumbList.
+const site = Astro.site ?? SITE_ORIGIN;
+const canonical = canonicalUrl(Astro.url.pathname, site);
+const abs = (slug: string) => canonicalUrl(localizedHref(locale, slug), site);
+const crumbs: readonly Crumb[] = [
+  { name: t('contentHeader.home'), url: abs('') },
+  { name: t('footer.nav.roundup'), url: abs('best-ai-commit-tools') },
+  { name: vsBlock.h1, url: canonical },
+];
 
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: vsBlock.faq.items.map((item) => ({
-    '@type': 'Question',
-    name: item.q,
-    acceptedAnswer: { '@type': 'Answer', text: item.a },
-  })),
-};
-
-const schema = [articleSchema, faqSchema];
+const schema = [
+  articleSchema({
+    headline: title,
+    description,
+    datePublished,
+    dateModified,
+    about: ['aic', rival.name, 'AI commit message tools'],
+    url: canonical,
+    site,
+  }),
+  faqSchema(vsBlock.faq.items),
+  breadcrumbSchema(crumbs),
+];
 ---
 
 <Base version={facts.version} title={title} description={description} schema={schema}>

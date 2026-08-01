@@ -19,9 +19,15 @@ import ContentHeader from '@/components/content/ContentHeader.astro';
 import Footer from '@/components/footer/Footer.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
 import { ROUNDUP } from '@/config/competitors';
-import { GITHUB_URL, HUNK_SPLITTING, PRIMARY_INSTALL_COMMAND } from '@/config/site';
+import {
+  GITHUB_URL,
+  HUNK_SPLITTING,
+  PRIMARY_INSTALL_COMMAND,
+  SITE_ORIGIN,
+} from '@/config/site';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer, useMessages } from '@/i18n/t';
+import { articleSchema, canonicalUrl } from '@/lib/schema';
 
 const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
@@ -33,17 +39,17 @@ const resolve = localizedHref(locale, 'resolve');
 const title = t('meta.roundup.title', { year: '2026' });
 const description = t('meta.roundup.description');
 
-const schema = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
+const site = Astro.site ?? SITE_ORIGIN;
+const canonical = canonicalUrl(Astro.url.pathname, site);
+
+const schema = articleSchema({
   headline: title,
   description,
   datePublished: '2026-07-08',
-  dateModified: '2026-07-08',
-  author: { '@type': 'Organization', name: 'aic' },
-  publisher: { '@type': 'Organization', name: 'aic' },
   about: ['AI commit message tools', 'git', 'conventional commits'],
-};
+  url: canonical,
+  site,
+});
 ---
 
 <Base version={facts.version} title={title} description={description} schema={schema}>
