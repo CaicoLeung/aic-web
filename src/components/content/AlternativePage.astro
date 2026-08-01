@@ -1,0 +1,302 @@
+---
+/**
+ * /alternatives/{id} — singular migration-intent page (ADR-0006).
+ *
+ * Format 1 of the competitors playbook: validates why people look for an
+ * alternative, positions aic as the alternative, reuses the vs-page
+ * comparison matrix, and gives an honest switch/stay call plus migration
+ * steps. Comparison facts come from `src/config/competitors.ts`; prose is
+ * hand-maintained per competitor (editorial, ADR-0006).
+ *
+ * Rendered by both `/alternatives/{id}/` and `/[locale]/alternatives/{id}/`
+ * (ADR-0010). Base self-determines locale; stubbed keys fall back to EN.
+ */
+import { loadAicFacts } from '@/data/aic';
+import Base from '@/layouts/Base.astro';
+import ContentHeader from '@/components/content/ContentHeader.astro';
+import Footer from '@/components/footer/Footer.astro';
+import CopyButton from '@/components/ui/CopyButton.astro';
+import type { CompetitorComparison } from '@/config/competitors';
+import { GITHUB_URL, PRIMARY_INSTALL_COMMAND, SITE_ORIGIN } from '@/config/site';
+import { localizedHref, localeFromUrl } from '@/i18n/config';
+import { assertRivalMessages } from '@/i18n/assert';
+import { useLocalizer, useMessages } from '@/i18n/t';
+import { articleSchema, breadcrumbSchema, canonicalUrl, type Crumb } from '@/lib/schema';
+import FeatureMatrix from '@/components/content/FeatureMatrix.astro';
+
+/** Message-block keys under `meta.alt` / `alt` (competitor pages, not hub). */
+interface Props {
+  /**
+   * Editorial comparison data (`src/config/competitors.ts`). The rival id is
+   * the single source of truth for the message-block key (alt + vs axes),
+   * the breadcrumb, and the cross-links — no separate `id` prop.
+   */
+  comparison: CompetitorComparison;
+}
+
+const { comparison } = Astro.props;
+// Derive every id-keyed lookup from the data, not a parallel prop.
+const id = comparison.rival.id;
+const facts = await loadAicFacts();
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useLocalizer(locale);
+const m = useMessages(locale);
+// Build-time gate: a missing i18n block fails the build clearly (ADR-0007 gap:
+// `.astro` frontmatter isn't type-checked, and `m.alt[id]` is a string index).
+assertRivalMessages(m, id);
+const alt = m.alt[id];
+const vsAxes = m.vs[id].axes;
+const { rival, axes } = comparison;
+const title = t(`meta.alt.${id}.title`);
+const description = t(`meta.alt.${id}.description`);
+const hub = localizedHref(locale, 'alternatives');
+const vsPage = localizedHref(locale, `vs/${id}`);
+
+// Canonical URL + absolute crumb URLs for Article.url / BreadcrumbList.
+const site = Astro.site ?? SITE_ORIGIN;
+const canonical = canonicalUrl(Astro.url.pathname, site);
+const absolutizeUrl = (slug: string) => canonicalUrl(localizedHref(locale, slug), site);
+const crumbs: readonly Crumb[] = [
+  { name: t('contentHeader.home'), url: absolutizeUrl('') },
+  { name: t('alt.hub.eyebrow'), url: absolutizeUrl('alternatives') },
+  { name: alt.h1, url: canonical },
+];
+
+const schema = [
+  articleSchema({
+    headline: title,
+    description,
+    datePublished: '2026-08-01',
+    about: ['aic', rival.name, 'AI commit message tools'],
+    url: canonical,
+    site,
+  }),
+  breadcrumbSchema(crumbs),
+];
+---
+
+<Base version={facts.version} title={title} description={description} schema={schema}>
+  <ContentHeader version={facts.version} />
+
+  <main id="main">
+    <article class="article container">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href={localizedHref(locale, '')}>{t('contentHeader.home')}</a>
+        <span aria-hidden="true">›</span>
+        <a href={hub}>{t('alt.hub.eyebrow')}</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">{alt.h1}</span>
+      </nav>
+      <p class="eyebrow"><span class="line" aria-hidden="true"></span>{alt.eyebrow}</p>
+      <h1>{alt.h1}</h1>
+      <p class="lede" set:html={alt.lede} />
+
+      <!-- Why switch -->
+      <section class="block">
+        <h2>{alt.whyH}</h2>
+        <p>{alt.why}</p>
+      </section>
+
+      <!-- Comparison matrix (reuses vs-page axes) -->
+      <FeatureMatrix
+        axes={axes}
+        axisLabels={vsAxes}
+        rivalName={rival.name}
+        labels={m.vs.matrix}
+      />
+
+      <p class="inline-cta">
+        <a href="#cta">{m.vs.more.installCta}</a>
+      </p>
+
+      <!-- Switch / stay -->
+      <section class="switch-grid block">
+        <div class="switch-col">
+          <h2>{alt.switchH}</h2>
+          <p>{alt.shouldSwitch}</p>
+        </div>
+        <div class="switch-col stay">
+          <h2>{alt.notH}</h2>
+          <p>{alt.shouldNot}</p>
+        </div>
+      </section>
+
+      <!-- Migration -->
+      <section class="block">
+        <h2>{alt.migrateH}</h2>
+        <ol class="migrate">
+          {
+            /*
+            Install step sources the command from PRIMARY_INSTALL_COMMAND (ADR-0003)
+            rather than re-typing it in every locale's prose (ADR-0006). Only the
+            localized lead-in lives in the message module; the command is
+            code-register, rendered as <code> by the component.
+          */
+          }
+          <li>{t('alt.migrateLead')} <code>{PRIMARY_INSTALL_COMMAND}</code></li>
+          {alt.migrate.map((step) => <li set:html={step} />)}
+        </ol>
+      </section>
+
+      <!-- CTA + full comparison -->
+      <section class="verdict" id="cta">
+        <div class="cta">
+          <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
+          <a class="cta-link" href={vsPage}>{m.vs[id].h1}</a>
+          <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
+            {t('footer.star')}
+          </a>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .article {
+    max-width: 820px;
+    padding-block: clamp(2.5rem, 1rem + 4vw, 4.5rem) clamp(3rem, 1rem + 5vw, 5rem);
+    position: relative;
+    z-index: 2;
+  }
+  h1 {
+    font-size: var(--text-h2);
+    line-height: 1.05;
+    margin: 0.75rem 0 0;
+  }
+  .lede {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    margin-top: 1rem;
+    font-size: var(--text-lede);
+  }
+  .lede code {
+    color: var(--color-amber);
+    font-family: var(--font-mono);
+  }
+
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-ink-dim);
+    margin-bottom: 0.5rem;
+  }
+  .crumbs a {
+    color: var(--color-ink-muted);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--color-amber);
+  }
+  .crumbs span[aria-current='page'] {
+    color: var(--color-ink);
+  }
+
+  .block {
+    margin-top: 2.75rem;
+  }
+  .block h2 {
+    font-size: 1.5rem;
+    margin: 0 0 1rem;
+  }
+  .block p {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+  }
+  .block p code {
+    color: var(--color-amber);
+    font-family: var(--font-mono);
+  }
+
+  /* Switch / stay */
+  .switch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  @media (max-width: 640px) {
+    .switch-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .switch-col {
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--color-line-soft);
+    border-radius: 12px;
+    background: var(--color-surface);
+  }
+  .switch-col.stay {
+    border-color: var(--color-line);
+  }
+  .switch-col h2 {
+    font-size: 1.05rem;
+    margin: 0 0 0.5rem;
+  }
+
+  /* Migration */
+  .migrate {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: var(--color-ink-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+  .migrate code {
+    color: var(--color-amber);
+    font-family: var(--font-mono);
+  }
+
+  /* CTA */
+  .verdict {
+    margin-top: 2.75rem;
+    padding: 1.75rem;
+    border: 1px solid var(--color-line-soft);
+    border-radius: 14px;
+    background: var(--color-surface);
+  }
+  .cta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+  .cta-link {
+    color: var(--color-ink);
+    text-decoration: none;
+    padding: 0.55rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition:
+      border-color var(--duration-fast) ease,
+      color var(--duration-fast) ease;
+  }
+  .cta-link:hover {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+  }
+
+  .inline-cta {
+    margin-top: 1.5rem;
+  }
+  .inline-cta a {
+    color: var(--color-amber);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-amber) 40%, transparent);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .inline-cta a:hover {
+    color: var(--color-ink);
+  }
+</style>

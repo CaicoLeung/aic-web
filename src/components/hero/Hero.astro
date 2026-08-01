@@ -1,56 +1,145 @@
 ---
 /**
- * Hero — eyebrow + H1 + lede + commands table + primary CTA, with the
- * animated terminal.
+ * Hero — a quiet 3D deck.
  *
- * Mobile order is a narrative: eyebrow → H1 → terminal (the hook) → lede
- * → CTA → commands reference. Desktop restores the two-column copy/terminal
- * split via grid-template-areas, so DOM order (mobile) and desktop placement
- * can differ without CSS `order` hacks. See ADR-0004 for the type system.
+ * Concept: the terminal floats inside a perspective scene and tilts
+ * gently with the pointer, leaning back as it leaves the viewport. A
+ * few dim monospace glyphs drift at their own depths as parallax dust.
+ * The H1 reveals line-by-line through a clip mask. That is the whole
+ * atmosphere — depth comes from motion, not from graphics.
+ *
+ * Minimalism discipline (the brief asked for 极简 first): one accent
+ * (amber), one ink, one mono, lots of air. No horizon line, no grid
+ * floor, no aurora blobs — those read as synthwave noise on wide screens
+ * and fight the two-column layout. The terminal's own glow is the only
+ * light source; everything else is restraint.
+ *
+ * Reduced-motion / no-JS: every animated element has a visible final
+ * state via `[data-reveal] { opacity:1; transform:none }` and the CSS
+ * keyframes are gated behind `(prefers-reduced-motion: no-preference)`.
+ * Pointer + scroll parallax only construct under `whenMotionOk`, so a
+ * reduced-motion visitor pays zero rAF cost and sees the deck assembled.
+ *
+ * Copy + i18n + composables (CommandsTable / Terminal / CopyButton) are
+ * unchanged from the previous hero — only the visual chrome and the motion
+ * layer were rebuilt.
  */
 import CommandsTable from './CommandsTable.astro';
 import Terminal from './Terminal.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
-import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
+import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 
+interface Props {
+  readonly stars?: number;
+}
+const { stars } = Astro.props;
+
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
-// Two-verb reframe (v0.3.0): commit + resolve. The lede links the resolve
-// pillar to its Capability page (ADR-0009).
 const resolveUrl = localizedHref(locale, 'resolve');
+
+// Ambient monospace glyphs scattered as depth dust. Sparse + dim so
+// the hero reads minimal — parallax depth cue, not decoration. Kept to
+// four and placed away from the copy/terminal focal area.
+const GLYPHS = [
+  { ch: '✓', x: '10%', y: '20%', d: 0.26 },
+  { ch: '@@', x: '88%', y: '16%', d: 0.16 },
+  { ch: '→', x: '20%', y: '78%', d: 0.2 },
+  { ch: 'aic', x: '84%', y: '72%', d: 0.14 },
+] as const;
 ---
 
 <section class="hero" id="top">
+  <!-- 3D atmosphere — parallax sky. aria-hidden: decorative reinforcement
+       of the hero copy, never primary content. -->
+  <!-- Ambient depth — parallax dust only. No horizon line, no grid
+       floor, no aurora blobs: those read as busy synthwave noise on wide
+       screens and fight the two-column layout. Depth here comes from the
+       floating terminal (tilt + glow) and these few drifting glyphs.
+       aria-hidden: decorative, never primary content. -->
+  <div class="hero-sky" aria-hidden="true" data-parallax-root>
+    <div class="glyphs">
+      {
+        GLYPHS.map((g) => (
+          <span
+            class="glyph"
+            style={`--gx:${g.x};--gy:${g.y};--gd:${g.d}`}
+            data-depth={g.d}
+          >
+            {g.ch}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+
   <div class="hero-grid container">
     <p class="eyebrow hero-eyebrow" data-reveal>
       <span class="line" aria-hidden="true"></span>{t('hero.eyebrow')}
     </p>
-    <h1 class="hero-h1" data-reveal>
-      {t('hero.h1.stopWriting')}<br />
-      <em class="ital">{t('hero.h1.commit')}</em>
-      <span class="pop">{t('hero.h1.messages')}</span><br />
-      {t('hero.h1.stopUntangling')}<br />
-      <em class="ital">{t('hero.h1.merge')}</em>
-      <span class="pop">{t('hero.h1.conflicts')}</span>
+
+    <h1 class="hero-h1">
+      <span class="kin-line">
+        <span class="kin-inner" data-reveal>
+          {t('hero.h1.stopWriting')}{' '}
+          <em class="ital">{t('hero.h1.commit')}</em>{' '}
+          <span class="pop">{t('hero.h1.messages')}</span>
+        </span>
+      </span>
+      <span class="kin-line">
+        <span class="kin-inner" data-reveal>
+          {t('hero.h1.stopUntangling')}{' '}
+          <em class="ital">{t('hero.h1.merge')}</em>{' '}
+          <span class="pop">{t('hero.h1.conflicts')}</span>
+        </span>
+      </span>
     </h1>
 
     <div class="hero-terminal" data-reveal>
-      <Terminal />
+      <div class="term-stage" data-term-stage>
+        <div class="term-float">
+          <div class="term-glow" data-depth="0.40"></div>
+          <Terminal />
+        </div>
+      </div>
     </div>
 
-    <p class="lede hero-lede" data-reveal><Fragment set:html={t('hero.ledeBefore')} /><a href={resolveUrl}>{t('hero.ledeLink')}</a><Fragment set:html={t('hero.ledeAfter')} /></p>
+    <p class="lede hero-lede" data-reveal>
+      <Fragment set:html={t('hero.ledeBefore')} /><a href={resolveUrl}
+        >{t('hero.ledeLink')}</a
+      ><Fragment set:html={t('hero.ledeAfter')} />
+    </p>
 
-    <div class="hero-cta" data-reveal>
-      <CopyButton
-        text={PRIMARY_INSTALL_COMMAND}
-        label="brew tap CaicoLeung/aic && brew install aic"
-        variant="primary"
-      />
-      <span class="cta-hint">
-        <span class="arrow" aria-hidden="true">→</span> <Fragment set:html={t('hero.ctaHint', { cmd: 'aic setup' })} />
-      </span>
+    <div class="hero-actions">
+      {
+        stars !== undefined && (
+          <p class="hero-trust" data-reveal>
+            {t('hero.trust', { stars })}
+          </p>
+        )
+      }
+
+      <div class="hero-cta" data-reveal>
+        <div class="cta-stack">
+          <span class="cta-label">{t('hero.ctaLabel')}</span>
+          <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
+          <span class="cta-hint">
+            <span class="arrow" aria-hidden="true">→</span>
+            <Fragment set:html={t('hero.ctaHint', { cmd: 'aic setup' })} />
+          </span>
+        </div>
+        <a
+          class="cta-link hero-star"
+          href={GITHUB_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t('footer.star')}
+        </a>
+        <p class="platform-note">{t('hero.platformNote')}</p>
+      </div>
     </div>
 
     <div class="hero-commands" data-reveal>
@@ -63,59 +152,167 @@ const resolveUrl = localizedHref(locale, 'resolve');
   .hero {
     position: relative;
     z-index: 2;
-    padding: clamp(2rem, 1rem + 5vw, 5rem) 0 clamp(3rem, 1rem + 6vw, 6rem);
+    /* Capped so the CTA stays above the fold on common laptop screens.
+       Content beyond this simply extends the section. */
+    min-height: clamp(560px, 78vh, 800px);
+    padding: clamp(2.5rem, 1rem + 4vw, 4.5rem) 0 clamp(2.5rem, 1rem + 4vw, 4.5rem);
+    overflow: hidden;
+    /* Local perspective origin for the 3D deck — slightly above center so
+       the terminal's tilt reads as looking down onto a deck. */
+    perspective: 1600px;
+    perspective-origin: 50% 42%;
+    /* Parallax bus lives on the section (not .hero-sky) so BOTH subtrees
+       inherit it — the sky glyphs AND the terminal glow, which sits in
+       the sibling .hero-grid column. The JS rAF loop writes --mx/--my
+       (pointer, -1..1) and --sy (scroll-out, 0..1) here. */
+    --mx: 0;
+    --my: 0;
+    --sy: 0;
   }
-  /* Mobile-first: single column in narrative order —
-     eyebrow → h1 → terminal → lede → CTA → commands reference. */
+
+  /* ── Parallax sky ─────────────────────────────────────────────────
+     Layers live behind the content grid. Each carries `data-depth` for
+     the JS parallax driver; the static transform here is the layer's
+     resting pose. Pointer parallax composes an additive translate3d on
+     top via a dedicated CSS var so it never overrides the base pose. */
+  .hero-sky {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── Floating glyphs — depth dust ──────────────────────────────── */
+  .glyphs {
+    position: absolute;
+    inset: 0;
+  }
+  .glyph {
+    position: absolute;
+    left: var(--gx);
+    top: var(--gy);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: rgba(243, 179, 64, 0.32);
+    letter-spacing: 0.04em;
+    /* Parallax scaled by the per-glyph depth var (--gd); translate(-50%,-50%)
+       is preserved so the glyph stays anchored on its --gx/--gy point. */
+    transform: translate3d(
+        calc(var(--mx, 0) * 22px * var(--gd, 0)),
+        calc(var(--my, 0) * 22px * var(--gd, 0) + var(--sy, 0) * -50px * var(--gd, 0)),
+        0
+      )
+      translate(-50%, -50%);
+    will-change: transform, opacity;
+    animation: glyph-bob 9s ease-in-out infinite alternate;
+  }
+  .glyph:nth-child(2n) {
+    animation-duration: 13s;
+    animation-delay: -3s;
+    opacity: 0.8;
+  }
+  .glyph:nth-child(3n) {
+    animation-duration: 16s;
+    animation-delay: -6s;
+  }
+
+  /* ── Content grid ──────────────────────────────────────────────── */
   .hero-grid {
+    position: relative;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
   }
   .hero-terminal {
-    margin-block: 0.5rem;
+    margin-block: 0.75rem;
+    display: flex;
+    justify-content: center;
   }
-  /* Desktop: two columns — copy left, terminal right (spanning). The copy
-     column reads eyebrow → h1 → lede → commands → cta, restored via
-     grid-template-areas regardless of DOM order. */
+
+  /* Desktop (≥1024): two-column deck — copy + CTA on the left, product
+     surface on the right. The right column pairs the floating terminal
+     with the commands reference underneath, so both columns carry
+     comparable visual weight. Rows pack toward the vertical center.
+     Mobile keeps commands at the end (reference) via DOM order. */
   @media (min-width: 1024px) {
     .hero-grid {
       display: grid;
-      grid-template-columns: 5fr 7fr;
+      grid-template-columns: 1.05fr 0.95fr;
       grid-template-areas:
         'eyebrow  terminal'
         'h1       terminal'
         'lede     terminal'
-        'commands terminal'
-        'cta      terminal';
-      gap: 1.25rem 2.5rem;
+        'actions  commands';
+      column-gap: 3.5rem;
+      row-gap: 1.4rem;
+      align-content: center;
       align-items: center;
+      justify-items: start;
+      text-align: left;
     }
     .hero-eyebrow {
       grid-area: eyebrow;
+      align-self: end;
+      justify-content: flex-start;
     }
     .hero-h1 {
       grid-area: h1;
+      font-size: clamp(2.6rem, 1rem + 4.6vw, 4.1rem);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      text-align: left;
+      max-width: 14ch;
     }
     .hero-terminal {
       grid-area: terminal;
+      order: unset;
       margin-block: 0;
+      align-self: center;
+      justify-self: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .hero-lede {
+    /* Qualified with `.hero` to beat the mobile base rules below
+       (`.lede`, `.hero-actions`, `.cta-stack` use single-class selectors
+       and sit later in source order, so without the bump their mobile
+       centering wins on desktop and skews the left column). */
+    .hero .hero-lede {
       grid-area: lede;
+      max-width: 34rem;
+      text-align: left;
+      margin-inline: 0;
+    }
+    .hero .hero-actions {
+      grid-area: actions;
+      align-items: flex-start;
+      text-align: left;
+      gap: 1rem;
     }
     .hero-commands {
       grid-area: commands;
+      justify-self: stretch;
+      align-self: center;
+      margin-top: 0;
+      max-width: 100%;
     }
-    .hero-cta {
-      grid-area: cta;
+    .hero .hero-cta {
+      align-items: flex-start;
+      text-align: left;
+    }
+    .hero .cta-stack {
+      align-items: flex-start;
     }
   }
+
+  /* ── Type ──────────────────────────────────────────────────────── */
   h1 {
     font-size: var(--text-hero);
-    line-height: 1.02;
+    line-height: 1;
     letter-spacing: -0.035em;
     margin: 0;
+    text-align: center;
   }
   h1 .ital {
     font-style: italic;
@@ -125,12 +322,27 @@ const resolveUrl = localizedHref(locale, 'resolve');
   h1 .pop {
     color: var(--color-amber);
   }
+
+  /* Kinetic line reveal — overflow-hidden clip mask + inner translate.
+     JS animates `.kin-inner`; the mask hides the pre-state. */
+  .kin-line {
+    display: block;
+    overflow: hidden;
+    padding-block: 0.06em 0.12em; /* avoid clipping italic descenders */
+  }
+  .kin-inner {
+    display: block;
+    will-change: transform;
+  }
+
   .lede {
     font-size: var(--text-lede);
     color: var(--color-ink-muted);
     line-height: 1.65;
     max-width: 32rem;
     margin: 0;
+    text-align: center;
+    margin-inline: auto;
   }
   .lede b {
     color: var(--color-ink);
@@ -148,11 +360,83 @@ const resolveUrl = localizedHref(locale, 'resolve');
     color: var(--color-amber-warm);
     border-bottom-color: var(--color-amber-warm);
   }
-  .hero-cta {
-    display: inline-flex;
+
+  /* ── Terminal 3D stage ───────────────────────────────────────────
+     Three nested transforms to keep concerns isolated:
+       .term-stage : pointer tilt (rotateX/Y) + scroll translate
+       .term-float : continuous breathing keyframe
+       .term-glow  : parallax bloom behind the shell
+     The shell (Terminal) itself stays untouched. */
+  .term-stage {
+    --rx: 0deg;
+    --ry: 0deg;
+    --ty: 0px;
+    transform: rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--ty));
+    transform-style: preserve-3d;
+    will-change: transform;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .term-float {
+    position: relative;
+    transform-style: preserve-3d;
+    animation: term-breathe 11s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .term-glow {
+    position: absolute;
+    inset: -8% -6% -14% -6%;
+    background: radial-gradient(
+      ellipse 60% 70% at 50% 45%,
+      rgba(243, 179, 64, 0.28),
+      rgba(243, 179, 64, 0) 70%
+    );
+    filter: blur(28px);
+    z-index: -1;
+    border-radius: 24px;
+    transform: translate3d(
+      calc(var(--mx, 0) * 30px),
+      calc(var(--my, 0) * 30px + var(--sy, 0) * -24px),
+      0
+    );
+    will-change: transform;
+  }
+
+  /* ── Actions / CTA ─────────────────────────────────────────────── */
+  .hero-trust {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-dim);
+    margin: 0;
+  }
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  .hero-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .cta-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .cta-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
   }
   .cta-hint {
     font-size: 0.9375rem;
@@ -169,29 +453,192 @@ const resolveUrl = localizedHref(locale, 'resolve');
     font-weight: 600;
     font-size: 0.78rem;
   }
+  .hero-star {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+  }
+  .hero-star:hover {
+    background: var(--color-amber-soft);
+  }
+  .platform-note {
+    font-size: 0.78rem;
+    color: var(--color-ink-dim);
+    margin: 0.35rem 0 0;
+  }
+  .hero-terminal :global(.terminal) {
+    max-width: 560px;
+    font-size: 0.98rem;
+  }
+  .hero-terminal :global(.termbody) {
+    padding: 1.6rem 1.6rem 1.9rem;
+    line-height: 1.95;
+  }
 
-  /* Reduced-motion / no-JS default: visible & in place. */
+  /* Reduced-motion / no-JS default: everything in place & visible. */
   [data-reveal] {
     opacity: 1;
     transform: none;
   }
+
+  /* ── Keyframes — disabled under reduced motion ─────────────────── */
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes glyph-bob {
+      0% {
+        opacity: 0.3;
+      }
+      100% {
+        opacity: 0.7;
+      }
+    }
+    @keyframes term-breathe {
+      0% {
+        transform: translate3d(0, -6px, 0);
+      }
+      100% {
+        transform: translate3d(0, 6px, 0);
+      }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .glyph,
+    .term-float {
+      animation: none !important;
+    }
+  }
+
+  /* Touch / no-pointer devices: skip the pointer-tilt math (the JS still
+     feature-detects, but this keeps the resting pose clean if hover is
+     absent). */
+  @media (hover: none) {
+    .term-stage {
+      transform: none;
+    }
+  }
 </style>
 
 <script>
-  import { gsap, whenMotionOk } from '@/lib/motion';
+  import { gsap, ScrollTrigger, whenMotionOk } from '@/lib/motion';
 
   whenMotionOk(() => {
-    const items = gsap.utils.toArray<HTMLElement>('.hero [data-reveal]');
-    if (items.length === 0) return;
+    const section = document.querySelector<HTMLElement>('.hero');
+    if (!section) return;
 
-    gsap.set(items, { opacity: 0, y: 12 });
-    gsap.to(items, {
-      opacity: 1,
-      y: 0,
-      duration: 0.55,
-      stagger: 0.09,
-      ease: 'power3.out',
-      delay: 0.15,
+    // ── 1. Entrance stagger ──────────────────────────────────────────
+    const items = gsap.utils.toArray<HTMLElement>('.hero [data-reveal]');
+    if (items.length > 0) {
+      gsap.set(items, { opacity: 0, y: 18 });
+      gsap.to(items, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        stagger: 0.08,
+        ease: 'power3.out',
+        delay: 0.12,
+      });
+    }
+
+    // The kinetic H1 inner spans get an extra upward clip-reveal layered
+    // on top of the opacity tween above — masked by `.kin-line`.
+    const kinInners = gsap.utils.toArray<HTMLElement>('.hero .kin-inner');
+    if (kinInners.length > 0) {
+      gsap.set(kinInners, { yPercent: 115 });
+      gsap.to(kinInners, {
+        yPercent: 0,
+        duration: 0.9,
+        ease: 'power4.out',
+        stagger: 0.12,
+        delay: 0.18,
+      });
+    }
+
+    // ── 2. Pointer parallax (lerp-smoothed rAF) ─────────────────────
+    // One rAF loop. It writes the parallax bus vars (--mx/--my/--sy) on
+    // the sky root, and composes the terminal tilt (pointer + scroll) so
+    // there is a single writer per transform — no fighting between the
+    // pointer loop and the ScrollTrigger.
+    const termStage = section.querySelector<HTMLElement>('[data-term-stage]');
+
+    let targetMx = 0;
+    let targetMy = 0;
+    let curMx = 0;
+    let curMy = 0;
+    let scrollProg = 0; // 0..1 as the hero scrolls out of view
+    let rafId = 0;
+    let hovering = false;
+
+    const noHover =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(hover: none)').matches;
+
+    const onPointer = (e: PointerEvent) => {
+      if (noHover) return;
+      const rect = section.getBoundingClientRect();
+      // Normalise to -1..1 around the section center.
+      targetMx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+      targetMy = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    };
+    const onEnter = () => {
+      hovering = !noHover;
+    };
+    const onLeave = () => {
+      hovering = false;
+      targetMx = 0;
+      targetMy = 0;
+    };
+
+    const clamp = gsap.utils.clamp;
+
+    const tick = () => {
+      // Ease toward the pointer target — buttery, not twitchy.
+      curMx += (targetMx - curMx) * 0.08;
+      curMy += (targetMy - curMy) * 0.08;
+
+      // Bus vars live on the section so both the sky glyphs and the
+      // terminal glow (in the sibling grid column) inherit them.
+      section.style.setProperty('--mx', curMx.toFixed(4));
+      section.style.setProperty('--my', curMy.toFixed(4));
+      section.style.setProperty('--sy', scrollProg.toFixed(4));
+
+      // Terminal tilt — pointer live-tilt (only while hovering) composed
+      // with a scroll-driven lean-back so departure reads as recession.
+      if (termStage) {
+        const liveRx = hovering ? clamp(-5, 5, curMy * 5) : 0;
+        const liveRy = hovering ? clamp(-6, 6, curMx * -6) : 0;
+        const scrollRx = clamp(0, 14, scrollProg * 14); // always positive
+        const rx = liveRx + scrollRx;
+        const ry = liveRy;
+        termStage.style.setProperty('--rx', `${rx.toFixed(2)}deg`);
+        termStage.style.setProperty('--ry', `${ry.toFixed(2)}deg`);
+        termStage.style.setProperty('--ty', `${(scrollProg * 18).toFixed(2)}px`);
+      }
+
+      rafId = requestAnimationFrame(tick);
+    };
+
+    section.addEventListener('pointermove', onPointer, { passive: true });
+    section.addEventListener('pointerenter', onEnter, { passive: true });
+    section.addEventListener('pointerleave', onLeave, { passive: true });
+    rafId = requestAnimationFrame(tick);
+
+    // ── 3. Scroll parallax — feed scroll progress into the bus + tilt ──
+    const scrollTrig = ScrollTrigger.create({
+      trigger: section,
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true,
+      onUpdate: (self) => {
+        scrollProg = self.progress; // consumed by the rAF tick
+      },
     });
+
+    // Cleanup for hot-reload / SPA teardowns.
+    return () => {
+      cancelAnimationFrame(rafId);
+      section.removeEventListener('pointermove', onPointer);
+      section.removeEventListener('pointerenter', onEnter);
+      section.removeEventListener('pointerleave', onLeave);
+      scrollTrig.kill();
+    };
   });
 </script>

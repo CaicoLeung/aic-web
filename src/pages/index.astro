@@ -22,7 +22,7 @@ const facts = await loadAicFacts();
 <Base version={facts.version}>
   <Topbar version={facts.version} />
   <main id="main">
-    <Hero />
+    <Hero stars={facts.stars} />
     <HowItWorks />
     <Batching />
     <Providers providers={facts.providers} />

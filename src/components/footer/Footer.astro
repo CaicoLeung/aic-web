@@ -13,6 +13,8 @@ const resolveBase = localizedHref(locale, 'resolve');
 const compareBase = localizedHref(locale, 'vs/aicommits');
 const roundupBase = localizedHref(locale, 'best-ai-commit-tools');
 const changelogBase = localizedHref(locale, 'changelog');
+const alternativesBase = localizedHref(locale, 'alternatives');
+const deepseekBase = localizedHref(locale, 'deepseek');
 ---
 
 <footer class="footer">
@@ -23,11 +25,7 @@ const changelogBase = localizedHref(locale, 'changelog');
       </p>
       <h2>{t('footer.h2')}</h2>
       <div class="footer-actions">
-        <CopyButton
-          text={PRIMARY_INSTALL_COMMAND}
-          label="brew tap CaicoLeung/aic && brew install aic"
-          variant="primary"
-        />
+        <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
         <a
           class="footer-link"
           href={GITHUB_URL}
@@ -89,6 +87,34 @@ const changelogBase = localizedHref(locale, 'changelog');
             <path d="M21 16H7"></path>
           </svg>
           <span>{t('footer.nav.compare')}</span>
+        </a>
+        <a href={alternativesBase}>
+          <svg
+            class="flink-icon"
+            viewBox="0 0 24 24"
+            width="15"
+            height="15"
+            aria-hidden="true"
+          >
+            <path d="M17 3v12"></path>
+            <path d="m12 8-5 5"></path>
+            <path d="m12 13-5-5"></path>
+          </svg>
+          <span>{t('footer.nav.alternatives')}</span>
+        </a>
+        <a href={deepseekBase}>
+          <svg
+            class="flink-icon"
+            viewBox="0 0 24 24"
+            width="15"
+            height="15"
+            aria-hidden="true"
+          >
+            <path d="M9 12h6"></path>
+            <path d="M12 9v6"></path>
+            <circle cx="12" cy="12" r="8"></circle>
+          </svg>
+          <span>{t('footer.nav.deepseek')}</span>
         </a>
         <a href={changelogBase}>
           <svg

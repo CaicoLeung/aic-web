@@ -22,30 +22,32 @@ import ContentHeader from '@/components/content/ContentHeader.astro';
 import Footer from '@/components/footer/Footer.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
 import ResolveTerminal from '@/components/resolve/ResolveTerminal.astro';
-import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
-import { localeFromUrl } from '@/i18n/config';
+import { GITHUB_URL, PRIMARY_INSTALL_COMMAND, SITE_ORIGIN } from '@/config/site';
+import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer, useMessages } from '@/i18n/t';
+import { articleSchema, canonicalUrl } from '@/lib/schema';
 
 const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const m = useMessages(locale);
+const roundup = localizedHref(locale, 'best-ai-commit-tools');
 const releaseUrl = `${GITHUB_URL}/releases/tag/v0.3.0`;
 
 const title = t('meta.resolve.title');
 const description = t('meta.resolve.description');
 
-const schema = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
+const site = Astro.site ?? SITE_ORIGIN;
+const canonical = canonicalUrl(Astro.url.pathname, site);
+
+const schema = articleSchema({
   headline: title,
   description,
   datePublished: '2026-07-29',
-  dateModified: '2026-07-29',
-  author: { '@type': 'Organization', name: 'aic' },
-  publisher: { '@type': 'Organization', name: 'aic' },
   about: ['aic', 'merge conflicts', 'AI merge conflict resolver', 'git'],
-};
+  url: canonical,
+  site,
+});
 ---
 
 <Base version={facts.version} title={title} description={description} schema={schema}>
@@ -59,7 +61,9 @@ const schema = {
       </p>
       <h1 id="resolve-h1" class="resolve-h1">
         {t('resolve.h1.main')}<br />
-        <em class="ital">{m.resolve.h1.sub[0]}</em>{m.resolve.h1.sub[1]}<span class="pop">{m.resolve.h1.sub[2]}</span>
+        <em class="ital">{m.resolve.h1.sub[0]}</em>{m.resolve.h1.sub[1]}<span class="pop"
+          >{m.resolve.h1.sub[2]}</span
+        >
       </h1>
 
       <div class="resolve-terminal">
@@ -69,13 +73,10 @@ const schema = {
       <p class="lede resolve-lede" set:html={t('resolve.lede')} />
 
       <div class="resolve-cta">
-        <CopyButton
-          text={PRIMARY_INSTALL_COMMAND}
-          label="brew tap CaicoLeung/aic && brew install aic"
-          variant="primary"
-        />
+        <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
         <span class="cta-hint">
-          <span class="arrow" aria-hidden="true">→</span> <Fragment set:html={t('resolve.ctaHint')} />
+          <span class="arrow" aria-hidden="true">→</span>
+          <Fragment set:html={t('resolve.ctaHint')} />
         </span>
       </div>
     </section>
@@ -87,12 +88,14 @@ const schema = {
         <h2>{t('resolve.workflow.h2')}</h2>
         <p class="block-lede">{t('resolve.workflow.lede')}</p>
         <ol class="steps">
-          {m.resolve.workflow.steps.map((s) => (
-            <li>
-              <span class="step-h" set:html={s.h} />
-              <span class="step-n" set:html={s.n} />
-            </li>
-          ))}
+          {
+            m.resolve.workflow.steps.map((s) => (
+              <li>
+                <span class="step-h" set:html={s.h} />
+                <span class="step-n" set:html={s.n} />
+              </li>
+            ))
+          }
         </ol>
       </section>
 
@@ -101,12 +104,14 @@ const schema = {
         <h2>{t('resolve.twoWays.h2')}</h2>
         <p class="block-lede">{t('resolve.twoWays.lede')}</p>
         <ul class="points">
-          {m.resolve.twoWays.points.map((p) => (
-            <li>
-              <span class="point-h" set:html={p.h} />
-              <span class="point-n" set:html={p.n} />
-            </li>
-          ))}
+          {
+            m.resolve.twoWays.points.map((p) => (
+              <li>
+                <span class="point-h" set:html={p.h} />
+                <span class="point-n" set:html={p.n} />
+              </li>
+            ))
+          }
         </ul>
       </section>
 
@@ -122,12 +127,14 @@ const schema = {
         <h2>{t('resolve.limits.h2')}</h2>
         <p class="block-lede">{t('resolve.limits.lede')}</p>
         <ul class="points">
-          {m.resolve.limits.points.map((p) => (
-            <li>
-              <span class="point-h" set:html={p.h} />
-              <span class="point-n" set:html={p.n} />
-            </li>
-          ))}
+          {
+            m.resolve.limits.points.map((p) => (
+              <li>
+                <span class="point-h" set:html={p.h} />
+                <span class="point-n" set:html={p.n} />
+              </li>
+            ))
+          }
         </ul>
       </section>
 
@@ -136,11 +143,10 @@ const schema = {
         <h2>{t('resolve.verdict.h2')}</h2>
         <p set:html={t('resolve.verdict.body')} />
         <div class="cta">
-          <CopyButton
-            text={PRIMARY_INSTALL_COMMAND}
-            label="brew tap CaicoLeung/aic && brew install aic"
-            variant="primary"
-          />
+          <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
+          <a class="cta-link" href={roundup}>
+            {t('batching.cmpLink')}
+          </a>
           <a class="cta-link" href={releaseUrl} target="_blank" rel="noopener noreferrer">
             {t('resolve.verdict.releaseNotes')}<span aria-hidden="true"> ↗</span>
           </a>

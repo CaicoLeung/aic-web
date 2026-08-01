@@ -9,10 +9,12 @@
  */
 import type * as en from './en';
 
-type MessageShape<T> =
-  T extends string ? string
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<MessageShape<U>>
-  : T extends object ? { -readonly [K in keyof T]: MessageShape<T[K]> }
-  : T;
+type MessageShape<T> = T extends string
+  ? string
+  : T extends ReadonlyArray<infer U>
+    ? ReadonlyArray<MessageShape<U>>
+    : T extends object
+      ? { -readonly [K in keyof T]: MessageShape<T[K]> }
+      : T;
 
 export type Messages = MessageShape<typeof en.messages>;

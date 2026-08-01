@@ -1,0 +1,31 @@
+---
+/**
+ * /[locale]/alternatives/[id]/ — localized migration-intent routes (ADR-0010).
+ *
+ * Enumerates every locale × rival so each `/{locale}/alternatives/{id}`
+ * page is pre-rendered; the layout/components resolve locale from the URL.
+ * Body lives in `AlternativePage`.
+ */
+import { isLocalePrefix, LOCALE_PREFIXES } from '@/i18n/config';
+import AlternativePage from '@/components/content/AlternativePage.astro';
+import { COMPARISONS } from '@/config/competitors';
+
+export function getStaticPaths() {
+  const rivalIds = Object.keys(COMPARISONS);
+  return LOCALE_PREFIXES.flatMap((locale) =>
+    rivalIds.map((id) => ({
+      params: { locale, id },
+      props: { comparison: COMPARISONS[id] },
+    })),
+  );
+}
+
+const { locale } = Astro.params;
+if (!isLocalePrefix(locale)) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+
+const { comparison } = Astro.props;
+---
+
+<AlternativePage comparison={comparison} />

@@ -19,38 +19,47 @@ import ContentHeader from '@/components/content/ContentHeader.astro';
 import Footer from '@/components/footer/Footer.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
 import { ROUNDUP } from '@/config/competitors';
-import { GITHUB_URL, HUNK_SPLITTING, PRIMARY_INSTALL_COMMAND } from '@/config/site';
+import {
+  GITHUB_URL,
+  HUNK_SPLITTING,
+  PRIMARY_INSTALL_COMMAND,
+  SITE_ORIGIN,
+} from '@/config/site';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer, useMessages } from '@/i18n/t';
+import { articleSchema, canonicalUrl } from '@/lib/schema';
 
 const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const m = useMessages(locale);
 const vsAicommits = localizedHref(locale, 'vs/aicommits');
+const resolve = localizedHref(locale, 'resolve');
 
 const title = t('meta.roundup.title', { year: '2026' });
 const description = t('meta.roundup.description');
 
-const schema = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
+const site = Astro.site ?? SITE_ORIGIN;
+const canonical = canonicalUrl(Astro.url.pathname, site);
+
+const schema = articleSchema({
   headline: title,
   description,
   datePublished: '2026-07-08',
-  dateModified: '2026-07-08',
-  author: { '@type': 'Organization', name: 'aic' },
-  publisher: { '@type': 'Organization', name: 'aic' },
   about: ['AI commit message tools', 'git', 'conventional commits'],
-};
+  url: canonical,
+  site,
+});
 ---
 
 <Base version={facts.version} title={title} description={description} schema={schema}>
   <ContentHeader version={facts.version} />
 
   <main id="main">
-    <article class="container article">
-      <p class="eyebrow"><span class="line" aria-hidden="true"></span>{t('roundup.eyebrow')}</p>
+    <article class="article container">
+      <p class="eyebrow">
+        <span class="line" aria-hidden="true"></span>{t('roundup.eyebrow')}
+      </p>
       <h1>{t('roundup.h1')}</h1>
       <p class="lede" set:html={t('roundup.lede')} />
 
@@ -60,9 +69,16 @@ const schema = {
       <section class="block">
         <h2>{t('roundup.choose.h2')}</h2>
         <ul class="chooser">
-          {m.roundup.choose.items.map((item) => (
-            <li><span class="need">{item.need}</span><span class="pick">{item.pick}</span></li>
-          ))}
+          {
+            m.roundup.choose.items.map((item) => (
+              <li>
+                <>
+                  <span class="need">{item.need}</span>
+                  <span class="pick">{item.pick}</span>
+                </>
+              </li>
+            ))
+          }
         </ul>
       </section>
 
@@ -70,38 +86,59 @@ const schema = {
       <section class="block">
         <h2>{t('roundup.field.h2')}</h2>
         <ul class="cards">
-          {ROUNDUP.map((tool) => (
-            <li class:list={['card', { home: tool.homeTeam }]}>
-              <div class="card-head">
-                <h3>{tool.name}</h3>
-                {tool.homeTeam && <span class="badge">{t('roundup.field.badge')}</span>}
-              </div>
-              <p class="runtime">{tool.runtime}</p>
-              {tool.homeTeam && (
-                <div class="hl">
-                  <span class="hl-eyebrow">{t('roundup.field.hlEyebrow', { version: HUNK_SPLITTING.shippedIn })}</span>
-                  <p class="hl-head">{t('roundup.field.hlHead')}</p>
-                  <p class="hl-sub">{t('roundup.field.hlSub')}</p>
+          {
+            ROUNDUP.map((tool) => (
+              <li class:list={['card', { home: tool.homeTeam }]}>
+                <div class="card-head">
+                  <h3>{tool.name}</h3>
+                  {tool.homeTeam && <span class="badge">{t('roundup.field.badge')}</span>}
                 </div>
-              )}
-              <p class="strength">{m.roundup.tools[tool.id].strength}</p>
-              <div class="card-links">
-                {tool.homeTeam ? (
-                  <>
-                    <CopyButton text={PRIMARY_INSTALL_COMMAND} label="brew install aic" variant="primary" />
-                    <a class="card-link" href={vsAicommits}>{t('roundup.field.vsAicommitsLink')}</a>
-                  </>
-                ) : (
-                  <>
-                    <a class="card-link" href={tool.repo} target="_blank" rel="noopener noreferrer">
-                      {t('roundup.field.repoLink')}
-                    </a>
-                    {tool.vsPath && <a class="card-link" href={localizedHref(locale, tool.vsPath)}>{t('roundup.field.compareLink')}</a>}
-                  </>
+                <p class="runtime">{tool.runtime}</p>
+                {tool.homeTeam && (
+                  <div class="hl">
+                    <span class="hl-eyebrow">
+                      {t('roundup.field.hlEyebrow', {
+                        version: HUNK_SPLITTING.shippedIn,
+                      })}
+                    </span>
+                    <p class="hl-head">{t('roundup.field.hlHead')}</p>
+                    <p class="hl-sub">{t('roundup.field.hlSub')}</p>
+                  </div>
                 )}
-              </div>
-            </li>
-          ))}
+                <p class="strength">{m.roundup.tools[tool.id].strength}</p>
+                <div class="card-links">
+                  {tool.homeTeam ? (
+                    <>
+                      <CopyButton
+                        text={PRIMARY_INSTALL_COMMAND}
+                        label="brew install aic"
+                        variant="primary"
+                      />
+                      <a class="card-link" href={vsAicommits}>
+                        {t('roundup.field.vsAicommitsLink')}
+                      </a>
+                    </>
+                  ) : (
+                    <>
+                      <a
+                        class="card-link"
+                        href={tool.repo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {t('roundup.field.repoLink')}
+                      </a>
+                      {tool.vsPath && (
+                        <a class="card-link" href={localizedHref(locale, tool.vsPath)}>
+                          {t('roundup.field.compareLink')}
+                        </a>
+                      )}
+                    </>
+                  )}
+                </div>
+              </li>
+            ))
+          }
         </ul>
         <p class="field-note" set:html={t('roundup.field.note')} />
       </section>
@@ -111,9 +148,12 @@ const schema = {
         <h2>{t('roundup.verdict.h2')}</h2>
         <p set:html={t('roundup.verdict.body')} />
         <div class="cta">
-          <CopyButton text={PRIMARY_INSTALL_COMMAND} label="brew tap CaicoLeung/aic && brew install aic" variant="primary" />
+          <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
+          <a class="cta-link" href={resolve}>{t('footer.nav.resolve')}</a>
           <a class="cta-link" href={vsAicommits}>{t('roundup.verdict.seeVs')}</a>
-          <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">{t('footer.star')}</a>
+          <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer"
+            >{t('footer.star')}</a
+          >
         </div>
       </section>
     </article>

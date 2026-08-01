@@ -15,17 +15,17 @@ import { useLocalizer } from '@/i18n/t';
 
 interface Props {
   readonly text: string;
+  /**
+   * Visible button label. Defaults to `text` (show the command you copy) —
+   * pass an explicit label only when it should differ (e.g. a short form on
+   * a compact card). Locale-invariant code-register either way.
+   */
   readonly label?: string;
   readonly variant?: 'primary' | 'ghost';
   readonly class?: string;
 }
 
-const {
-  text,
-  label = 'Copy command',
-  variant = 'ghost',
-  class: className = '',
-} = Astro.props;
+const { text, label = text, variant = 'ghost', class: className = '' } = Astro.props;
 
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);

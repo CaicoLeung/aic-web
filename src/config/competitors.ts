@@ -35,10 +35,19 @@ export interface CompetitorMeta {
   readonly strength: string;
 }
 
-/** One side of a comparison row. `supported` drives the ✓/✗ glyph; the
- *  text is localized in `messages.vs.aicommits.axes[id]` (ADR-0010). */
+/** One side of a comparison row. Drives the ✓/✗ glyph; the cell text is
+ *  localized in `messages.vs.{id}.axes[axisId]` (ADR-0010).
+ *
+ *  - `glyph: 'yes'`  → render a ✓ before the cell text.
+ *  - `glyph: 'no'`   → render a ✗ before the cell text.
+ *  - `glyph: 'none'` → text-only row (no glyph); the localized text carries
+ *    the meaning on its own.
+ *
+ *  Replaces the old `{ supported?: boolean }` shape, where an empty `{}
+ *  stood for "text row" — an ambiguous sentinel. Every cell now states its
+ *  intent explicitly. */
 export interface FeatureCell {
-  readonly supported?: boolean;
+  readonly glyph: 'yes' | 'no' | 'none';
 }
 
 /** A single row in the feature matrix: aic vs one rival. `id` keys the
@@ -57,7 +66,7 @@ export interface CompetitorComparison {
   readonly axes: readonly ComparisonAxis[];
 }
 
-export const AICOMMITS: CompetitorMeta = {
+const AICOMMITS: CompetitorMeta = {
   id: 'aicommits',
   name: 'aicommits',
   repo: 'https://github.com/Nutlope/aicommits',
@@ -73,82 +82,453 @@ export const AICOMMITS: CompetitorMeta = {
  * concedes the rest. The `aic` alias note is not a jab — aicommits' own
  * README suggests aliasing to `aic`.
  */
-export const AICOMMITS_COMPARISON: CompetitorComparison = {
+const AICOMMITS_COMPARISON: CompetitorComparison = {
   rival: AICOMMITS,
   axes: [
     {
       id: 'auto-batch',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'per-hunk',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'resolve',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'anthropic',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'runtime',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'reach',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'formats',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'rival',
     },
     {
       id: 'hook',
-      aic: { supported: false },
-      rival: { supported: true },
+      aic: { glyph: 'no' },
+      rival: { glyph: 'yes' },
       winner: 'rival',
     },
     {
       id: 'candidates',
-      aic: { supported: false },
-      rival: { supported: true },
+      aic: { glyph: 'no' },
+      rival: { glyph: 'yes' },
       winner: 'rival',
     },
     {
       id: 'prompt',
-      aic: {},
-      rival: { supported: true },
+      aic: { glyph: 'none' },
+      rival: { glyph: 'yes' },
       winner: 'rival',
     },
     {
       id: 'popularity',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'rival',
     },
   ],
 };
 
-/** Lookup by rival id — used by the roundup page and future `/vs/[id]` route. */
+const AI_COMMIT: CompetitorMeta = {
+  id: 'ai-commit',
+  name: 'ai-commit',
+  repo: 'https://github.com/lifedever/ai-commit',
+  runtime: 'Node.js ≥ 22.19 · Homebrew / curl',
+  install: 'brew tap lifedever/tap && brew install ai-commit',
+  strength:
+    'The Claude-Code-native pick — reads your source files for richer context, writes Chinese or English messages on demand, and reaches any OpenAI-compatible endpoint.',
+};
+
+/**
+ * aic vs ai-commit. Fair by design: aic wins where atomic history matters
+ * (auto-batching, per-hunk splitting, resolve, no-Node, Windows) and
+ * concedes ai-commit's real niches (Claude Code context, `-l zh`, emoji).
+ * Both are young (~8★); neither offers multiple candidates.
+ * Sources verified 2026-08-01 (READMEs + repo data; see competitor-profiles/).
+ */
+const AI_COMMIT_COMPARISON: CompetitorComparison = {
+  rival: AI_COMMIT,
+  axes: [
+    {
+      id: 'auto-batch',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'per-hunk',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'resolve',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'claude-context',
+      aic: { glyph: 'no' },
+      rival: { glyph: 'yes' },
+      winner: 'rival',
+    },
+    {
+      id: 'provider-reach',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'aic',
+    },
+    {
+      id: 'runtime',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'aic',
+    },
+    {
+      id: 'windows',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'language',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'yes' },
+      winner: 'rival',
+    },
+    {
+      id: 'emoji',
+      aic: { glyph: 'no' },
+      rival: { glyph: 'yes' },
+      winner: 'rival',
+    },
+    {
+      id: 'candidates',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'tie',
+    },
+    {
+      id: 'popularity',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'tie',
+    },
+  ],
+};
+
+const LLMC: CompetitorMeta = {
+  id: 'llmc',
+  name: 'llmc',
+  repo: 'https://github.com/marclove/llmc',
+  runtime: 'Node.js · npx / npm',
+  install: 'npx llmc',
+  strength:
+    'The max-provider pick — 13 LLM backends, TOML custom prompts, and a polished terminal UI.',
+};
+
+/**
+ * aic vs llmc. Fair by design: aic concedes provider count (12 vs 13),
+ * TUI polish, and custom-prompt richness; wins on batching, resolve,
+ * runtime, setup wizard, and project activity (llmc quiet since 2025-10).
+ * Sources verified 2026-08-01 (READMEs + repo data; see competitor-profiles/).
+ */
+const LLMC_COMPARISON: CompetitorComparison = {
+  rival: LLMC,
+  axes: [
+    {
+      id: 'auto-batch',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'per-hunk',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'resolve',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'provider-count',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'rival',
+    },
+    {
+      id: 'tui',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'rival',
+    },
+    {
+      id: 'runtime',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'aic',
+    },
+    {
+      id: 'setup',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'aic',
+    },
+    {
+      id: 'custom-prompt',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'rival',
+    },
+    {
+      id: 'activity',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'aic',
+    },
+    {
+      id: 'candidates',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'tie',
+    },
+    {
+      id: 'formats',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'tie',
+    },
+  ],
+};
+
+const GIT_AI: CompetitorMeta = {
+  id: 'git-ai',
+  name: 'git-ai',
+  repo: 'https://github.com/DaleSeo/git-ai',
+  runtime: 'Node.js ≥ 22 · npm / npx',
+  install: 'npm install -g @daleseo/git-ai',
+  strength:
+    'The local-first Git assistant — commit messages, PR descriptions, and zero-config Ollama (free, offline) by default. Early and quiet since early 2026, but the PR-description angle is real.',
+};
+
+/**
+ * aic vs git-ai. Fair by design: aic concedes git-ai's PR-description
+ * workflow, local-first default, and gitmoji format option; wins on
+ * batching, resolve, providers, setup, and activity (git-ai dormant
+ * since 2026-02). Sources verified 2026-08-01 (README + repo data;
+ * see competitor-profiles/).
+ */
+const GIT_AI_COMPARISON: CompetitorComparison = {
+  rival: GIT_AI,
+  axes: [
+    {
+      id: 'auto-batch',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'per-hunk',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'resolve',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'pr-description',
+      aic: { glyph: 'no' },
+      rival: { glyph: 'yes' },
+      winner: 'rival',
+    },
+    {
+      id: 'local-default',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'rival',
+    },
+    {
+      id: 'runtime',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'aic',
+    },
+    {
+      id: 'setup',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'aic',
+    },
+    {
+      id: 'providers',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'aic',
+    },
+    {
+      id: 'activity',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'aic',
+    },
+    {
+      id: 'formats',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'rival',
+    },
+    {
+      id: 'candidates',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'tie',
+    },
+  ],
+};
+
+const OPENCOMMIT: CompetitorMeta = {
+  id: 'opencommit',
+  name: 'OpenCommit',
+  repo: 'https://github.com/di-sukharev/opencommit',
+  runtime: 'Node.js · npm',
+  install: 'npm install -g opencommit',
+  strength:
+    'The GitHub 2023 hackathon winner and most feature-rich GPT wrapper for git — GitMoji, configurable descriptions, local Ollama/llama.cpp, and a large community (7.5k★, ~12k npm downloads/mo).',
+};
+
+/**
+ * aic vs OpenCommit. Fair by design: aic concedes GitMoji and community;
+ * wins on hunk-level batching, conflict resolution, no-Node runtime, and
+ * the setup wizard. Both are active and multi-provider.
+ * Sources verified 2026-08-01 (README + repo data; see competitor-profiles/).
+ */
+const OPENCOMMIT_COMPARISON: CompetitorComparison = {
+  rival: OPENCOMMIT,
+  axes: [
+    {
+      id: 'auto-batch',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'per-hunk',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'resolve',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'runtime',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'aic',
+    },
+    {
+      id: 'setup',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'aic',
+    },
+    {
+      id: 'provider-count',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'tie',
+    },
+    {
+      id: 'emoji',
+      aic: { glyph: 'no' },
+      rival: { glyph: 'yes' },
+      winner: 'rival',
+    },
+    {
+      id: 'community',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'rival',
+    },
+    {
+      id: 'activity',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'tie',
+    },
+    {
+      id: 'candidates',
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
+      winner: 'tie',
+    },
+  ],
+};
+
+/**
+ * Lookup by rival id. The single source of truth for which competitors have
+ * a comparison: the `/vs/[id]` route, the `/alternatives/[id]` route, and
+ * the "More comparisons" link list all enumerate this, so adding a rival is
+ * a one-place data change (plus its i18n blocks) rather than a route sweep.
+ */
 export const COMPARISONS: Readonly<Record<string, CompetitorComparison>> = {
   [AICOMMITS.id]: AICOMMITS_COMPARISON,
+  [AI_COMMIT.id]: AI_COMMIT_COMPARISON,
+  [GIT_AI.id]: GIT_AI_COMPARISON,
+  [OPENCOMMIT.id]: OPENCOMMIT_COMPARISON,
+  [LLMC.id]: LLMC_COMPARISON,
 };
+
+/**
+ * Rival ids that own a dedicated `/vs/{id}` page, in display order. Drives
+ * the "More comparisons" cross-links. Kept as an explicit order (not
+ * `Object.keys(COMPARISONS)`) so the link list reads in a curated sequence
+ * independent of storage order.
+ */
+export const COMPARISON_RIVALS: readonly string[] = [
+  AICOMMITS.id,
+  AI_COMMIT.id,
+  LLMC.id,
+  GIT_AI.id,
+  OPENCOMMIT.id,
+];
 
 /* ──────────────────────────────────────────────────────────────────
    Roundup — the "best AI commit tools" survey.
@@ -160,6 +540,12 @@ export interface RoundupEntry {
   readonly id: string;
   readonly name: string;
   readonly repo: string;
+  /**
+   * Terse runtime label for the roundup card — a compact rendering of
+   * `CompetitorMeta.runtime` (which keeps the detailed version for the
+   * vs page). Roundup-specific by design, so it stays here rather than on
+   * the comparison rival.
+   */
   readonly runtime: string;
   /** True for aic (disclosed). */
   readonly homeTeam?: boolean;
@@ -167,37 +553,45 @@ export interface RoundupEntry {
   readonly vsPath?: string;
 }
 
-export const ROUNDUP: readonly RoundupEntry[] = [
-  {
-    id: 'aic',
-    name: 'aic',
-    repo: GITHUB_URL,
-    runtime: 'Rust · brew / installer',
-    homeTeam: true,
-  },
-  {
-    id: 'aicommits',
-    name: 'aicommits',
-    repo: 'https://github.com/Nutlope/aicommits',
-    runtime: 'Node.js · npm',
-    vsPath: 'vs/aicommits/',
-  },
-  {
-    id: 'ai-commit',
-    name: 'ai-commit',
-    repo: 'https://github.com/lifedever/ai-commit',
-    runtime: 'Node.js · brew / npm',
-  },
-  {
-    id: 'git-ai',
-    name: 'git-ai',
-    repo: 'https://github.com/DaleSeo/git-ai',
-    runtime: 'Node.js · npm / npx',
-  },
-  {
-    id: 'llmc',
-    name: 'llmc',
-    repo: 'https://github.com/marclove/llmc',
-    runtime: 'Node.js · npx / npm',
-  },
+/**
+ * Roundup overrides. Identity (`name`/`repo`) is sourced from
+ * `COMPARISONS[id].rival` so it cannot drift from the vs page; only the
+ * terse `runtime` and `homeTeam` flag are roundup-specific. The home team
+ * (aic) has no comparison entry, so it is identified by `homeTeam`.
+ */
+interface RoundupOverride {
+  readonly id: string;
+  readonly runtime: string;
+  readonly homeTeam?: boolean;
+}
+
+const ROUNDUP_OVERRIDES: readonly RoundupOverride[] = [
+  { id: 'aic', runtime: 'Rust · brew / installer', homeTeam: true },
+  { id: 'aicommits', runtime: 'Node.js · npm' },
+  { id: 'opencommit', runtime: 'Node.js · npm' },
+  { id: 'ai-commit', runtime: 'Node.js · brew / npm' },
+  { id: 'git-ai', runtime: 'Node.js · npm / npx' },
+  { id: 'llmc', runtime: 'Node.js · npx / npm' },
 ];
+
+function buildRoundupEntry(o: RoundupOverride): RoundupEntry {
+  if (o.homeTeam) {
+    return {
+      id: o.id,
+      name: o.id,
+      repo: GITHUB_URL,
+      runtime: o.runtime,
+      homeTeam: true,
+    };
+  }
+  const rival = COMPARISONS[o.id].rival;
+  return {
+    id: rival.id,
+    name: rival.name,
+    repo: rival.repo,
+    runtime: o.runtime,
+    vsPath: `vs/${rival.id}/`,
+  };
+}
+
+export const ROUNDUP: readonly RoundupEntry[] = ROUNDUP_OVERRIDES.map(buildRoundupEntry);
