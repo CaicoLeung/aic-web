@@ -316,6 +316,13 @@ export const messages: Messages = {
   },
 
   vs: {
+    // Shared feature-matrix column labels — identical for every rival,
+    // so defined once here rather than copied into each rival block.
+    matrix: {
+      heading: '機能ごとの比較',
+      capability: '能力',
+      aic: 'aic',
+    },
     aicommits: {
       eyebrow: '比較 · aicommits の代替',
       h1: 'aic vs aicommits',
@@ -323,11 +330,6 @@ export const messages: Messages = {
         ' は AI コミットメッセージツールとして定着したデフォルト — 導入実績、エコシステム、先発の勢い。このページはそうでないふりをするためのものではありません。いつ <strong>aic</strong> がより良い選択か — そしていつ aicommits に留まるべきかを正確に伝えます。',
       callout:
         '<strong>世間は狭いですね。</strong>aicommits 自身の README も、名前が長すぎる場合は <code>aic</code> にエイリアスすることを提案しています。私たちは <code>aic</code> を独立したツールとして出荷しました — そしてそれは hunk レベルで未ステージの作業を論理的なコミットに分割するので、1つのファイルでも複数になり得ます。',
-      matrix: {
-        heading: '機能ごとの比較',
-        capability: '能力',
-        aic: 'aic',
-      },
       winsH2: 'aic がリードする点',
       rivalH2: 'aicommits が依然として勝つ点',
       rivalLede:
@@ -428,11 +430,6 @@ export const messages: Messages = {
       // <strong>/<code> を含む；set:html。
       callout:
         '<strong>2つの異なる賭け。</strong> ai-commit は Claude Code を文脈エンジンに賭け、aic は diff そのものに賭けます。どちらも無料。未ステージの作業をファイル境界の下で論理コミットに分割し、マージコンフリクトまで解決できるのは aic だけです。',
-      matrix: {
-        heading: '機能比較',
-        capability: '機能',
-        aic: 'aic',
-      },
       winsH2: 'aic がリードする点',
       rivalH2: 'ai-commit がまだ勝つ点',
       rivalLede:
@@ -535,11 +532,6 @@ export const messages: Messages = {
       // <strong>/<code> を含む；set:html。
       callout:
         '<strong>同じ仕様、異なる焦点。</strong> どちらも Conventional Commits を書きます。llmc はプロバイダー選択とターミナル体験を最大化；aic はコミット履歴の質を最大化 — 1ファイルが複数の焦点を絞ったコミットになり、`aic resolve` がファイルごとに承認したマージを完了します。',
-      matrix: {
-        heading: '機能比較',
-        capability: '機能',
-        aic: 'aic',
-      },
       winsH2: 'aic がリードする点',
       rivalH2: 'llmc がまだ勝つ点',
       rivalLede:
@@ -640,11 +632,6 @@ export const messages: Messages = {
         ' はローカルファーストの Git アシスタント — コミットメッセージ、PR 説明、デフォルトでゼロ設定の Ollama。まだ初期段階（v0.1.3）で2026年初頭から静かですが、PR 説明という角度は本物です。このページは公平に比較します。<strong>aic</strong> が勝つのはアトミックな履歴が重要な場面：hunk レベルのバッチングと AI コンフリクト解決、依存のない Rust バイナリで。',
       callout:
         '<strong>2つのヘルパー、異なる範囲。</strong> git-ai は git をアシスタントで拡張します（コミット + PR 説明、ローカルファースト）。aic は1つのことを深く：クリーンでアトミックな conventional コミット履歴 — そしてマージコンフリクトの解決。',
-      matrix: {
-        heading: '機能比較',
-        capability: '機能',
-        aic: 'aic',
-      },
       winsH2: 'aic がリードする点',
       rivalH2: 'git-ai がまだ勝つ点',
       rivalLede:
@@ -744,11 +731,6 @@ export const messages: Messages = {
         ' は GitHub 2023 ハッカソン優勝者で、git 向け最高機能の GPT ラッパー — GitMoji、設定可能な説明、ローカル Ollama、そして大きなコミュニティ。このページは公平に比較します：OpenCommit が勝つところは正直に言います。<strong>aic</strong> が勝つのはアトミックな履歴が重要な場面 — hunk レベルのバッチングと AI コンフリクト解決、依存のない Rust バイナリで。',
       callout:
         '<strong>どちらも git を愛する；分割の仕方が違う。</strong> OpenCommit は実績のある LLM ラッパー — ステージした diff に1メッセージ、絵文字は任意。aic はここで唯一ファイル境界の下まで行く：未ステージの作業が論理アトミックコミットになり、`aic resolve` がファイルごとに承認したマージを完了します。',
-      matrix: {
-        heading: '機能比較',
-        capability: '機能',
-        aic: 'aic',
-      },
       winsH2: 'aic がリードする点',
       rivalH2: 'OpenCommit がまだ勝つ点',
       rivalLede:

@@ -318,6 +318,13 @@ export const messages: Messages = {
   },
 
   vs: {
+    // Shared feature-matrix column labels — identical for every rival,
+    // so defined once here rather than copied into each rival block.
+    matrix: {
+      heading: '逐特性对比',
+      capability: '能力',
+      aic: 'aic',
+    },
     aicommits: {
       eyebrow: '对比 · aicommits 的替代方案',
       h1: 'aic 对比 aicommits',
@@ -325,11 +332,6 @@ export const messages: Messages = {
         ' 是 AI 提交信息工具里根深蒂固的默认选择——装机量、生态、先发优势都在它那边。本页无意粉饰这一点。它要准确告诉你 <strong>aic</strong> 何时更值得选——以及你何时就该继续用 aicommits。',
       callout:
         '<strong>巧了。</strong>aicommits 自己的 README 就建议，如果名字太长，可以把它别名成 <code>aic</code>。我们把 <code>aic</code> 作为独立的东西发布了——而且它在 hunk 层级把你的未暂存改动拆成多个逻辑提交，所以哪怕一个文件也能变成好几个。',
-      matrix: {
-        heading: '逐特性对比',
-        capability: '能力',
-        aic: 'aic',
-      },
       winsH2: 'aic 领先的地方',
       rivalH2: 'aicommits 仍然占优的地方',
       rivalLede:
@@ -430,11 +432,6 @@ export const messages: Messages = {
       // 含 <strong>/<code>；set:html 渲染。
       callout:
         '<strong>两种不同的押注。</strong> ai-commit 押注 Claude Code 作为上下文引擎；aic 押注 diff 本身。两者都免费。只有 aic 能把未暂存的改动拆到文件边界以下、形成逻辑提交——还能解决合并冲突。',
-      matrix: {
-        heading: '逐特性对比',
-        capability: '能力',
-        aic: 'aic',
-      },
       winsH2: 'aic 领先之处',
       rivalH2: 'ai-commit 仍然占优之处',
       rivalLede:
@@ -537,11 +534,6 @@ export const messages: Messages = {
       // 含 <strong>/<code>；set:html 渲染。
       callout:
         '<strong>同样的规范，不同的侧重。</strong> 两者都写约定式提交。llmc 把供应商选择和终端观感拉满；aic 把提交历史质量拉满——一个文件可以变成多个聚焦的提交，`aic resolve` 能完成你逐文件审批的合并。',
-      matrix: {
-        heading: '逐特性对比',
-        capability: '能力',
-        aic: 'aic',
-      },
       winsH2: 'aic 领先之处',
       rivalH2: 'llmc 仍然占优之处',
       rivalLede:
@@ -642,11 +634,6 @@ export const messages: Messages = {
         ' 是本地优先的 Git 助手——提交信息、PR 描述，默认零配置的 Ollama。它还很早期（v0.1.3），自 2026 年初以来一直沉寂，但 PR 描述这个切入点是真的。这份对比会保持公平。<strong>aic</strong> 在原子化历史至关重要的地方胜出：hunk 级分批和 AI 冲突解决，且无需依赖 Node.js。',
       callout:
         '<strong>两个助手，不同侧重。</strong> git-ai 用一个助手扩展 git（提交 + PR 描述，本地优先）。aic 只把一件事做深：干净、原子、约定式的提交历史——并解决合并冲突。',
-      matrix: {
-        heading: '逐特性对比',
-        capability: '能力',
-        aic: 'aic',
-      },
       winsH2: 'aic 领先之处',
       rivalH2: 'git-ai 仍然占优之处',
       rivalLede:
@@ -745,11 +732,6 @@ export const messages: Messages = {
         ' 是 GitHub 2023 黑客松冠军、git 上功能最丰富的 GPT 封装——GitMoji、可配置描述、本地 Ollama，以及庞大的社区。这份对比会保持公平：OpenCommit 占优的地方，我们会如实说明。<strong>aic</strong> 在原子化历史至关重要的地方胜出——hunk 级分批和 AI 冲突解决，且无需依赖 Node.js。',
       callout:
         '<strong>都爱 git，但拆分方式不同。</strong> OpenCommit 是久经考验的 LLM 封装——为你的暂存 diff 写一条信息，emoji 可选。aic 是这里唯一深入文件边界以下的工具：未暂存工作变成逻辑原子提交，`aic resolve` 完成你逐文件审批的合并。',
-      matrix: {
-        heading: '逐特性对比',
-        capability: '能力',
-        aic: 'aic',
-      },
       winsH2: 'aic 领先之处',
       rivalH2: 'OpenCommit 仍然占优之处',
       rivalLede:

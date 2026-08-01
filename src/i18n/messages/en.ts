@@ -355,6 +355,13 @@ export const messages = {
   },
 
   vs: {
+    // Shared feature-matrix column labels — identical for every rival,
+    // so defined once here rather than copied into each rival block.
+    matrix: {
+      heading: 'Feature-by-feature',
+      capability: 'Capability',
+      aic: 'aic',
+    },
     aicommits: {
       eyebrow: 'Comparison · aicommits alternative',
       h1: 'aic vs aicommits',
@@ -365,11 +372,6 @@ export const messages = {
       // Contains <strong>/<code>; render via set:html.
       callout:
         "<strong>Small world.</strong> aicommits' own README suggests aliasing it to <code>aic</code> if the name is too long. We shipped <code>aic</code> as its own thing — and it splits your unstaged work into logical commits at the hunk level, so even one file can become several.",
-      matrix: {
-        heading: 'Feature-by-feature',
-        capability: 'Capability',
-        aic: 'aic',
-      },
       winsH2: 'Where aic pulls ahead',
       rivalH2: 'Where aicommits still wins',
       rivalLede:
@@ -474,11 +476,6 @@ export const messages = {
       // Contains <strong>/<code>; render via set:html.
       callout:
         '<strong>Two different bets.</strong> ai-commit bets on Claude Code as the context engine; aic bets on the diff itself. Both are free. aic is the only one that splits unstaged work into logical commits below the file boundary — and resolves merge conflicts.',
-      matrix: {
-        heading: 'Feature-by-feature',
-        capability: 'Capability',
-        aic: 'aic',
-      },
       winsH2: 'Where aic pulls ahead',
       rivalH2: 'Where ai-commit still wins',
       rivalLede:
@@ -582,11 +579,6 @@ export const messages = {
       // Contains <strong>/<code>; render via set:html.
       callout:
         '<strong>Same spec, different scope.</strong> Both write Conventional Commits. llmc maximizes provider choice and terminal polish; aic maximizes commit-history quality — one file can become several focused commits, and `aic resolve` finishes merges you approve per file.',
-      matrix: {
-        heading: 'Feature-by-feature',
-        capability: 'Capability',
-        aic: 'aic',
-      },
       winsH2: 'Where aic pulls ahead',
       rivalH2: 'Where llmc still wins',
       rivalLede:
@@ -690,11 +682,6 @@ export const messages = {
       // Contains <strong>/<code>; render via set:html.
       callout:
         '<strong>Two helpers, different scopes.</strong> git-ai extends git with an assistant (commits + PR descriptions, local-first). aic specializes in one thing done deeply: clean, atomic, conventional commit history — and resolving merge conflicts.',
-      matrix: {
-        heading: 'Feature-by-feature',
-        capability: 'Capability',
-        aic: 'aic',
-      },
       winsH2: 'Where aic pulls ahead',
       rivalH2: 'Where git-ai still wins',
       rivalLede:
@@ -797,11 +784,6 @@ export const messages = {
       // Contains <strong>/<code>; render via set:html.
       callout:
         '<strong>Both love git; we split it differently.</strong> OpenCommit is a battle-tested wrapper around the LLM — one message for your staged diff, emoji optional. aic is the only one here that goes below the file boundary: unstaged work becomes logical atomic commits, and `aic resolve` finishes merges you approve per file.',
-      matrix: {
-        heading: 'Feature-by-feature',
-        capability: 'Capability',
-        aic: 'aic',
-      },
       winsH2: 'Where aic pulls ahead',
       rivalH2: 'Where OpenCommit still wins',
       rivalLede:
