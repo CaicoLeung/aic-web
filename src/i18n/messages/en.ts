@@ -158,7 +158,7 @@ export const messages = {
     },
     // Contains <b>; render via set:html. Split at the resolve link (dynamic href).
     ledeBefore:
-      '<em>"fix stuff"</em> and <em>"WIP"</em>. <b>aic</b> reads your diff, writes a real conventional commit, and ships it — one command. Mid-merge? It ',
+      'Your history shouldn\'t say <em>"fix stuff"</em> and <em>"WIP"</em>. <b>aic</b> reads your diff, writes a real conventional commit, and ships it — one command. Mid-merge? It ',
     ledeLink: 'proposes a clean resolution',
     ledeAfter:
       ' for each conflicted file — and nothing lands until you approve the diff. Nothing staged? It splits one file into several focused commits, automatically.',
