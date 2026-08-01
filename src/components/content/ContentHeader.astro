@@ -30,20 +30,29 @@ const versionTitle = version ? t('contentHeader.versionTitle', { version }) : un
   <a class="brand" href={home} aria-label="aic — home">
     <span class="mark" aria-hidden="true">
       <svg viewBox="0 0 24 24" width="20" height="20" focusable="false">
-        <path d="M10,5 Q10,13 18,13 Q10,13 10,21 Q10,13 2,13 Q10,13 10,5 Z" fill="#1a1408"></path>
-        <path d="M18,2 Q18,6 22,6 Q18,6 18,10 Q18,6 14,6 Q18,6 18,2 Z" fill="#1a1408"></path>
+        <path d="M10,5 Q10,13 18,13 Q10,13 10,21 Q10,13 2,13 Q10,13 10,5 Z" fill="#1a1408"
+        ></path>
+        <path d="M18,2 Q18,6 22,6 Q18,6 18,10 Q18,6 14,6 Q18,6 18,2 Z" fill="#1a1408"
+        ></path>
       </svg>
     </span>
     <span class="brand-name">aic</span>
   </a>
 
   <nav class="content-nav" aria-label="Site">
-    {version && (
-      <a class="version" href={changelog} title={versionTitle}>
-        v{version}
-      </a>
-    )}
+    {
+      version && (
+        <a class="version" href={changelog} title={versionTitle}>
+          v{version}
+        </a>
+      )
+    }
     <a href={home}>{t('contentHeader.home')}</a>
+    <a href={localizedHref(locale, 'resolve')}>{t('contentHeader.resolve')}</a>
+    <a href={localizedHref(locale, 'best-ai-commit-tools')}
+      >{t('contentHeader.roundup')}</a
+    >
+    <a href={localizedHref(locale, 'vs/aicommits')}>{t('contentHeader.compare')}</a>
     <a href={changelog}>{t('contentHeader.changelog')}</a>
     <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
       {t('contentHeader.github')}<span aria-hidden="true"> ↗</span>
@@ -92,8 +101,10 @@ const versionTitle = version ? t('contentHeader.versionTitle', { version }) : un
   }
   .content-nav {
     display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     align-items: center;
-    gap: 1.25rem;
+    gap: 0.85rem 1.25rem;
     font-family: var(--font-mono);
     font-size: 0.8rem;
   }
