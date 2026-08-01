@@ -531,6 +531,12 @@ export interface RoundupEntry {
   readonly id: string;
   readonly name: string;
   readonly repo: string;
+  /**
+   * Terse runtime label for the roundup card — a compact rendering of
+   * `CompetitorMeta.runtime` (which keeps the detailed version for the
+   * vs page). Roundup-specific by design, so it stays here rather than on
+   * the comparison rival.
+   */
   readonly runtime: string;
   /** True for aic (disclosed). */
   readonly homeTeam?: boolean;
@@ -538,47 +544,45 @@ export interface RoundupEntry {
   readonly vsPath?: string;
 }
 
-export const ROUNDUP: readonly RoundupEntry[] = [
-  {
-    id: 'aic',
-    name: 'aic',
-    repo: GITHUB_URL,
-    runtime: 'Rust · brew / installer',
-    homeTeam: true,
-  },
-  {
-    id: 'aicommits',
-    name: 'aicommits',
-    repo: 'https://github.com/Nutlope/aicommits',
-    runtime: 'Node.js · npm',
-    vsPath: 'vs/aicommits/',
-  },
-  {
-    id: 'opencommit',
-    name: 'OpenCommit',
-    repo: 'https://github.com/di-sukharev/opencommit',
-    runtime: 'Node.js · npm',
-    vsPath: 'vs/opencommit/',
-  },
-  {
-    id: 'ai-commit',
-    name: 'ai-commit',
-    repo: 'https://github.com/lifedever/ai-commit',
-    runtime: 'Node.js · brew / npm',
-    vsPath: 'vs/ai-commit/',
-  },
-  {
-    id: 'git-ai',
-    name: 'git-ai',
-    repo: 'https://github.com/DaleSeo/git-ai',
-    runtime: 'Node.js · npm / npx',
-    vsPath: 'vs/git-ai/',
-  },
-  {
-    id: 'llmc',
-    name: 'llmc',
-    repo: 'https://github.com/marclove/llmc',
-    runtime: 'Node.js · npx / npm',
-    vsPath: 'vs/llmc/',
-  },
+/**
+ * Roundup overrides. Identity (`name`/`repo`) is sourced from
+ * `COMPARISONS[id].rival` so it cannot drift from the vs page; only the
+ * terse `runtime` and `homeTeam` flag are roundup-specific. The home team
+ * (aic) has no comparison entry, so it is identified by `homeTeam`.
+ */
+interface RoundupOverride {
+  readonly id: string;
+  readonly runtime: string;
+  readonly homeTeam?: boolean;
+}
+
+const ROUNDUP_OVERRIDES: readonly RoundupOverride[] = [
+  { id: 'aic', runtime: 'Rust · brew / installer', homeTeam: true },
+  { id: 'aicommits', runtime: 'Node.js · npm' },
+  { id: 'opencommit', runtime: 'Node.js · npm' },
+  { id: 'ai-commit', runtime: 'Node.js · brew / npm' },
+  { id: 'git-ai', runtime: 'Node.js · npm / npx' },
+  { id: 'llmc', runtime: 'Node.js · npx / npm' },
 ];
+
+function buildRoundupEntry(o: RoundupOverride): RoundupEntry {
+  if (o.homeTeam) {
+    return {
+      id: o.id,
+      name: o.id,
+      repo: GITHUB_URL,
+      runtime: o.runtime,
+      homeTeam: true,
+    };
+  }
+  const rival = COMPARISONS[o.id].rival;
+  return {
+    id: rival.id,
+    name: rival.name,
+    repo: rival.repo,
+    runtime: o.runtime,
+    vsPath: `vs/${rival.id}/`,
+  };
+}
+
+export const ROUNDUP: readonly RoundupEntry[] = ROUNDUP_OVERRIDES.map(buildRoundupEntry);
