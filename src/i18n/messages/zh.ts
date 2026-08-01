@@ -148,7 +148,11 @@ export const messages: Messages = {
       '——针对每个冲突文件，而且在你批准 diff 之前什么都不会落地。没有暂存？它会把一个文件拆成多个聚焦的提交，自动完成。',
     ctaHint: '然后运行 <code>{cmd}</code>',
     /** Above-the-fold credibility line. `{version}` substituted at render. */
-    trust: 'v{version} · MIT 协议 · 无需 Node.js · 每周发布',
+    trust: '★ {stars} · MIT 协议 · 无需 Node.js · 每周发布',
+    /** 主动作命名(CRO)。 */
+    ctaLabel: '安装 aic——一条命令',
+    /** CTA 下方平台微文案(CRO)。 */
+    platformNote: 'Homebrew（macOS · Linux）——Windows 和 Unix 安装器在下方 ↓',
   },
 
   how: {

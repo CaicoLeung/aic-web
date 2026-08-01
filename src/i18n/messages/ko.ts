@@ -145,7 +145,11 @@ export const messages: Messages = {
       '합니다 — 파일마다, 당신이 diff를 승인하기 전에는 아무것도 적용되지 않습니다. 스테이징 없음? 한 파일을 여러 집중 커밋으로 자동 분할합니다.',
     ctaHint: '그런 다음 <code>{cmd}</code> 실행',
     /** Above-the-fold credibility line. `{version}` substituted at render. */
-    trust: 'v{version} · MIT · Node.js 불필요 · 매주 릴리스',
+    trust: '★ {stars} · MIT · Node.js 불필요 · 매주 릴리스',
+    /** 기본 동작 이름 표시(CRO). */
+    ctaLabel: 'aic 설치 — 명령 하나',
+    /** CTA 아래 플랫폼 안내(CRO). */
+    platformNote: 'Homebrew(macOS · Linux) — Windows·Unix 설치 프로그램은 아래로 ↓',
   },
 
   how: {

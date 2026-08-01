@@ -145,7 +145,11 @@ export const messages: Messages = {
       'します — ファイルごとに、あなたが diff を承認するまで何も適用されません。ステージなし？1つのファイルを複数の焦点を絞ったコミットに、自動で分割します。',
     ctaHint: 'そして <code>{cmd}</code> を実行',
     /** Above-the-fold credibility line. `{version}` substituted at render. */
-    trust: 'v{version} · MIT · Node.js 不要 · 毎週リリース',
+    trust: '★ {stars} · MIT · Node.js 不要 · 毎週リリース',
+    /** 主アクションの命名(CRO)。 */
+    ctaLabel: 'aic をインストール — コマンド1つ',
+    /** CTA 下のプラットフォーム微コピー(CRO)。 */
+    platformNote: 'Homebrew（macOS · Linux）— Windows・Unix のインストーラーは下へ ↓',
   },
 
   how: {

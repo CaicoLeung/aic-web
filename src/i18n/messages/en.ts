@@ -163,9 +163,13 @@ export const messages = {
     ledeAfter:
       ' for each conflicted file — and nothing lands until you approve the diff. Nothing staged? It splits one file into several focused commits, automatically.',
     // Contains <code>; render via set:html. `{cmd}` is the literal command.
-    ctaHint: 'then run <code>{cmd}</code>',
+    ctaHint: 'then run <code>{cmd}</code> — one wizard: provider → key → model',
     /** Above-the-fold credibility line. `{version}` substituted at render. */
-    trust: 'v{version} · MIT · no Node.js · ships weekly',
+    trust: '★ {stars} · MIT · no Node.js · ships weekly',
+    /** Names the primary action above the command (CRO). */
+    ctaLabel: 'Install aic — one command',
+    /** Platform microcopy under the hero CTA (CRO). */
+    platformNote: 'Homebrew (macOS · Linux) — Windows & Unix installers below ↓',
   },
 
   how: {

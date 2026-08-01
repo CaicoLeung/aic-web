@@ -11,14 +11,15 @@
 import CommandsTable from './CommandsTable.astro';
 import Terminal from './Terminal.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
-import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
+import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 
 interface Props {
   readonly version?: string;
+  readonly stars?: number;
 }
-const { version } = Astro.props;
+const { version, stars } = Astro.props;
 
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
@@ -52,21 +53,33 @@ const resolveUrl = localizedHref(locale, 'resolve');
     </p>
 
     <div class="hero-cta" data-reveal>
-      <CopyButton
-        text={PRIMARY_INSTALL_COMMAND}
-        label="brew tap CaicoLeung/aic && brew install aic"
-        variant="primary"
-      />
-      <span class="cta-hint">
-        <span class="arrow" aria-hidden="true">→</span>
-        <Fragment set:html={t('hero.ctaHint', { cmd: 'aic setup' })} />
-      </span>
+      <div class="cta-stack">
+        <span class="cta-label">{t('hero.ctaLabel')}</span>
+        <CopyButton
+          text={PRIMARY_INSTALL_COMMAND}
+          label="brew tap CaicoLeung/aic && brew install aic"
+          variant="primary"
+        />
+        <span class="cta-hint">
+          <span class="arrow" aria-hidden="true">→</span>
+          <Fragment set:html={t('hero.ctaHint', { cmd: 'aic setup' })} />
+        </span>
+      </div>
+      <a
+        class="cta-link hero-star"
+        href={GITHUB_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {t('footer.star')}
+      </a>
+      <p class="platform-note">{t('hero.platformNote')}</p>
     </div>
 
     {
-      version && (
+      stars !== undefined && (
         <p class="hero-trust" data-reveal>
-          {t('hero.trust', { version })}
+          {t('hero.trust', { stars })}
         </p>
       )
     }
@@ -206,6 +219,32 @@ const resolveUrl = localizedHref(locale, 'resolve');
     text-transform: uppercase;
     color: var(--color-ink-dim);
     margin: 0;
+  }
+
+  .cta-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .cta-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+  .hero-star {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+  }
+  .hero-star:hover {
+    background: var(--color-amber-soft);
+  }
+  .platform-note {
+    font-size: 0.78rem;
+    color: var(--color-ink-dim);
+    margin: 0.35rem 0 0;
   }
 </style>
 
