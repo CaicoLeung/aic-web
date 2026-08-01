@@ -25,9 +25,6 @@ const hub = m.alt.hub;
 const title = t('meta.alt.hub.title');
 const description = t('meta.alt.hub.description');
 
-const slugOf = (name: string) =>
-  name === 'OpenCommit' ? 'opencommit' : name.toLowerCase();
-
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
@@ -63,7 +60,7 @@ const schema = {
               <li class="card">
                 <a
                   class="card-link"
-                  href={localizedHref(locale, `alternatives/${slugOf(item.name)}`)}
+                  href={localizedHref(locale, `alternatives/${item.id}`)}
                 >
                   <span class="card-name">{item.name}</span>
                   <span class="card-line">{item.line}</span>

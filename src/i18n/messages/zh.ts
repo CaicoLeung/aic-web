@@ -837,11 +837,7 @@ export const messages: Messages = {
     },
     more: {
       h2: '更多对比',
-      aicommits: 'aic 对比 aicommits',
-      aiCommit: 'aic 对比 ai-commit',
-      llmc: 'aic 对比 llmc',
-      gitAi: 'aic 对比 git-ai',
-      opencommit: 'aic 对比 OpenCommit',
+      vsLabel: 'aic 对比 {name}',
       roundup: '看看 aic 在最佳 AI 提交工具中的位置 →',
       installCta: '安装 aic →',
     },
@@ -855,22 +851,27 @@ export const messages: Messages = {
       h2: '各替代方案',
       items: [
         {
+          id: 'aicommits',
           name: 'aicommits',
           line: '老牌默认——如果你想要自动分批和冲突解决，而不只是一条信息，就切换。',
         },
         {
+          id: 'opencommit',
           name: 'OpenCommit',
           line: '黑客松冠军封装——如果你想要原子化历史，而不只是 GitMoji，就切换。',
         },
         {
+          id: 'ai-commit',
           name: 'ai-commit',
           line: 'Claude Code 之选——如果你想要无需 Node.js 的 hunk 级拆分，就切换。',
         },
         {
+          id: 'llmc',
           name: 'llmc',
           line: '最多供应商之选——如果你想要分批和解决，而不只是 TUI，就切换。',
         },
         {
+          id: 'git-ai',
           name: 'git-ai',
           line: '本地优先助手——如果你想要文件级别以下的提交拆分，就切换。',
         },

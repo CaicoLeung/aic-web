@@ -837,11 +837,7 @@ export const messages: Messages = {
 
     more: {
       h2: '더 많은 비교',
-      aicommits: 'aic vs aicommits',
-      aiCommit: 'aic vs ai-commit',
-      llmc: 'aic vs llmc',
-      gitAi: 'aic vs git-ai',
-      opencommit: 'aic vs OpenCommit',
+      vsLabel: 'aic vs {name}',
       roundup: 'aic를 최고 AI 커밋 도구 목록에서 보기 →',
       installCta: 'aic 설치 →',
     },
@@ -855,22 +851,27 @@ export const messages: Messages = {
       h2: '대안 목록',
       items: [
         {
+          id: 'aicommits',
           name: 'aicommits',
           line: '기존 강자 — 메시지 하나가 아니라 자동 배칭과 충돌 해결을 원한다면 전환.',
         },
         {
+          id: 'opencommit',
           name: 'OpenCommit',
           line: '해커톤 우승 래퍼 — GitMoji가 아니라 원자적 히스토리를 원한다면 전환.',
         },
         {
+          id: 'ai-commit',
           name: 'ai-commit',
           line: 'Claude Code 선택지 — Node.js 없이 hunk 수준 분할을 원한다면 전환.',
         },
         {
+          id: 'llmc',
           name: 'llmc',
           line: '최대 프로바이더 선택지 — TUI가 아니라 배칭과 해결을 원한다면 전환.',
         },
         {
+          id: 'git-ai',
           name: 'git-ai',
           line: '로컬 우선 어시스턴트 — 파일 경계 아래의 커밋 분할을 원한다면 전환.',
         },

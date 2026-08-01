@@ -1,0 +1,23 @@
+---
+/**
+ * /alternatives/[id]/ — English migration-intent routes (ADR-0006, ADR-0010).
+ *
+ * A single dynamic route generates every `/alternatives/{id}` page from
+ * `COMPARISONS` — each rival with a comparison also has an alternative
+ * page. Adding a rival is a data change, not a new route file. Body lives
+ * in `AlternativePage`; this file is routing only.
+ */
+import AlternativePage from '@/components/content/AlternativePage.astro';
+import { COMPARISONS } from '@/config/competitors';
+
+export function getStaticPaths() {
+  return Object.keys(COMPARISONS).map((id) => ({
+    params: { id },
+    props: { comparison: COMPARISONS[id] },
+  }));
+}
+
+const { comparison } = Astro.props;
+---
+
+<AlternativePage comparison={comparison} />

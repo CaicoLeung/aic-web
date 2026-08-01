@@ -22,14 +22,18 @@ import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer, useMessages } from '@/i18n/t';
 
 /** Message-block keys under `meta.alt` / `alt` (competitor pages, not hub). */
-type AltKey = 'aicommits' | 'opencommit' | 'ai-commit' | 'llmc' | 'git-ai';
-
 interface Props {
-  id: AltKey;
+  /**
+   * Editorial comparison data (`src/config/competitors.ts`). The rival id is
+   * the single source of truth for the message-block key (alt + vs axes),
+   * the breadcrumb, and the cross-links — no separate `id` prop.
+   */
   comparison: CompetitorComparison;
 }
 
-const { id, comparison } = Astro.props;
+const { comparison } = Astro.props;
+// Derive every id-keyed lookup from the data, not a parallel prop.
+const id = comparison.rival.id;
 const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);

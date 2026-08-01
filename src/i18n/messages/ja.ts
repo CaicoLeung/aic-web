@@ -837,11 +837,7 @@ export const messages: Messages = {
 
     more: {
       h2: '他の比較',
-      aicommits: 'aic vs aicommits',
-      aiCommit: 'aic vs ai-commit',
-      llmc: 'aic vs llmc',
-      gitAi: 'aic vs git-ai',
-      opencommit: 'aic vs OpenCommit',
+      vsLabel: 'aic vs {name}',
       roundup: 'aic をベスト AI コミットツールの総まとめで見る →',
       installCta: 'aic をインストール →',
     },
@@ -855,22 +851,27 @@ export const messages: Messages = {
       h2: '代替案一覧',
       items: [
         {
+          id: 'aicommits',
           name: 'aicommits',
           line: '既存の大手 — メッセージだけでなく、自動バッチングとコンフリクト解決が欲しいなら乗り換え。',
         },
         {
+          id: 'opencommit',
           name: 'OpenCommit',
           line: 'ハッカソン優勝のラッパー — GitMoji だけでなく原子履歴が欲しいなら乗り換え。',
         },
         {
+          id: 'ai-commit',
           name: 'ai-commit',
           line: 'Claude Code 向け — Node.js なしの hunk レベル分割が欲しいなら乗り換え。',
         },
         {
+          id: 'llmc',
           name: 'llmc',
           line: '最多プロバイダ向け — TUI だけでなくバッチングと解決が欲しいなら乗り換え。',
         },
         {
+          id: 'git-ai',
           name: 'git-ai',
           line: 'ローカルファーストのアシスタント — ファイル境界より下のコミット分割が欲しいなら乗り換え。',
         },

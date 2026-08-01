@@ -493,7 +493,12 @@ export const OPENCOMMIT_COMPARISON: CompetitorComparison = {
   ],
 };
 
-/** Lookup by rival id — used by the roundup page and future `/vs/[id]` route. */
+/**
+ * Lookup by rival id. The single source of truth for which competitors have
+ * a comparison: the `/vs/[id]` route, the `/alternatives/[id]` route, and
+ * the "More comparisons" link list all enumerate this, so adding a rival is
+ * a one-place data change (plus its i18n blocks) rather than a route sweep.
+ */
 export const COMPARISONS: Readonly<Record<string, CompetitorComparison>> = {
   [AICOMMITS.id]: AICOMMITS_COMPARISON,
   [AI_COMMIT.id]: AI_COMMIT_COMPARISON,
@@ -501,6 +506,20 @@ export const COMPARISONS: Readonly<Record<string, CompetitorComparison>> = {
   [OPENCOMMIT.id]: OPENCOMMIT_COMPARISON,
   [LLMC.id]: LLMC_COMPARISON,
 };
+
+/**
+ * Rival ids that own a dedicated `/vs/{id}` page, in display order. Drives
+ * the "More comparisons" cross-links. Kept as an explicit order (not
+ * `Object.keys(COMPARISONS)`) so the link list reads in a curated sequence
+ * independent of storage order.
+ */
+export const COMPARISON_RIVALS: readonly string[] = [
+  AICOMMITS.id,
+  AI_COMMIT.id,
+  LLMC.id,
+  GIT_AI.id,
+  OPENCOMMIT.id,
+];
 
 /* ──────────────────────────────────────────────────────────────────
    Roundup — the "best AI commit tools" survey.

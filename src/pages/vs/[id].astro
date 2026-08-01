@@ -1,0 +1,23 @@
+---
+/**
+ * /vs/[id]/ — English head-to-head comparison routes (ADR-0006, ADR-0010).
+ *
+ * A single dynamic route generates every `/vs/{id}` page from `COMPARISONS`,
+ * so adding a rival is a data change in `competitors.ts` (plus its i18n
+ * blocks) — not a new route file per rival × locale. Page body lives in
+ * `VsCompetitorPage`; this file is routing only.
+ */
+import VsCompetitorPage from '@/components/content/VsCompetitorPage.astro';
+import { COMPARISONS } from '@/config/competitors';
+
+export function getStaticPaths() {
+  return Object.keys(COMPARISONS).map((id) => ({
+    params: { id },
+    props: { comparison: COMPARISONS[id] },
+  }));
+}
+
+const { comparison } = Astro.props;
+---
+
+<VsCompetitorPage comparison={comparison} />

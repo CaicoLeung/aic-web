@@ -2,11 +2,12 @@
 /**
  * /vs/{id} — head-to-head comparison page (ADR-0006).
  *
- * Generic over competitor id (aicommits | ai-commit | llmc). Fair by design
+ * Generic over competitor id. Fair by design
  * (CONTEXT.md → "vs page"): concedes where the rival wins, wins decisively
  * on aic's differentiators. Comparison facts are editorial judgments from
  * `src/config/competitors.ts`, verified against both READMEs and repo data
- * (see `competitor-profiles/`).
+ * (see `competitor-profiles/`). The set of rivals with a page is whatever
+ * `COMPARISONS` exposes — there is no parallel type to keep in sync.
  *
  * Targets the "{rival} alternative" / migration cluster. Article schema
  * (not SoftwareApplication) since this is content, not the app listing.
@@ -20,29 +21,36 @@ import Base from '@/layouts/Base.astro';
 import ContentHeader from '@/components/content/ContentHeader.astro';
 import Footer from '@/components/footer/Footer.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
-import type { CompetitorComparison } from '@/config/competitors';
+import {
+  COMPARISONS,
+  COMPARISON_RIVALS,
+  type CompetitorComparison,
+} from '@/config/competitors';
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { localeFromUrl, localizedHref } from '@/i18n/config';
 import { useLocalizer, useMessages } from '@/i18n/t';
 
-/** Message-block keys under `meta.vs` and `vs` in the locale modules. */
-type VsKey = 'aicommits' | 'ai-commit' | 'llmc';
-
 interface Props {
-  /** Locale message-block key for this comparison. */
-  id: VsKey;
-  /** Editorial comparison data (src/config/competitors.ts). */
+  /**
+   * Editorial comparison data (`src/config/competitors.ts`). The rival id is
+   * the single source of truth for the message-block key, the route, and the
+   * "More comparisons" filter — there is no separate `id` prop, so the type
+   * contract can never drift from the rivals that actually have a page.
+   */
   comparison: CompetitorComparison;
   datePublished?: string;
   dateModified?: string;
 }
 
 const {
-  id,
   comparison,
   datePublished = '2026-08-01',
   dateModified = '2026-08-01',
 } = Astro.props;
+
+// Derive every id-keyed lookup from the data: message block, breadcrumb,
+// and the More-comparisons filter all read this, not a parallel prop.
+const id = comparison.rival.id;
 
 const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
@@ -224,41 +232,13 @@ const schema = [articleSchema, faqSchema];
         <h2>{m.vs.more.h2}</h2>
         <ul class="more-links">
           {
-            id !== 'aicommits' && (
+            COMPARISON_RIVALS.filter((rivalId) => rivalId !== id).map((rivalId) => (
               <li>
-                <a href={localizedHref(locale, 'vs/aicommits')}>{m.vs.more.aicommits}</a>
-              </li>
-            )
-          }
-          {
-            id !== 'ai-commit' && (
-              <li>
-                <a href={localizedHref(locale, 'vs/ai-commit')}>{m.vs.more.aiCommit}</a>
-              </li>
-            )
-          }
-          {
-            id !== 'llmc' && (
-              <li>
-                <a href={localizedHref(locale, 'vs/llmc')}>{m.vs.more.llmc}</a>
-              </li>
-            )
-          }
-          {
-            id !== 'git-ai' && (
-              <li>
-                <a href={localizedHref(locale, 'vs/git-ai')}>{m.vs.more.gitAi}</a>
-              </li>
-            )
-          }
-          {
-            id !== 'opencommit' && (
-              <li>
-                <a href={localizedHref(locale, 'vs/opencommit')}>
-                  {m.vs.more.opencommit}
+                <a href={localizedHref(locale, `vs/${rivalId}`)}>
+                  {t('vs.more.vsLabel', { name: COMPARISONS[rivalId].rival.name })}
                 </a>
               </li>
-            )
+            ))
           }
           <li>
             <a href={localizedHref(locale, 'best-ai-commit-tools')}>{m.vs.more.roundup}</a

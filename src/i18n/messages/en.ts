@@ -891,11 +891,7 @@ export const messages = {
     },
     more: {
       h2: 'More comparisons',
-      aicommits: 'aic vs aicommits',
-      aiCommit: 'aic vs ai-commit',
-      llmc: 'aic vs llmc',
-      gitAi: 'aic vs git-ai',
-      opencommit: 'aic vs OpenCommit',
+      vsLabel: 'aic vs {name}',
       roundup: 'See aic among the best AI commit tools →',
       installCta: 'Install aic →',
     },
@@ -909,22 +905,27 @@ export const messages = {
       h2: 'The alternatives',
       items: [
         {
+          id: 'aicommits',
           name: 'aicommits',
           line: 'The incumbent default — switch if you want auto-batching and conflict resolution, not just a message.',
         },
         {
+          id: 'opencommit',
           name: 'OpenCommit',
           line: 'The hackathon-winning wrapper — switch if you want atomic history, not just GitMoji.',
         },
         {
+          id: 'ai-commit',
           name: 'ai-commit',
           line: 'The Claude Code pick — switch if you want hunk-level splitting without Node.js.',
         },
         {
+          id: 'llmc',
           name: 'llmc',
           line: 'The max-provider pick — switch if you want batching and resolve, not just a TUI.',
         },
         {
+          id: 'git-ai',
           name: 'git-ai',
           line: 'The local-first assistant — switch if you want commits split below the file level.',
         },
