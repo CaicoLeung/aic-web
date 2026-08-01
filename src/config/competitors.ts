@@ -145,9 +145,361 @@ export const AICOMMITS_COMPARISON: CompetitorComparison = {
   ],
 };
 
+export const AI_COMMIT: CompetitorMeta = {
+  id: 'ai-commit',
+  name: 'ai-commit',
+  repo: 'https://github.com/lifedever/ai-commit',
+  runtime: 'Node.js ≥ 22.19 · Homebrew / curl',
+  install: 'brew tap lifedever/tap && brew install ai-commit',
+  strength:
+    'The Claude-Code-native pick — reads your source files for richer context, writes Chinese or English messages on demand, and reaches any OpenAI-compatible endpoint.',
+};
+
+/**
+ * aic vs ai-commit. Fair by design: aic wins where atomic history matters
+ * (auto-batching, per-hunk splitting, resolve, no-Node, Windows) and
+ * concedes ai-commit's real niches (Claude Code context, `-l zh`, emoji).
+ * Both are young (~8★); neither offers multiple candidates.
+ * Sources verified 2026-08-01 (READMEs + repo data; see competitor-profiles/).
+ */
+export const AI_COMMIT_COMPARISON: CompetitorComparison = {
+  rival: AI_COMMIT,
+  axes: [
+    {
+      id: 'auto-batch',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'per-hunk',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'resolve',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'claude-context',
+      aic: { supported: false },
+      rival: { supported: true },
+      winner: 'rival',
+    },
+    {
+      id: 'provider-reach',
+      aic: {},
+      rival: {},
+      winner: 'aic',
+    },
+    {
+      id: 'runtime',
+      aic: {},
+      rival: {},
+      winner: 'aic',
+    },
+    {
+      id: 'windows',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'language',
+      aic: {},
+      rival: { supported: true },
+      winner: 'rival',
+    },
+    {
+      id: 'emoji',
+      aic: { supported: false },
+      rival: { supported: true },
+      winner: 'rival',
+    },
+    {
+      id: 'candidates',
+      aic: {},
+      rival: {},
+      winner: 'tie',
+    },
+    {
+      id: 'popularity',
+      aic: {},
+      rival: {},
+      winner: 'tie',
+    },
+  ],
+};
+
+export const LLMC: CompetitorMeta = {
+  id: 'llmc',
+  name: 'llmc',
+  repo: 'https://github.com/marclove/llmc',
+  runtime: 'Node.js · npx / npm',
+  install: 'npx llmc',
+  strength:
+    'The max-provider pick — 13 LLM backends, TOML custom prompts, and a polished terminal UI.',
+};
+
+/**
+ * aic vs llmc. Fair by design: aic concedes provider count (12 vs 13),
+ * TUI polish, and custom-prompt richness; wins on batching, resolve,
+ * runtime, setup wizard, and project activity (llmc quiet since 2025-10).
+ * Sources verified 2026-08-01 (READMEs + repo data; see competitor-profiles/).
+ */
+export const LLMC_COMPARISON: CompetitorComparison = {
+  rival: LLMC,
+  axes: [
+    {
+      id: 'auto-batch',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'per-hunk',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'resolve',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'provider-count',
+      aic: {},
+      rival: {},
+      winner: 'rival',
+    },
+    {
+      id: 'tui',
+      aic: {},
+      rival: {},
+      winner: 'rival',
+    },
+    {
+      id: 'runtime',
+      aic: {},
+      rival: {},
+      winner: 'aic',
+    },
+    {
+      id: 'setup',
+      aic: {},
+      rival: {},
+      winner: 'aic',
+    },
+    {
+      id: 'custom-prompt',
+      aic: {},
+      rival: {},
+      winner: 'rival',
+    },
+    {
+      id: 'activity',
+      aic: {},
+      rival: {},
+      winner: 'aic',
+    },
+    {
+      id: 'candidates',
+      aic: {},
+      rival: {},
+      winner: 'tie',
+    },
+    {
+      id: 'formats',
+      aic: {},
+      rival: {},
+      winner: 'tie',
+    },
+  ],
+};
+
+export const GIT_AI: CompetitorMeta = {
+  id: 'git-ai',
+  name: 'git-ai',
+  repo: 'https://github.com/DaleSeo/git-ai',
+  runtime: 'Node.js ≥ 22 · npm / npx',
+  install: 'npm install -g @daleseo/git-ai',
+  strength:
+    'The local-first Git assistant — commit messages, PR descriptions, and zero-config Ollama (free, offline) by default. Early and quiet since early 2026, but the PR-description angle is real.',
+};
+
+/**
+ * aic vs git-ai. Fair by design: aic concedes git-ai's PR-description
+ * workflow, local-first default, and gitmoji format option; wins on
+ * batching, resolve, providers, setup, and activity (git-ai dormant
+ * since 2026-02). Sources verified 2026-08-01 (README + repo data;
+ * see competitor-profiles/).
+ */
+export const GIT_AI_COMPARISON: CompetitorComparison = {
+  rival: GIT_AI,
+  axes: [
+    {
+      id: 'auto-batch',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'per-hunk',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'resolve',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'pr-description',
+      aic: { supported: false },
+      rival: { supported: true },
+      winner: 'rival',
+    },
+    {
+      id: 'local-default',
+      aic: {},
+      rival: {},
+      winner: 'rival',
+    },
+    {
+      id: 'runtime',
+      aic: {},
+      rival: {},
+      winner: 'aic',
+    },
+    {
+      id: 'setup',
+      aic: {},
+      rival: {},
+      winner: 'aic',
+    },
+    {
+      id: 'providers',
+      aic: {},
+      rival: {},
+      winner: 'aic',
+    },
+    {
+      id: 'activity',
+      aic: {},
+      rival: {},
+      winner: 'aic',
+    },
+    {
+      id: 'formats',
+      aic: {},
+      rival: {},
+      winner: 'rival',
+    },
+    {
+      id: 'candidates',
+      aic: {},
+      rival: {},
+      winner: 'tie',
+    },
+  ],
+};
+
+export const OPENCOMMIT: CompetitorMeta = {
+  id: 'opencommit',
+  name: 'OpenCommit',
+  repo: 'https://github.com/di-sukharev/opencommit',
+  runtime: 'Node.js · npm',
+  install: 'npm install -g opencommit',
+  strength:
+    'The GitHub 2023 hackathon winner and most feature-rich GPT wrapper for git — GitMoji, configurable descriptions, local Ollama/llama.cpp, and a large community (7.5k★, ~12k npm downloads/mo).',
+};
+
+/**
+ * aic vs OpenCommit. Fair by design: aic concedes GitMoji and community;
+ * wins on hunk-level batching, conflict resolution, no-Node runtime, and
+ * the setup wizard. Both are active and multi-provider.
+ * Sources verified 2026-08-01 (README + repo data; see competitor-profiles/).
+ */
+export const OPENCOMMIT_COMPARISON: CompetitorComparison = {
+  rival: OPENCOMMIT,
+  axes: [
+    {
+      id: 'auto-batch',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'per-hunk',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'resolve',
+      aic: { supported: true },
+      rival: { supported: false },
+      winner: 'aic',
+    },
+    {
+      id: 'runtime',
+      aic: {},
+      rival: {},
+      winner: 'aic',
+    },
+    {
+      id: 'setup',
+      aic: {},
+      rival: {},
+      winner: 'aic',
+    },
+    {
+      id: 'provider-count',
+      aic: {},
+      rival: {},
+      winner: 'tie',
+    },
+    {
+      id: 'emoji',
+      aic: { supported: false },
+      rival: { supported: true },
+      winner: 'rival',
+    },
+    {
+      id: 'community',
+      aic: {},
+      rival: {},
+      winner: 'rival',
+    },
+    {
+      id: 'activity',
+      aic: {},
+      rival: {},
+      winner: 'tie',
+    },
+    {
+      id: 'candidates',
+      aic: {},
+      rival: {},
+      winner: 'tie',
+    },
+  ],
+};
+
 /** Lookup by rival id — used by the roundup page and future `/vs/[id]` route. */
 export const COMPARISONS: Readonly<Record<string, CompetitorComparison>> = {
   [AICOMMITS.id]: AICOMMITS_COMPARISON,
+  [AI_COMMIT.id]: AI_COMMIT_COMPARISON,
+  [GIT_AI.id]: GIT_AI_COMPARISON,
+  [OPENCOMMIT.id]: OPENCOMMIT_COMPARISON,
+  [LLMC.id]: LLMC_COMPARISON,
 };
 
 /* ──────────────────────────────────────────────────────────────────
@@ -183,21 +535,31 @@ export const ROUNDUP: readonly RoundupEntry[] = [
     vsPath: 'vs/aicommits/',
   },
   {
+    id: 'opencommit',
+    name: 'OpenCommit',
+    repo: 'https://github.com/di-sukharev/opencommit',
+    runtime: 'Node.js · npm',
+    vsPath: 'vs/opencommit/',
+  },
+  {
     id: 'ai-commit',
     name: 'ai-commit',
     repo: 'https://github.com/lifedever/ai-commit',
     runtime: 'Node.js · brew / npm',
+    vsPath: 'vs/ai-commit/',
   },
   {
     id: 'git-ai',
     name: 'git-ai',
     repo: 'https://github.com/DaleSeo/git-ai',
     runtime: 'Node.js · npm / npx',
+    vsPath: 'vs/git-ai/',
   },
   {
     id: 'llmc',
     name: 'llmc',
     repo: 'https://github.com/marclove/llmc',
     runtime: 'Node.js · npx / npm',
+    vsPath: 'vs/llmc/',
   },
 ];
