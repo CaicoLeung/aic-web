@@ -16,10 +16,9 @@ import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 
 interface Props {
-  readonly version?: string;
   readonly stars?: number;
 }
-const { version, stars } = Astro.props;
+const { stars } = Astro.props;
 
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
