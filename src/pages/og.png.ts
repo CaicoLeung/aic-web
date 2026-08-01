@@ -56,7 +56,7 @@ function ogSvg(): string {
   <text x="80" y="404" font-family="sans-serif" font-size="86" font-weight="800" fill="#f3b340" letter-spacing="-3">git commits.</text>
 
   <!-- sub -->
-  <text x="82" y="452" font-family="sans-serif" font-size="27" fill="#8a8f9f">reads your diff  ·  drafts the message  ·  ships it</text>
+  <text x="82" y="452" font-family="sans-serif" font-size="26" fill="#8a8f9f">one file, many commits  ·  resolves merge conflicts  ·  no Node.js</text>
 
   <!-- install chip -->
   <rect x="80" y="500" width="332" height="52" rx="26" fill="#f3b340" fill-opacity="0.12"/>
