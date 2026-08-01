@@ -36,16 +36,6 @@ const slug = sharedSlug(Astro.url.pathname, import.meta.env.BASE_URL);
     aria-label={t('topbar.switcher.label')}
   >
     <span class="lang-glyph">{LOCALE_SHORT[locale]}</span>
-    <svg class="lang-caret" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-      <path
-        d="M2 3.5 5 6.5 8 3.5"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      ></path>
-    </svg>
   </button>
 
   <ul class="lang-menu" id="lang-menu" role="menu" data-lang-menu>
@@ -94,9 +84,7 @@ const slug = sharedSlug(Astro.url.pathname, import.meta.env.BASE_URL);
     if (!trigger || !menu) return;
     var base = root.getAttribute('data-base') || '/';
     var slug = root.getAttribute('data-slug') || '';
-    var items = Array.prototype.slice.call(
-      menu.querySelectorAll('[data-lang-option]'),
-    );
+    var items = Array.prototype.slice.call(menu.querySelectorAll('[data-lang-option]'));
 
     function navigate(locale) {
       var prefix = locale === 'en' ? '' : locale + '/';
@@ -178,7 +166,7 @@ const slug = sharedSlug(Astro.url.pathname, import.meta.env.BASE_URL);
     background: transparent;
     border: 1px solid var(--color-line);
     border-radius: 999px;
-    padding: 0.3rem 0.55rem 0.3rem 0.65rem;
+    padding: 0.3rem 0.65rem;
     cursor: pointer;
     transition:
       color var(--duration-fast) ease,
@@ -204,19 +192,6 @@ const slug = sharedSlug(Astro.url.pathname, import.meta.env.BASE_URL);
     font-weight: 600;
     letter-spacing: 0.02em;
   }
-  .lang-caret {
-    color: var(--color-ink-dim);
-    transition: transform var(--duration-fast) var(--ease-out-expo),
-      color var(--duration-fast) ease;
-  }
-  .lang-trigger:hover .lang-caret,
-  .lang-trigger[aria-expanded='true'] .lang-caret {
-    color: var(--color-amber);
-  }
-  .lang-trigger[aria-expanded='true'] .lang-caret {
-    transform: rotate(180deg);
-  }
-
   /* Menu — dark raised surface, right-aligned under the trigger. */
   .lang-menu {
     position: absolute;
@@ -301,7 +276,6 @@ const slug = sharedSlug(Astro.url.pathname, import.meta.env.BASE_URL);
 
   @media (prefers-reduced-motion: reduce) {
     .lang-trigger,
-    .lang-caret,
     .lang-menu,
     .lang-option,
     .lang-option-glyph,

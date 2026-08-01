@@ -129,9 +129,17 @@ const m = useMessages(locale);
     border-radius: 12px;
     background: var(--color-surface);
   }
-  .cmd-line {
+  /* `.cmd-line` is a block command, not an inline code chip — reset the
+     global `.section code` chip (ADR-0004). Specificity `.cmd-line-row
+     .cmd-line` (0,2,0) beats `.section code` (0,1,1) so the command sits
+     flat on the row's surface instead of nesting a second rounded box. */
+  .cmd-line-row .cmd-line {
     flex: 1 1 320px;
+    margin: 0;
     color: var(--color-ink);
+    background: none;
+    padding: 0;
+    border-radius: 0;
     font-family: var(--font-mono);
     font-size: 0.82rem;
     word-break: break-all;
