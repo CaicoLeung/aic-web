@@ -10,6 +10,10 @@
  * build time; low-drift facts (install methods, GitHub URL) live here.
  */
 
+/** Deployed origin (matches `site` in astro.config). Used as the `Astro.site`
+ *  fallback in content pages when building canonical/schema URLs. */
+export const SITE_ORIGIN = 'https://caicoleung.github.io';
+
 export const GITHUB_OWNER = 'CaicoLeung';
 export const GITHUB_REPO = 'aic';
 export const GITHUB_URL = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`;
