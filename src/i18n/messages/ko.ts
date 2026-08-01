@@ -190,6 +190,14 @@ export const messages: Messages = {
   install: {
     eyebrow: '05 — 설치',
     h2: '한 줄로 aic 설치.',
+    // CRO 신뢰 스트립 — 설치 방법 전에 주요 우려에 답합니다.
+    trust: [
+      '무료 & MIT',
+      'Node.js 불필요',
+      '12개 프로바이더',
+      'git 훅도 실행',
+      '키는 기기를 떠나지 않음',
+    ],
     postinstall:
       '<span class="arrow" aria-hidden="true">→</span> 그런 다음 <code>{cmd}</code>를 실행해 프로바이더, 키, 모델을 선택.',
     methods: {

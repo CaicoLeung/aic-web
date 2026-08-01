@@ -20,6 +20,10 @@ const m = useMessages(locale);
     </p>
     <h2>{t('install.h2')}</h2>
 
+    <ul class="trust-strip" aria-label="Trust">
+      {m.install.trust.map((item) => <li>{item}</li>)}
+    </ul>
+
     <div class="tabs-row" role="tablist" aria-label="Install method" data-tabs>
       {
         INSTALL_METHODS.map((method, i) => (
@@ -165,6 +169,24 @@ const m = useMessages(locale);
     border-radius: 6px;
     font-weight: 600;
     font-size: 0.78rem;
+  }
+
+  .trust-strip {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-muted);
+  }
+  .trust-strip li::before {
+    content: '✓ ';
+    color: var(--color-mint);
+    font-weight: 700;
   }
 </style>
 

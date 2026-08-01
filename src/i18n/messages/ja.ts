@@ -190,6 +190,14 @@ export const messages: Messages = {
   install: {
     eyebrow: '05 — インストール',
     h2: '1行で aic をインストール。',
+    // CRO トラストストリップ — インストール方法の前に主な懸念へ回答。
+    trust: [
+      '無料 & MIT',
+      'Node.js 不要',
+      '12プロバイダー',
+      'git フックも動作',
+      'キーはマシンから出ない',
+    ],
     postinstall:
       '<span class="arrow" aria-hidden="true">→</span> そして <code>{cmd}</code> を実行してプロバイダ、キー、モデルを選択。',
     methods: {

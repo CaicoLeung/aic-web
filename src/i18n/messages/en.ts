@@ -216,6 +216,14 @@ export const messages = {
   install: {
     eyebrow: '05 — Install',
     h2: 'install aic in one line.',
+    // CRO trust strip — answers the top objections before install methods.
+    trust: [
+      'Free & MIT',
+      'No Node.js',
+      '12 providers',
+      'Runs your git hooks',
+      'Key never leaves your machine',
+    ],
     // Contains <code>; render via set:html. `{cmd}` is the literal command.
     postinstall:
       '<span class="arrow" aria-hidden="true">→</span> then run <code>{cmd}</code> to pick provider, key, and model.',

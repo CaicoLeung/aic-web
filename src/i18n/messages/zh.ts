@@ -193,6 +193,14 @@ export const messages: Messages = {
   install: {
     eyebrow: '05 — 安装',
     h2: '一行安装 aic。',
+    // CRO 信任条——在安装方式前回答主要顾虑。
+    trust: [
+      '免费 & MIT',
+      '无需 Node.js',
+      '12 个供应商',
+      '运行你的 git hooks',
+      '密钥永不离机',
+    ],
     postinstall:
       '<span class="arrow" aria-hidden="true">→</span> 然后运行 <code>{cmd}</code> 来选择供应商、密钥和模型。',
     methods: {
