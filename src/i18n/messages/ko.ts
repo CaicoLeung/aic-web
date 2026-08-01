@@ -826,6 +826,10 @@ export const messages: Messages = {
   },
 
   alt: {
+    // 마이그레이션 설치 단계의 현지화된 도입구. 명령어 자체는 PRIMARY_INSTALL_COMMAND
+    // (site.ts)에서 가져오며 AlternativePage가 <code>로 렌더링합니다. locale 파일에는
+    // 다시 적지 않습니다 (ADR-0006).
+    migrateLead: 'aic 설치:',
     hub: {
       eyebrow: '대안',
       h1: 'AI 커밋 도구 대안 — aic 선택',
@@ -873,7 +877,6 @@ export const messages: Messages = {
         '…`prepare-commit-msg` 훅에 의존하고, gitmoji 또는 일반 형식을 원하고, 여러 메시지 후보가 필요하거나, 가장 큰 커뮤니티의 안정감을 원한다면.',
       migrateH: '전환 방법',
       migrate: [
-        'aic 설치: `brew tap CaicoLeung/aic && brew install aic`',
         '한 번만 설정: `aic setup` 실행 — 프로바이더·키·모델을 하나의 마법사에서',
         '커밋: 작업을 스테이징하고 `aic` 실행; aic가 스테이징하지 않은 작업을 자동으로 배칭합니다',
       ],
@@ -892,7 +895,6 @@ export const messages: Messages = {
         '…검증된 해커톤 우승 래퍼와 GitMoji, 가장 큰 커뮤니티를 원하고 파일 단위 커밋이 괜찮다면.',
       migrateH: '전환 방법',
       migrate: [
-        'aic 설치: `brew tap CaicoLeung/aic && brew install aic`',
         '한 번만 설정: `aic setup` 실행 — 프로바이더·키·모델을 하나의 마법사에서',
         '커밋: 스테이징 여부와 무관하게 `aic` 실행; 아무것도 눈감고 적용되지 않습니다',
       ],
@@ -911,7 +913,6 @@ export const messages: Messages = {
         '…Claude Code를 일상적으로 쓰고, 중국어 커밋 메시지(`-l zh`)를 원하거나, 이모지 컨벤셔널 커밋을 원한다면.',
       migrateH: '전환 방법',
       migrate: [
-        'aic 설치: `brew tap CaicoLeung/aic && brew install aic`',
         '한 번만 설정: `aic setup` 실행 — 프로바이더·키·모델을 하나의 마법사에서',
         '커밋: 작업을 스테이징하고 `aic` 실행; aic가 스테이징하지 않은 작업을 자동으로 배칭합니다',
       ],
@@ -930,7 +931,6 @@ export const messages: Messages = {
         '…가장 넓은 프로바이더 메뉴(13), 가장 예쁜 TUI, 풍부한 TOML 프롬프트 설정을 원한다면.',
       migrateH: '전환 방법',
       migrate: [
-        'aic 설치: `brew tap CaicoLeung/aic && brew install aic`',
         '한 번만 설정: `aic setup` 실행 — 프로바이더·키·모델을 하나의 마법사에서',
         '커밋: 스테이징 여부와 무관하게 `aic` 실행; 아무것도 눈감고 적용되지 않습니다',
       ],
@@ -948,7 +948,6 @@ export const messages: Messages = {
       shouldNot: '…PR 설명과 무료·오프라인·설정 없는 기본값을 원한다면.',
       migrateH: '전환 방법',
       migrate: [
-        'aic 설치: `brew tap CaicoLeung/aic && brew install aic`',
         '한 번만 설정: `aic setup` 실행 — 프로바이더·키·모델을 하나의 마법사에서',
         '커밋: 작업을 스테이징하고 `aic` 실행; aic가 스테이징하지 않은 작업을 자동으로 배칭합니다',
       ],
@@ -978,21 +977,23 @@ export const messages: Messages = {
     modelH: '기본 모델',
     model:
       'aic는 합리적인 DeepSeek 기본값(<code>deepseek-v4-flash</code>)을 내장합니다 — 커밋 메시지 작업에 빠르고 저렴합니다. 언제든 <code>LLM_MODEL</code>로 덮어쓸 수 있습니다.',
-    faqH: '자주 묻는 질문',
-    faq: [
-      {
-        q: 'aic는 DeepSeek를 지원하나요?',
-        a: '네 — DeepSeek는 OpenAI, Anthropic, Gemini 등 8개 이상과 함께 aic의 일급 프로바이더입니다.',
-      },
-      {
-        q: 'aic는 어떤 DeepSeek 모델을 사용하나요?',
-        a: 'aic는 기본적으로 deepseek-v4-flash — 커밋 메시지에 맞는 빠르고 저렴한 모델을 사용합니다. 언제든 LLM_MODEL로 변경할 수 있습니다.',
-      },
-      {
-        q: '제 DeepSeek 키는 안전한가요?',
-        a: '네 — aic는 기기에서 DeepSeek으로 직접 호출합니다. 키가 기기를 떠나지 않으며 중간자나 커밋당 과금도 없습니다.',
-      },
-    ],
+    faq: {
+      h2: '자주 묻는 질문',
+      items: [
+        {
+          q: 'aic는 DeepSeek를 지원하나요?',
+          a: '네 — DeepSeek는 OpenAI, Anthropic, Gemini 등 8개 이상과 함께 aic의 일급 프로바이더입니다.',
+        },
+        {
+          q: 'aic는 어떤 DeepSeek 모델을 사용하나요?',
+          a: 'aic는 기본적으로 deepseek-v4-flash — 커밋 메시지에 맞는 빠르고 저렴한 모델을 사용합니다. 언제든 LLM_MODEL로 변경할 수 있습니다.',
+        },
+        {
+          q: '제 DeepSeek 키는 안전한가요?',
+          a: '네 — aic는 기기에서 DeepSeek으로 직접 호출합니다. 키가 기기를 떠나지 않으며 중간자나 커밋당 과금도 없습니다.',
+        },
+      ],
+    },
   },
 
   roundup: {

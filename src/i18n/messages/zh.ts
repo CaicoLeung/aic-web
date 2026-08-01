@@ -826,6 +826,9 @@ export const messages: Messages = {
   },
 
   alt: {
+    // 迁移安装步骤的本地化引导语。命令本身来自 PRIMARY_INSTALL_COMMAND（site.ts），
+    // 由 AlternativePage 渲染为 <code>——绝不在 locale 文件中重写（ADR-0006）。
+    migrateLead: '安装 aic：',
     hub: {
       eyebrow: '替代方案',
       h1: 'AI 提交工具替代方案——选择 aic',
@@ -873,7 +876,6 @@ export const messages: Messages = {
         '…你依赖它的 `prepare-commit-msg` 钩子、想要 gitmoji 或纯文本格式、需要多条候选消息,或者只是想要最大社区带来的安心感。',
       migrateH: '如何切换',
       migrate: [
-        '安装 aic:`brew tap CaicoLeung/aic && brew install aic`',
         '一次性配置:运行 `aic setup`——供应商、密钥、模型,一个向导搞定',
         '提交:暂存你的工作并运行 `aic`;aic 会自动分批未暂存的工作',
       ],
@@ -892,7 +894,6 @@ export const messages: Messages = {
         '…你想要那个久经考验、黑客松冠军、带 GitMoji 和最大社区的封装,而且文件粒度的提交对你没问题。',
       migrateH: '如何切换',
       migrate: [
-        '安装 aic:`brew tap CaicoLeung/aic && brew install aic`',
         '一次性配置:运行 `aic setup`——供应商、密钥、模型,一个向导搞定',
         '提交:对已暂存或未暂存的工作运行 `aic`;没有任何东西会盲目落地',
       ],
@@ -911,7 +912,6 @@ export const messages: Messages = {
         '…你常驻 Claude Code、想要中文提交信息（`-l zh`）、或者想要 emoji 风格的约定式提交。',
       migrateH: '如何切换',
       migrate: [
-        '安装 aic:`brew tap CaicoLeung/aic && brew install aic`',
         '一次性配置:运行 `aic setup`——供应商、密钥、模型,一个向导搞定',
         '提交:暂存你的工作并运行 `aic`;aic 会自动分批未暂存的工作',
       ],
@@ -930,7 +930,6 @@ export const messages: Messages = {
         '…你想要最全的供应商菜单（13 个）、最漂亮的 TUI,以及丰富的 TOML 提示词配置。',
       migrateH: '如何切换',
       migrate: [
-        '安装 aic:`brew tap CaicoLeung/aic && brew install aic`',
         '一次性配置:运行 `aic setup`——供应商、密钥、模型,一个向导搞定',
         '提交:对已暂存或未暂存的工作运行 `aic`;没有任何东西会盲目落地',
       ],
@@ -948,7 +947,6 @@ export const messages: Messages = {
       shouldNot: '…你想要 PR 描述,以及一个免费、离线、零配置的默认方案。',
       migrateH: '如何切换',
       migrate: [
-        '安装 aic:`brew tap CaicoLeung/aic && brew install aic`',
         '一次性配置:运行 `aic setup`——供应商、密钥、模型,一个向导搞定',
         '提交:暂存你的工作并运行 `aic`;aic 会自动分批未暂存的工作',
       ],
@@ -978,21 +976,23 @@ export const messages: Messages = {
     modelH: '默认模型',
     model:
       'aic 内置合理的 DeepSeek 默认模型(<code>deepseek-v4-flash</code>)——针对提交信息这类轻量任务,又快又便宜。随时可用 <code>LLM_MODEL</code> 覆盖。',
-    faqH: '常见问题',
-    faq: [
-      {
-        q: 'aic 支持 DeepSeek 吗？',
-        a: '支持——DeepSeek 是 aic 的一流供应商,与 OpenAI、Anthropic、Gemini 及其他 8 家并列。',
-      },
-      {
-        q: 'aic 用哪个 DeepSeek 模型？',
-        a: 'aic 默认使用 deepseek-v4-flash——针对提交信息调优的快速、低成本模型。随时可用 LLM_MODEL 覆盖。',
-      },
-      {
-        q: '我的 DeepSeek 密钥安全吗？',
-        a: '安全——aic 直接从你的机器调用 DeepSeek。密钥永远不会离开你的机器,没有中间商,也没有按次计费加成。',
-      },
-    ],
+    faq: {
+      h2: '常见问题',
+      items: [
+        {
+          q: 'aic 支持 DeepSeek 吗？',
+          a: '支持——DeepSeek 是 aic 的一流供应商,与 OpenAI、Anthropic、Gemini 及其他 8 家并列。',
+        },
+        {
+          q: 'aic 用哪个 DeepSeek 模型？',
+          a: 'aic 默认使用 deepseek-v4-flash——针对提交信息调优的快速、低成本模型。随时可用 LLM_MODEL 覆盖。',
+        },
+        {
+          q: '我的 DeepSeek 密钥安全吗？',
+          a: '安全——aic 直接从你的机器调用 DeepSeek。密钥永远不会离开你的机器,没有中间商,也没有按次计费加成。',
+        },
+      ],
+    },
   },
 
   roundup: {

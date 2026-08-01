@@ -826,6 +826,10 @@ export const messages: Messages = {
   },
 
   alt: {
+    // マイグレーションのインストール手順ローカライズ済みリード。コマンド本体は
+    // PRIMARY_INSTALL_COMMAND（site.ts）から供給し、AlternativePage が <code> として
+    // 描画します。locale ファイルには書かない（ADR-0006）。
+    migrateLead: 'aic をインストール：',
     hub: {
       eyebrow: '代替案',
       h1: 'AI コミットツールの代替案 — aic を選ぶ',
@@ -873,7 +877,6 @@ export const messages: Messages = {
         '…`prepare-commit-msg` フックに依存し、gitmoji や plain 形式が欲しく、複数のメッセージ候補が必要、または最大コミュニティの安心感が欲しい。',
       migrateH: '乗り換え方',
       migrate: [
-        'aic をインストール：`brew tap CaicoLeung/aic && brew install aic`',
         '一度だけ設定：`aic setup` を実行 — プロバイダー・キー・モデルを1つのウィザードで',
         'コミット：作業をステージして `aic` を実行；aic が未ステージの作業を自動バッチします',
       ],
@@ -892,7 +895,6 @@ export const messages: Messages = {
         '…実績あるハッカソン優勝ラッパー、GitMoji、最大コミュニティが欲しく、ファイル粒度で問題ない。',
       migrateH: '乗り換え方',
       migrate: [
-        'aic をインストール：`brew tap CaicoLeung/aic && brew install aic`',
         '一度だけ設定：`aic setup` を実行 — プロバイダー・キー・モデルを1つのウィザードで',
         'コミット：ステージ済み・未ステージの作業に `aic` を実行；盲目的に何も適用されません',
       ],
@@ -911,7 +913,6 @@ export const messages: Messages = {
         '…Claude Code を日常的に使い、中国語のコミットメッセージ（`-l zh`）が欲しい、または絵文字付きの conventional コミットが欲しい。',
       migrateH: '乗り換え方',
       migrate: [
-        'aic をインストール：`brew tap CaicoLeung/aic && brew install aic`',
         '一度だけ設定：`aic setup` を実行 — プロバイダー・キー・モデルを1つのウィザードで',
         'コミット：作業をステージして `aic` を実行；aic が未ステージの作業を自動バッチします',
       ],
@@ -930,7 +931,6 @@ export const messages: Messages = {
         '…最も広いプロバイダメニュー（13）、最も美しい TUI、豊かな TOML プロンプト設定が欲しい。',
       migrateH: '乗り換え方',
       migrate: [
-        'aic をインストール：`brew tap CaicoLeung/aic && brew install aic`',
         '一度だけ設定：`aic setup` を実行 — プロバイダー・キー・モデルを1つのウィザードで',
         'コミット：ステージ済み・未ステージの作業に `aic` を実行；盲目的に何も適用されません',
       ],
@@ -948,7 +948,6 @@ export const messages: Messages = {
       shouldNot: '…PR 説明と、無料・オフライン・ゼロ設定のデフォルトが欲しい。',
       migrateH: '乗り換え方',
       migrate: [
-        'aic をインストール：`brew tap CaicoLeung/aic && brew install aic`',
         '一度だけ設定：`aic setup` を実行 — プロバイダー・キー・モデルを1つのウィザードで',
         'コミット：作業をステージして `aic` を実行；aic が未ステージの作業を自動バッチします',
       ],
@@ -978,21 +977,23 @@ export const messages: Messages = {
     modelH: 'デフォルトモデル',
     model:
       'aic は妥当な DeepSeek デフォルト(<code>deepseek-v4-flash</code>)を同梱 — コミットメッセージのワークロードに高速で低コスト。いつでも <code>LLM_MODEL</code> で上書きできます。',
-    faqH: 'よくある質問',
-    faq: [
-      {
-        q: 'aic は DeepSeek に対応していますか？',
-        a: 'はい — DeepSeek は aic の一級プロバイダーで、OpenAI、Anthropic、Gemini など8つ以上と並びます。',
-      },
-      {
-        q: 'aic はどの DeepSeek モデルを使いますか？',
-        a: 'aic はデフォルトで deepseek-v4-flash — コミットメッセージ向けの高速・低コストモデル。いつでも LLM_MODEL で上書きできます。',
-      },
-      {
-        q: 'DeepSeek キーは安全ですか？',
-        a: 'はい — aic はマシンから DeepSeek へ直接呼び出します。キーがマシンの外に出ることはなく、仲介も従量課金もありません。',
-      },
-    ],
+    faq: {
+      h2: 'よくある質問',
+      items: [
+        {
+          q: 'aic は DeepSeek に対応していますか？',
+          a: 'はい — DeepSeek は aic の一級プロバイダーで、OpenAI、Anthropic、Gemini など8つ以上と並びます。',
+        },
+        {
+          q: 'aic はどの DeepSeek モデルを使いますか？',
+          a: 'aic はデフォルトで deepseek-v4-flash — コミットメッセージ向けの高速・低コストモデル。いつでも LLM_MODEL で上書きできます。',
+        },
+        {
+          q: 'DeepSeek キーは安全ですか？',
+          a: 'はい — aic はマシンから DeepSeek へ直接呼び出します。キーがマシンの外に出ることはなく、仲介も従量課金もありません。',
+        },
+      ],
+    },
   },
 
   roundup: {

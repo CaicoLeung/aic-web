@@ -19,8 +19,10 @@ import CopyButton from '@/components/ui/CopyButton.astro';
 import type { CompetitorComparison } from '@/config/competitors';
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND, SITE_ORIGIN } from '@/config/site';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
+import { assertRivalMessages } from '@/i18n/assert';
 import { useLocalizer, useMessages } from '@/i18n/t';
 import { articleSchema, breadcrumbSchema, canonicalUrl, type Crumb } from '@/lib/schema';
+import FeatureMatrix from '@/components/content/FeatureMatrix.astro';
 
 /** Message-block keys under `meta.alt` / `alt` (competitor pages, not hub). */
 interface Props {
@@ -39,6 +41,9 @@ const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const m = useMessages(locale);
+// Build-time gate: a missing i18n block fails the build clearly (ADR-0007 gap:
+// `.astro` frontmatter isn't type-checked, and `m.alt[id]` is a string index).
+assertRivalMessages(m, id);
 const alt = m.alt[id];
 const vsAxes = m.vs[id].axes;
 const { rival, axes } = comparison;
@@ -50,10 +55,10 @@ const vsPage = localizedHref(locale, `vs/${id}`);
 // Canonical URL + absolute crumb URLs for Article.url / BreadcrumbList.
 const site = Astro.site ?? SITE_ORIGIN;
 const canonical = canonicalUrl(Astro.url.pathname, site);
-const abs = (slug: string) => canonicalUrl(localizedHref(locale, slug), site);
+const absolutizeUrl = (slug: string) => canonicalUrl(localizedHref(locale, slug), site);
 const crumbs: readonly Crumb[] = [
-  { name: t('contentHeader.home'), url: abs('') },
-  { name: t('alt.hub.eyebrow'), url: abs('alternatives') },
+  { name: t('contentHeader.home'), url: absolutizeUrl('') },
+  { name: t('alt.hub.eyebrow'), url: absolutizeUrl('alternatives') },
   { name: alt.h1, url: canonical },
 ];
 
@@ -93,55 +98,12 @@ const schema = [
       </section>
 
       <!-- Comparison matrix (reuses vs-page axes) -->
-      <section class="block">
-        <h2>{t('vs.matrix.heading')}</h2>
-        <div class="table-wrap">
-          <table class="matrix">
-            <thead>
-              <tr>
-                <th scope="col">{t('vs.matrix.capability')}</th>
-                <th scope="col">{t('vs.matrix.aic')}</th>
-                <th scope="col">{rival.name}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                axes.map((axis) => (
-                  <tr>
-                    <th scope="row">{vsAxes[axis.id].feature}</th>
-                    <td class={axis.winner === 'aic' ? 'win' : ''}>
-                      {axis.aic.supported === true && (
-                        <span class="glyph yes" aria-hidden="true">
-                          ✓
-                        </span>
-                      )}
-                      {axis.aic.supported === false && (
-                        <span class="glyph no" aria-hidden="true">
-                          ✗
-                        </span>
-                      )}
-                      <span>{vsAxes[axis.id].aic}</span>
-                    </td>
-                    <td class={axis.winner === 'rival' ? 'win' : ''}>
-                      {axis.rival.supported === true && (
-                        <span class="glyph yes" aria-hidden="true">
-                          ✓
-                        </span>
-                      )}
-                      {axis.rival.supported === false && (
-                        <span class="glyph no" aria-hidden="true">
-                          ✗
-                        </span>
-                      )}
-                      <span>{vsAxes[axis.id].rival}</span>
-                    </td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <FeatureMatrix
+        axes={axes}
+        axisLabels={vsAxes}
+        rivalName={rival.name}
+        labels={m.vs.matrix}
+      />
 
       <p class="inline-cta">
         <a href="#cta">{m.vs.more.installCta}</a>
@@ -163,6 +125,15 @@ const schema = [
       <section class="block">
         <h2>{alt.migrateH}</h2>
         <ol class="migrate">
+          {
+            /*
+            Install step sources the command from PRIMARY_INSTALL_COMMAND (ADR-0003)
+            rather than re-typing it in every locale's prose (ADR-0006). Only the
+            localized lead-in lives in the message module; the command is
+            code-register, rendered as <code> by the component.
+          */
+          }
+          <li>{t('alt.migrateLead')} <code>{PRIMARY_INSTALL_COMMAND}</code></li>
           {alt.migrate.map((step) => <li set:html={step} />)}
         </ol>
       </section>
@@ -241,60 +212,6 @@ const schema = [
   .block p code {
     color: var(--color-amber);
     font-family: var(--font-mono);
-  }
-
-  /* Matrix table */
-  .table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--color-line-soft);
-    border-radius: 12px;
-  }
-  .matrix {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-    min-width: 520px;
-  }
-  .matrix th,
-  .matrix td {
-    text-align: left;
-    padding: 0.85rem 1rem;
-    border-bottom: 1px solid var(--color-line-soft);
-    vertical-align: top;
-  }
-  .matrix thead th {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-ink-muted);
-    background: var(--color-surface);
-  }
-  .matrix tbody th {
-    font-weight: 600;
-    color: var(--color-ink);
-    max-width: 16rem;
-  }
-  .matrix tbody tr:last-child th,
-  .matrix tbody tr:last-child td {
-    border-bottom: none;
-  }
-  .matrix td {
-    color: var(--color-ink-muted);
-  }
-  .matrix td.win {
-    color: var(--color-ink);
-    background: var(--color-amber-soft);
-  }
-  .glyph {
-    font-weight: 700;
-    margin-right: 0.4rem;
-  }
-  .glyph.yes {
-    color: var(--color-mint);
-  }
-  .glyph.no {
-    color: var(--color-ink-dim);
   }
 
   /* Switch / stay */

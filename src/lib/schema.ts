@@ -18,10 +18,16 @@ export function canonicalUrl(pathname: string, site: URL | string): string {
 /**
  * Absolute URL to a base-path-relative asset (e.g. `'og.png'`,
  * `'icons/icon-512.png'`). Resolved against the build `BASE_URL` so it stays
- * correct if the base path ever changes.
+ * correct if the base path ever changes. The base defaults to
+ * `import.meta.env.BASE_URL` (Astro injects it at build); when that is absent
+ * (e.g. under a test harness) it falls back to `'/'` rather than throwing.
  */
-export function assetUrl(slug: string, site: URL | string): string {
-  const base = baseHref(import.meta.env.BASE_URL);
+export function assetUrl(
+  slug: string,
+  site: URL | string,
+  baseUrl: string = import.meta.env?.BASE_URL ?? '/',
+): string {
+  const base = baseHref(baseUrl);
   return new URL(`${base}${slug.replace(/^\/+/, '')}`, site).toString();
 }
 

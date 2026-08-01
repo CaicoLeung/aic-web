@@ -880,6 +880,11 @@ export const messages = {
   },
 
   alt: {
+    // Localized lead-in for the migration install step. The command itself
+    // is sourced from PRIMARY_INSTALL_COMMAND (site.ts) and rendered as
+    // <code> by AlternativePage — it is never typed in a locale file
+    // (ADR-0006: install commands are technical reference, single-sourced).
+    migrateLead: 'Install aic:',
     hub: {
       eyebrow: 'Alternatives',
       h1: 'AI commit tool alternatives — choose aic',
@@ -927,7 +932,6 @@ export const messages = {
         '…you rely on its `prepare-commit-msg` hook, want gitmoji or plain formats, need multiple message candidates, or just want the comfort of the biggest community.',
       migrateH: 'How to switch',
       migrate: [
-        'Install aic: `brew tap CaicoLeung/aic && brew install aic`',
         'Configure once: run `aic setup` — provider, key, and model in one wizard',
         'Commit: stage your work and run `aic`; aic batches unstaged work automatically',
       ],
@@ -946,7 +950,6 @@ export const messages = {
         '…you want the proven, hackathon-winning wrapper with GitMoji and the largest community, and file-granular commits are fine for you.',
       migrateH: 'How to switch',
       migrate: [
-        'Install aic: `brew tap CaicoLeung/aic && brew install aic`',
         'Configure once: run `aic setup` — provider, key, and model in one wizard',
         'Commit: run `aic` on staged or unstaged work; nothing lands blind',
       ],
@@ -965,7 +968,6 @@ export const messages = {
         '…you live in Claude Code, want Chinese-language commit messages (`-l zh`), or want emoji-flavored conventional commits.',
       migrateH: 'How to switch',
       migrate: [
-        'Install aic: `brew tap CaicoLeung/aic && brew install aic`',
         'Configure once: run `aic setup` — provider, key, and model in one wizard',
         'Commit: stage your work and run `aic`; aic batches unstaged work automatically',
       ],
@@ -984,7 +986,6 @@ export const messages = {
         '…you want the broadest provider menu (13), the prettiest TUI, and rich TOML prompt configuration.',
       migrateH: 'How to switch',
       migrate: [
-        'Install aic: `brew tap CaicoLeung/aic && brew install aic`',
         'Configure once: run `aic setup` — provider, key, and model in one wizard',
         'Commit: run `aic` on staged or unstaged work; nothing lands blind',
       ],
@@ -1002,7 +1003,6 @@ export const messages = {
       shouldNot: '…you want PR descriptions and a free, offline, zero-config default.',
       migrateH: 'How to switch',
       migrate: [
-        'Install aic: `brew tap CaicoLeung/aic && brew install aic`',
         'Configure once: run `aic setup` — provider, key, and model in one wizard',
         'Commit: stage your work and run `aic`; aic batches unstaged work automatically',
       ],
@@ -1032,21 +1032,23 @@ export const messages = {
     modelH: 'Default model',
     model:
       'aic ships a sensible DeepSeek default (<code>deepseek-v4-flash</code>) — fast and cheap for the commit-message workload. Override anytime with <code>LLM_MODEL</code>.',
-    faqH: 'FAQ',
-    faq: [
-      {
-        q: 'Does aic support DeepSeek?',
-        a: 'Yes — DeepSeek is a first-class provider in aic, alongside OpenAI, Anthropic, Gemini, and eight more.',
-      },
-      {
-        q: 'Which DeepSeek model does aic use?',
-        a: 'aic defaults to deepseek-v4-flash — a fast, low-cost model suited to commit messages. Override anytime with LLM_MODEL.',
-      },
-      {
-        q: 'Is my DeepSeek key safe?',
-        a: 'Yes — aic calls DeepSeek directly from your machine. Your key never leaves it, and there is no middleman or per-commit markup.',
-      },
-    ],
+    faq: {
+      h2: 'FAQ',
+      items: [
+        {
+          q: 'Does aic support DeepSeek?',
+          a: 'Yes — DeepSeek is a first-class provider in aic, alongside OpenAI, Anthropic, Gemini, and eight more.',
+        },
+        {
+          q: 'Which DeepSeek model does aic use?',
+          a: 'aic defaults to deepseek-v4-flash — a fast, low-cost model suited to commit messages. Override anytime with LLM_MODEL.',
+        },
+        {
+          q: 'Is my DeepSeek key safe?',
+          a: 'Yes — aic calls DeepSeek directly from your machine. Your key never leaves it, and there is no middleman or per-commit markup.',
+        },
+      ],
+    },
   },
 
   roundup: {

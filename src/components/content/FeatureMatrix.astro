@@ -1,0 +1,151 @@
+---
+/**
+ * Feature matrix — the aic-vs-rival comparison table.
+ *
+ * Shared by `VsCompetitorPage` and `AlternativePage` so the matrix markup
+ * and its CSS live in exactly one place (the prior duplication was the
+ * largest repeated block in the content cluster). Editorial facts come from
+ * `ComparisonAxis` in `src/config/competitors.ts`; the per-axis labels are
+ * the rival's localized `messages.vs.{id}.axes` block; the column headers
+ * are the shared `messages.vs.matrix` labels.
+ *
+ * `glyph` on each `FeatureCell` drives the ✓/✗; `'none'` renders text only.
+ */
+import type { ComparisonAxis } from '@/config/competitors';
+
+/** The localized per-axis label row: `messages.vs.{id}.axes[axisId]`. */
+interface AxisLabel {
+  readonly feature: string;
+  readonly aic: string;
+  readonly rival: string;
+  readonly note: string;
+}
+
+interface Props {
+  /** Editorial axes for this rival (`ComparisonAxis[]`). */
+  axes: readonly ComparisonAxis[];
+  /** Localized labels keyed by axis id (`messages.vs.{id}.axes`). */
+  axisLabels: Readonly<Record<string, AxisLabel>>;
+  /** Rival display name (column header). */
+  rivalName: string;
+  /** Shared matrix column labels (`messages.vs.matrix`). */
+  labels: { readonly heading: string; readonly capability: string; readonly aic: string };
+}
+
+const { axes, axisLabels, rivalName, labels } = Astro.props;
+---
+
+<section class="matrix-block">
+  <h2>{labels.heading}</h2>
+  <div class="table-wrap">
+    <table class="matrix">
+      <thead>
+        <tr>
+          <th scope="col">{labels.capability}</th>
+          <th scope="col">{labels.aic}</th>
+          <th scope="col">{rivalName}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          axes.map((axis) => (
+            <tr>
+              <th scope="row">{axisLabels[axis.id].feature}</th>
+              <td class={axis.winner === 'aic' ? 'win' : ''}>
+                {axis.aic.glyph === 'yes' && (
+                  <span class="glyph yes" aria-hidden="true">
+                    ✓
+                  </span>
+                )}
+                {axis.aic.glyph === 'no' && (
+                  <span class="glyph no" aria-hidden="true">
+                    ✗
+                  </span>
+                )}
+                <span>{axisLabels[axis.id].aic}</span>
+              </td>
+              <td class={axis.winner === 'rival' ? 'win' : ''}>
+                {axis.rival.glyph === 'yes' && (
+                  <span class="glyph yes" aria-hidden="true">
+                    ✓
+                  </span>
+                )}
+                {axis.rival.glyph === 'no' && (
+                  <span class="glyph no" aria-hidden="true">
+                    ✗
+                  </span>
+                )}
+                <span>{axisLabels[axis.id].rival}</span>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<style>
+  .matrix-block {
+    margin-top: 2.75rem;
+  }
+  .matrix-block h2 {
+    font-size: 1.5rem;
+    margin: 0 0 1rem;
+  }
+
+  /* Matrix table */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-line-soft);
+    border-radius: 12px;
+  }
+  .matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 520px;
+  }
+  .matrix th,
+  .matrix td {
+    text-align: left;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--color-line-soft);
+    vertical-align: top;
+  }
+  .matrix thead th {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    background: var(--color-surface);
+  }
+  .matrix tbody th {
+    font-family: var(--font-body);
+    font-weight: 600;
+    color: var(--color-ink);
+    max-width: 16rem;
+  }
+  .matrix tbody tr:last-child th,
+  .matrix tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .matrix td {
+    color: var(--color-ink-muted);
+  }
+  .matrix td.win {
+    color: var(--color-ink);
+    background: var(--color-amber-soft);
+  }
+  .glyph {
+    font-weight: 700;
+    margin-right: 0.4rem;
+  }
+  .glyph.yes {
+    color: var(--color-mint);
+  }
+  .glyph.no {
+    color: var(--color-ink-dim);
+  }
+</style>

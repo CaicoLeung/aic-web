@@ -27,7 +27,7 @@ Non-indexable: /manifest.webmanifest, /sw.js, /icons/*, /og.png
 
 ```
 Homepage (/)                                       L0
-├── [homepage spine — unchanged]                   L1
+├── [homepage spine — structure unchanged; Hero treatment redesigned per ADR-0013]   L1
 ├── Resolve (/resolve)                             L1
 ├── Roundup hub (/best-ai-commit-tools)            L1   ← hub of the comparison cluster
 │   ├── vs aicommits (/vs/aicommits)               L2
@@ -108,6 +108,12 @@ URL conventions already compliant: lowercase, hyphens, trailing slash, no dates/
 1. Extend `ContentHeader` nav to `Home · Resolve · Roundup · Compare · Changelog` — gives every content page a route to the comparison cluster (today only via footer). Keep homepage Topbar untouched (spine constraint).
 2. Add breadcrumbs on vs pages: `Home › Roundup › aic vs {competitor}` — mirrors URL (`/` → `/best-ai-commit-tools/` → `/vs/{name}/`), free internal links + FAQ-adjacent clarity.
 
+> **Spine scope (amended by ADR-0013).** The fixed-seven spine constraint
+> governs section **structure** (count, identity, order) — it does not freeze a
+> section's internal visual treatment. The Hero section's chrome + motion were
+> redesigned per ADR-0013; the other six sections are untouched. See
+> `docs/adr/0013-hero-parallax-deck.md`.
+
 **P1:** rename ContentHeader "Compare" target to a comparison hub if one is built; add "Alternatives" footer column when P2 ships.
 
 ## 6. Internal Linking Plan
@@ -150,3 +156,4 @@ URL conventions already compliant: lowercase, hyphens, trailing slash, no dates/
 - ✅ **P2 /alternatives/ hub + 5 singular pages** — `/alternatives/` (hub) + `/alternatives/{aicommits,opencommit,ai-commit,llmc,git-ai}` × 4 locales; Format-1 migration intent (why switch → matrix → switch/stay → how to switch); footer nav link added. (2026-08-01)
 - ⏸️ **P2 /docs/** — intentionally deferred: ADR-0006 keeps the source README as docs source of truth; revisit only if content grows.
 - ✅ **P2 DeepSeek capability page** — `/deepseek/` ("aic + DeepSeek"): DeepSeek provider guide — setup wizard walkthrough, env config, default model, FAQ + FAQPage schema; footer nav link added. Published as a **locale-symmetric** page across all 4 locales (identical structure/schema per locale; no zh-primary hreflang or zh-only URL signal). DeepSeek matters most to the Chinese-dev ICP (zh default LLM), but a dedicated zh-optimized landing (§7 #7) remains a separate, deferred strategy — this page does not claim to be it. (2026-08-01)
+- ✅ **Hero section redesign (ADR-0013)** — the Hero _section's internal treatment_ was rebuilt as a 3D parallax deck (perspective scene, pointer + scroll parallax, clip-mask H1 reveal) while carrying over its copy, i18n, and composables unchanged. The 7-section spine **structure** is preserved; ADR-0013 amends this doc's §2/§5 "spine — unchanged" line to mean structure-only. Reduced-motion / no-JS gating unchanged. (2026-08-01)

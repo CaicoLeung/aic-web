@@ -36,9 +36,9 @@ const roundup = localizedHref(locale, 'best-ai-commit-tools');
 // Canonical URL + absolute crumb URLs for Article.url / BreadcrumbList.
 const site = Astro.site ?? SITE_ORIGIN;
 const canonical = canonicalUrl(Astro.url.pathname, site);
-const abs = (slug: string) => canonicalUrl(localizedHref(locale, slug), site);
+const absolutizeUrl = (slug: string) => canonicalUrl(localizedHref(locale, slug), site);
 const crumbs: readonly Crumb[] = [
-  { name: t('contentHeader.home'), url: abs('') },
+  { name: t('contentHeader.home'), url: absolutizeUrl('') },
   { name: d.h1, url: canonical },
 ];
 
@@ -51,7 +51,7 @@ const schema = [
     url: canonical,
     site,
   }),
-  faqSchema(d.faq),
+  faqSchema(d.faq.items),
   breadcrumbSchema(crumbs),
 ];
 ---
@@ -95,10 +95,10 @@ const schema = [
 
       <!-- FAQ -->
       <section class="block">
-        <h2>{d.faqH}</h2>
+        <h2>{d.faq.h2}</h2>
         <div class="faq">
           {
-            d.faq.map((item) => (
+            d.faq.items.map((item) => (
               <div class="faq-item">
                 <h3>{item.q}</h3>
                 <p>{item.a}</p>

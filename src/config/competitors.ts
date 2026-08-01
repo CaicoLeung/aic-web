@@ -35,10 +35,19 @@ export interface CompetitorMeta {
   readonly strength: string;
 }
 
-/** One side of a comparison row. `supported` drives the ✓/✗ glyph; the
- *  text is localized in `messages.vs.aicommits.axes[id]` (ADR-0010). */
+/** One side of a comparison row. Drives the ✓/✗ glyph; the cell text is
+ *  localized in `messages.vs.{id}.axes[axisId]` (ADR-0010).
+ *
+ *  - `glyph: 'yes'`  → render a ✓ before the cell text.
+ *  - `glyph: 'no'`   → render a ✗ before the cell text.
+ *  - `glyph: 'none'` → text-only row (no glyph); the localized text carries
+ *    the meaning on its own.
+ *
+ *  Replaces the old `{ supported?: boolean }` shape, where an empty `{}
+ *  stood for "text row" — an ambiguous sentinel. Every cell now states its
+ *  intent explicitly. */
 export interface FeatureCell {
-  readonly supported?: boolean;
+  readonly glyph: 'yes' | 'no' | 'none';
 }
 
 /** A single row in the feature matrix: aic vs one rival. `id` keys the
@@ -57,7 +66,7 @@ export interface CompetitorComparison {
   readonly axes: readonly ComparisonAxis[];
 }
 
-export const AICOMMITS: CompetitorMeta = {
+const AICOMMITS: CompetitorMeta = {
   id: 'aicommits',
   name: 'aicommits',
   repo: 'https://github.com/Nutlope/aicommits',
@@ -73,79 +82,79 @@ export const AICOMMITS: CompetitorMeta = {
  * concedes the rest. The `aic` alias note is not a jab — aicommits' own
  * README suggests aliasing to `aic`.
  */
-export const AICOMMITS_COMPARISON: CompetitorComparison = {
+const AICOMMITS_COMPARISON: CompetitorComparison = {
   rival: AICOMMITS,
   axes: [
     {
       id: 'auto-batch',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'per-hunk',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'resolve',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'anthropic',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'runtime',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'reach',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'formats',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'rival',
     },
     {
       id: 'hook',
-      aic: { supported: false },
-      rival: { supported: true },
+      aic: { glyph: 'no' },
+      rival: { glyph: 'yes' },
       winner: 'rival',
     },
     {
       id: 'candidates',
-      aic: { supported: false },
-      rival: { supported: true },
+      aic: { glyph: 'no' },
+      rival: { glyph: 'yes' },
       winner: 'rival',
     },
     {
       id: 'prompt',
-      aic: {},
-      rival: { supported: true },
+      aic: { glyph: 'none' },
+      rival: { glyph: 'yes' },
       winner: 'rival',
     },
     {
       id: 'popularity',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'rival',
     },
   ],
 };
 
-export const AI_COMMIT: CompetitorMeta = {
+const AI_COMMIT: CompetitorMeta = {
   id: 'ai-commit',
   name: 'ai-commit',
   repo: 'https://github.com/lifedever/ai-commit',
@@ -162,79 +171,79 @@ export const AI_COMMIT: CompetitorMeta = {
  * Both are young (~8★); neither offers multiple candidates.
  * Sources verified 2026-08-01 (READMEs + repo data; see competitor-profiles/).
  */
-export const AI_COMMIT_COMPARISON: CompetitorComparison = {
+const AI_COMMIT_COMPARISON: CompetitorComparison = {
   rival: AI_COMMIT,
   axes: [
     {
       id: 'auto-batch',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'per-hunk',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'resolve',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'claude-context',
-      aic: { supported: false },
-      rival: { supported: true },
+      aic: { glyph: 'no' },
+      rival: { glyph: 'yes' },
       winner: 'rival',
     },
     {
       id: 'provider-reach',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'runtime',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'windows',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'language',
-      aic: {},
-      rival: { supported: true },
+      aic: { glyph: 'none' },
+      rival: { glyph: 'yes' },
       winner: 'rival',
     },
     {
       id: 'emoji',
-      aic: { supported: false },
-      rival: { supported: true },
+      aic: { glyph: 'no' },
+      rival: { glyph: 'yes' },
       winner: 'rival',
     },
     {
       id: 'candidates',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'tie',
     },
     {
       id: 'popularity',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'tie',
     },
   ],
 };
 
-export const LLMC: CompetitorMeta = {
+const LLMC: CompetitorMeta = {
   id: 'llmc',
   name: 'llmc',
   repo: 'https://github.com/marclove/llmc',
@@ -250,79 +259,79 @@ export const LLMC: CompetitorMeta = {
  * runtime, setup wizard, and project activity (llmc quiet since 2025-10).
  * Sources verified 2026-08-01 (READMEs + repo data; see competitor-profiles/).
  */
-export const LLMC_COMPARISON: CompetitorComparison = {
+const LLMC_COMPARISON: CompetitorComparison = {
   rival: LLMC,
   axes: [
     {
       id: 'auto-batch',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'per-hunk',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'resolve',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'provider-count',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'rival',
     },
     {
       id: 'tui',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'rival',
     },
     {
       id: 'runtime',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'setup',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'custom-prompt',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'rival',
     },
     {
       id: 'activity',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'candidates',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'tie',
     },
     {
       id: 'formats',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'tie',
     },
   ],
 };
 
-export const GIT_AI: CompetitorMeta = {
+const GIT_AI: CompetitorMeta = {
   id: 'git-ai',
   name: 'git-ai',
   repo: 'https://github.com/DaleSeo/git-ai',
@@ -339,79 +348,79 @@ export const GIT_AI: CompetitorMeta = {
  * since 2026-02). Sources verified 2026-08-01 (README + repo data;
  * see competitor-profiles/).
  */
-export const GIT_AI_COMPARISON: CompetitorComparison = {
+const GIT_AI_COMPARISON: CompetitorComparison = {
   rival: GIT_AI,
   axes: [
     {
       id: 'auto-batch',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'per-hunk',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'resolve',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'pr-description',
-      aic: { supported: false },
-      rival: { supported: true },
+      aic: { glyph: 'no' },
+      rival: { glyph: 'yes' },
       winner: 'rival',
     },
     {
       id: 'local-default',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'rival',
     },
     {
       id: 'runtime',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'setup',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'providers',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'activity',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'formats',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'rival',
     },
     {
       id: 'candidates',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'tie',
     },
   ],
 };
 
-export const OPENCOMMIT: CompetitorMeta = {
+const OPENCOMMIT: CompetitorMeta = {
   id: 'opencommit',
   name: 'OpenCommit',
   repo: 'https://github.com/di-sukharev/opencommit',
@@ -427,67 +436,67 @@ export const OPENCOMMIT: CompetitorMeta = {
  * the setup wizard. Both are active and multi-provider.
  * Sources verified 2026-08-01 (README + repo data; see competitor-profiles/).
  */
-export const OPENCOMMIT_COMPARISON: CompetitorComparison = {
+const OPENCOMMIT_COMPARISON: CompetitorComparison = {
   rival: OPENCOMMIT,
   axes: [
     {
       id: 'auto-batch',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'per-hunk',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'resolve',
-      aic: { supported: true },
-      rival: { supported: false },
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
       winner: 'aic',
     },
     {
       id: 'runtime',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'setup',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'aic',
     },
     {
       id: 'provider-count',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'tie',
     },
     {
       id: 'emoji',
-      aic: { supported: false },
-      rival: { supported: true },
+      aic: { glyph: 'no' },
+      rival: { glyph: 'yes' },
       winner: 'rival',
     },
     {
       id: 'community',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'rival',
     },
     {
       id: 'activity',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'tie',
     },
     {
       id: 'candidates',
-      aic: {},
-      rival: {},
+      aic: { glyph: 'none' },
+      rival: { glyph: 'none' },
       winner: 'tie',
     },
   ],

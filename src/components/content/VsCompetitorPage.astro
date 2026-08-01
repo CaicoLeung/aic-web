@@ -28,7 +28,9 @@ import {
 } from '@/config/competitors';
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND, SITE_ORIGIN } from '@/config/site';
 import { localeFromUrl, localizedHref } from '@/i18n/config';
+import { assertRivalMessages } from '@/i18n/assert';
 import { useLocalizer, useMessages } from '@/i18n/t';
+import FeatureMatrix from '@/components/content/FeatureMatrix.astro';
 import {
   articleSchema,
   breadcrumbSchema,
@@ -63,8 +65,11 @@ const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const m = useMessages(locale);
+// Build-time gate: a missing i18n block for this rival fails the build with a
+// clear message. tsc can't catch this — `.astro` frontmatter isn't type-checked
+// (ADR-0007) and `m.vs[id]` is a string index.
+assertRivalMessages(m, id);
 const vsBlock = m.vs[id];
-const L = vsBlock.axes;
 const { rival, axes } = comparison;
 const aicWins = axes.filter((a) => a.winner === 'aic');
 const rivalWins = axes.filter((a) => a.winner === 'rival');
@@ -76,10 +81,10 @@ const description = t(`meta.vs.${id}.description`);
 // Canonical URL + absolute crumb URLs for Article.url / BreadcrumbList.
 const site = Astro.site ?? SITE_ORIGIN;
 const canonical = canonicalUrl(Astro.url.pathname, site);
-const abs = (slug: string) => canonicalUrl(localizedHref(locale, slug), site);
+const absolutizeUrl = (slug: string) => canonicalUrl(localizedHref(locale, slug), site);
 const crumbs: readonly Crumb[] = [
-  { name: t('contentHeader.home'), url: abs('') },
-  { name: t('footer.nav.roundup'), url: abs('best-ai-commit-tools') },
+  { name: t('contentHeader.home'), url: absolutizeUrl('') },
+  { name: t('footer.nav.roundup'), url: absolutizeUrl('best-ai-commit-tools') },
   { name: vsBlock.h1, url: canonical },
 ];
 
@@ -124,55 +129,12 @@ const schema = [
       <aside class="callout" set:html={vsBlock.callout} />
 
       <!-- Feature matrix -->
-      <section class="block">
-        <h2>{m.vs.matrix.heading}</h2>
-        <div class="table-wrap">
-          <table class="matrix">
-            <thead>
-              <tr>
-                <th scope="col">{m.vs.matrix.capability}</th>
-                <th scope="col">{m.vs.matrix.aic}</th>
-                <th scope="col">{rival.name}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                axes.map((axis) => (
-                  <tr>
-                    <th scope="row">{L[axis.id].feature}</th>
-                    <td class={axis.winner === 'aic' ? 'win' : ''}>
-                      {axis.aic.supported === true && (
-                        <span class="glyph yes" aria-hidden="true">
-                          ✓
-                        </span>
-                      )}
-                      {axis.aic.supported === false && (
-                        <span class="glyph no" aria-hidden="true">
-                          ✗
-                        </span>
-                      )}
-                      <span>{L[axis.id].aic}</span>
-                    </td>
-                    <td class={axis.winner === 'rival' ? 'win' : ''}>
-                      {axis.rival.supported === true && (
-                        <span class="glyph yes" aria-hidden="true">
-                          ✓
-                        </span>
-                      )}
-                      {axis.rival.supported === false && (
-                        <span class="glyph no" aria-hidden="true">
-                          ✗
-                        </span>
-                      )}
-                      <span>{L[axis.id].rival}</span>
-                    </td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <FeatureMatrix
+        axes={axes}
+        axisLabels={vsBlock.axes}
+        rivalName={rival.name}
+        labels={m.vs.matrix}
+      />
 
       <p class="inline-cta">
         <a href="#cta">{m.vs.more.installCta}</a>
@@ -185,8 +147,8 @@ const schema = [
           {
             aicWins.map((axis) => (
               <li>
-                <span class="point-h">{L[axis.id].feature}</span>
-                <span class="point-n">{L[axis.id].note}</span>
+                <span class="point-h">{vsBlock.axes[axis.id].feature}</span>
+                <span class="point-n">{vsBlock.axes[axis.id].note}</span>
               </li>
             ))
           }
@@ -194,9 +156,10 @@ const schema = [
             ties.map((axis) => (
               <li>
                 <span class="point-h">
-                  {L[axis.id].feature} <span class="tie-tag">{vsBlock.tieTag}</span>
+                  {vsBlock.axes[axis.id].feature}{' '}
+                  <span class="tie-tag">{vsBlock.tieTag}</span>
                 </span>
-                <span class="point-n">{L[axis.id].note}</span>
+                <span class="point-n">{vsBlock.axes[axis.id].note}</span>
               </li>
             ))
           }
@@ -211,8 +174,8 @@ const schema = [
           {
             rivalWins.map((axis) => (
               <li>
-                <span class="point-h">{L[axis.id].feature}</span>
-                <span class="point-n">{L[axis.id].note}</span>
+                <span class="point-h">{vsBlock.axes[axis.id].feature}</span>
+                <span class="point-n">{vsBlock.axes[axis.id].note}</span>
               </li>
             ))
           }
@@ -254,7 +217,7 @@ const schema = [
         </ul>
       </section>
 
-      <!-- Verdict + CTA -->
+      <!-- Verdict + CTA (spec §6: roundup back-link lives in the verdict/more area) -->
       <section class="verdict" id="cta">
         <h2>{vsBlock.verdict.h2}</h2>
         <p set:html={vsBlock.verdict.body} />
@@ -264,6 +227,9 @@ const schema = [
             {t('footer.star')}
           </a>
         </div>
+        <p class="verdict-roundup">
+          <a href={localizedHref(locale, 'best-ai-commit-tools')}>{m.vs.more.roundup}</a>
+        </p>
       </section>
     </article>
   </main>
@@ -344,61 +310,6 @@ const schema = [
     margin: -0.25rem 0 1.25rem;
     line-height: 1.6;
     font-size: 0.975rem;
-  }
-
-  /* Matrix table */
-  .table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--color-line-soft);
-    border-radius: 12px;
-  }
-  .matrix {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-    min-width: 520px;
-  }
-  .matrix th,
-  .matrix td {
-    text-align: left;
-    padding: 0.85rem 1rem;
-    border-bottom: 1px solid var(--color-line-soft);
-    vertical-align: top;
-  }
-  .matrix thead th {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-ink-muted);
-    background: var(--color-surface);
-  }
-  .matrix tbody th {
-    font-family: var(--font-body);
-    font-weight: 600;
-    color: var(--color-ink);
-    max-width: 16rem;
-  }
-  .matrix tbody tr:last-child th,
-  .matrix tbody tr:last-child td {
-    border-bottom: none;
-  }
-  .matrix td {
-    color: var(--color-ink-muted);
-  }
-  .matrix td.win {
-    color: var(--color-ink);
-    background: var(--color-amber-soft);
-  }
-  .glyph {
-    font-weight: 700;
-    margin-right: 0.4rem;
-  }
-  .glyph.yes {
-    color: var(--color-mint);
-  }
-  .glyph.no {
-    color: var(--color-ink-dim);
   }
 
   /* Point lists */
@@ -493,6 +404,19 @@ const schema = [
   .verdict code {
     color: var(--color-amber);
     font-family: var(--font-mono);
+  }
+  .verdict-roundup {
+    margin: 1.25rem 0 0;
+  }
+  .verdict-roundup a {
+    color: var(--color-amber);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-amber) 40%, transparent);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .verdict-roundup a:hover {
+    color: var(--color-ink);
   }
   .cta {
     display: inline-flex;
