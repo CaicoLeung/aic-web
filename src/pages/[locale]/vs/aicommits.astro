@@ -1,12 +1,13 @@
 ---
 /**
  * /[locale]/vs/aicommits/ — localized comparison page (ADR-0010).
- * Renders the same `VsAicommitsPage` as the English route; Base
+ * Renders the same `VsCompetitorPage` as the English route; Base
  * self-determines locale. Stubbed keys fall back to the EN source
  * (soft parity, Q7=B).
  */
 import { isLocalePrefix, LOCALE_PREFIXES } from '@/i18n/config';
-import VsAicommitsPage from '@/components/content/VsAicommitsPage.astro';
+import VsCompetitorPage from '@/components/content/VsCompetitorPage.astro';
+import { AICOMMITS_COMPARISON } from '@/config/competitors';
 
 export function getStaticPaths() {
   return LOCALE_PREFIXES.map((locale) => ({ params: { locale } }));
@@ -20,4 +21,9 @@ if (!isLocalePrefix(locale)) {
 }
 ---
 
-<VsAicommitsPage />
+<VsCompetitorPage
+  id="aicommits"
+  comparison={AICOMMITS_COMPARISON}
+  datePublished="2026-07-08"
+  dateModified="2026-07-31"
+/>
