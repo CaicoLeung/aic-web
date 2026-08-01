@@ -33,11 +33,12 @@ const resolveUrl = localizedHref(locale, 'resolve');
       <span class="line" aria-hidden="true"></span>{t('hero.eyebrow')}
     </p>
     <h1 class="hero-h1" data-reveal>
-      {t('hero.h1.stopWriting')}<br />
-      <em class="ital">{t('hero.h1.commit')}</em>
-      <span class="pop">{t('hero.h1.messages')}</span><br />
-      {t('hero.h1.stopUntangling')}<br />
-      <em class="ital">{t('hero.h1.merge')}</em>
+      {t('hero.h1.stopWriting')}{' '}
+      <em class="ital">{t('hero.h1.commit')}</em>{' '}
+      <span class="pop">{t('hero.h1.messages')}</span>
+      <br />
+      {t('hero.h1.stopUntangling')}{' '}
+      <em class="ital">{t('hero.h1.merge')}</em>{' '}
       <span class="pop">{t('hero.h1.conflicts')}</span>
     </h1>
 
@@ -51,36 +52,38 @@ const resolveUrl = localizedHref(locale, 'resolve');
       ><Fragment set:html={t('hero.ledeAfter')} />
     </p>
 
-    <div class="hero-cta" data-reveal>
-      <div class="cta-stack">
-        <span class="cta-label">{t('hero.ctaLabel')}</span>
-        <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
-        <span class="cta-hint">
-          <span class="arrow" aria-hidden="true">→</span>
-          <Fragment set:html={t('hero.ctaHint', { cmd: 'aic setup' })} />
-        </span>
+    <div class="hero-actions">
+      {
+        stars !== undefined && (
+          <p class="hero-trust" data-reveal>
+            {t('hero.trust', { stars })}
+          </p>
+        )
+      }
+
+      <div class="hero-commands" data-reveal>
+        <CommandsTable />
       </div>
-      <a
-        class="cta-link hero-star"
-        href={GITHUB_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {t('footer.star')}
-      </a>
-      <p class="platform-note">{t('hero.platformNote')}</p>
-    </div>
 
-    {
-      stars !== undefined && (
-        <p class="hero-trust" data-reveal>
-          {t('hero.trust', { stars })}
-        </p>
-      )
-    }
-
-    <div class="hero-commands" data-reveal>
-      <CommandsTable />
+      <div class="hero-cta" data-reveal>
+        <div class="cta-stack">
+          <span class="cta-label">{t('hero.ctaLabel')}</span>
+          <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
+          <span class="cta-hint">
+            <span class="arrow" aria-hidden="true">→</span>
+            <Fragment set:html={t('hero.ctaHint', { cmd: 'aic setup' })} />
+          </span>
+        </div>
+        <a
+          class="cta-link hero-star"
+          href={GITHUB_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t('footer.star')}
+        </a>
+        <p class="platform-note">{t('hero.platformNote')}</p>
+      </div>
     </div>
   </div>
 </section>
@@ -100,29 +103,35 @@ const resolveUrl = localizedHref(locale, 'resolve');
   }
   .hero-terminal {
     margin-block: 0.5rem;
+    display: flex;
+    justify-content: center;
   }
-  /* Desktop: two columns — copy left, terminal right (spanning). The copy
-     column reads eyebrow → h1 → lede → commands → cta, restored via
-     grid-template-areas regardless of DOM order. */
+  /* Desktop (≥1024): centered intro (eyebrow · H1 · lede) on top, then a
+     two-column zone — terminal + CTA side by side, vertically centered
+     and aligned. Below 1024 (incl. iPad-portrait ~820) the single-column
+     centered narrative reads cleaner. */
   @media (min-width: 1024px) {
     .hero-grid {
       display: grid;
-      grid-template-columns: 5fr 7fr;
+      grid-template-columns: 7fr 5fr;
       grid-template-areas:
-        'eyebrow  terminal'
-        'h1       terminal'
-        'lede     terminal'
-        'commands terminal'
-        'cta      terminal'
-        'trust    terminal';
-      gap: 1.25rem 2.5rem;
+        'eyebrow  eyebrow'
+        'h1       h1'
+        'lede     lede'
+        'terminal actions';
+      gap: 3rem 3rem;
       align-items: center;
+      justify-items: center;
+      text-align: center;
     }
     .hero-eyebrow {
       grid-area: eyebrow;
     }
     .hero-h1 {
       grid-area: h1;
+      /* Two centered lines — back to hero scale; fits the 1200px container. */
+      font-size: clamp(2.75rem, 1rem + 5vw, 4.25rem);
+      line-height: 1.08;
     }
     .hero-terminal {
       grid-area: terminal;
@@ -131,21 +140,23 @@ const resolveUrl = localizedHref(locale, 'resolve');
     .hero-lede {
       grid-area: lede;
     }
-    .hero-commands {
-      grid-area: commands;
+    .hero-actions {
+      grid-area: actions;
+      gap: 1.75rem;
     }
     .hero-cta {
-      grid-area: cta;
-    }
-    .hero-trust {
-      grid-area: trust;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
     }
   }
   h1 {
     font-size: var(--text-hero);
-    line-height: 1.02;
+    line-height: 1.05;
     letter-spacing: -0.035em;
     margin: 0;
+    text-align: center;
   }
   h1 .ital {
     font-style: italic;
@@ -166,6 +177,14 @@ const resolveUrl = localizedHref(locale, 'resolve');
     color: var(--color-ink);
     font-weight: 600;
   }
+  .hero-eyebrow {
+    text-align: center;
+    justify-content: center;
+  }
+  .hero-lede {
+    text-align: center;
+    margin-inline: auto;
+  }
   .hero-lede a {
     color: var(--color-amber);
     text-decoration: none;
@@ -179,10 +198,10 @@ const resolveUrl = localizedHref(locale, 'resolve');
     border-bottom-color: var(--color-amber-warm);
   }
   .hero-cta {
-    display: inline-flex;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1.25rem;
   }
   .cta-hint {
     font-size: 0.9375rem;
@@ -216,10 +235,19 @@ const resolveUrl = localizedHref(locale, 'resolve');
     margin: 0;
   }
 
+  /* CTA + commands + trust grouped as one action panel. */
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
   .cta-stack {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.5rem;
   }
   .cta-label {
@@ -235,6 +263,17 @@ const resolveUrl = localizedHref(locale, 'resolve');
   }
   .hero-star:hover {
     background: var(--color-amber-soft);
+  }
+  /* Give the hero terminal more presence so it carries the right column
+     against the tall copy column. Scoped via .hero-terminal so the shared
+     TerminalShell chrome on other pages is unaffected. */
+  .hero-terminal :global(.terminal) {
+    max-width: 640px;
+    font-size: 0.92rem;
+  }
+  .hero-terminal :global(.termbody) {
+    padding: 1.6rem 1.6rem 1.9rem;
+    line-height: 1.95;
   }
   .platform-note {
     font-size: 0.78rem;
