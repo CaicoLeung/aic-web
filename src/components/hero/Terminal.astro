@@ -20,11 +20,18 @@ import TerminalShell from '@/components/ui/TerminalShell.astro';
 import { HUNK_SPLITTING, HUNK_TYPE_ACCENT } from '@/config/site';
 import HunkTraceLine from '@/components/batching/HunkTraceLine.astro';
 
+interface Props {
+  /** Wire chrome variant — the hero passes 'wire' to fuse the terminal into
+   *  the DAG line-art language (Q9). Default (unset) keeps solid chrome. */
+  readonly variant?: 'wire';
+}
+const { variant } = Astro.props;
+
 const hunks = HUNK_SPLITTING.hunks;
 const commits = HUNK_SPLITTING.commits;
 ---
 
-<TerminalShell>
+<TerminalShell variant={variant}>
   <div class="row" data-row="cmd">
     <span class="prompt">$</span>
     <span class="cmdin" data-typed>aic</span>
@@ -48,7 +55,9 @@ const commits = HUNK_SPLITTING.commits;
     {
       commits.map((c) => (
         <div class="row commitrow" data-commit>
-          <span class="ok" aria-hidden="true">✓</span>
+          <span class="ok" aria-hidden="true">
+            ✓
+          </span>
           <span class="hash">{c.hash}</span>
           <span class="msg">
             <span class="ctype" style={`--accent: ${HUNK_TYPE_ACCENT[c.type]}`}>
@@ -98,6 +107,18 @@ const commits = HUNK_SPLITTING.commits;
   }
   .plan-icon {
     color: var(--color-amber);
+  }
+
+  /* Wire variant (hero fusion, Q9): rhyme the reasoning box + plan divider
+     with the DAG's amber-tint edges so the terminal body speaks the same
+     line-art idiom as the background graph. `.terminal.wire` is authored on
+     the shared TerminalShell figure; only the hero passes the variant. */
+  .terminal.wire .reasoning {
+    border-color: color-mix(in oklch, var(--color-amber) 22%, transparent);
+    background: color-mix(in oklch, var(--color-amber) 5%, transparent);
+  }
+  .terminal.wire .planline {
+    border-top-color: color-mix(in oklch, var(--color-amber) 24%, transparent);
   }
 
   /* ── Commits ─────────────────────────────────────────────────────── */
