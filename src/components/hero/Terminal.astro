@@ -59,9 +59,18 @@ const commits = HUNK_SPLITTING.commits;
     {
       commits.map((c) => (
         <div class="row commitrow" data-commit>
-          <span class="ok" aria-hidden="true">
-            ✓
-          </span>
+          <svg
+            class="ok"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
           <span class="hash">{c.hash}</span>
           <span class="msg">
             <span class="ctype" style={`--accent: ${HUNK_TYPE_ACCENT[c.type]}`}>
@@ -132,7 +141,12 @@ const commits = HUNK_SPLITTING.commits;
     gap: 0.15rem;
   }
   .commitrow {
-    align-items: baseline;
+    align-items: center;
+  }
+  .commitrow .ok {
+    flex: none;
+    width: 0.9em;
+    height: 0.9em;
   }
   .commitrow .hash {
     color: var(--color-amber);
