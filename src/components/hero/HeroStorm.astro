@@ -118,9 +118,6 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     }
   </div>
 
-  <!-- Center vignette so the headline stays crisp over the rain. -->
-  <div class="storm-veil" aria-hidden="true"></div>
-
   <div class="storm-grid container">
     <p class="eyebrow storm-eyebrow" data-reveal>
       <span class="line" aria-hidden="true"></span>{t('hero.eyebrow')}
@@ -197,7 +194,8 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
   .storm-hero {
     position: relative;
     z-index: 2;
-    min-height: clamp(600px, 92vh, 940px);
+    min-height: 100vh;
+    min-height: 100dvh;
     padding: clamp(3rem, 1rem + 5vw, 6rem) 0 clamp(3rem, 1rem + 4vw, 5rem);
     overflow: hidden;
     background:
@@ -291,18 +289,18 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     filter: none;
   }
 
-  /* Center veil: a soft (not black) pool behind the headline — the storm
-     still shows through; the headline's own glow carries legibility. */
-  .storm-veil {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background: radial-gradient(
-      ellipse 40% 34% at 50% 42%,
-      rgba(10, 11, 15, 0.5),
-      rgba(10, 11, 15, 0) 70%
-    );
+  /* Mobile: 22 rain columns is too dense on a narrow screen and the
+     headline loses contrast against the fragments. Thin the columns
+     progressively so the storm stays atmosphere, not noise. */
+  @media (max-width: 640px) {
+    .storm .col:nth-child(2n) {
+      display: none;
+    }
+  }
+  @media (max-width: 400px) {
+    .storm .col:nth-child(3n) {
+      display: none;
+    }
   }
 
   /* ── Content ────────────────────────────────────────────────────── */
@@ -540,6 +538,31 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-ink-dim);
+  }
+
+  /* Mobile: reclaim the gutters so the terminal gets maximum room inside
+     the popup. Trim the viewport padding, the panel's own padding, and the
+     stage/install top margins. */
+  @media (max-width: 640px) {
+    .term-modal {
+      padding: 0.6rem;
+    }
+    .term-panel {
+      padding: 0.85rem;
+    }
+    .term-x {
+      top: 0.4rem;
+      right: 0.5rem;
+    }
+    .term-stage-modal {
+      margin-top: 0.6rem;
+    }
+    .term-stage-modal :global(.terminal.wire .termbody) {
+      padding: 0.9rem 1rem 1rem;
+    }
+    .term-install {
+      margin-top: 0.85rem;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .term-modal,
