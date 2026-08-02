@@ -199,7 +199,7 @@ export const messages: Messages = {
       '無料 & MIT',
       'Node.js 不要',
       '12プロバイダー',
-      'git フックも動作',
+      'pre-commit フックと共存',
       'キーはマシンから出ない',
     ],
     postinstall:
@@ -468,7 +468,7 @@ export const messages: Messages = {
         },
         'provider-reach': {
           feature: 'プロバイダー網羅',
-          aic: '12の一級プロバイダー + OpenAI 互換',
+          aic: '11の一級プロバイダー + OpenAI 互換',
           rival: '任意の OpenAI 互換エンドポイント + Claude Code',
           note: 'どちらもオープン。aic は妥当なデフォルトモデルを持つ一級プロバイダーが多く、ai-commit は OpenAI 互換の任意エンドポイントと Claude Code に対応。',
         },
@@ -594,7 +594,7 @@ export const messages: Messages = {
         },
         activity: {
           feature: 'プロジェクトの活動状況',
-          aic: '毎週リリース、v0.4.0（2026-08-01）',
+          aic: '毎週リリース',
           rival: '2025-10 以降静か、GitHub リリースなし',
           note: 'aic は毎週のリリースと公開チェンジログ；llmc は約9ヶ月休眠。',
         },
@@ -699,7 +699,7 @@ export const messages: Messages = {
         },
         providers: {
           feature: 'プロバイダー網羅',
-          aic: '12の一級プロバイダー + OpenAI 互換',
+          aic: '11の一級プロバイダー + OpenAI 互換',
           rival: 'Ollama、OpenAI、Anthropic',
           note: 'aic は妥当なデフォルトモデルを持つ一級プロバイダーがより多い。',
         },
@@ -786,9 +786,9 @@ export const messages: Messages = {
         },
         'provider-count': {
           feature: 'プロバイダー網羅',
-          aic: '12の一級プロバイダー + OpenAI 互換',
+          aic: '11の一級プロバイダー + OpenAI 互換',
           rival: 'Claude、GPT、その他すべてのプロバイダー',
-          note: 'どちらもマルチプロバイダー。aic は妥当なデフォルトモデルを持つ一級プロバイダーを12提供；OpenCommit は任意のプロバイダーを手動設定。',
+          note: 'どちらもマルチプロバイダー。aic は妥当なデフォルトモデルを持つ一級プロバイダーを11提供；OpenCommit は任意のプロバイダーを手動設定。',
         },
         emoji: {
           feature: 'GitMoji サポート',
@@ -982,7 +982,7 @@ export const messages: Messages = {
       items: [
         {
           q: 'aic は DeepSeek に対応していますか？',
-          a: 'はい — DeepSeek は aic の一級プロバイダーで、OpenAI、Anthropic、Gemini など8つ以上と並びます。',
+          a: 'はい — DeepSeek は aic の一級プロバイダーで、OpenAI、Anthropic、Gemini など7つ以上と並びます。',
         },
         {
           q: 'aic はどの DeepSeek モデルを使いますか？',

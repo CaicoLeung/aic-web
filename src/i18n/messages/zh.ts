@@ -202,7 +202,7 @@ export const messages: Messages = {
       '免费 & MIT',
       '无需 Node.js',
       '12 个供应商',
-      '运行你的 git hooks',
+      '兼容你的 pre-commit 钩子',
       '密钥永不离机',
     ],
     postinstall:
@@ -470,7 +470,7 @@ export const messages: Messages = {
         },
         'provider-reach': {
           feature: '供应商覆盖',
-          aic: '12 个一流供应商 + OpenAI 兼容',
+          aic: '11 个一流供应商 + OpenAI 兼容',
           rival: '任意 OpenAI 兼容端点 + Claude Code',
           note: '两者都很开放。aic 提供更多带合理默认模型的一流供应商；ai-commit 可接任意 OpenAI 兼容端点以及 Claude Code。',
         },
@@ -596,7 +596,7 @@ export const messages: Messages = {
         },
         activity: {
           feature: '项目活跃度',
-          aic: '每周发布，v0.4.0（2026-08-01）',
+          aic: '每周发布',
           rival: '自 2025-10 起停更，无 GitHub 发布',
           note: 'aic 每周发布并有公开更新日志；llmc 已沉寂约 9 个月。',
         },
@@ -701,7 +701,7 @@ export const messages: Messages = {
         },
         providers: {
           feature: '供应商覆盖',
-          aic: '12 个一流供应商 + OpenAI 兼容',
+          aic: '11 个一流供应商 + OpenAI 兼容',
           rival: 'Ollama、OpenAI、Anthropic',
           note: 'aic 提供更多带合理默认模型的一流供应商。',
         },
@@ -787,9 +787,9 @@ export const messages: Messages = {
         },
         'provider-count': {
           feature: '供应商覆盖',
-          aic: '12 个一流供应商 + OpenAI 兼容',
+          aic: '11 个一流供应商 + OpenAI 兼容',
           rival: 'Claude、GPT 和其他所有供应商',
-          note: '两者都支持多供应商。aic 提供 12 个带合理默认模型的一流供应商；OpenCommit 手动配置任意供应商。',
+          note: '两者都支持多供应商。aic 提供 11 个带合理默认模型的一流供应商；OpenCommit 手动配置任意供应商。',
         },
         emoji: {
           feature: 'GitMoji 支持',
@@ -981,7 +981,7 @@ export const messages: Messages = {
       items: [
         {
           q: 'aic 支持 DeepSeek 吗？',
-          a: '支持——DeepSeek 是 aic 的一流供应商,与 OpenAI、Anthropic、Gemini 及其他 8 家并列。',
+          a: '支持——DeepSeek 是 aic 的一流供应商,与 OpenAI、Anthropic、Gemini 及其他 7 家并列。',
         },
         {
           q: 'aic 用哪个 DeepSeek 模型？',

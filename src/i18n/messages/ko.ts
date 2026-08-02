@@ -199,7 +199,7 @@ export const messages: Messages = {
       '무료 & MIT',
       'Node.js 불필요',
       '12개 프로바이더',
-      'git 훅도 실행',
+      'pre-commit 훅과 공존',
       '키는 기기를 떠나지 않음',
     ],
     postinstall:
@@ -468,7 +468,7 @@ export const messages: Messages = {
         },
         'provider-reach': {
           feature: '프로바이더 범위',
-          aic: '12개 일급 + OpenAI 호환',
+          aic: '11개 일급 + OpenAI 호환',
           rival: '모든 OpenAI 호환 엔드포인트 + Claude Code',
           note: '둘 다 열려 있습니다. aic는 합리적 기본 모델을 가진 일급 프로바이더가 더 많고, ai-commit은 OpenAI 호환 엔드포인트와 Claude Code를 지원합니다.',
         },
@@ -594,7 +594,7 @@ export const messages: Messages = {
         },
         activity: {
           feature: '프로젝트 활동',
-          aic: '매주 릴리스, v0.4.0(2026-08-01)',
+          aic: '매주 릴리스',
           rival: '2025-10 이후 조용, GitHub 릴리스 없음',
           note: 'aic는 매주 릴리스와 공개 체인지로그; llmc는 약 9개월간 휴면 상태입니다.',
         },
@@ -699,7 +699,7 @@ export const messages: Messages = {
         },
         providers: {
           feature: '프로바이더 범위',
-          aic: '12개 일급 + OpenAI 호환',
+          aic: '11개 일급 + OpenAI 호환',
           rival: 'Ollama, OpenAI, Anthropic',
           note: 'aic는 합리적 기본 모델을 가진 일급 프로바이더가 더 많습니다.',
         },
@@ -786,9 +786,9 @@ export const messages: Messages = {
         },
         'provider-count': {
           feature: '프로바이더 범위',
-          aic: '12개 일급 + OpenAI 호환',
+          aic: '11개 일급 + OpenAI 호환',
           rival: 'Claude, GPT 및 모든 프로바이더',
-          note: '둘 다 멀티 프로바이더입니다. aic는 합리적 기본 모델을 가진 일급 프로바이더 12개 제공; OpenCommit은 원하는 프로바이더를 수동 설정합니다.',
+          note: '둘 다 멀티 프로바이더입니다. aic는 합리적 기본 모델을 가진 일급 프로바이더 11개 제공; OpenCommit은 원하는 프로바이더를 수동 설정합니다.',
         },
         emoji: {
           feature: 'GitMoji 지원',
@@ -982,7 +982,7 @@ export const messages: Messages = {
       items: [
         {
           q: 'aic는 DeepSeek를 지원하나요?',
-          a: '네 — DeepSeek는 OpenAI, Anthropic, Gemini 등 8개 이상과 함께 aic의 일급 프로바이더입니다.',
+          a: '네 — DeepSeek는 OpenAI, Anthropic, Gemini 등 7개 이상과 함께 aic의 일급 프로바이더입니다.',
         },
         {
           q: 'aic는 어떤 DeepSeek 모델을 사용하나요?',

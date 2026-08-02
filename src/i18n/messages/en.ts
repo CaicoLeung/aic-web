@@ -225,7 +225,7 @@ export const messages = {
       'Free & MIT',
       'No Node.js',
       '12 providers',
-      'Runs your git hooks',
+      'Survives your pre-commit hooks',
       'Key never leaves your machine',
     ],
     // Contains <code>; render via set:html. `{cmd}` is the literal command.
@@ -515,7 +515,7 @@ export const messages = {
         },
         'provider-reach': {
           feature: 'Provider reach',
-          aic: '12 first-class + OpenAI-compatible',
+          aic: '11 first-class + OpenAI-compatible',
           rival: 'Any OpenAI-compatible endpoint + Claude Code',
           note: 'Both are open. aic ships more first-class providers with sensible default models; ai-commit reaches anything OpenAI-compatible plus Claude Code.',
         },
@@ -642,7 +642,7 @@ export const messages = {
         },
         activity: {
           feature: 'Project activity',
-          aic: 'Weekly releases, v0.4.0 (2026-08-01)',
+          aic: 'Weekly releases',
           rival: 'Quiet since 2025-10, no GitHub releases',
           note: 'aic ships on a weekly cadence with a public changelog; llmc has been dormant for ~9 months.',
         },
@@ -751,7 +751,7 @@ export const messages = {
         },
         providers: {
           feature: 'Provider reach',
-          aic: '12 first-class + OpenAI-compatible',
+          aic: '11 first-class + OpenAI-compatible',
           rival: 'Ollama, OpenAI, Anthropic',
           note: 'aic ships more first-class providers with sensible default models.',
         },
@@ -841,9 +841,9 @@ export const messages = {
         },
         'provider-count': {
           feature: 'Provider reach',
-          aic: '12 first-class + OpenAI-compatible',
+          aic: '11 first-class + OpenAI-compatible',
           rival: 'Claude, GPT, and every other provider',
-          note: 'Both are multi-provider. aic ships 12 first-class with sensible default models; OpenCommit configures any provider manually.',
+          note: 'Both are multi-provider. aic ships 11 first-class with sensible default models; OpenCommit configures any provider manually.',
         },
         emoji: {
           feature: 'GitMoji support',
@@ -1037,7 +1037,7 @@ export const messages = {
       items: [
         {
           q: 'Does aic support DeepSeek?',
-          a: 'Yes — DeepSeek is a first-class provider in aic, alongside OpenAI, Anthropic, Gemini, and eight more.',
+          a: 'Yes — DeepSeek is a first-class provider in aic, alongside OpenAI, Anthropic, Gemini, and seven more.',
         },
         {
           q: 'Which DeepSeek model does aic use?',
