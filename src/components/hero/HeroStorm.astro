@@ -293,17 +293,32 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
   }
 
   /* Center veil: a soft (not black) pool behind the headline — the storm
-     still shows through; the headline's own glow carries legibility. */
+     still shows through; the headline's own glow carries legibility.
+     One parameterized background (a radial vignette + a flat darkening
+     wash); each breakpoint only retunes the --veil-* dials instead of
+     redeclaring the whole gradient. --veil-wash is 0 on desktop, so the
+     flat layer renders nothing there. */
   .storm-veil {
+    --veil-rx: 40%;
+    --veil-ry: 34%;
+    --veil-y: 42%;
+    --veil-alpha: 0.5;
+    --veil-fade: 70%;
+    --veil-wash: 0;
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: radial-gradient(
-      ellipse 40% 34% at 50% 42%,
-      rgba(10, 11, 15, 0.5),
-      rgba(10, 11, 15, 0) 70%
-    );
+    background:
+      radial-gradient(
+        ellipse var(--veil-rx) var(--veil-ry) at 50% var(--veil-y),
+        rgba(10, 11, 15, var(--veil-alpha)),
+        rgba(10, 11, 15, 0) var(--veil-fade)
+      ),
+      linear-gradient(
+        rgba(10, 11, 15, var(--veil-wash)),
+        rgba(10, 11, 15, var(--veil-wash))
+      );
   }
 
   /* Mobile: 22 rain columns is too dense on a narrow screen and the
@@ -315,13 +330,12 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
       display: none;
     }
     .storm-veil {
-      background:
-        radial-gradient(
-          ellipse 78% 66% at 50% 44%,
-          rgba(10, 11, 15, 0.95),
-          rgba(10, 11, 15, 0) 82%
-        ),
-        linear-gradient(rgba(10, 11, 15, 0.35), rgba(10, 11, 15, 0.35));
+      --veil-rx: 78%;
+      --veil-ry: 66%;
+      --veil-y: 44%;
+      --veil-alpha: 0.95;
+      --veil-fade: 82%;
+      --veil-wash: 0.35;
     }
   }
   @media (max-width: 400px) {
@@ -329,13 +343,12 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
       display: none;
     }
     .storm-veil {
-      background:
-        radial-gradient(
-          ellipse 88% 72% at 50% 44%,
-          rgba(10, 11, 15, 0.97),
-          rgba(10, 11, 15, 0) 86%
-        ),
-        linear-gradient(rgba(10, 11, 15, 0.45), rgba(10, 11, 15, 0.45));
+      --veil-rx: 88%;
+      --veil-ry: 72%;
+      --veil-y: 44%;
+      --veil-alpha: 0.97;
+      --veil-fade: 86%;
+      --veil-wash: 0.45;
     }
   }
 
@@ -593,7 +606,7 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     .term-stage-modal {
       margin-top: 0.6rem;
     }
-    .term-stage-modal :global(.terminal .termbody) {
+    .term-stage-modal :global(.terminal.wire .termbody) {
       padding: 0.9rem 1rem 1rem;
     }
     .term-install {
