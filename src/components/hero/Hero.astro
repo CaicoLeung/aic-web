@@ -1,31 +1,35 @@
 ---
 /**
- * Hero — a quiet 3D deck.
+ * Hero — a commit graph that writes itself.
  *
- * Concept: the terminal floats inside a perspective scene and tilts
- * gently with the pointer, leaning back as it leaves the viewport. A
- * few dim monospace glyphs drift at their own depths as parallax dust.
- * The H1 reveals line-by-line through a clip mask. That is the whole
- * atmosphere — depth comes from motion, not from graphics.
+ * Concept (redesign consensus, 13 decisions): a full-bleed git commit
+ * graph (DAG) is the hero's signature. The terminal — restyled to a
+ * wireframe idiom — is the stable causal anchor; as it ships commits
+ * (feat → fix → refactor), each one trace-draws onto the graph's tip in
+ * sync, like new history being appended to the repo. The H1 sits static
+ * as the reader's anchor; the only motion is the graph breathing in
+ * depth (pointer parallax) and receding on scroll.
  *
- * Minimalism discipline (the brief asked for 极简 first): one accent
- * (amber), one ink, one mono, lots of air. No horizon line, no grid
- * floor, no aurora blobs — those read as synthwave noise on wide screens
- * and fight the two-column layout. The terminal's own glow is the only
- * light source; everything else is restraint.
+ * Minimalism discipline: one accent (amber) lights the new commits'
+ * edges; the committed nodes use mint (the site's existing success
+ * color, rhyming with the terminal's ✓). Existing history is faint
+ * ink-dim — neutral structure, not a second accent. Lots of air.
  *
- * Reduced-motion / no-JS: every animated element has a visible final
- * state via `[data-reveal] { opacity:1; transform:none }` and the CSS
- * keyframes are gated behind `(prefers-reduced-motion: no-preference)`.
- * Pointer + scroll parallax only construct under `whenMotionOk`, so a
- * reduced-motion visitor pays zero rAF cost and sees the deck assembled.
+ * Reduced-motion / no-JS: the DAG defaults to its pre-lit final state
+ * (full graph drawn, 3 commits lit) in CSS; the motion script reverses
+ * it to a hidden pre-trace state and re-traces on the terminal's
+ * `term:commit` events, under whenMotionOk only. Every [data-reveal]
+ * element defaults to opacity 1, so a no-JS visitor sees the assembled
+ * hero. The entrance fade is opacity-only (no translate) to stay
+ * coordinated with the static H1.
  *
- * Copy + i18n + composables (CommandsTable / Terminal / CopyButton) are
- * unchanged from the previous hero — only the visual chrome and the motion
- * layer were rebuilt.
+ * Composition is authored (Dag.astro owns fixed node coordinates). Copy
+ * + i18n + composables (CommandsTable / Terminal / CopyButton) are
+ * unchanged — only the visual chrome and the motion layer were rebuilt.
  */
 import CommandsTable from './CommandsTable.astro';
 import Terminal from './Terminal.astro';
+import Dag from './Dag.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
@@ -39,41 +43,13 @@ const { stars } = Astro.props;
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const resolveUrl = localizedHref(locale, 'resolve');
-
-// Ambient monospace glyphs scattered as depth dust. Sparse + dim so
-// the hero reads minimal — parallax depth cue, not decoration. Kept to
-// four and placed away from the copy/terminal focal area.
-const GLYPHS = [
-  { ch: '✓', x: '10%', y: '20%', d: 0.26 },
-  { ch: '@@', x: '88%', y: '16%', d: 0.16 },
-  { ch: '→', x: '20%', y: '78%', d: 0.2 },
-  { ch: 'aic', x: '84%', y: '72%', d: 0.14 },
-] as const;
 ---
 
 <section class="hero" id="top">
-  <!-- 3D atmosphere — parallax sky. aria-hidden: decorative reinforcement
-       of the hero copy, never primary content. -->
-  <!-- Ambient depth — parallax dust only. No horizon line, no grid
-       floor, no aurora blobs: those read as busy synthwave noise on wide
-       screens and fight the two-column layout. Depth here comes from the
-       floating terminal (tilt + glow) and these few drifting glyphs.
-       aria-hidden: decorative, never primary content. -->
-  <div class="hero-sky" aria-hidden="true" data-parallax-root>
-    <div class="glyphs">
-      {
-        GLYPHS.map((g) => (
-          <span
-            class="glyph"
-            style={`--gx:${g.x};--gy:${g.y};--gd:${g.d}`}
-            data-depth={g.d}
-          >
-            {g.ch}
-          </span>
-        ))
-      }
-    </div>
-  </div>
+  <!-- Signature background: a full-bleed git commit graph (DAG). The hero
+       terminal's commits trace-draw onto its tip (Q3 fusion). aria-hidden:
+       decorative reinforcement of the hero copy, never primary content. -->
+  <Dag />
 
   <div class="hero-grid container">
     <p class="eyebrow hero-eyebrow" data-reveal>
@@ -82,14 +58,14 @@ const GLYPHS = [
 
     <h1 class="hero-h1">
       <span class="kin-line">
-        <span class="kin-inner" data-reveal>
+        <span class="kin-inner">
           {t('hero.h1.stopWriting')}{' '}
           <em class="ital">{t('hero.h1.commit')}</em>{' '}
           <span class="pop">{t('hero.h1.messages')}</span>
         </span>
       </span>
       <span class="kin-line">
-        <span class="kin-inner" data-reveal>
+        <span class="kin-inner">
           {t('hero.h1.stopUntangling')}{' '}
           <em class="ital">{t('hero.h1.merge')}</em>{' '}
           <span class="pop">{t('hero.h1.conflicts')}</span>
@@ -98,12 +74,7 @@ const GLYPHS = [
     </h1>
 
     <div class="hero-terminal" data-reveal>
-      <div class="term-stage" data-term-stage>
-        <div class="term-float">
-          <div class="term-glow" data-depth="0.40"></div>
-          <Terminal />
-        </div>
-      </div>
+      <Terminal variant="wire" />
     </div>
 
     <p class="lede hero-lede" data-reveal>
@@ -157,63 +128,12 @@ const GLYPHS = [
     min-height: clamp(560px, 78vh, 800px);
     padding: clamp(2.5rem, 1rem + 4vw, 4.5rem) 0 clamp(2.5rem, 1rem + 4vw, 4.5rem);
     overflow: hidden;
-    /* Local perspective origin for the 3D deck — slightly above center so
-       the terminal's tilt reads as looking down onto a deck. */
-    perspective: 1600px;
-    perspective-origin: 50% 42%;
-    /* Parallax bus lives on the section (not .hero-sky) so BOTH subtrees
-       inherit it — the sky glyphs AND the terminal glow, which sits in
-       the sibling .hero-grid column. The JS rAF loop writes --mx/--my
-       (pointer, -1..1) and --sy (scroll-out, 0..1) here. */
+    /* Parallax bus: the rAF loop writes --mx/--my (pointer, -1..1) and --sy
+       (scroll-out, 0..1) here; the DAG layers (data-depth <g> in <Dag/>)
+       consume them via their per-layer translate. */
     --mx: 0;
     --my: 0;
     --sy: 0;
-  }
-
-  /* ── Parallax sky ─────────────────────────────────────────────────
-     Layers live behind the content grid. Each carries `data-depth` for
-     the JS parallax driver; the static transform here is the layer's
-     resting pose. Pointer parallax composes an additive translate3d on
-     top via a dedicated CSS var so it never overrides the base pose. */
-  .hero-sky {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  /* ── Floating glyphs — depth dust ──────────────────────────────── */
-  .glyphs {
-    position: absolute;
-    inset: 0;
-  }
-  .glyph {
-    position: absolute;
-    left: var(--gx);
-    top: var(--gy);
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    color: rgba(243, 179, 64, 0.32);
-    letter-spacing: 0.04em;
-    /* Parallax scaled by the per-glyph depth var (--gd); translate(-50%,-50%)
-       is preserved so the glyph stays anchored on its --gx/--gy point. */
-    transform: translate3d(
-        calc(var(--mx, 0) * 22px * var(--gd, 0)),
-        calc(var(--my, 0) * 22px * var(--gd, 0) + var(--sy, 0) * -50px * var(--gd, 0)),
-        0
-      )
-      translate(-50%, -50%);
-    will-change: transform, opacity;
-    animation: glyph-bob 9s ease-in-out infinite alternate;
-  }
-  .glyph:nth-child(2n) {
-    animation-duration: 13s;
-    animation-delay: -3s;
-    opacity: 0.8;
-  }
-  .glyph:nth-child(3n) {
-    animation-duration: 16s;
-    animation-delay: -6s;
   }
 
   /* ── Content grid ──────────────────────────────────────────────── */
@@ -231,10 +151,10 @@ const GLYPHS = [
   }
 
   /* Desktop (≥1024): two-column deck — copy + CTA on the left, product
-     surface on the right. The right column pairs the floating terminal
-     with the commands reference underneath, so both columns carry
-     comparable visual weight. Rows pack toward the vertical center.
-     Mobile keeps commands at the end (reference) via DOM order. */
+     surface on the right. The right column pairs the terminal with the
+     commands reference underneath, so both columns carry comparable
+     visual weight. Rows pack toward the vertical center. Mobile keeps
+     commands at the end (reference) via DOM order. */
   @media (min-width: 1024px) {
     .hero-grid {
       display: grid;
@@ -323,8 +243,8 @@ const GLYPHS = [
     color: var(--color-amber);
   }
 
-  /* Kinetic line reveal — overflow-hidden clip mask + inner translate.
-     JS animates `.kin-inner`; the mask hides the pre-state. */
+  /* H1 line wrappers. Now static (Q10) — the clip-mask reveal was removed;
+     the wrappers remain only to preserve italic-descender padding. */
   .kin-line {
     display: block;
     overflow: hidden;
@@ -332,7 +252,6 @@ const GLYPHS = [
   }
   .kin-inner {
     display: block;
-    will-change: transform;
   }
 
   .lede {
@@ -359,48 +278,6 @@ const GLYPHS = [
   .hero-lede a:hover {
     color: var(--color-amber-warm);
     border-bottom-color: var(--color-amber-warm);
-  }
-
-  /* ── Terminal 3D stage ───────────────────────────────────────────
-     Three nested transforms to keep concerns isolated:
-       .term-stage : pointer tilt (rotateX/Y) + scroll translate
-       .term-float : continuous breathing keyframe
-       .term-glow  : parallax bloom behind the shell
-     The shell (Terminal) itself stays untouched. */
-  .term-stage {
-    --rx: 0deg;
-    --ry: 0deg;
-    --ty: 0px;
-    transform: rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--ty));
-    transform-style: preserve-3d;
-    will-change: transform;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-  .term-float {
-    position: relative;
-    transform-style: preserve-3d;
-    animation: term-breathe 11s ease-in-out infinite alternate;
-    will-change: transform;
-  }
-  .term-glow {
-    position: absolute;
-    inset: -8% -6% -14% -6%;
-    background: radial-gradient(
-      ellipse 60% 70% at 50% 45%,
-      rgba(243, 179, 64, 0.28),
-      rgba(243, 179, 64, 0) 70%
-    );
-    filter: blur(28px);
-    z-index: -1;
-    border-radius: 24px;
-    transform: translate3d(
-      calc(var(--mx, 0) * 30px),
-      calc(var(--my, 0) * 30px + var(--sy, 0) * -24px),
-      0
-    );
-    will-change: transform;
   }
 
   /* ── Actions / CTA ─────────────────────────────────────────────── */
@@ -479,41 +356,6 @@ const GLYPHS = [
     opacity: 1;
     transform: none;
   }
-
-  /* ── Keyframes — disabled under reduced motion ─────────────────── */
-  @media (prefers-reduced-motion: no-preference) {
-    @keyframes glyph-bob {
-      0% {
-        opacity: 0.3;
-      }
-      100% {
-        opacity: 0.7;
-      }
-    }
-    @keyframes term-breathe {
-      0% {
-        transform: translate3d(0, -6px, 0);
-      }
-      100% {
-        transform: translate3d(0, 6px, 0);
-      }
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .glyph,
-    .term-float {
-      animation: none !important;
-    }
-  }
-
-  /* Touch / no-pointer devices: skip the pointer-tilt math (the JS still
-     feature-detects, but this keeps the resting pose clean if hover is
-     absent). */
-  @media (hover: none) {
-    .term-stage {
-      transform: none;
-    }
-  }
 </style>
 
 <script>
@@ -523,48 +365,33 @@ const GLYPHS = [
     const section = document.querySelector<HTMLElement>('.hero');
     if (!section) return;
 
-    // ── 1. Entrance stagger ──────────────────────────────────────────
+    // ── 1. Entrance — opacity-only stagger (Q11). No y-translate, so it
+    //      stays coordinated with the static H1 (Q10). The DAG trace-draw
+    //      is driven separately by the terminal's `term:commit` events
+    //      (see Dag.astro); this script owns only the calm fade-in. ────
     const items = gsap.utils.toArray<HTMLElement>('.hero [data-reveal]');
     if (items.length > 0) {
-      gsap.set(items, { opacity: 0, y: 18 });
+      gsap.set(items, { opacity: 0 });
       gsap.to(items, {
         opacity: 1,
-        y: 0,
-        duration: 0.7,
+        duration: 0.6,
         stagger: 0.08,
-        ease: 'power3.out',
+        ease: 'power2.out',
         delay: 0.12,
       });
     }
 
-    // The kinetic H1 inner spans get an extra upward clip-reveal layered
-    // on top of the opacity tween above — masked by `.kin-line`.
-    const kinInners = gsap.utils.toArray<HTMLElement>('.hero .kin-inner');
-    if (kinInners.length > 0) {
-      gsap.set(kinInners, { yPercent: 115 });
-      gsap.to(kinInners, {
-        yPercent: 0,
-        duration: 0.9,
-        ease: 'power4.out',
-        stagger: 0.12,
-        delay: 0.18,
-      });
-    }
-
-    // ── 2. Pointer parallax (lerp-smoothed rAF) ─────────────────────
-    // One rAF loop. It writes the parallax bus vars (--mx/--my/--sy) on
-    // the sky root, and composes the terminal tilt (pointer + scroll) so
-    // there is a single writer per transform — no fighting between the
-    // pointer loop and the ScrollTrigger.
-    const termStage = section.querySelector<HTMLElement>('[data-term-stage]');
-
+    // ── 2. Pointer + scroll parallax bus (lerp-smoothed rAF) ─────────
+    // One rAF loop writes the bus vars (--mx/--my pointer -1..1, --sy
+    // scroll-out 0..1) on the section. The DAG layers (data-depth <g> in
+    // <Dag/>) consume them for depth parallax. The terminal itself stays
+    // stable — it is the causal anchor, no tilt (Q8).
     let targetMx = 0;
     let targetMy = 0;
     let curMx = 0;
     let curMy = 0;
-    let scrollProg = 0; // 0..1 as the hero scrolls out of view
+    let scrollProg = 0;
     let rafId = 0;
-    let hovering = false;
 
     const noHover =
       typeof window !== 'undefined' &&
@@ -578,50 +405,29 @@ const GLYPHS = [
       targetMx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
       targetMy = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
     };
-    const onEnter = () => {
-      hovering = !noHover;
-    };
     const onLeave = () => {
-      hovering = false;
       targetMx = 0;
       targetMy = 0;
     };
-
-    const clamp = gsap.utils.clamp;
 
     const tick = () => {
       // Ease toward the pointer target — buttery, not twitchy.
       curMx += (targetMx - curMx) * 0.08;
       curMy += (targetMy - curMy) * 0.08;
 
-      // Bus vars live on the section so both the sky glyphs and the
-      // terminal glow (in the sibling grid column) inherit them.
       section.style.setProperty('--mx', curMx.toFixed(4));
       section.style.setProperty('--my', curMy.toFixed(4));
       section.style.setProperty('--sy', scrollProg.toFixed(4));
-
-      // Terminal tilt — pointer live-tilt (only while hovering) composed
-      // with a scroll-driven lean-back so departure reads as recession.
-      if (termStage) {
-        const liveRx = hovering ? clamp(-5, 5, curMy * 5) : 0;
-        const liveRy = hovering ? clamp(-6, 6, curMx * -6) : 0;
-        const scrollRx = clamp(0, 14, scrollProg * 14); // always positive
-        const rx = liveRx + scrollRx;
-        const ry = liveRy;
-        termStage.style.setProperty('--rx', `${rx.toFixed(2)}deg`);
-        termStage.style.setProperty('--ry', `${ry.toFixed(2)}deg`);
-        termStage.style.setProperty('--ty', `${(scrollProg * 18).toFixed(2)}px`);
-      }
 
       rafId = requestAnimationFrame(tick);
     };
 
     section.addEventListener('pointermove', onPointer, { passive: true });
-    section.addEventListener('pointerenter', onEnter, { passive: true });
     section.addEventListener('pointerleave', onLeave, { passive: true });
     rafId = requestAnimationFrame(tick);
 
-    // ── 3. Scroll parallax — feed scroll progress into the bus + tilt ──
+    // ── 3. Scroll parallax — feed scroll progress into the bus so the
+    //      DAG layers drift + recede as the hero leaves the viewport. ──
     const scrollTrig = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
@@ -636,7 +442,6 @@ const GLYPHS = [
     return () => {
       cancelAnimationFrame(rafId);
       section.removeEventListener('pointermove', onPointer);
-      section.removeEventListener('pointerenter', onEnter);
       section.removeEventListener('pointerleave', onLeave);
       scrollTrig.kill();
     };

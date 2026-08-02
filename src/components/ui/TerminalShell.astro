@@ -21,12 +21,34 @@ interface Props {
   readonly title?: string;
   /** data-attribute hook the consuming mock's motion script queries. */
   readonly bodyAttr?: string;
+  /**
+   * Visual chrome variant. `'wire'` = hero wireframe language (Q9): titlebar
+   * dots become amber-tinted wire squares, the frame border thins to a single
+   * amber-tint line with a flat translucent body. Default (unset) keeps the
+   * original solid chrome used by resolve/ResolveTerminal.astro.
+   */
+  readonly variant?: 'wire';
+  /** Whether the consuming mock's motion loop should auto-play on load
+   *  (default true). Emitted as `data-autoplay` on the figure so the
+   *  client script (which can't see frontmatter) can read it per-instance —
+   *  the HeroStorm popup terminal opts out and replays on open instead. */
+  readonly autoPlay?: boolean;
 }
 
-const { title = 'projects/your-repo', bodyAttr = 'data-term-body' } = Astro.props;
+const {
+  title = 'projects/your-repo',
+  bodyAttr = 'data-term-body',
+  variant,
+  autoPlay = true,
+} = Astro.props;
+const isWire = variant === 'wire';
 ---
 
-<figure class="terminal" aria-hidden="true">
+<figure
+  class:list={['terminal', { wire: isWire }]}
+  data-autoplay={autoPlay === false ? 'false' : 'true'}
+  aria-hidden="true"
+>
   <div class="termbar">
     <div class="dots"><i></i><i></i><i></i></div>
     <div class="termtitle"><b>~/</b>{title}</div>
@@ -88,6 +110,24 @@ const { title = 'projects/your-repo', bodyAttr = 'data-term-body' } = Astro.prop
   .termtitle b {
     color: var(--color-ink-muted);
     font-weight: 500;
+  }
+
+  /* ── Wire variant (hero fusion language, Q9) ───────────────────────
+     Thin amber-tint frame, flat translucent body, and wire-square titlebar
+     dots — so the terminal speaks the same line-art idiom as the background
+     DAG instead of sitting on top of it as a foreign solid block. Only the
+     hero passes `variant="wire"`; resolve keeps the original solid chrome. */
+  .terminal.wire {
+    background: linear-gradient(180deg, rgba(20, 22, 30, 0.55), rgba(16, 18, 25, 0.55));
+    border: 1px solid color-mix(in oklch, var(--color-amber) 28%, transparent);
+    border-radius: 12px;
+    box-shadow:
+      0 30px 70px -34px rgba(0, 0, 0, 0.7),
+      0 0 28px -10px color-mix(in oklch, var(--color-amber) 22%, transparent);
+  }
+  .terminal.wire .termbar {
+    background: transparent;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-amber) 18%, transparent);
   }
   .termbody {
     padding: 1.25rem 1.4rem 1.5rem;

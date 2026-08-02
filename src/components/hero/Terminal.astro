@@ -20,11 +20,22 @@ import TerminalShell from '@/components/ui/TerminalShell.astro';
 import { HUNK_SPLITTING, HUNK_TYPE_ACCENT } from '@/config/site';
 import HunkTraceLine from '@/components/batching/HunkTraceLine.astro';
 
+interface Props {
+  /** Wire chrome variant — the hero passes 'wire' to fuse the terminal into
+   *  the DAG line-art language (Q9). Default (unset) keeps solid chrome. */
+  readonly variant?: 'wire';
+  /** Auto-play the demo loop on load (default true). The HeroStorm popup
+   *  terminal passes `false` so it stays paused until the user opens the
+   *  modal, then replays fresh on the `term:replay` event. */
+  readonly autoPlay?: boolean;
+}
+const { variant, autoPlay = true } = Astro.props;
+
 const hunks = HUNK_SPLITTING.hunks;
 const commits = HUNK_SPLITTING.commits;
 ---
 
-<TerminalShell>
+<TerminalShell variant={variant} autoPlay={autoPlay}>
   <div class="row" data-row="cmd">
     <span class="prompt">$</span>
     <span class="cmdin" data-typed>aic</span>
@@ -48,7 +59,9 @@ const commits = HUNK_SPLITTING.commits;
     {
       commits.map((c) => (
         <div class="row commitrow" data-commit>
-          <span class="ok" aria-hidden="true">✓</span>
+          <span class="ok" aria-hidden="true">
+            ✓
+          </span>
           <span class="hash">{c.hash}</span>
           <span class="msg">
             <span class="ctype" style={`--accent: ${HUNK_TYPE_ACCENT[c.type]}`}>
@@ -98,6 +111,18 @@ const commits = HUNK_SPLITTING.commits;
   }
   .plan-icon {
     color: var(--color-amber);
+  }
+
+  /* Wire variant (hero fusion, Q9): rhyme the reasoning box + plan divider
+     with the DAG's amber-tint edges so the terminal body speaks the same
+     line-art idiom as the background graph. `.terminal.wire` is authored on
+     the shared TerminalShell figure; only the hero passes the variant. */
+  .terminal.wire .reasoning {
+    border-color: color-mix(in oklch, var(--color-amber) 22%, transparent);
+    background: color-mix(in oklch, var(--color-amber) 5%, transparent);
+  }
+  .terminal.wire .planline {
+    border-top-color: color-mix(in oklch, var(--color-amber) 24%, transparent);
   }
 
   /* ── Commits ─────────────────────────────────────────────────────── */
@@ -163,6 +188,13 @@ const commits = HUNK_SPLITTING.commits;
       )
         return;
 
+      // The hero DAG listens for `term:commit` / `term:reset` bubbling off the
+      // terminal figure (Q3 fusion + Q4 trace binding).
+      const termRoot = term.closest('.terminal');
+      // autoPlay comes from the figure's data-autoplay (set from the prop) —
+      // the client script can't see frontmatter, so read it from the DOM.
+      const autoPlay = termRoot?.dataset.autoplay !== 'false';
+
       const fullText = typed.textContent ?? 'aic';
 
       const spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
@@ -186,8 +218,18 @@ const commits = HUNK_SPLITTING.commits;
         delay: 0.5,
         repeat: -1,
         repeatDelay: 3.2,
+        paused: !autoPlay,
         onReverseComplete: () => spinnerCycle.pause(),
       });
+
+      // Tell the hero DAG (Q4 fusion) to reset its lit path each loop.
+      tl.call(() =>
+        termRoot?.dispatchEvent(new CustomEvent('term:reset', { bubbles: true })),
+      );
+
+      // Let the HeroStorm popup replay (open) or pause (close) this terminal.
+      term.addEventListener('term:replay', () => tl.restart());
+      term.addEventListener('term:pause', () => tl.pause());
 
       // Reset to the pre-animation state at the start of every loop so the
       // replay reads cleanly (typed emptied, downstream hidden).
@@ -235,13 +277,24 @@ const commits = HUNK_SPLITTING.commits;
       // 4. Plan line — the pivot.
       tl.to(plan, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, '+=0.12');
 
-      // 5. Commits ship, in sequence.
-      tl.to(commitRows, {
-        opacity: 1,
-        x: 0,
-        duration: 0.3,
-        stagger: 0.22,
-        ease: 'power2.out',
+      // 5. Commits ship, in sequence — each fires `term:commit` so the hero DAG
+      // traces the matching node in sync (Q4). The `commits` label + per-row
+      // positions reproduce the original 0.22 stagger cadence exactly.
+      tl.addLabel('commits');
+      commitRows.forEach((row, i) => {
+        const at = `commits+=${(i * 0.22).toFixed(3)}`;
+        tl.to(row, { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' }, at);
+        tl.call(
+          () =>
+            termRoot?.dispatchEvent(
+              new CustomEvent('term:commit', {
+                detail: { index: i },
+                bubbles: true,
+              }),
+            ),
+          null,
+          at,
+        );
       });
     });
   });
