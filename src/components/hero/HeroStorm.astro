@@ -314,16 +314,27 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
       display: none;
     }
     .storm-veil {
-      background: radial-gradient(
-        ellipse 58% 48% at 50% 44%,
-        rgba(10, 11, 15, 0.8),
-        rgba(10, 11, 15, 0) 74%
-      );
+      background:
+        radial-gradient(
+          ellipse 78% 66% at 50% 44%,
+          rgba(10, 11, 15, 0.95),
+          rgba(10, 11, 15, 0) 82%
+        ),
+        linear-gradient(rgba(10, 11, 15, 0.35), rgba(10, 11, 15, 0.35));
     }
   }
   @media (max-width: 400px) {
     .storm .col:nth-child(3n) {
       display: none;
+    }
+    .storm-veil {
+      background:
+        radial-gradient(
+          ellipse 88% 72% at 50% 44%,
+          rgba(10, 11, 15, 0.97),
+          rgba(10, 11, 15, 0) 86%
+        ),
+        linear-gradient(rgba(10, 11, 15, 0.45), rgba(10, 11, 15, 0.45));
     }
   }
 
