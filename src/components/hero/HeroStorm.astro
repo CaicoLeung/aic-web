@@ -208,9 +208,6 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     /* Parallax bus: rAF writes --mx/--my here; columns translate by depth. */
     --mx: 0;
     --my: 0;
-    /* Scrim strength for .storm-grid::before — media queries override it
-       directly on .storm-grid (direct beats inherited). */
-    --scrim-alpha: 0.5;
   }
 
   /* ── Hunk storm ─────────────────────────────────────────────────── */
@@ -299,16 +296,10 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     .storm .col:nth-child(2n) {
       display: none;
     }
-    .storm-grid {
-      --scrim-alpha: 0.6;
-    }
   }
   @media (max-width: 400px) {
     .storm .col:nth-child(3n) {
       display: none;
-    }
-    .storm-grid {
-      --scrim-alpha: 0.68;
     }
   }
 
@@ -321,28 +312,6 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     align-items: center;
     gap: 1.5rem;
     text-align: center;
-  }
-
-  /* Non-ellipse legibility backing for the headline — the removed
-     veil's replacement. A flat horizontal band behind the grid content
-     with a vertical linear fade: no radial gradient, so no concentric
-     8-bit rings and no ellipse shape. ::before + z-index:-1 keeps it
-     under the text and above the storm; the band hugs the grid's box
-     (tracks any locale's content height) and bleeds ~1.5rem past it so
-     the fades land off the content. */
-  .storm-grid::before {
-    content: '';
-    position: absolute;
-    inset: -1.5rem 0;
-    z-index: -1;
-    pointer-events: none;
-    background: linear-gradient(
-      to bottom,
-      transparent 0%,
-      rgba(10, 11, 15, var(--scrim-alpha)) 14%,
-      rgba(10, 11, 15, var(--scrim-alpha)) 86%,
-      transparent 100%
-    );
   }
   .storm-eyebrow {
     justify-content: center;
