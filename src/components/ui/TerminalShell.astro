@@ -28,17 +28,27 @@ interface Props {
    * original solid chrome used by resolve/ResolveTerminal.astro.
    */
   readonly variant?: 'wire';
+  /** Whether the consuming mock's motion loop should auto-play on load
+   *  (default true). Emitted as `data-autoplay` on the figure so the
+   *  client script (which can't see frontmatter) can read it per-instance —
+   *  the HeroStorm popup terminal opts out and replays on open instead. */
+  readonly autoPlay?: boolean;
 }
 
 const {
   title = 'projects/your-repo',
   bodyAttr = 'data-term-body',
   variant,
+  autoPlay = true,
 } = Astro.props;
 const isWire = variant === 'wire';
 ---
 
-<figure class:list={['terminal', { wire: isWire }]} aria-hidden="true">
+<figure
+  class:list={['terminal', { wire: isWire }]}
+  data-autoplay={autoPlay === false ? 'false' : 'true'}
+  aria-hidden="true"
+>
   <div class="termbar">
     <div class="dots"><i></i><i></i><i></i></div>
     <div class="termtitle"><b>~/</b>{title}</div>
