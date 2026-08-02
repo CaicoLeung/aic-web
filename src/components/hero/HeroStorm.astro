@@ -1,0 +1,737 @@
+---
+/**
+ * HeroStorm — the "unhinged" alternate hero (preview at /forge).
+ *
+ * Concept: a cinematic git hunk-storm. The full-bleed background is a slow,
+ * parallaxed rain of real git diff fragments — `@@ -12,4 +12,7 @@`,
+ * `+feat: …`, hashes, `→ fix` — in three depth tiers (dim/dimmer/dimmest),
+ * with a handful of bright amber/mint accents. It reads as "git, alive",
+ * and no other commit tool has it. Over it: an oversized headline whose
+ * every line carries a mint `+` prefix, like a diff line being committed;
+ * a one-off amber light-sweep scans the headline on load; a slim glowing
+ * terminal strip (`$ aic ✦ 3 commits ready`) is the quiet product proof.
+ *
+ * This is deliberately a different aesthetic universe from the canonical
+ * Hero (the tasteful DAG fusion) — bolder, moodier, more cinematic. It is a
+ * PREVIEW variant for comparison, not wired into the homepage spine.
+ *
+ * Reduced-motion / no-JS: the storm freezes (fragments hold their build-time
+ * positions), the headline + strip + CTA render in their final state, and
+ * the light-sweep is skipped. Keyframes live under `(prefers-reduced-motion:
+ * no-preference)`; pointer parallax only constructs under whenMotionOk.
+ */
+import CopyButton from '@/components/ui/CopyButton.astro';
+import Terminal from './Terminal.astro';
+import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
+import { localizedHref, localeFromUrl } from '@/i18n/config';
+import { useLocalizer } from '@/i18n/t';
+
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useLocalizer(locale);
+const resolveUrl = localizedHref(locale, 'resolve');
+
+// ── Hunk-storm fragment pool ─────────────────────────────────────────
+// Real git syntax so the rain reads as git, not generic Matrix green.
+const FRAGMENTS = [
+  '@@ -12,4 +12,7 @@',
+  '@@ -1,3 +1,4 @@',
+  '@@ -87,2 +88,5 @@',
+  '@@ -44,5 +45,8 @@',
+  '+feat: refresh tokens',
+  '-const old = req.user',
+  '+fix: redirect on expiry',
+  '+refactor: extract store',
+  '+chore: bump deps',
+  'abc1234',
+  'def5678',
+  'ghi9012',
+  '→ feat',
+  '→ fix',
+  '→ refactor',
+  '✓ shipped',
+  'aic',
+  '+',
+  '-',
+  '@@ hunk',
+] as const;
+
+// Deterministic PRNG (mulberry32-ish) so the build output is stable — the
+// storm composition is a fixed design artifact, not a different rain each
+// deploy. No Math.random() at render.
+let seed = 20260802;
+const rnd = () => {
+  seed = (seed * 1664525 + 1013904223) % 4294967296;
+  return seed / 4294967296;
+};
+
+interface StormFrag {
+  readonly text: string;
+  readonly y: number; // vh, vertical resting offset
+  readonly dur: number; // s, fall period
+  readonly delay: number; // s, negative = already mid-fall
+}
+interface StormCol {
+  readonly left: number; // %
+  readonly tier: 0 | 1 | 2; // 0 near, 2 far
+  readonly accent: 'amber' | 'mint' | null; // a bright fragment, if any
+  readonly frags: readonly StormFrag[];
+}
+
+const COLS = 22;
+const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
+  const tier = (i % 3) as 0 | 1 | 2;
+  const accent: StormCol['accent'] =
+    rnd() < 0.5 ? (rnd() < 0.5 ? 'amber' : 'mint') : null;
+  const left = (i + 0.5 + (rnd() - 0.5) * 0.7) * (100 / COLS);
+  const count = 6 + Math.floor(rnd() * 3);
+  const baseDur = 30 + tier * 12;
+  const frags: StormFrag[] = Array.from({ length: count }, () => ({
+    text: FRAGMENTS[Math.floor(rnd() * FRAGMENTS.length)],
+    y: rnd() * 120 - 10,
+    dur: baseDur + rnd() * 18,
+    delay: -(rnd() * baseDur),
+  }));
+  return { left, tier, accent, frags };
+});
+---
+
+<section class="storm-hero" id="top">
+  <!-- Hunk storm background. aria-hidden: decorative, never primary content. -->
+  <div class="storm" aria-hidden="true" data-parallax-root>
+    {
+      columns.map((c) => (
+        <div
+          class:list={['col', `t${c.tier}`, { accent: c.accent }]}
+          style={`left:${c.left.toFixed(2)}%;--accent:${c.accent === 'mint' ? 'var(--color-mint)' : 'var(--color-amber)'}`}
+          data-depth={(0.12 + c.tier * 0.08).toFixed(2)}
+        >
+          {c.frags.map((f) => (
+            <span
+              class="frag"
+              style={`top:${f.y.toFixed(2)}vh;animation-duration:${f.dur.toFixed(2)}s;animation-delay:${f.delay.toFixed(2)}s`}
+            >
+              {f.text}
+            </span>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Center vignette so the headline stays crisp over the rain. -->
+  <div class="storm-veil" aria-hidden="true"></div>
+
+  <div class="storm-grid container">
+    <p class="eyebrow storm-eyebrow" data-reveal>
+      <span class="line" aria-hidden="true"></span>{t('hero.eyebrow')}
+    </p>
+
+    <h1 class="storm-h1">
+      <span class="hline">
+        <span class="plus" aria-hidden="true">+</span>
+        <span class="htext">
+          {t('hero.h1.stopWriting')}{' '}
+          <em class="ital">{t('hero.h1.commit')}</em>{' '}
+          <span class="pop">{t('hero.h1.messages')}</span>
+        </span>
+      </span>
+      <span class="hline">
+        <span class="plus" aria-hidden="true">+</span>
+        <span class="htext">
+          {t('hero.h1.stopUntangling')}{' '}
+          <em class="ital">{t('hero.h1.merge')}</em>{' '}
+          <span class="pop">{t('hero.h1.conflicts')}</span>
+        </span>
+      </span>
+    </h1>
+
+    <p class="lede storm-lede" data-reveal>
+      <Fragment set:html={t('hero.ledeBefore')} /><a href={resolveUrl}
+        >{t('hero.ledeLink')}</a
+      ><Fragment set:html={t('hero.ledeAfter')} />
+    </p>
+
+    <div class="storm-cta" data-reveal>
+      <div class="cta-stack">
+        <span class="cta-label">{t('hero.ctaLabel')}</span>
+        <button class="aic-trigger" type="button" data-term-open>
+          <span class="aic-prompt" aria-hidden="true">$</span>
+          <span class="aic-cmd">aic</span>
+          <span class="aic-play" aria-hidden="true">▶</span>
+        </button>
+        <span class="cta-hint">
+          <span class="arrow" aria-hidden="true">→</span>
+          <Fragment set:html={t('hero.ctaHint', { cmd: 'aic setup' })} />
+        </span>
+      </div>
+      <a
+        class="cta-link storm-star"
+        href={GITHUB_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {t('footer.star')}
+      </a>
+    </div>
+  </div>
+
+  <!-- Terminal demo popup — hidden by default. The `$ aic ▶` trigger opens
+       it and replays the typing/reasoning/commits animation; backdrop / Esc /
+       × close. aria-hidden toggled by the modal script. -->
+  <div class="term-modal" data-term-modal aria-hidden="true">
+    <div class="term-backdrop" data-term-close></div>
+    <div class="term-panel" role="dialog" aria-modal="true" aria-label="aic demo">
+      <button class="term-x" type="button" data-term-close aria-label="Close"> × </button>
+      <div class="term-stage-modal">
+        <Terminal variant="wire" autoPlay={false} />
+      </div>
+      <div class="term-install">
+        <span class="term-install-label">install</span>
+        <CopyButton text={PRIMARY_INSTALL_COMMAND} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .storm-hero {
+    position: relative;
+    z-index: 2;
+    min-height: clamp(600px, 92vh, 940px);
+    padding: clamp(3rem, 1rem + 5vw, 6rem) 0 clamp(3rem, 1rem + 4vw, 5rem);
+    overflow: hidden;
+    background:
+      radial-gradient(
+        ellipse 70% 60% at 50% 38%,
+        rgba(243, 179, 64, 0.07),
+        transparent 70%
+      ),
+      var(--color-base-deep);
+    /* Parallax bus: rAF writes --mx/--my here; columns translate by depth. */
+    --mx: 0;
+    --my: 0;
+  }
+
+  /* ── Hunk storm ─────────────────────────────────────────────────── */
+  .storm {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    /* Fade top + bottom so the rain emerges into and out of black, never
+       crashing into the CTA. Slight horizontal vignette too. */
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 16%,
+      #000 78%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 16%,
+      #000 78%,
+      transparent 100%
+    );
+  }
+  .col {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    will-change: transform;
+    transform: translate3d(
+      calc(var(--mx, 0) * 26px * var(--d, 0.12)),
+      calc(var(--my, 0) * 18px * var(--d, 0.12)),
+      0
+    );
+    /* --d (depth) is set inline from data-depth via the JS loop; default
+       keeps it sane if JS is absent. */
+    --d: 0.12;
+  }
+  .frag {
+    position: absolute;
+    left: 0;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    white-space: nowrap;
+    color: var(--color-ink-muted);
+    opacity: 0.34;
+    will-change: transform, opacity;
+  }
+  /* Depth tiers — near = bright + crisp, far = dim + soft haze. Tuned loud
+     so the storm reads as a cinematic git-rain, not faint noise. */
+  .col.t0 .frag {
+    color: var(--color-ink);
+    opacity: 0.5;
+    font-size: 0.95rem;
+  }
+  .col.t1 .frag {
+    color: var(--color-ink-muted);
+    opacity: 0.42;
+    filter: blur(0.3px);
+    font-size: 0.82rem;
+  }
+  .col.t2 .frag {
+    color: var(--color-ink-dim);
+    opacity: 0.3;
+    filter: blur(0.8px);
+    font-size: 0.72rem;
+  }
+  /* Bright accent fragments — the signal that reads as git activity. */
+  .col.accent .frag:first-child {
+    color: var(--accent);
+    opacity: 1;
+    font-weight: 700;
+    font-size: 1.04rem;
+    text-shadow:
+      0 0 12px color-mix(in oklch, var(--accent) 75%, transparent),
+      0 0 4px color-mix(in oklch, var(--accent) 55%, transparent);
+    filter: none;
+  }
+
+  /* Center veil: a soft (not black) pool behind the headline — the storm
+     still shows through; the headline's own glow carries legibility. */
+  .storm-veil {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse 40% 34% at 50% 42%,
+      rgba(10, 11, 15, 0.5),
+      rgba(10, 11, 15, 0) 70%
+    );
+  }
+
+  /* ── Content ────────────────────────────────────────────────────── */
+  .storm-grid {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  .storm-eyebrow {
+    justify-content: center;
+  }
+
+  h1 {
+    font-size: var(--text-hero);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    margin: 0.4rem 0 0;
+    text-align: center;
+    max-width: 16ch;
+  }
+  .storm-h1 {
+    font-size: clamp(2.8rem, 1rem + 6vw, 5.4rem);
+  }
+  .hline {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.35em;
+  }
+  .hline .plus {
+    font-family: var(--font-mono);
+    color: var(--color-mint);
+    font-weight: 700;
+    font-size: 0.62em;
+    text-shadow: 0 0 12px color-mix(in oklch, var(--color-mint) 60%, transparent);
+    transform: translateY(-0.06em);
+  }
+  .hline .htext {
+    display: inline;
+  }
+  h1 .ital {
+    font-style: italic;
+    font-weight: 700;
+    color: var(--color-ink-muted);
+  }
+  h1 .pop {
+    color: var(--color-amber);
+    text-shadow:
+      0 0 18px color-mix(in oklch, var(--color-amber) 45%, transparent),
+      0 0 2px color-mix(in oklch, var(--color-amber) 60%, transparent);
+  }
+
+  /* ── Terminal strip ─────────────────────────────────────────────── */
+  /* ── aic trigger + terminal popup ──────────────────────────────── */
+  .aic-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.72rem 1.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-amber);
+    background: var(--color-amber);
+    color: #1a1408;
+    cursor: pointer;
+    box-shadow:
+      0 16px 36px -10px rgba(243, 179, 64, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    transition:
+      transform var(--duration-fast) ease,
+      box-shadow var(--duration-fast) ease,
+      background var(--duration-fast) ease,
+      border-color var(--duration-fast) ease;
+  }
+  .aic-trigger:hover {
+    background: var(--color-amber-warm);
+    border-color: var(--color-amber-warm);
+    transform: translateY(-1px);
+    box-shadow:
+      0 22px 46px -10px rgba(243, 179, 64, 0.62),
+      0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  }
+  .aic-trigger:active {
+    transform: translateY(0);
+  }
+  .aic-trigger .aic-prompt {
+    opacity: 0.6;
+  }
+  .aic-trigger .aic-play {
+    font-size: 0.76rem;
+    margin-left: 0.15rem;
+  }
+
+  .term-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.25s ease,
+      visibility 0.25s ease;
+  }
+  .term-modal.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .term-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 6, 9, 0.72);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .term-modal.open .term-backdrop {
+    opacity: 1;
+  }
+  .term-panel {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    padding: 1.4rem;
+    border-radius: 16px;
+    background: rgba(16, 18, 25, 0.92);
+    border: 1px solid color-mix(in oklch, var(--color-amber) 30%, transparent);
+    box-shadow:
+      0 40px 90px -30px rgba(0, 0, 0, 0.8),
+      0 0 50px -12px color-mix(in oklch, var(--color-amber) 28%, transparent);
+    transform: scale(0.92) translateY(12px);
+    opacity: 0;
+    transition:
+      transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 0.25s ease;
+  }
+  .term-modal.open .term-panel {
+    transform: none;
+    opacity: 1;
+  }
+  .term-x {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.65rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1px solid var(--color-line);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--color-ink-muted);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 2;
+    transition:
+      color var(--duration-fast) ease,
+      border-color var(--duration-fast) ease;
+  }
+  .term-x:hover {
+    color: var(--color-amber);
+    border-color: var(--color-amber);
+  }
+  .term-stage-modal {
+    margin-top: 1.5rem;
+  }
+  .term-stage-modal :global(.terminal) {
+    max-width: none;
+    font-size: 0.9rem;
+  }
+  .term-install {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-line-soft);
+  }
+  .term-install-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-dim);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .term-modal,
+    .term-panel,
+    .term-backdrop {
+      transition: none;
+    }
+    .term-panel {
+      transform: none;
+    }
+  }
+
+  /* ── Lede + CTA ─────────────────────────────────────────────────── */
+  .lede {
+    font-size: var(--text-lede);
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    max-width: 34rem;
+    margin: 0;
+    text-align: center;
+  }
+  .lede b {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .storm-lede a {
+    color: var(--color-amber);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-amber) 40%, transparent);
+  }
+  .storm-lede a:hover {
+    color: var(--color-amber-warm);
+    border-bottom-color: var(--color-amber-warm);
+  }
+
+  .storm-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+  }
+  .cta-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .cta-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+  .cta-hint {
+    font-size: 0.9375rem;
+    color: var(--color-ink-muted);
+  }
+  .cta-hint .arrow {
+    color: var(--color-amber);
+  }
+  .cta-hint code {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.78rem;
+  }
+  .storm-star {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+  }
+  .storm-star:hover {
+    background: var(--color-amber-soft);
+  }
+
+  /* ── Headline light-sweep (one-off, on load) ────────────────────── */
+  /* A skewed translucent gradient band slides across the headline once,
+     like a scan/commit event igniting the type. */
+  /* Reduced-motion / no-JS default: everything in place & visible. */
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── Motion keyframes — only under no-preference ────────────────── */
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes storm-fall {
+      0% {
+        transform: translate(-50%, -112vh);
+      }
+      100% {
+        transform: translate(-50%, 112vh);
+      }
+    }
+    .frag {
+      animation-name: storm-fall;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    @keyframes blink {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0;
+      }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .frag,
+    .strip-cursor {
+      animation: none !important;
+    }
+    /* Fragments rest at their build-time y, evenly visible. */
+    .col.t2 .frag {
+      opacity: 0.2;
+    }
+  }
+
+  /* Touch / no-pointer: skip pointer parallax (JS feature-detects too). */
+  @media (hover: none) {
+    .col {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, whenMotionOk } from '@/lib/motion';
+
+  whenMotionOk(() => {
+    const section = document.querySelector<HTMLElement>('.storm-hero');
+    if (!section) return;
+
+    // ── 1. Entrance — opacity-only stagger (coordinate with static type). ─
+    const items = gsap.utils.toArray<HTMLElement>('.storm-hero [data-reveal]');
+    if (items.length > 0) {
+      gsap.set(items, { opacity: 0 });
+      gsap.to(items, {
+        opacity: 1,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'power2.out',
+        delay: 0.15,
+      });
+    }
+
+    // ── 2. Headline light-sweep (the one signature gesture). ───────────
+    // ── 3. Pointer parallax — columns drift by depth tier. ─────────────
+    const cols = gsap.utils.toArray<HTMLElement>('.storm-hero .col');
+    cols.forEach((col) => {
+      const d = col.dataset.depth ?? '0.12';
+      col.style.setProperty('--d', d);
+    });
+
+    let targetMx = 0;
+    let targetMy = 0;
+    let curMx = 0;
+    let curMy = 0;
+    let rafId = 0;
+
+    const noHover =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(hover: none)').matches;
+
+    const onPointer = (e: PointerEvent) => {
+      if (noHover) return;
+      const rect = section.getBoundingClientRect();
+      targetMx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+      targetMy = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    };
+    const onLeave = () => {
+      targetMx = 0;
+      targetMy = 0;
+    };
+
+    const tick = () => {
+      curMx += (targetMx - curMx) * 0.07;
+      curMy += (targetMy - curMy) * 0.07;
+      section.style.setProperty('--mx', curMx.toFixed(4));
+      section.style.setProperty('--my', curMy.toFixed(4));
+      rafId = requestAnimationFrame(tick);
+    };
+
+    section.addEventListener('pointermove', onPointer, { passive: true });
+    section.addEventListener('pointerleave', onLeave, { passive: true });
+    rafId = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      section.removeEventListener('pointermove', onPointer);
+      section.removeEventListener('pointerleave', onLeave);
+    };
+  });
+</script>
+
+<script>
+  // Terminal popup — runs for everyone (not gated on motion): opening a modal
+  // is interaction, not animation. The `term:replay`/`term:pause` events are
+  // no-ops under reduced-motion (Terminal.astro only listens under motion),
+  // so those visitors simply see the static final-state terminal.
+  const modal = document.querySelector<HTMLElement>('.storm-hero [data-term-modal]');
+  const openBtn = document.querySelector<HTMLElement>('.storm-hero [data-term-open]');
+  if (modal && openBtn) {
+    const termBody = modal.querySelector<HTMLElement>('[data-term-body]');
+    let lastFocus: HTMLElement | null = null;
+
+    const open = () => {
+      lastFocus = document.activeElement as HTMLElement;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      // Replay the demo fresh each open.
+      termBody?.dispatchEvent(new CustomEvent('term:replay', { bubbles: true }));
+      requestAnimationFrame(() => modal.querySelector<HTMLElement>('.term-x')?.focus());
+    };
+    const close = () => {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      termBody?.dispatchEvent(new CustomEvent('term:pause', { bubbles: true }));
+      lastFocus?.focus?.();
+    };
+
+    openBtn.addEventListener('click', open);
+    modal.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('[data-term-close]')) close();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) close();
+    });
+  }
+</script>
