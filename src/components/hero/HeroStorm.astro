@@ -321,6 +321,41 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
       );
   }
 
+  /* Dither the veil's 8-bit radial gradient. A smooth vignette printed
+     in 8-bit channels quantises into ~25 concentric luminance steps
+     that read as visible "rings". A fine fractalNoise grain blended
+     with color-burn decorrelates adjacent pixels so the steps fuse
+     into grain. color-burn only darkens, so the dither reinforces the
+     vignette instead of lifting it — the veil region never brightens
+     past the storm, so there are no light patches, just darkening
+     speckle. (linear-light would be shift-neutral but the CSS pipeline
+     drops that keyword; color-burn is the strongest survivor that stays
+     one-directional for a vignette.) mask-image reuses the veil's
+     --veil-* dials so the grain tracks the vignette and never leaks a
+     hard edge over the rain. Vector texture only (ADR-0006). Bump
+     --veil-grain if rings resurface; lower it if grain reads as noise. */
+  .storm-veil::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    --veil-grain: 0.26;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'200'%20height%3D'200'%3E%3Cfilter%20id%3D'n'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.8'%20numOctaves%3D'2'%20stitchTiles%3D'stitch'%2F%3E%3CfeComponentTransfer%3E%3CfeFuncR%20type%3D'linear'%20slope%3D'1'%20intercept%3D'-0.25'%2F%3E%3CfeFuncG%20type%3D'linear'%20slope%3D'1'%20intercept%3D'-0.25'%2F%3E%3CfeFuncB%20type%3D'linear'%20slope%3D'1'%20intercept%3D'-0.25'%2F%3E%3C%2FfeComponentTransfer%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23n)'%2F%3E%3C%2Fsvg%3E");
+    background-size: 200px 200px;
+    background-repeat: repeat;
+    mix-blend-mode: color-burn;
+    opacity: var(--veil-grain);
+    -webkit-mask-image: radial-gradient(
+      ellipse var(--veil-rx) var(--veil-ry) at 50% var(--veil-y),
+      #000,
+      transparent var(--veil-fade)
+    );
+    mask-image: radial-gradient(
+      ellipse var(--veil-rx) var(--veil-ry) at 50% var(--veil-y),
+      #000,
+      transparent var(--veil-fade)
+    );
+  }
+
   /* Mobile: 22 rain columns is too dense on a narrow screen and the
      headline loses contrast against the fragments. Thin the columns
      progressively and deepen the veil behind the type so the storm
