@@ -305,6 +305,28 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     );
   }
 
+  /* Mobile: 22 rain columns is too dense on a narrow screen and the
+     headline loses contrast against the fragments. Thin the columns
+     progressively and deepen the veil behind the type so the storm
+     stays atmosphere, not noise. */
+  @media (max-width: 640px) {
+    .storm .col:nth-child(2n) {
+      display: none;
+    }
+    .storm-veil {
+      background: radial-gradient(
+        ellipse 58% 48% at 50% 44%,
+        rgba(10, 11, 15, 0.8),
+        rgba(10, 11, 15, 0) 74%
+      );
+    }
+  }
+  @media (max-width: 400px) {
+    .storm .col:nth-child(3n) {
+      display: none;
+    }
+  }
+
   /* ── Content ────────────────────────────────────────────────────── */
   .storm-grid {
     position: relative;
