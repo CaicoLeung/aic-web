@@ -141,12 +141,16 @@ const commits = HUNK_SPLITTING.commits;
     gap: 0.15rem;
   }
   .commitrow {
-    align-items: center;
+    align-items: flex-start;
   }
   .commitrow .ok {
     flex: none;
     width: 0.9em;
     height: 0.9em;
+    /* Center the icon on the first text line's optical mid (line-height
+     * 1.7 → half-leading + half-icon). Keeps it aligned with the hash /
+     * first msg line, not the middle of a wrapped block. */
+    margin-top: 0.4em;
   }
   .commitrow .hash {
     color: var(--color-amber);
