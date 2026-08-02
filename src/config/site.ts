@@ -96,7 +96,7 @@ export interface InstallMethod {
 export const INSTALL_METHODS: readonly InstallMethod[] = [
   {
     id: 'brew',
-    command: 'brew tap CaicoLeung/aic && brew install aic',
+    command: 'brew install CaicoLeung/aic/aic',
   },
   {
     id: 'unix',
@@ -111,7 +111,7 @@ export const INSTALL_METHODS: readonly InstallMethod[] = [
 ] as const;
 
 /** The single primary CTA command used in the hero (Q10). */
-export const PRIMARY_INSTALL_COMMAND = 'brew tap CaicoLeung/aic && brew install aic';
+export const PRIMARY_INSTALL_COMMAND = 'brew install CaicoLeung/aic/aic';
 
 /**
  * Ordered step ids for the "How it works" flow (ADR-0010). The visible
