@@ -1,0 +1,251 @@
+---
+/**
+ * Dag — the hero's signature: a full-bleed git commit graph.
+ *
+ * Concept (hero redesign consensus, 13 decisions):
+ * A faint diagonal-ascending commit history (ambient, ink-dim) spans the
+ * hero background. The hero terminal's 3 shipped commits trace-draw onto
+ * the graph tip in sync with the terminal timeline — feat → fix → refactor
+ * (refactor on a side branch merging back into feat). Edges amber, committed
+ * node cores mint (rhymes with the terminal's mint ✓ = success).
+ *
+ * Composition is AUTHORED (not random) — node coordinates are fixed design
+ * constants (the high-end/cheap divider; Q6). viewBox 1440×900 with
+ * preserveAspectRatio="xMidYMid slice" crops gracefully across breakpoints
+ * (mobile reveals the terminal-anchored center, no separate asset — Q12).
+ *
+ * Reduced-motion / no-JS: the CSS default is the PRE-LIT final state (full
+ * graph drawn, 3 commits lit). The motion script, under whenMotionOk only,
+ * reverses the lit path to a hidden pre-trace state and re-traces it on
+ * terminal `term:commit` events. Any failure path lands on the coherent
+ * static final state — never a blank graph (Q13).
+ *
+ * Pointer/scroll parallax (Q8): the two <g> layers carry data-depth; the
+ * hero rAF loop writes --mx/--my/--sy on .hero and each group translates by
+ * its --depth. The terminal stays stable (no tilt) — the DAG breathes around
+ * the causal anchor.
+ *
+ * Coordinate plan (viewBox 0 0 1440 900):
+ *   Faint spine (old→new):  n0(120,780) n1(260,700) n2(395,622) n3(525,548)
+ *                           n4(650,478) n5(765,412) n6(870,358) n7(975,322)
+ *   Lit commits (terminal-anchored, ascending):
+ *     c0 feat      (1085,296)  edge n7→c0
+ *     c1 fix       (1205,218)  edge c0→c1
+ *     c2 refactor  (995,175)   side branch n6→c2→c0 (merge into feat)
+ */
+---
+
+<svg
+  class="dag"
+  viewBox="0 0 1440 900"
+  preserveAspectRatio="xMidYMid slice"
+  aria-hidden="true"
+  data-dag
+>
+  <defs>
+    <radialGradient id="dag-node-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="var(--color-amber)" stop-opacity="0.6"></stop>
+      <stop offset="100%" stop-color="var(--color-amber)" stop-opacity="0"></stop>
+    </radialGradient>
+  </defs>
+
+  <!-- Ambient layer: existing faint history. depth ~0.15 -->
+  <g class="dag-ambient" data-depth="0.15" style="--depth:0.15">
+    <path
+      class="edge faint"
+      d="M120,780 L260,700 L395,622 L525,548 L650,478 L765,412 L870,358 L975,322"></path>
+    <g class="nodes faint">
+      <circle cx="120" cy="780" r="3.5"></circle>
+      <circle cx="260" cy="700" r="3.5"></circle>
+      <circle cx="395" cy="622" r="3.5"></circle>
+      <circle cx="525" cy="548" r="3.5"></circle>
+      <circle cx="650" cy="478" r="3.5"></circle>
+      <circle cx="765" cy="412" r="3.5"></circle>
+      <circle cx="870" cy="358" r="3.5"></circle>
+      <circle cx="975" cy="322" r="3.5"></circle>
+    </g>
+  </g>
+
+  <!-- Lit layer: the 3 new commits + their edges. depth ~0.40.
+       Default (CSS) = pre-lit final state. JS reverses + traces on events. -->
+  <g class="dag-lit" data-depth="0.40" style="--depth:0.40">
+    <!-- commit 0: feat — spine continuation n7→c0 -->
+    <path class="edge lit" data-commit-edge="0" d="M975,322 L1085,296"></path>
+    <g class="commit-node" data-commit-node="0">
+      <circle class="node-halo" cx="1085" cy="296" r="11" fill="url(#dag-node-glow)"
+      ></circle>
+      <circle class="node-core" cx="1085" cy="296" r="4"></circle>
+    </g>
+
+    <!-- commit 1: fix — spine tip c0→c1 -->
+    <path class="edge lit" data-commit-edge="1" d="M1085,296 L1205,218"></path>
+    <g class="commit-node" data-commit-node="1">
+      <circle class="node-halo" cx="1205" cy="218" r="11" fill="url(#dag-node-glow)"
+      ></circle>
+      <circle class="node-core" cx="1205" cy="218" r="4"></circle>
+    </g>
+
+    <!-- commit 2: refactor — side branch n6→c2 then c2→c0 (merge into feat) -->
+    <path class="edge lit" data-commit-edge="2" d="M870,358 L995,175 L1085,296"></path>
+    <g class="commit-node" data-commit-node="2">
+      <circle class="node-halo" cx="995" cy="175" r="11" fill="url(#dag-node-glow)"
+      ></circle>
+      <circle class="node-core" cx="995" cy="175" r="4"></circle>
+    </g>
+  </g>
+</svg>
+
+<style>
+  .dag {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    /* Parallax bus inherited from .hero (--mx/--my/--sy written by the rAF loop). */
+    --mx: 0;
+    --my: 0;
+    --sy: 0;
+    /* Radial mask: keep the graph readable on the copy column (left) by
+       fading it there. The bright lit path lives on the right (terminal
+       area) so it survives the fade; the faint ambient is dim enough that a
+       partial fade under copy is fine. Tuned per breakpoint below. */
+    -webkit-mask-image: radial-gradient(
+      ellipse 68% 88% at 73% 46%,
+      #000 34%,
+      transparent 80%
+    );
+    mask-image: radial-gradient(ellipse 68% 88% at 73% 46%, #000 34%, transparent 80%);
+  }
+
+  /* Each layer translates by its --depth; the bus vars come from .hero. */
+  .dag-ambient,
+  .dag-lit {
+    transform: translate3d(
+      calc(var(--mx, 0) * 22px * var(--depth, 0)),
+      calc(
+        var(--my, 0) * 22px * var(--depth, 0) + var(--sy, 0) * -50px * var(--depth, 0)
+      ),
+      0
+    );
+    will-change: transform;
+  }
+
+  /* ── Faint ambient history ── */
+  .edge.faint {
+    fill: none;
+    stroke: var(--color-ink-dim);
+    stroke-opacity: 0.3;
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .nodes.faint circle {
+    fill: var(--color-ink-dim);
+    fill-opacity: 0.34;
+  }
+
+  /* ── Lit path — default = pre-lit final state (drawn + visible) ── */
+  .edge.lit {
+    fill: none;
+    stroke: var(--color-amber);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* dasharray/offset are overridden by JS (getTotalLength) under motion;
+       CSS leaves the edge fully drawn so reduced-motion/no-JS shows it. */
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    filter: drop-shadow(0 0 3px color-mix(in oklch, var(--color-amber) 55%, transparent));
+  }
+  .commit-node .node-halo {
+    opacity: 1;
+  }
+  .commit-node .node-core {
+    fill: var(--color-mint);
+    filter: drop-shadow(0 0 4px color-mix(in oklch, var(--color-amber) 60%, transparent));
+    opacity: 1;
+  }
+
+  /* Mobile (single column): copy stacks full-width over the graph. Reposition
+     the mask's opaque core lower-center where the terminal lives so the lit
+     path stays visible without sitting under the H1/lede. */
+  @media (max-width: 1023px) {
+    .dag {
+      -webkit-mask-image: radial-gradient(
+        ellipse 72% 62% at 50% 64%,
+        #000 30%,
+        transparent 72%
+      );
+      mask-image: radial-gradient(ellipse 72% 62% at 50% 64%, #000 30%, transparent 72%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dag-ambient,
+    .dag-lit {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, whenMotionOk } from '@/lib/motion';
+
+  whenMotionOk(() => {
+    const dag = document.querySelector<SVGSVGElement>('[data-dag]');
+    if (!dag) return;
+
+    const litEdges = gsap.utils.toArray<SVGPathElement>('.dag .edge.lit');
+    const litNodes = gsap.utils.toArray<HTMLElement>('.dag .commit-node');
+
+    // Measure each lit edge and freeze its dasharray to its true length, then
+    // set the pre-trace hidden state (fully offset). CSS default is drawn, so
+    // this reversal ONLY applies under motion — any failure keeps the final
+    // pre-lit state visible.
+    const hideEdge = (edge: SVGPathElement) => {
+      const len = edge.getTotalLength();
+      gsap.set(edge, { strokeDasharray: len, strokeDashoffset: len });
+    };
+    litEdges.forEach(hideEdge);
+    gsap.set(litNodes, { opacity: 0 });
+
+    // Trace one commit's edge, then pop its node.
+    const traceCommit = (index: number) => {
+      const edge = dag.querySelector<SVGPathElement>(
+        `.edge.lit[data-commit-edge="${index}"]`,
+      );
+      const node = dag.querySelector<HTMLElement>(
+        `.commit-node[data-commit-node="${index}"]`,
+      );
+      if (edge) {
+        gsap.to(edge, {
+          strokeDashoffset: 0,
+          duration: 0.45,
+          ease: 'power2.out',
+        });
+      }
+      if (node) {
+        gsap.fromTo(
+          node,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.4, ease: 'power2.out', delay: 0.28 },
+        );
+      }
+    };
+
+    const reset = () => {
+      litEdges.forEach(hideEdge);
+      gsap.set(litNodes, { opacity: 0 });
+    };
+
+    // The hero terminal dispatches these (bubbles up to .hero). Listen on the
+    // closest .hero so multiple heroes (if ever) stay isolated.
+    const hero = dag.closest<HTMLElement>('.hero') ?? document;
+    hero.addEventListener('term:commit', ((e: CustomEvent<{ index: number }>) => {
+      if (typeof e.detail?.index === 'number') traceCommit(e.detail.index);
+    }) as EventListener);
+    hero.addEventListener('term:reset', reset);
+  });
+</script>
