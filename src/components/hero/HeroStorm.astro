@@ -575,6 +575,31 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     text-transform: uppercase;
     color: var(--color-ink-dim);
   }
+
+  /* Mobile: reclaim the gutters so the terminal gets maximum room inside
+     the popup. Trim the viewport padding, the panel's own padding, and the
+     stage/install top margins. */
+  @media (max-width: 640px) {
+    .term-modal {
+      padding: 0.6rem;
+    }
+    .term-panel {
+      padding: 0.85rem;
+    }
+    .term-x {
+      top: 0.4rem;
+      right: 0.5rem;
+    }
+    .term-stage-modal {
+      margin-top: 0.6rem;
+    }
+    .term-stage-modal :global(.terminal .termbody) {
+      padding: 0.9rem 1rem 1rem;
+    }
+    .term-install {
+      margin-top: 0.85rem;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .term-modal,
     .term-panel,
