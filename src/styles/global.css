@@ -34,10 +34,11 @@
 
   /* type — three registers (ADR-0004):
      display = headings, body = prose, mono = code/chrome.
-     Each stack carries a CJK slot via `--font-cjk` (ADR-0012): set to the
-     bundled Noto family on locale pages (Base), else falls back to the
-     system CJK families — which cover the rare CJK glyph in EN content
-     without loading a webfont. */
+     Each stack carries a CJK slot via `--font-cjk`: Base sets it to a
+     locale-specific SYSTEM CJK stack on zh/ja/ko pages (supersedes
+     ADR-0012 — see ADR-0014); undefined on `en` → falls back to the
+     system CJK families below, which cover the rare CJK glyph in EN
+     content with zero webfont cost. */
   --font-display:
     -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui,
     var(--font-cjk, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei'), sans-serif;

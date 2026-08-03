@@ -13,9 +13,11 @@ const BASE = ${JSON.stringify(BASE)};
 const START_URL = BASE;
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.add(START_URL)).then(() => self.skipWaiting()),
-  );
+  // No install precache — the network-first navigation handler caches
+  // START_URL on every real visit (Q8-C). Precaching here fetched the home
+  // HTML a second time on first load, competing with first paint for no
+  // benefit (offline fallback is populated by the first real navigation).
+  event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('activate', (event) => {

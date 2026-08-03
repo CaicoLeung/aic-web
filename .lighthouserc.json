@@ -1,0 +1,29 @@
+{
+  "ci": {
+    "collect": {
+      "startServerCommand": "pnpm preview",
+      "startServerReadyPattern": "Local",
+      "url": ["http://localhost:4321/aic-web/", "http://localhost:4321/aic-web/zh/"],
+      "numberOfRuns": 3,
+      "settings": {
+        "chromeFlags": "--no-sandbox"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "largest-contentful-paint": [
+          ["warn", { "maxNumericValue": 2500 }],
+          ["error", { "maxNumericValue": 4000 }]
+        ],
+        "cumulative-layout-shift": [
+          ["warn", { "maxNumericValue": 0.1 }],
+          ["error", { "maxNumericValue": 0.25 }]
+        ],
+        "total-blocking-time": [
+          ["warn", { "maxNumericValue": 200 }],
+          ["error", { "maxNumericValue": 600 }]
+        ]
+      }
+    }
+  }
+}

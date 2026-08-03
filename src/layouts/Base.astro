@@ -13,9 +13,6 @@ import '@/styles/global.css';
 import { LOCALE_HREFLANG, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 import { buildHreflangAlternates } from '@/i18n/hreflang';
-import CjkFontsZh from '@/components/i18n/CjkFontsZh.astro';
-import CjkFontsJa from '@/components/i18n/CjkFontsJa.astro';
-import CjkFontsKo from '@/components/i18n/CjkFontsKo.astro';
 
 interface Props {
   readonly version: string;
@@ -27,12 +24,7 @@ interface Props {
   readonly schema?: Record<string, unknown> | readonly Record<string, unknown>[];
 }
 
-const {
-  version,
-  title,
-  description,
-  schema,
-} = Astro.props;
+const { version, title, description, schema } = Astro.props;
 
 // Locale self-determined from the URL (ADR-0010).
 const locale = localeFromUrl(Astro.url.pathname);
@@ -41,18 +33,16 @@ const resolvedTitle = title ?? t('meta.title');
 const resolvedDescription = description ?? t('meta.description');
 
 // Home keeps SoftwareApplication; content pages pass their own schema.
-const jsonLd =
-  schema ??
-  ({
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'aic',
-    applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'macOS, Linux, Windows',
-    softwareVersion: `v${version}`,
-    description: resolvedDescription,
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-  });
+const jsonLd = schema ?? {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'aic',
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'macOS, Linux, Windows',
+  softwareVersion: `v${version}`,
+  description: resolvedDescription,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
 
 const site = Astro.site?.toString() ?? 'https://caicoleung.github.io';
 const canonical = new URL(Astro.url.pathname, site).toString();
@@ -60,17 +50,26 @@ const ogImage = new URL('/aic-web/og.png', site).toString();
 const themeColor = '#0e0f14';
 const ogLocale = LOCALE_HREFLANG[locale].replace('-', '_').replace(/^en$/, 'en_US');
 const hreflangAlternates = buildHreflangAlternates(Astro.url.pathname, site);
-// CJK webfont family for the locale (ADR-0012). Undefined on `en` → the
-// type stacks fall back to system CJK families (no webfont loaded).
-const cjkFamily =
-  locale === 'zh' ? 'Noto Sans SC Variable'
-  : locale === 'ja' ? 'Noto Sans JP Variable'
-  : locale === 'ko' ? 'Noto Sans KR Variable'
-  : undefined;
+// Locale-aware CJK system font stack (supersedes ADR-0012's Noto webfont —
+// see docs/adr/0014-cjk-system-fonts-supersede-0012.md). Zero webfont cost:
+// each locale resolves to its native system CJK families. Undefined on `en`
+// → the type stacks fall back to a zh-leaning default that covers the rare
+// CJK glyph in EN copy without loading any font.
+const cjkStack =
+  locale === 'zh'
+    ? "'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei'"
+    : locale === 'ja'
+      ? "'Hiragino Sans', 'Yu Gothic', 'Noto Sans CJK JP'"
+      : locale === 'ko'
+        ? "'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic'"
+        : undefined;
 ---
 
 <!doctype html>
-<html lang={LOCALE_HREFLANG[locale]} style={cjkFamily ? `--font-cjk:'${cjkFamily}'` : undefined}>
+<html
+  lang={LOCALE_HREFLANG[locale]}
+  style={cjkStack ? `--font-cjk:${cjkStack}` : undefined}
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -88,9 +87,11 @@ const cjkFamily =
     <link rel="canonical" href={canonical} />
 
     {/* hreflang alternates + x-default → en (ADR-0010) */}
-    {hreflangAlternates.map((alt) => (
-      <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
-    ))}
+    {
+      hreflangAlternates.map((alt) => (
+        <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+      ))
+    }
 
     {/* icons */}
     <link rel="icon" href="/aic-web/favicon.svg" type="image/svg+xml" />
@@ -110,14 +111,6 @@ const cjkFamily =
       type="font/woff2"
       crossorigin
     />
-
-    {/* CJK webfont (ADR-0012): each font's CSS ships as its own asset
-        (`?url` import in CjkFonts*), linked only on the matching locale's
-        pages — English carries zero CJK @font-face rules (verified in the
-        built output). unicode-range subsets cap the actual font downloads. */}
-    {locale === 'zh' && <CjkFontsZh />}
-    {locale === 'ja' && <CjkFontsJa />}
-    {locale === 'ko' && <CjkFontsKo />}
 
     {/* open graph / twitter */}
     <meta property="og:type" content="website" />

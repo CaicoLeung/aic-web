@@ -36,3 +36,27 @@ export function whenMotionOk(setup: (self: gsap.Context) => void): () => void {
 export function revealStatic(targets: gsap.TweenTarget): void {
   gsap.set(targets, { opacity: 1, y: 0 });
 }
+
+/**
+ * Run `onEnter` when `el` scrolls into view and `onLeave` when it leaves
+ * (IntersectionObserver, `threshold: 0`). Returns a teardown that disconnects
+ * the observer. Thread that teardown into the return value of a `whenMotionOk`
+ * setup so the observer reverts with the rest of the motion context — owning
+ * `disconnect()` here is what keeps every call-site leak-free on hot-reload
+ * and `prefers-reduced-motion` toggles.
+ */
+export function whileVisible(
+  el: Element,
+  onEnter: () => void,
+  onLeave?: () => void,
+): () => void {
+  const io = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) onEnter();
+      else onLeave?.();
+    },
+    { threshold: 0 },
+  );
+  io.observe(el);
+  return () => io.disconnect();
+}

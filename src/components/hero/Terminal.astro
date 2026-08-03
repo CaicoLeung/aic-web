@@ -183,10 +183,14 @@ const commits = HUNK_SPLITTING.commits;
 </style>
 
 <script>
-  import { gsap, whenMotionOk } from '@/lib/motion';
+  import { gsap, whenMotionOk, whileVisible } from '@/lib/motion';
 
   whenMotionOk(() => {
     const terms = document.querySelectorAll<HTMLElement>('[data-term-body]');
+
+    // Teardown for each terminal's visibility observer — returned below so
+    // whenMotionOk reverts them with the rest of the motion context.
+    const reverts: Array<() => void> = [];
 
     terms.forEach((term) => {
       const typed = term.querySelector<HTMLElement>('[data-typed]');
@@ -236,7 +240,10 @@ const commits = HUNK_SPLITTING.commits;
         delay: 0.5,
         repeat: -1,
         repeatDelay: 3.2,
-        paused: !autoPlay,
+        // Always start paused; the IntersectionObserver below (Q6-B) drives
+        // play for the autoPlay variant only while on-screen, and the popup
+        // replay event drives the non-autoPlay variant.
+        paused: true,
         onReverseComplete: () => spinnerCycle.pause(),
       });
 
@@ -248,6 +255,24 @@ const commits = HUNK_SPLITTING.commits;
       // Let the HeroStorm popup replay (open) or pause (close) this terminal.
       term.addEventListener('term:replay', () => tl.restart());
       term.addEventListener('term:pause', () => tl.pause());
+
+      // Q6-B: pause the loop when the terminal is off-screen, resume in view.
+      // Only autoPlay terminals self-run — the popup variant is driven by its
+      // open/close events and must not be auto-played by visibility.
+      // whileVisible owns the observer + its teardown (captured into `reverts`
+      // below), so it reverts cleanly on hot-reload / reduced-motion toggles.
+      if (autoPlay) {
+        reverts.push(
+          whileVisible(
+            term,
+            () => tl.play(),
+            () => {
+              tl.pause();
+              spinnerCycle.pause();
+            },
+          ),
+        );
+      }
 
       // Reset to the pre-animation state at the start of every loop so the
       // replay reads cleanly (typed emptied, downstream hidden).
@@ -315,5 +340,9 @@ const commits = HUNK_SPLITTING.commits;
         );
       });
     });
+
+    // Revert every terminal's visibility observer alongside the GSAP
+    // timelines, which whenMotionOk already auto-reverts.
+    return () => reverts.forEach((revert) => revert());
   });
 </script>
