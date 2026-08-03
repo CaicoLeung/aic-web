@@ -183,10 +183,14 @@ const commits = HUNK_SPLITTING.commits;
 </style>
 
 <script>
-  import { gsap, whenMotionOk } from '@/lib/motion';
+  import { gsap, whenMotionOk, whileVisible } from '@/lib/motion';
 
   whenMotionOk(() => {
     const terms = document.querySelectorAll<HTMLElement>('[data-term-body]');
+
+    // Teardown for each terminal's visibility observer — returned below so
+    // whenMotionOk reverts them with the rest of the motion context.
+    const reverts: Array<() => void> = [];
 
     terms.forEach((term) => {
       const typed = term.querySelector<HTMLElement>('[data-typed]');
@@ -255,18 +259,19 @@ const commits = HUNK_SPLITTING.commits;
       // Q6-B: pause the loop when the terminal is off-screen, resume in view.
       // Only autoPlay terminals self-run — the popup variant is driven by its
       // open/close events and must not be auto-played by visibility.
+      // whileVisible owns the observer + its teardown (captured into `reverts`
+      // below), so it reverts cleanly on hot-reload / reduced-motion toggles.
       if (autoPlay) {
-        const io = new IntersectionObserver(
-          ([entry]) => {
-            if (entry.isIntersecting) tl.play();
-            else {
+        reverts.push(
+          whileVisible(
+            term,
+            () => tl.play(),
+            () => {
               tl.pause();
               spinnerCycle.pause();
-            }
-          },
-          { threshold: 0 },
+            },
+          ),
         );
-        io.observe(term);
       }
 
       // Reset to the pre-animation state at the start of every loop so the
@@ -335,5 +340,9 @@ const commits = HUNK_SPLITTING.commits;
         );
       });
     });
+
+    // Revert every terminal's visibility observer alongside the GSAP
+    // timelines, which whenMotionOk already auto-reverts.
+    return () => reverts.forEach((revert) => revert());
   });
 </script>
