@@ -695,7 +695,7 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
 </style>
 
 <script>
-  import { gsap, whenMotionOk } from '@/lib/motion';
+  import { gsap, whenMotionOk, whileVisible } from '@/lib/motion';
 
   whenMotionOk(() => {
     const section = document.querySelector<HTMLElement>('.storm-hero');
@@ -766,18 +766,11 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     section.addEventListener('pointermove', onPointer, { passive: true });
     section.addEventListener('pointerleave', onLeave, { passive: true });
 
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) start();
-        else stop();
-      },
-      { threshold: 0 },
-    );
-    io.observe(section);
+    const unobserve = whileVisible(section, start, stop);
 
     return () => {
+      unobserve();
       stop();
-      io.disconnect();
       section.removeEventListener('pointermove', onPointer);
       section.removeEventListener('pointerleave', onLeave);
     };
