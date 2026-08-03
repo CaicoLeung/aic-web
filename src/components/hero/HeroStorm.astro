@@ -722,19 +722,21 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
       col.style.setProperty('--d', d);
     });
 
+    // Pointer parallax runs only on devices with a real pointer
+    // (`(hover: hover)`) and only while the hero is on-screen (Q6-B). Touch
+    // devices never start the rAF; scrolling the hero out of view pauses it.
+    const hasHover =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(hover: hover)').matches === true;
+    if (!hasHover) return () => {};
+
     let targetMx = 0;
     let targetMy = 0;
     let curMx = 0;
     let curMy = 0;
     let rafId = 0;
 
-    const noHover =
-      typeof window !== 'undefined' &&
-      window.matchMedia &&
-      window.matchMedia('(hover: none)').matches;
-
     const onPointer = (e: PointerEvent) => {
-      if (noHover) return;
       const rect = section.getBoundingClientRect();
       targetMx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
       targetMy = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
@@ -751,13 +753,31 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
       section.style.setProperty('--my', curMy.toFixed(4));
       rafId = requestAnimationFrame(tick);
     };
+    const start = () => {
+      if (rafId === 0) rafId = requestAnimationFrame(tick);
+    };
+    const stop = () => {
+      if (rafId !== 0) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+    };
 
     section.addEventListener('pointermove', onPointer, { passive: true });
     section.addEventListener('pointerleave', onLeave, { passive: true });
-    rafId = requestAnimationFrame(tick);
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) start();
+        else stop();
+      },
+      { threshold: 0 },
+    );
+    io.observe(section);
 
     return () => {
-      cancelAnimationFrame(rafId);
+      stop();
+      io.disconnect();
       section.removeEventListener('pointermove', onPointer);
       section.removeEventListener('pointerleave', onLeave);
     };
