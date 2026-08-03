@@ -194,8 +194,15 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
   .storm-hero {
     position: relative;
     z-index: 2;
+    /* 100svh (small viewport) — NOT dvh. On iOS Safari the bottom URL
+       bar animates the *dynamic* viewport height continuously; 100dvh
+       made this min-height track that animation and shove every section
+       below the hero up/down mid-transition (visible jitter in How-it-works).
+       svh is the stable smallest viewport, so the hero still fills the
+       screen but its bound height never changes during the bar show/hide.
+       100vh is the pre-svh fallback (old browsers). */
     min-height: 100vh;
-    min-height: 100dvh;
+    min-height: 100svh;
     padding: clamp(3rem, 1rem + 5vw, 6rem) 0 clamp(3rem, 1rem + 4vw, 5rem);
     overflow: hidden;
     background:
