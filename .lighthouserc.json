@@ -5,7 +5,9 @@
       "startServerReadyPattern": "Local",
       "url": ["http://localhost:4321/aic-web/", "http://localhost:4321/aic-web/zh/"],
       "numberOfRuns": 3,
-      "chromeFlags": "--no-sandbox"
+      "settings": {
+        "chromeFlags": "--no-sandbox"
+      }
     },
     "assert": {
       "assertions": {
