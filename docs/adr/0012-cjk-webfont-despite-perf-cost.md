@@ -1,6 +1,6 @@
 # ADR-0012: Bundle a CJK webfont despite the perf cost
 
-- **Status:** Accepted
+- **Status:** Superseded by ADR-0014 (2026-08-03)
 - **Date:** 2026-07-31
 - **Decision owner:** Caico Leung
 
@@ -10,7 +10,7 @@ Prose is set in the system-sans stack (`--font-display`); the code register
 is JetBrains Mono (`--font-mono`, via `@fontsource/jetbrains-mono`). Neither
 carries CJK glyphs. ADR-0010 adds `zh`, `ja`, `ko` locales, and several
 code-register bits **do** translate per the scope decision (command
-*descriptions*, the prose `detail` rows of "How it works"): the Terminal
+_descriptions_, the prose `detail` rows of "How it works"): the Terminal
 mockup itself stays English by a separate decision, but the mono-styled
 descriptions around it now need to render CJK inside a `--font-mono`
 context.
@@ -65,7 +65,7 @@ bound — but do not eliminate — the perf cost:
   weighed consistency above CWV for the CJK reading experience.
 - **Risk — addition:** a future maintainer adding a locale or a weight
   **must** follow the per-locale subset rule. Naively adding `Noto Sans
-  JP` to the global stack, or adding a new weight, re-introduces the
+JP` to the global stack, or adding a new weight, re-introduces the
   multi-MB catastrophe this ADR's mitigations exist to prevent.
 
 ## Alternatives considered
@@ -75,7 +75,7 @@ bound — but do not eliminate — the perf cost:
   the zero-cost default that most CJK sites correctly choose; this project
   knowingly pays the cost instead.
 - **(C) Hybrid (system default + subset for display only).** Deferred —
-   start with full per-locale subsetting (B); if profiling later proves a
-   specific weight or locale is unused or unimpactful, lift just that
-   piece to the system stack. B does not preclude C later; C-for-everything
-   is premature before we have CWV data from the locale pages in production.
+  start with full per-locale subsetting (B); if profiling later proves a
+  specific weight or locale is unused or unimpactful, lift just that
+  piece to the system stack. B does not preclude C later; C-for-everything
+  is premature before we have CWV data from the locale pages in production.
