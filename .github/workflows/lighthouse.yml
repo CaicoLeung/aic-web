@@ -1,0 +1,65 @@
+name: Lighthouse CI
+
+# CWV regression gate (Q4, two-tier). Canary URLs: `/aic-web/` (EN home,
+# control) + `/aic-web/zh/` (worst-case canary). 3 runs per URL, median.
+#
+# Two-tier assertions (see .lighthouserc.json, format verified locally):
+#   warn  = CWV "Good" threshold  → soft (slipped below green)
+#   error = CWV "Poor" threshold  → hard fail (genuine regression)
+#
+# Baseline (local, chrome-headless-shell, lab throttled): both URLs at
+# LCP ~1.67s / TBT 0ms / CLS 0.0 — deep green. The error ceilings leave
+# real headroom; ratchet them toward warn as the site matures.
+#
+# INP (`interaction-to-next-paint`) is a field metric — Lighthouse lab
+# reports it as n/a. Add it here only once field data is available.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 25
+          cache: pnpm
+
+      # ubuntu-latest runner images no longer ship Chrome by default.
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome: stable
+        id: chrome
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+
+      - name: Run Lighthouse CI
+        run: npx -y -p @lhci/cli@0.15.0 lhci autorun --config=.lighthouserc.json
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          # Optional — enables richer PR check annotations when set.
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
