@@ -153,10 +153,24 @@ const resolveUrl = localizedHref(locale, 'resolve');
   /* Desktop (≥1024): two-column deck — copy + CTA on the left, product
      surface on the right. The right column pairs the terminal with the
      commands reference underneath, so both columns carry comparable
-     visual weight. Rows pack toward the vertical center. Mobile keeps
-     commands at the end (reference) via DOM order. */
+     visual weight. Mobile keeps commands at the end (reference) via DOM
+     order.
+
+     Vertical placement: the hero itself is a 3-row grid whose top/bottom
+     rows (0.38fr / 0.62fr) split the intra-hero void by the golden ratio,
+     so the content block reads from ~38% of the void instead of sitting
+     flush at the top — which left a dead band at the bottom on tall
+     screens. Symmetric .hero padding acts as the frame; only the void
+     inside the frame is split. fr rows collapse to 0 when content exceeds
+     the min-height (short screens), so the ratio engages only where a
+     void actually exists — the laptop fold guardrail is preserved. */
   @media (min-width: 1024px) {
+    .hero {
+      display: grid;
+      grid-template-rows: 0.38fr auto 0.62fr;
+    }
     .hero-grid {
+      grid-row: 2;
       display: grid;
       grid-template-columns: 1.05fr 0.95fr;
       grid-template-areas:
@@ -166,7 +180,6 @@ const resolveUrl = localizedHref(locale, 'resolve');
         'actions  commands';
       column-gap: 3.5rem;
       row-gap: 1.4rem;
-      align-content: center;
       align-items: center;
       justify-items: start;
       text-align: left;
