@@ -140,8 +140,12 @@ const cjkStack =
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <div class="relative z-2 contents">
-      <slot />
-    </div>
+    {
+      /* Page content flows directly into <body>. Do NOT wrap the slot in a
+        positioned box (position: relative + z-index): that establishes a
+        stacking context and traps fixed descendants — e.g. the hero's
+        term-modal — below later sections. See HeroStorm.astro / ADR-0013. */
+    }
+    <slot />
   </body>
 </html>
