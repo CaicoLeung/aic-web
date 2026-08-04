@@ -171,24 +171,29 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
       </a>
     </div>
   </div>
+</section>
 
-  <!-- Terminal demo popup — hidden by default. The `$ aic ▶` trigger opens
-       it and replays the typing/reasoning/commits animation; backdrop / Esc /
-       × close. aria-hidden toggled by the modal script. -->
-  <div class="term-modal" data-term-modal aria-hidden="true">
-    <div class="term-backdrop" data-term-close></div>
-    <div class="term-panel" role="dialog" aria-modal="true" aria-label="aic demo">
-      <button class="term-x" type="button" data-term-close aria-label="Close"> × </button>
-      <div class="term-stage-modal">
-        <Terminal variant="wire" autoPlay={false} />
-      </div>
-      <div class="term-install">
-        <span class="term-install-label">install</span>
-        <CopyButton text={PRIMARY_INSTALL_COMMAND} />
-      </div>
+<!-- Terminal demo popup — rendered as a TOP-LEVEL element, NOT inside
+     .storm-hero. The hero carries `position: relative; z-index: 2`, which
+     makes it its own stacking context; a `position: fixed; z-index: 100`
+     modal nested inside was trapped at the hero's z=2 layer, so sibling
+     sections (e.g. .how, also z-index:2 and later in DOM) painted above
+     it on iOS Safari — the terminal got covered by Section 2. At the root
+     level the modal's z-index:100 applies in the root stacking context and
+     beats every section. -->
+<div class="term-modal" data-term-modal aria-hidden="true">
+  <div class="term-backdrop" data-term-close></div>
+  <div class="term-panel" role="dialog" aria-modal="true" aria-label="aic demo">
+    <button class="term-x" type="button" data-term-close aria-label="Close"> × </button>
+    <div class="term-stage-modal">
+      <Terminal variant="wire" autoPlay={false} />
+    </div>
+    <div class="term-install">
+      <span class="term-install-label">install</span>
+      <CopyButton text={PRIMARY_INSTALL_COMMAND} />
     </div>
   </div>
-</section>
+</div>
 
 <style>
   .storm-hero {
@@ -388,16 +393,23 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
       background var(--duration-fast) ease,
       border-color var(--duration-fast) ease;
   }
-  .aic-trigger:hover {
-    background: var(--color-amber-warm);
-    border-color: var(--color-amber-warm);
-    transform: translateY(-1px);
-    box-shadow:
-      0 22px 46px -10px rgba(243, 179, 64, 0.62),
-      0 0 0 1px rgba(255, 255, 255, 0.04) inset;
-  }
   .aic-trigger:active {
     transform: translateY(0);
+  }
+  /* `:hover` scoped to hover-capable pointers. Without this, iOS Safari
+     applies :hover on the FIRST tap (the button visibly lifts/shifts) and
+     suppresses the click — so the modal only opens on the second tap.
+     Touch devices never truly hover, so these hover affordances are
+     desktop-only by design. */
+  @media (hover: hover) {
+    .aic-trigger:hover {
+      background: var(--color-amber-warm);
+      border-color: var(--color-amber-warm);
+      transform: translateY(-1px);
+      box-shadow:
+        0 22px 46px -10px rgba(243, 179, 64, 0.62),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    }
   }
   .aic-trigger .aic-prompt {
     opacity: 0.6;
@@ -482,9 +494,11 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
       color var(--duration-fast) ease,
       background var(--duration-fast) ease;
   }
-  .term-x:hover {
-    color: var(--color-amber);
-    background: var(--color-amber-soft);
+  @media (hover: hover) {
+    .term-x:hover {
+      color: var(--color-amber);
+      background: var(--color-amber-soft);
+    }
   }
   .term-stage-modal {
     margin-top: 1.25rem;
@@ -600,9 +614,11 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     text-decoration: none;
     border-bottom: 1px solid color-mix(in oklch, var(--color-amber) 40%, transparent);
   }
-  .storm-lede a:hover {
-    color: var(--color-amber-warm);
-    border-bottom-color: var(--color-amber-warm);
+  @media (hover: hover) {
+    .storm-lede a:hover {
+      color: var(--color-amber-warm);
+      border-bottom-color: var(--color-amber-warm);
+    }
   }
 
   .storm-cta {
@@ -644,8 +660,10 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     border-color: var(--color-amber);
     color: var(--color-amber);
   }
-  .storm-star:hover {
-    background: var(--color-amber-soft);
+  @media (hover: hover) {
+    .storm-star:hover {
+      background: var(--color-amber-soft);
+    }
   }
 
   /* ── Headline light-sweep (one-off, on load) ────────────────────── */
@@ -784,40 +802,49 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
   });
 </script>
 
-<script>
-  // Terminal popup — runs for everyone (not gated on motion): opening a modal
-  // is interaction, not animation. The `term:replay`/`term:pause` events are
-  // no-ops under reduced-motion (Terminal.astro only listens under motion),
-  // so those visitors simply see the static final-state terminal.
-  const modal = document.querySelector<HTMLElement>('.storm-hero [data-term-modal]');
-  const openBtn = document.querySelector<HTMLElement>('.storm-hero [data-term-open]');
-  if (modal && openBtn) {
-    const termBody = modal.querySelector<HTMLElement>('[data-term-body]');
-    let lastFocus: HTMLElement | null = null;
+<script is:inline>
+  // Terminal popup — inline (NOT a deferred module) so the click handler is
+  // attached the moment this markup is parsed, before any external bundle
+  // (GSAP) lands. On a cold first visit over slow data the deferred module
+  // that drives the terminal animation can take seconds to arrive; this
+  // handler must not wait for it. Runs for everyone (modal open is
+  // interaction, not animation); `term:replay`/`term:pause` are no-ops until
+  // the Terminal's own script attaches its listener, so visitors who open
+  // the modal pre-GSAP simply see the terminal's static final state.
+  (function () {
+    var modal = document.querySelector('[data-term-modal]');
+    var openBtn = document.querySelector('[data-term-open]');
+    if (!modal || !openBtn) return;
+    var termBody = modal.querySelector('[data-term-body]');
+    var lastFocus = null;
 
-    const open = () => {
-      lastFocus = document.activeElement as HTMLElement;
+    function open() {
+      lastFocus = document.activeElement;
       modal.classList.add('open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
-      // Replay the demo fresh each open.
-      termBody?.dispatchEvent(new CustomEvent('term:replay', { bubbles: true }));
-      requestAnimationFrame(() => modal.querySelector<HTMLElement>('.term-x')?.focus());
-    };
-    const close = () => {
+      if (termBody)
+        termBody.dispatchEvent(new CustomEvent('term:replay', { bubbles: true }));
+      requestAnimationFrame(function () {
+        var x = modal.querySelector('.term-x');
+        if (x) x.focus();
+      });
+    }
+    function close() {
       modal.classList.remove('open');
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-      termBody?.dispatchEvent(new CustomEvent('term:pause', { bubbles: true }));
-      lastFocus?.focus?.();
-    };
+      if (termBody)
+        termBody.dispatchEvent(new CustomEvent('term:pause', { bubbles: true }));
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
 
     openBtn.addEventListener('click', open);
-    modal.addEventListener('click', (e) => {
-      if ((e.target as HTMLElement).closest('[data-term-close]')) close();
+    modal.addEventListener('click', function (e) {
+      if (e.target.closest('[data-term-close]')) close();
     });
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && modal.classList.contains('open')) close();
     });
-  }
+  })();
 </script>
