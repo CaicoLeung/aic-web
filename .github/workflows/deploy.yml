@@ -43,6 +43,12 @@ jobs:
       - name: Build
         run: pnpm build
         env:
+          # Mirror target: GitHub Pages at /aic-web/. Self-referential origin
+          # (OG/canonical point at Pages); NOINDEX keeps it out of the index
+          # so only the primary cPanel domain competes in search.
+          SITE_ORIGIN: https://caicoleung.github.io
+          BASE_PATH: /aic-web/
+          NOINDEX: 'true'
           # Build-time fact fetch needs no secrets — raw.githubusercontent.com
           # is public for the aic repo. Astro fetches at build time.
           NODE_OPTIONS: --max-old-space-size=4096

@@ -1,0 +1,77 @@
+name: Publish cPanel build (primary)
+
+# Publishes a pre-built, cPanel-tuned dist/ to the `cpanel-deploy` orphan
+# branch in THIS repo. cPanel Git Version Control clones that branch and,
+# on "Update from Remote" + "Deploy", runs .cpanel.yml to rsync dist/ into
+# ~/public_html/aic/. Semi-automatic: GitHub side is fully automated; the
+# final publish click happens in cPanel (no SSH on shared hosting).
+#
+# Flow:
+#   push to main → build primary → force-push cpanel-deploy branch
+#   → (manual in cPanel) Update from Remote → Deploy → live
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # Nightly rebuild closes the fact-drift window (ADR-0003) — keeps the
+  # primary build within ~24h of an aic release, mirroring the Pages cron.
+  schedule:
+    - cron: '17 3 * * *'
+
+# contents:write lets the built-in GITHUB_TOKEN force-push the orphan branch.
+permissions:
+  contents: write
+
+# One concurrent publish; never cancel a production build mid-flight.
+concurrency:
+  group: cpanel-deploy
+  cancel-in-progress: false
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 25
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build (primary cPanel target)
+        run: pnpm build
+        env:
+          # Primary domain — full SEO, indexed. Must match astro.config.mjs
+          # defaults and SITE_ORIGIN in src/config/site.ts.
+          SITE_ORIGIN: https://www.lookupapp.net
+          BASE_PATH: /aic/
+          NODE_OPTIONS: --max-old-space-size=4096
+
+      # Orphan branch carrying only deployable artifacts + .cpanel.yml.
+      # History is rewritten each publish (force-push) so the branch stays
+      # tiny. No secrets required — uses the automatic GITHUB_TOKEN.
+      - name: Publish dist/ to cpanel-deploy branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd dist
+          cp ../.cpanel.yml .
+          git init -b cpanel-deploy
+          git config user.email "deploy@aic-web"
+          git config user.name "aic-web-deploy"
+          git add -A
+          git commit -m "deploy ${GITHUB_SHA::7}" --allow-empty
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin cpanel-deploy

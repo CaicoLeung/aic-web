@@ -11,8 +11,9 @@
  */
 
 /** Deployed origin (matches `site` in astro.config). Used as the `Astro.site`
- *  fallback in content pages when building canonical/schema URLs. */
-export const SITE_ORIGIN = 'https://caicoleung.github.io';
+ *  fallback in content pages when building canonical/schema URLs.
+ *  Env-driven for dual-target builds (primary cPanel / mirror Pages). */
+export const SITE_ORIGIN = process.env.SITE_ORIGIN ?? 'https://www.lookupapp.net';
 
 export const GITHUB_OWNER = 'CaicoLeung';
 export const GITHUB_REPO = 'aic';

@@ -13,6 +13,7 @@ import '@/styles/global.css';
 import { LOCALE_HREFLANG, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 import { buildHreflangAlternates } from '@/i18n/hreflang';
+import { SITE_ORIGIN } from '@/config/site';
 
 interface Props {
   readonly version: string;
@@ -44,9 +45,15 @@ const jsonLd = schema ?? {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 };
 
-const site = Astro.site?.toString() ?? 'https://caicoleung.github.io';
+const site = Astro.site?.toString() ?? SITE_ORIGIN;
+// Build-time base path (trailing slash guaranteed by Astro). Parameterized
+// so one source tree builds for any base (cPanel /aic/, Pages /aic-web/).
+const base = import.meta.env.BASE_URL;
 const canonical = new URL(Astro.url.pathname, site).toString();
-const ogImage = new URL('/aic-web/og.png', site).toString();
+const ogImage = new URL(`${base}og.png`, site).toString();
+// Mirror builds (e.g. Pages) opt out of indexing so only the primary domain
+// (cPanel) competes in search — avoids duplicate-content split.
+const noindex = process.env.NOINDEX === 'true';
 const themeColor = '#0e0f14';
 const ogLocale = LOCALE_HREFLANG[locale].replace('-', '_').replace(/^en$/, 'en_US');
 const hreflangAlternates = buildHreflangAlternates(Astro.url.pathname, site);
@@ -85,6 +92,7 @@ const cjkStack =
       content="H26c_jjsBWfu5DJuCf3fURNdRzHvNydAXttVaOPRsmM"
     />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
 
     {/* hreflang alternates + x-default → en (ADR-0010) */}
     {
@@ -94,9 +102,9 @@ const cjkStack =
     }
 
     {/* icons */}
-    <link rel="icon" href="/aic-web/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/aic-web/icons/apple-touch-icon.png" />
-    <link rel="manifest" href="/aic-web/manifest.webmanifest" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={`${base}icons/apple-touch-icon.png`} />
+    <link rel="manifest" href={`${base}manifest.webmanifest`} />
 
     {/* apple web app */}
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -106,7 +114,7 @@ const cjkStack =
     {/* fonts — preload only regular weight (Q12 hybrid) */}
     <link
       rel="preload"
-      href="/aic-web/fonts/JetBrainsMono-Regular.woff2"
+      href={`${base}fonts/JetBrainsMono-Regular.woff2`}
       as="font"
       type="font/woff2"
       crossorigin
@@ -131,7 +139,7 @@ const cjkStack =
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/aic-web/sw.js').catch(() => {});
+          navigator.serviceWorker.register(`${base}sw.js`).catch(() => {});
         });
       }
     </script>

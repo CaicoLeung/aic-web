@@ -1,7 +1,7 @@
 # aic-web
 
 Marketing site for [aic](https://github.com/CaicoLeung/aic) — the AI-powered
-git commit CLI. Live at **<https://caicoleung.github.io/aic-web/>**.
+git commit CLI. Live at **<https://www.lookupapp.net/aic/>** (cPanel-deployed).
 
 Built with Astro 5 + Tailwind v4 + TypeScript + GSAP.
 
