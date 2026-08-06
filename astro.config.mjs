@@ -3,12 +3,20 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
+// Env-driven dual-target config (one source tree, two builds):
+//   • Primary  → cPanel:   SITE_ORIGIN=https://www.lookupapp.net  BASE_PATH=/aic/
+//   • Mirror   → Pages:    SITE_ORIGIN=https://caicoleung.github.io BASE_PATH=/aic-web/  NOINDEX=true
+// Pages is a noindex mirror (serves old links, doesn't compete for index).
+// Keep SITE_ORIGIN in src/config/site.ts in sync with these defaults.
+const SITE_ORIGIN = process.env.SITE_ORIGIN ?? 'https://www.lookupapp.net';
+const BASE_PATH = process.env.BASE_PATH ?? '/aic/';
+
 // https://astro.build/config
 export default defineConfig({
-  // Project site URL — used for sitemap, canonical URLs, and OG metadata.
-  // Update if a custom domain is wired later (e.g. 'https://aic.caicoleung.dev').
-  site: 'https://caicoleung.github.io',
-  base: '/aic-web',
+  // site + base drive sitemap, canonical URLs, OG metadata, and asset paths.
+  // Override per-deploy via env; defaults target the primary (cPanel) domain.
+  site: SITE_ORIGIN,
+  base: BASE_PATH,
   trailingSlash: 'ignore',
   // i18n routing (ADR-0010): `/` stays English (default, no prefix);
   // zh/ja/ko live under path prefixes. redirectToDefaultLocale:false → no

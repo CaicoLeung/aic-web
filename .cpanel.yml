@@ -1,0 +1,18 @@
+---
+# cPanel Git Version Control — automatic deployment definition.
+# Doc: https://docs.cpanel.net/knowledge-base/web-services/guide-to-git-deployment/
+#
+# Strategy: STATIC-COPY. The repo branch cPanel watches already contains a
+# pre-built dist/ (built in GitHub Actions with SITE_ORIGIN + BASE_PATH env
+# tuned for this domain). cPanel just copies static files to the web root.
+# → cPanel server needs NO Node.js / pnpm. Only rsync (or cp).
+#
+# Repo checkout: ~/repositories/aic-web
+# Web root:      ~/public_html/aic/   →   https://www.lookupapp.net/aic/
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/lookupap/public_html/aic
+    - /bin/mkdir -p "$DEPLOYPATH"
+    # --delete keeps the web root in sync (removes stale files after renames/deletes).
+    # Falls back to `cp -r dist/* "$DEPLOYPATH"/` if rsync is unavailable.
+    - /bin/rsync -av --delete dist/ "$DEPLOYPATH/"
