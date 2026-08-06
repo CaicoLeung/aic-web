@@ -1,7 +1,10 @@
 name: Lighthouse CI
 
-# CWV regression gate (Q4, two-tier). Canary URLs: `/aic-web/` (EN home,
-# control) + `/aic-web/zh/` (worst-case canary). 3 runs per URL, median.
+# CWV regression gate (Q4, two-tier). Canary URLs: `/aic/` (EN home,
+# control) + `/aic/zh/` (worst-case canary). 3 runs per URL, median.
+# URLs must match the default BASE_PATH in astro.config.mjs — `astro preview`
+# re-reads base at runtime, so build and preview must agree on the same base
+# (the default) for lhci collections to resolve.
 #
 # Two-tier assertions (see .lighthouserc.json, format verified locally):
 #   warn  = CWV "Good" threshold  → soft (slipped below green)
