@@ -28,3 +28,8 @@ deployment:
     - /bin/rm -rf "$DEPLOYPATH"/.git "$DEPLOYPATH"/.cpanel.yml "$DEPLOYPATH"/.gitignore
     # Guarantee readable bits: a+rX = read for files, read+search for dirs.
     - /bin/chmod -R a+rX "$DEPLOYPATH"
+    # 301 redirect: domain root (https://www.lookupapp.net/) → /aic/
+    # Only matches the bare root (^$); every other path is untouched.
+    # Written to public_html/ (the domain root = dirname of DEPLOYPATH).
+    - /bin/printf 'RewriteEngine On\nRewriteRule ^$ /aic/ [R=301,L]\n' > "$(dirname "$DEPLOYPATH")/.htaccess"
+    - /bin/chmod 644 "$(dirname "$DEPLOYPATH")/.htaccess"
