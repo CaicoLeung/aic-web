@@ -86,7 +86,7 @@ jobs:
           if git clone --branch cpanel-deploy "$REPO_URL" /tmp/cpanel-deploy 2>/dev/null; then
             cd /tmp/cpanel-deploy
             # Clear old content (preserve .git for incremental history)
-            find . -maxdepth 1 -not -name '.git' -not -name '.' -delete
+            find . -mindepth 1 -maxdepth 1 -not -name '.git' -exec rm -rf {} +
           else
             mkdir -p /tmp/cpanel-deploy && cd /tmp/cpanel-deploy
             git init -b cpanel-deploy
