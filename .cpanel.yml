@@ -14,5 +14,6 @@ deployment:
     - export DEPLOYPATH=/home/lookupap/public_html/aic
     - /bin/mkdir -p "$DEPLOYPATH"
     # --delete keeps the web root in sync (removes stale files after renames/deletes).
-    # Falls back to `cp -r dist/* "$DEPLOYPATH"/` if rsync is unavailable.
-    - /bin/rsync -av --delete dist/ "$DEPLOYPATH/"
+    # NOTE: the cpanel-deploy orphan branch ships the dist CONTENTS at the repo
+    # root (there is no dist/ subfolder), so we sync "./" and exclude repo metadata.
+    - /bin/rsync -av --delete --exclude='.cpanel.yml' --exclude='.git' --exclude='.gitignore' ./ "$DEPLOYPATH/"
