@@ -17,3 +17,7 @@ deployment:
     # NOTE: the cpanel-deploy orphan branch ships the dist CONTENTS at the repo
     # root (there is no dist/ subfolder), so we sync "./" and exclude repo metadata.
     - /bin/rsync -av --delete --exclude='.cpanel.yml' --exclude='.git' --exclude='.gitignore' ./ "$DEPLOYPATH/"
+    # Guarantee readable bits regardless of source perms (a+rX: read for files,
+    # read+search for dirs). Prevents the "listed by autoindex but 404 on fetch"
+    # symptom when files land with mode 600.
+    - /bin/chmod -R a+rX "$DEPLOYPATH"
