@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.lookupapp.net/aic/sitemap-index.xml

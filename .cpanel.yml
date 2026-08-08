@@ -1,0 +1,30 @@
+---
+# cPanel Git Version Control — automatic deployment definition.
+# Doc: https://docs.cpanel.net/knowledge-base/web-services/guide-to-git-deployment/
+#
+# IMPORTANT: cPanel MUST watch the `cpanel-deploy` branch (NOT main).
+# That branch ships pre-built static files at the repo root — built by
+# the GitHub Actions deploy-cpanel.yml workflow. The cPanel server needs
+# NO Node.js or pnpm; it only copies static files to the web root.
+#
+# Repo checkout: ~/repositories/aic-web   (cpanel-deploy branch clone)
+# Web root:      ~/public_html/aic/       → https://www.lookupapp.net/aic/
+#
+# Deploy steps: cPanel → Git Version Control → Manage the repo →
+#               Pull or Deploy tab → Update from Remote → Deploy HEAD Commit
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/lookupap/public_html/aic
+    # Wipe and recreate the target — guarantees no stale files linger
+    # (equivalent to rsync --delete, but using only /bin/cp per cPanel docs).
+    - /bin/rm -rf "$DEPLOYPATH"
+    - /bin/mkdir -p "$DEPLOYPATH"
+    # Copy ALL repo-root contents into the web root. On the cpanel-deploy
+    # branch the root IS the built site, so this is correct. We use /bin/cp
+    # (guaranteed on every cPanel server) instead of rsync (which may be at
+    # /usr/bin/rsync or absent entirely on shared hosting).
+    - /bin/cp -R . "$DEPLOYPATH"/
+    # Remove repo metadata that must not live in the web root.
+    - /bin/rm -rf "$DEPLOYPATH"/.git "$DEPLOYPATH"/.cpanel.yml "$DEPLOYPATH"/.gitignore
+    # Guarantee readable bits: a+rX = read for files, read+search for dirs.
+    - /bin/chmod -R a+rX "$DEPLOYPATH"
