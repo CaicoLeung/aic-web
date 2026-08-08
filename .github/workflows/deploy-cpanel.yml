@@ -1,14 +1,20 @@
 name: Publish cPanel build (primary)
 
-# Publishes a pre-built, cPanel-tuned dist/ to the `cpanel-deploy` orphan
-# branch in THIS repo. cPanel Git Version Control clones that branch and,
-# on "Update from Remote" + "Deploy", runs .cpanel.yml to rsync dist/ into
-# ~/public_html/aic/. Semi-automatic: GitHub side is fully automated; the
-# final publish click happens in cPanel (no SSH on shared hosting).
+# Publishes a pre-built, cPanel-tuned dist/ to the `cpanel-deploy` branch
+# in THIS repo. cPanel Git Version Control clones that branch and, on
+# "Update from Remote" + "Deploy HEAD Commit", runs .cpanel.yml to copy
+# files into ~/public_html/aic/. Semi-automatic: GitHub side is fully
+# automated; the final publish click happens in cPanel (no SSH on shared
+# hosting).
 #
 # Flow:
-#   push to main → build primary → force-push cpanel-deploy branch
-#   → (manual in cPanel) Update from Remote → Deploy → live
+#   push to main → build primary → commit to cpanel-deploy branch (fast-forward)
+#   → (manual in cPanel) Update from Remote → Deploy HEAD Commit → live
+#
+# IMPORTANT: We commit incrementally on top of the existing branch — NOT a
+# force-pushed orphan. cPanel's "Update from Remote" does a git pull, which
+# can only fast-forward. Force-push orphans break that (cPanel silently stays
+# on the old commit).
 
 on:
   push:
@@ -19,7 +25,7 @@ on:
   schedule:
     - cron: '17 3 * * *'
 
-# contents:write lets the built-in GITHUB_TOKEN force-push the orphan branch.
+# contents:write lets the built-in GITHUB_TOKEN push the deploy branch.
 permissions:
   contents: write
 
@@ -58,20 +64,36 @@ jobs:
           BASE_PATH: /aic/
           NODE_OPTIONS: --max-old-space-size=4096
 
-      # Orphan branch carrying only deployable artifacts + .cpanel.yml.
-      # History is rewritten each publish (force-push) so the branch stays
-      # tiny. No secrets required — uses the automatic GITHUB_TOKEN.
+      # Commit dist/ contents to the cpanel-deploy branch incrementally.
+      # We clone the existing branch, replace its files, commit on top, and
+      # push normally (NO force-push). This keeps the history linear so
+      # cPanel's "Update from Remote" (git pull) always fast-forwards.
       - name: Publish dist/ to cpanel-deploy branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          cd dist
-          cp ../.cpanel.yml .
-          git init -b cpanel-deploy
-          git config user.email "deploy@aic-web"
-          git config user.name "aic-web-deploy"
+          git config --global user.email "deploy@aic-web"
+          git config --global user.name "aic-web-deploy"
+          REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+          # Stage the build output + deploy config
+          STAGE=$(mktemp -d)
+          cp -a dist/. "$STAGE"/
+          cp .cpanel.yml "$STAGE"/
+
+          # Clone the existing cpanel-deploy branch (or init if first run)
+          if git clone --branch cpanel-deploy "$REPO_URL" /tmp/cpanel-deploy 2>/dev/null; then
+            cd /tmp/cpanel-deploy
+            # Clear old content (preserve .git for incremental history)
+            find . -maxdepth 1 -not -name '.git' -not -name '.' -delete
+          else
+            mkdir -p /tmp/cpanel-deploy && cd /tmp/cpanel-deploy
+            git init -b cpanel-deploy
+            git remote add origin "$REPO_URL"
+          fi
+
+          cp -a "$STAGE"/. .
           git add -A
           git commit -m "deploy ${GITHUB_SHA::7}" --allow-empty
-          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git push --force origin cpanel-deploy
+          git push origin cpanel-deploy
