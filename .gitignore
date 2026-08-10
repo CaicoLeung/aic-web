@@ -24,10 +24,12 @@ pnpm-debug.log*
 !.vscode/extensions.json
 .idea/
 
-# agent tooling local state
-.omc/
-.claude/
-.pi-subagents/
+# Paseo worktree config
+paseo.json
+ # agent tooling local state
+ .omc/
+ .claude/
+ .pi-subagents/
 
 # Lighthouse CI
 .lighthouseci/
