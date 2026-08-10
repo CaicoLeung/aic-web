@@ -12,7 +12,7 @@
  * build-time fetch — feature claims are editorial, and the shipped-in version
  * is historical/immutable. See CONTEXT.md · ADR-0003.
  */
-import { HUNK_SPLITTING, HUNK_TYPE_ACCENT } from '@/config/site';
+import { HUNK_SPLITTING, HUNK_TYPE_ACCENT, COMMIT_TYPE_PALETTE } from '@/config/site';
 import HunkTraceLine from './HunkTraceLine.astro';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
@@ -67,12 +67,33 @@ const changelog = `${localizedHref(locale, 'changelog')}#${HUNK_SPLITTING.shippe
       <p class="aside" data-reveal>{t('batching.aside')}</p>
       <p class="meta-row" data-reveal>
         <a class="ship-badge" href={changelog}>
-          {t('batching.shipBadge', { version: HUNK_SPLITTING.shippedIn })}<span class="ship-arrow" aria-hidden="true">→</span>
+          {t('batching.shipBadge', { version: HUNK_SPLITTING.shippedIn })}<span
+            class="ship-arrow"
+            aria-hidden="true">→</span
+          >
         </a>
       </p>
       <a class="cmp-link" href={roundup} data-reveal>
         {t('batching.cmpLink')}
       </a>
+    </div>
+  </div>
+
+  <div class="swatch-strip container" data-reveal>
+    <p class="swatch-label">{t('batching.swatchLabel')}</p>
+    <div class="swatch-chips">
+      {
+        COMMIT_TYPE_PALETTE.map((c) => (
+          <span class="swatch-chip">
+            <span
+              class="swatch-dot"
+              style={`background: ${c.color}`}
+              aria-hidden="true"
+            />
+            {c.type}
+          </span>
+        ))
+      }
     </div>
   </div>
 </section>
@@ -313,6 +334,39 @@ const changelog = `${localizedHref(locale, 'changelog')}#${HUNK_SPLITTING.shippe
   [data-hunk-line] {
     opacity: 1;
     transform: none;
+  }
+  /* Swatch strip — commit-type palette (ADR-0016: deliberate amber break). */
+  .swatch-strip {
+    margin-top: clamp(2rem, 1rem + 2vw, 3rem);
+    padding-top: clamp(1.5rem, 0.5rem + 2vw, 2.5rem);
+    border-top: 1px solid var(--color-line-soft);
+  }
+  .swatch-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-dim);
+    margin: 0 0 0.85rem;
+    font-weight: 600;
+  }
+  .swatch-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.8rem;
+  }
+  .swatch-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-ink-muted);
+  }
+  .swatch-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
 </style>
 

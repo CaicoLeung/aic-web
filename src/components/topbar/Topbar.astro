@@ -20,6 +20,7 @@ const { version } = Astro.props;
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const changelog = localizedHref(locale, 'changelog');
+const agentsBase = localizedHref(locale, 'agents');
 const versionTitle = t('topbar.versionTitle', { version });
 ---
 
@@ -46,6 +47,11 @@ const versionTitle = t('topbar.versionTitle', { version });
     <a href="#install">{t('topbar.nav.install')}</a>
   </nav>
 
+  <a class="feature-chip" href={agentsBase}>
+    <span class="chip-new">{t('topbar.featureChip.label')}</span>
+    <span class="chip-text">{t('topbar.featureChip.text')}</span>
+    <span class="chip-arrow" aria-hidden="true">→</span>
+  </a>
   <div class="meta">
     <a class="version" href={changelog} title={versionTitle}>
       <span class="version-dot" aria-hidden="true"></span>
@@ -218,6 +224,40 @@ const versionTitle = t('topbar.versionTitle', { version });
   @media (min-width: 768px) {
     .nav {
       display: inline-flex;
+    }
+  }
+  .feature-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.22rem 0.6rem;
+    border: 1px solid var(--color-amber);
+    border-radius: 999px;
+    color: var(--color-amber);
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: var(--color-amber-soft);
+    transition:
+      background var(--duration-fast) ease,
+      border-color var(--duration-fast) ease;
+  }
+  .feature-chip:hover {
+    border-color: var(--color-amber);
+    background: color-mix(in oklch, var(--color-amber-soft) 50%, var(--color-amber) 20%);
+  }
+  .chip-new {
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .chip-arrow {
+    font-size: 0.68rem;
+  }
+  @media (max-width: 480px) {
+    .chip-text {
+      display: none;
     }
   }
 </style>

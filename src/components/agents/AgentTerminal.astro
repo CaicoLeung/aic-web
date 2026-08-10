@@ -1,0 +1,151 @@
+---
+/**
+ * AgentTerminal — animated mockup of the CLI-agent backend (ADR-0009, 0015).
+ *
+ * Built on the shared ui/TerminalShell chrome (same idiom as
+ * ResolveTerminal). Shows the delegation loop: `aic` → shells out to the
+ * local agent → reasoning streams via `thinking_delta` → commit ships with
+ * a colored type prefix. Static final state is visible without JS and under
+ * `prefers-reduced-motion`; GSAP reveals the steps in sequence otherwise.
+ * `aria-hidden` — decorative reinforcement of the page copy.
+ */
+import TerminalShell from '@/components/ui/TerminalShell.astro';
+---
+
+<TerminalShell bodyAttr="data-agent-body" title="projects/your-repo">
+  <div class="row" data-row="cmd">
+    <span class="prompt">$</span>
+    <span class="cmdin">aic</span>
+  </div>
+  <div class="row" data-row="delegate">
+    <span class="dim" aria-hidden="true">↳</span>
+    <span class="muted">delegating to claude -p (local agent)</span>
+  </div>
+  <div class="row" data-row="reasoning">
+    <span class="spin" aria-hidden="true">⠋</span>
+    <span class="out">reasoning… reading diff</span>
+  </div>
+  <div class="row" data-row="thought">
+    <span class="spin" aria-hidden="true">⠋</span>
+    <span class="thought">token-based refresh is safer than timed expiry</span>
+  </div>
+  <div class="row" data-row="ship">
+    <span class="ok" aria-hidden="true">✓</span>
+    <span class="ctype">feat</span>
+    <span class="cscope">(auth)</span>
+    <span class="cmsg">refresh tokens on idle</span>
+  </div>
+</TerminalShell>
+
+<style>
+  .muted {
+    color: var(--color-ink-dim);
+  }
+  .dim {
+    color: var(--color-ink-dim);
+  }
+  .out {
+    color: var(--color-ink-muted);
+  }
+  .thought {
+    color: var(--color-ink-muted);
+    font-style: italic;
+  }
+  .ok {
+    color: var(--color-amber);
+  }
+  .ctype {
+    color: var(--color-amber);
+    font-weight: 600;
+  }
+  .cscope {
+    color: var(--color-ink-dim);
+  }
+  .cmsg {
+    color: var(--color-ink);
+  }
+
+  /* Reduced-motion / no-JS default: everything visible. */
+  :global([data-agent-body]) .row {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  import { gsap, whenMotionOk } from '@/lib/motion';
+
+  whenMotionOk(() => {
+    const terms = document.querySelectorAll<HTMLElement>('[data-agent-body]');
+
+    terms.forEach((term) => {
+      const rows = term.querySelectorAll<HTMLElement>('[data-row]');
+      const reasoningRow = term.querySelector<HTMLElement>('[data-row="reasoning"]');
+      const thoughtRow = term.querySelector<HTMLElement>('[data-row="thought"]');
+      const reasoningSpin = reasoningRow?.querySelector<HTMLElement>('.spin');
+      const thoughtSpin = thoughtRow?.querySelector<HTMLElement>('.spin');
+      if (
+        rows.length === 0 ||
+        !reasoningRow ||
+        !thoughtRow ||
+        !reasoningSpin ||
+        !thoughtSpin
+      )
+        return;
+
+      gsap.set(rows, { opacity: 0 });
+
+      const spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+      let frame = 0;
+      let activeSpin: HTMLElement = reasoningSpin;
+
+      const spinnerCycle = gsap.to(
+        {},
+        {
+          duration: 0.08,
+          repeat: -1,
+          paused: true,
+          onRepeat: () => {
+            frame = (frame + 1) % spinnerFrames.length;
+            activeSpin.textContent = spinnerFrames[frame];
+          },
+        },
+      );
+
+      const reveal = (sel: string) =>
+        term.querySelector<HTMLElement>(`[data-row="${sel}"]`);
+
+      const tl = gsap.timeline({
+        delay: 0.5,
+        repeat: -1,
+        repeatDelay: 4,
+      });
+
+      // 1. Command + delegation notice
+      tl.to(reveal('cmd'), { opacity: 1, duration: 0.2 });
+      tl.to(reveal('delegate'), { opacity: 1, duration: 0.2 }, '+=0.25');
+
+      // 2. Reasoning spinner cycles
+      tl.call(() => {
+        frame = 0;
+        activeSpin = reasoningSpin;
+        reasoningSpin.textContent = spinnerFrames[0];
+        spinnerCycle.restart();
+      });
+      tl.to(reasoningRow, { opacity: 1, duration: 0.18 });
+      tl.to(reasoningRow, { opacity: 1, duration: 0.6 }); // hold while spinning
+
+      // 3. Thought spinner cycles (switches active glyph)
+      tl.call(() => {
+        frame = 0;
+        activeSpin = thoughtSpin;
+        thoughtSpin.textContent = spinnerFrames[0];
+      });
+      tl.to(thoughtRow, { opacity: 1, duration: 0.18 });
+      tl.to(thoughtRow, { opacity: 1, duration: 0.6 }); // hold while spinning
+      tl.call(() => spinnerCycle.pause());
+
+      // 4. Commit ships
+      tl.to(reveal('ship'), { opacity: 1, duration: 0.2 }, '+=0.15');
+    });
+  });
+</script>

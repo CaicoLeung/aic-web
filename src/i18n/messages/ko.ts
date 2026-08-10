@@ -90,6 +90,11 @@ export const messages: Messages = {
       description:
         'DeepSeek로 aic에 Conventional Commits를 작성하게 하세요: 일급 프로바이더, 하나의 설정 마법사, 키는 기기를 떠나지 않습니다. Node.js 불필요.',
     },
+    agents: {
+      title: 'aic + 당신의 AI 코딩 에이전트 — Claude Code, Codex, Pi, OpenCode',
+      description:
+        'aic는 헤드리스 모드에서 로컬 AI 코딩 에이전트 — Claude Code, Codex, Pi, 또는 OpenCode — 에 작업을 위임할 수 있습니다. API 키도, 중간자도 없음: 에이전트가 diff를 읽고 커밋을 작성하며, 자신의 모델을 재사용합니다.',
+    },
     changelog: {
       title: 'aic 체인지로그 — 모든 릴리스',
       description:
@@ -107,6 +112,10 @@ export const messages: Messages = {
       providers: '프로바이더',
       install: '설치',
     },
+    featureChip: {
+      label: '신규',
+      text: '에이전트 가져오기',
+    },
     switcher: {
       label: '언어',
     },
@@ -119,6 +128,7 @@ export const messages: Messages = {
     roundup: '도구 목록',
     compare: '비교',
     changelog: '변경 이력',
+    agents: '에이전트',
     github: 'GitHub',
   },
 
@@ -157,7 +167,7 @@ export const messages: Messages = {
     h2: '한 번 설치 → <code>{cmd}</code> 입력 → 깔끔한 커밋.',
     steps: {
       '01': { label: '설치', detail: 'brew install aic' },
-      '02': { label: '설정', detail: 'provider · key · model' },
+      '02': { label: '설정', detail: 'provider · key · model — 또는 로컬 에이전트' },
       '03': { label: '실행', detail: 'type:  aic' },
       '04': { label: '읽기', detail: 'diff 읽기' },
       '05': { label: '초안', detail: '메시지 작성' },
@@ -177,6 +187,7 @@ export const messages: Messages = {
     h2: '한 파일, 여러 커밋',
     lede: 'aic는 hunk 단위로 diff를 읽습니다 — 그래서 한 파일도 여러 개의 집중된 커밋이 될 수 있고, 각각 하나의 아이디어. 스테이지 없이, 명령 한 번, 깔끔한 히스토리 — 한 파일이 세 가지 관심사에 걸쳐 있어도.',
     aside: 'hunk별 배치 ✦',
+    swatchLabel: '17가지 커밋 타입 · WCAG 안전 색상',
     stripLabel: '추론 · hunk별',
     shipBadge: 'v{version}에 탑재',
     cmpLink: '최고 AI 커밋 도구들 사이의 aic 보기 →',
@@ -189,6 +200,7 @@ export const messages: Messages = {
     aside: '중간자 없음 · 커밋별 추가 비용 없음 · 호출은 당신의 기계에서 직접',
     link: '프로바이더 코드 읽기 →',
     yourModel: '(당신의 모델)',
+    profilesHint: '프로필 저장 · <code>aic use</code>로 전환',
   },
 
   install: {
@@ -231,6 +243,7 @@ export const messages: Messages = {
       alternatives: '대안',
       deepseek: 'DeepSeek',
       changelog: '변경 이력',
+      agents: '에이전트',
     },
     meta: 'MIT 라이선스 · Astro + Tailwind + GSAP로 제작',
   },
@@ -312,6 +325,69 @@ export const messages: Messages = {
       h2: '한 줄 요약',
       body: '<code>aic resolve</code>는 충돌한 파일을 읽고, 실제로 검토할 수 있는 해결을 제안하며, 당신이 승인한 것만 씁니다 — 그런 다음 병합을 마무리합니다. aic가 커밋에 쓰는 것과 같은 "diff를 읽고, 수정을 초안하고, 출시하라" 루프가 git에서 가장 보기 흉한 부분을 향하고 있습니다.',
       releaseNotes: 'v0.3.0 릴리스 노트',
+    },
+  },
+
+  agents: {
+    eyebrow: '기능 · CLI 에이전트 백엔드',
+    h1: '에이전트를 가져오세요, 키가 아닙니다.',
+    lede: '<b>aic</b>는 헤드리스 모드에서 로컬 AI 코딩 에이전트 — Claude Code, Codex, Pi, 또는 OpenCode — 에 작업을 위임할 수 있습니다. API 키도, 기본 모델도, 중간자도 없음: 에이전트가 diff를 읽고 커밋을 작성하며, 자신의 모델과 인증을 재사용합니다.',
+    ctaHint: '그런 다음 <code>aic setup</code> 실행 → 에이전트 백엔드 선택',
+    how: {
+      h2: '작동 방식',
+      lede: '같은 루프, 다른 백엔드. LLM API를 호출하는 대신, aic는 프린트 모드에서 에이전트를 실행하고 diff를 전달하며, 에이전트가 가장 잘하는 일 — 변경 사항을 추론하고 메시지를 작성하는 일 — 을 맡깁니다.',
+      steps: [
+        {
+          h: '에이전트 백엔드 선택',
+          n: '<code>aic setup</code>을 실행하고 API 프로바이더 대신 CLI 에이전트를 선택하세요. aic가 기억합니다.',
+        },
+        {
+          h: '호출이 아닌 위임',
+          n: '<code>aic</code>를 실행하면 diff와 프롬프트와 함께 에이전트 — 예: <code>claude -p</code> — 로 위임합니다. 추론은 에이전트가 합니다.',
+        },
+        {
+          h: '동일한 커밋 결과',
+          n: '에이전트가 메시지를 반환합니다. aic가 git 히스토리에 적용합니다 — 배치, 컨벤셔널, 컬러, 언제나처럼.',
+        },
+      ],
+    },
+    presets: {
+      h2: '네 에이전트, 하나의 백엔드',
+      lede: '네 가지 프리셋이 기본 제공됩니다. 각각 자체 인증을 재사용 — 에이전트가 이미 설치되어 있다면 추가 설정 불필요.',
+      items: [
+        {
+          h: 'Claude Code',
+          n: '<code>thinking_delta</code>로 추론을 실시간 스트리밍. 에이전트가 생각하는 것을 지켜본 뒤 커밋하세요.',
+        },
+        {
+          h: 'Codex',
+          n: '읽기 전용 샌드박스에서 조용히 실행, 완료되면 메시지를 반환합니다.',
+        },
+        { h: 'Pi', n: 'Claude Code처럼 추론을 실시간 스트리밍.' },
+        {
+          h: 'OpenCode',
+          n: '조용히 실행, 기존 프로바이더 키(예: Cursor OAuth)를 재사용.',
+        },
+      ],
+    },
+    eitherOr: {
+      h2: '백엔드를 전환하세요 — 둘 다 실행하지 마세요',
+      lede: '<code>backend_kind</code>는 구분자입니다: 실행마다 하나의 백엔드만 활성화됩니다. API 경로(provider · key · model)와 에이전트 경로(로컬 CLI)는 레이어가 아니라 대안입니다.',
+      body: '전환하려면 <code>aic setup</code>을 다시 실행하세요. aic는 하나의 구성을 저장 — 마지막으로 선택한 백엔드가 사용됩니다.',
+    },
+    custom: {
+      h2: '또는 모든 커스텀 에이전트',
+      body: '네 가지 프리셋 외에도, 모든 CLI 명령을 에이전트로 구성할 수 있습니다. stdin으로 프롬프트를 받고 stdout으로 출력한다면, aic가 구동할 수 있습니다.',
+    },
+    speed: {
+      h2: '왜 빠른가',
+      lede: 'API 홉도, 새 인증도 없습니다. 에이전트는 이미 모델을 로드하고 인증을 마친 상태 — aic는 diff를 전달하고 메시지를 읽어올 뿐.',
+      body: '속도는 더 빠른 모델이 아니라 설정 생략에서 옵니다. 에이전트의 세션과 자격 증명을 재사용하는 것입니다.',
+    },
+    verdict: {
+      h2: '짧은 요약',
+      body: '<code>aic</code> + 코딩 에이전트: 에이전트는 추론, aic는 커밋을 출시. API 키도, 중간자도, 고를 모델도 없음 — aic가 언제나 만드는 것과 같은 배치된, 컨벤셔널, 컬러 히스토리뿐.',
+      releaseNotes: 'v0.5.0 릴리스 노트',
     },
   },
 

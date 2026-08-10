@@ -93,6 +93,11 @@ export const messages: Messages = {
       description:
         '用 DeepSeek 让 aic 写约定式提交:一流供应商、一个配置向导、密钥永不离开你的机器。无需 Node.js。',
     },
+    agents: {
+      title: 'aic + 你的 AI 编码 agent — Claude Code、Codex、Pi、OpenCode',
+      description:
+        'aic 可以委托给你的本地 AI 编码 agent —— Claude Code、Codex、Pi 或 OpenCode —— 在 headless 模式下运行。无需 API 密钥，无需中间人：你的 agent 读取 diff 并写出提交，复用它自己的模型。',
+    },
     changelog: {
       title: 'aic 更新日志 — 每一个版本',
       description:
@@ -110,6 +115,10 @@ export const messages: Messages = {
       providers: '供应商',
       install: '安装',
     },
+    featureChip: {
+      label: '新',
+      text: '带上你的 agent',
+    },
     switcher: {
       label: '语言',
     },
@@ -122,6 +131,7 @@ export const messages: Messages = {
     roundup: '工具榜单',
     compare: '对比',
     changelog: '更新日志',
+    agents: 'agent',
     github: 'GitHub',
   },
 
@@ -160,7 +170,7 @@ export const messages: Messages = {
     h2: '安装一次 → 输入 <code>{cmd}</code> → 干净提交。',
     steps: {
       '01': { label: '安装', detail: 'brew install aic' },
-      '02': { label: '配置', detail: 'provider · key · model' },
+      '02': { label: '配置', detail: 'provider · key · model — 或你的本地 agent' },
       '03': { label: '运行', detail: 'type:  aic' },
       '04': { label: '读取', detail: '读取 diff' },
       '05': { label: '起草', detail: '写好提交信息' },
@@ -180,6 +190,7 @@ export const messages: Messages = {
     h2: '一个文件，多个提交',
     lede: 'aic 在 hunk 层级读取你的 diff——这样一个文件也能拆成多个聚焦的提交，每个只讲一件事。没有暂存、一条命令、一份干净的历史——即使一个文件涉及三处不同的改动。',
     aside: '按 hunk 批处理 ✦',
+    swatchLabel: '17 种提交类型 · WCAG 安全配色',
     stripLabel: '推理 · 按 hunk',
     shipBadge: '随 v{version} 发布',
     cmpLink: '查看 aic 在最佳 AI 提交工具中的位置 →',
@@ -192,6 +203,7 @@ export const messages: Messages = {
     aside: '无中间人 · 无按提交计费 · 调用直接从你的机器发出',
     link: '阅读供应商代码 →',
     yourModel: '（你的模型）',
+    profilesHint: '保存配置 · 用 <code>aic use</code> 切换',
   },
 
   install: {
@@ -234,6 +246,7 @@ export const messages: Messages = {
       alternatives: '替代方案',
       deepseek: 'DeepSeek',
       changelog: '更新日志',
+      agents: 'agent',
     },
     meta: 'MIT 协议 · 基于 Astro + Tailwind + GSAP 构建',
   },
@@ -314,6 +327,63 @@ export const messages: Messages = {
       h2: '简而言之',
       body: '<code>aic resolve</code> 读取你的冲突文件，提出你确实能审查的解决方案，只写入你批准的部分——然后完成合并。它和 aic 用于提交的那套「读 diff、起草修复、交付」循环是同一个，只是指向了 git 里最难看的地方。',
       releaseNotes: 'v0.3.0 发布说明',
+    },
+  },
+
+  agents: {
+    eyebrow: '能力 · CLI-agent 后端',
+    h1: '带上你的 agent，而不是你的密钥。',
+    lede: '<b>aic</b> 可以委托给你的本地 AI 编码 agent —— Claude Code、Codex、Pi 或 OpenCode —— 在 headless 模式下运行。无需 API 密钥，无需默认模型，无需中间人：你的 agent 读取 diff 并写出提交，复用它自己的模型和授权。',
+    ctaHint: '然后运行 <code>aic setup</code> → 选择 agent 后端',
+    how: {
+      h2: '工作原理',
+      lede: '同一套循环，换一个后端。aic 不再调用 LLM API，而是以 print 模式 shell 调用你的 agent，把 diff 传过去，让它做最擅长的事 —— 推理这次改动并写出提交信息。',
+      steps: [
+        {
+          h: '选择 agent 后端',
+          n: '运行 <code>aic setup</code>，选一个 CLI agent 而不是 API 供应商。aic 会记住它。',
+        },
+        {
+          h: '委托，而非调用',
+          n: '当你运行 <code>aic</code> 时，它会 shell 调用你的 agent —— 例如 <code>claude -p</code> —— 把 diff 和 prompt 传过去。推理由 agent 完成。',
+        },
+        {
+          h: '同样的提交输出',
+          n: '你的 agent 返回提交信息。aic 把它写进你的 git 历史 —— 批处理、约定式、彩色，一如既往。',
+        },
+      ],
+    },
+    presets: {
+      h2: '四个 agent，一个后端',
+      lede: '开箱即用四个预设。每个复用各自的授权 —— 只要 agent 已经装好，就无需额外配置。',
+      items: [
+        {
+          h: 'Claude Code',
+          n: '通过 <code>thinking_delta</code> 实时流式输出推理过程。你看 agent 思考，然后提交。',
+        },
+        { h: 'Codex', n: '在只读沙盒中静默运行，完成后返回提交信息。' },
+        { h: 'Pi', n: '实时流式输出推理过程，和 Claude Code 一样。' },
+        { h: 'OpenCode', n: '静默运行，复用你已有的供应商密钥（例如 Cursor OAuth）。' },
+      ],
+    },
+    eitherOr: {
+      h2: '切换你的后端 —— 不要两个都跑',
+      lede: '<code>backend_kind</code> 是一个判别字段：每次运行只有一个后端生效。API 路径（provider · key · model）和 agent 路径（你的本地 CLI）是二选一，而不是叠加。',
+      body: '再运行一次 <code>aic setup</code> 即可切换。aic 只保存一份配置；你最后一次选的后端就是它使用的那个。',
+    },
+    custom: {
+      h2: '或者任意自定义 agent',
+      body: '在这四个预设之外，你可以把任意 CLI 命令配置为你的 agent。只要它从 stdin 接收 prompt 并向 stdout 输出，aic 就能驱动它。',
+    },
+    speed: {
+      h2: '为什么这么快',
+      lede: '没有 API 跳转，没有新增授权。你的 agent 早已经把模型加载好并完成了认证 —— aic 只是把 diff 传过去，再把提交信息读回来。',
+      body: '速度来自跳过了配置步骤，而不是来自更快的模型。你复用的是 agent 的会话和凭据。',
+    },
+    verdict: {
+      h2: '简而言之',
+      body: '<code>aic</code> + 你的编码 agent：agent 负责推理，aic 负责提交。无需 API 密钥，无需中间人，无需挑选模型 —— 输出的依然是 aic 一贯产出的那种批处理、约定式、彩色的历史。',
+      releaseNotes: 'v0.5.0 发布说明',
     },
   },
 

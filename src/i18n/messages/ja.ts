@@ -90,6 +90,12 @@ export const messages: Messages = {
       description:
         'DeepSeek で aic に Conventional Commits を書かせる:一級プロバイダー、1つのセットアップウィザード、キーはマシンから出ません。Node.js 不要。',
     },
+    agents: {
+      title:
+        'aic + あなたの AI コーディングエージェント — Claude Code, Codex, Pi, OpenCode',
+      description:
+        'aic はローカルの AI コーディングエージェント — Claude Code、Codex、Pi、または OpenCode — にヘッドレスモードで委譲できます。API キーも中間業者も不要：あなたのエージェントが diff を読み、自身のモデルを再利用してコミットを書きます。',
+    },
     changelog: {
       title: 'aic チェンジログ — すべてのリリース',
       description:
@@ -107,6 +113,10 @@ export const messages: Messages = {
       providers: 'プロバイダ',
       install: 'インストール',
     },
+    featureChip: {
+      label: '新機能',
+      text: 'あなたのエージェントを連携',
+    },
     switcher: {
       label: '言語',
     },
@@ -119,6 +129,7 @@ export const messages: Messages = {
     roundup: '総まとめ',
     compare: '比較',
     changelog: '変更履歴',
+    agents: 'エージェント',
     github: 'GitHub',
   },
 
@@ -157,7 +168,10 @@ export const messages: Messages = {
     h2: '一度インストール → <code>{cmd}</code> と入力 → クリーンなコミット。',
     steps: {
       '01': { label: 'インストール', detail: 'brew install aic' },
-      '02': { label: 'セットアップ', detail: 'provider · key · model' },
+      '02': {
+        label: 'セットアップ',
+        detail: 'provider · key · model — またはローカルエージェント',
+      },
       '03': { label: '実行', detail: 'type:  aic' },
       '04': { label: '読み取り', detail: 'diff を読む' },
       '05': { label: '起草', detail: 'メッセージを書く' },
@@ -173,6 +187,7 @@ export const messages: Messages = {
 
   batching: {
     eyebrow: '03 — 自動バッチ処理',
+    swatchLabel: '17 種類のコミット · WCAG セーフな色',
     kicker: '何もステージしていない？',
     h2: '1つのファイル、複数のコミット',
     lede: 'aic は hunk レベルで diff を読みます — だから1つのファイルでも複数の焦点を絞ったコミットになり、それぞれが1つのアイデア。ステージなし、コマンド1つ、クリーンな履歴 — 1つのファイルが3つの関心事に触れていても。',
@@ -185,6 +200,7 @@ export const messages: Messages = {
   providers: {
     eyebrow: '04 — プロバイダとプライバシー',
     h2: 'あなたのキー · あなたのモデル',
+    profilesHint: 'プロファイルを保存 · <code>aic use</code> で切り替え',
     lede: 'プロバイダを自分で。aic は LLM と直接通信 — 中間業者なし、コミットごとの課金なし、プロキシなし。API キーはあなたのマシンから出ません。',
     aside: '中間業者なし · コミットごとの課金なし · 呼び出しはあなたのマシンから直接',
     link: 'プロバイダのコードを読む →',
@@ -231,6 +247,7 @@ export const messages: Messages = {
       alternatives: '代替案',
       deepseek: 'DeepSeek',
       changelog: '変更履歴',
+      agents: 'エージェント',
     },
     meta: 'MIT ライセンス · Astro + Tailwind + GSAP で構築',
   },
@@ -312,6 +329,71 @@ export const messages: Messages = {
       h2: '要するに',
       body: '<code>aic resolve</code> はコンフリクトしたファイルを読み、実際に確認できる解決を提案し、あなたが承認したものだけを書き込み — それからマージを完了します。aic がコミットに使うのと同じ「diff を読み、修正を起草し、出荷する」ループが、git の最も見苦しい部分に向けられています。',
       releaseNotes: 'v0.3.0 リリースノート',
+    },
+  },
+  agents: {
+    eyebrow: '機能 · CLI エージェントバックエンド',
+    h1: 'キーではなく、エージェントを連携。',
+    lede: '<b>aic</b> はローカルの AI コーディングエージェント — Claude Code、Codex、Pi、または OpenCode — にヘッドレスモードで委譲できます。API キーもデフォルトモデルも中間業者も不要：あなたのエージェントが diff を読み、自身のモデルと認証を再利用してコミットを書きます。',
+    ctaHint: 'そして <code>aic setup</code> を実行 → エージェントバックエンドを選択',
+    how: {
+      h2: '仕組み',
+      lede: '同じループ、違うバックエンド。LLM API を呼ぶ代わりに、aic はプリントモードであなたのエージェントをシェル呼び出しし、diff を渡して、そのエージェントが最も得意なこと — 変更について推論しメッセージを書く — に任せます。',
+      steps: [
+        {
+          h: 'エージェントバックエンドを選ぶ',
+          n: '<code>aic setup</code> を実行し、API プロバイダの代わりに CLI エージェントを選びます。aic が記憶します。',
+        },
+        {
+          h: '呼ぶのではなく委譲する',
+          n: '<code>aic</code> を実行すると、diff とプロンプトとともにあなたのエージェント — 例えば <code>claude -p</code> — へシェル呼び出しします。推論はエージェントが行います。',
+        },
+        {
+          h: '同じコミット出力',
+          n: 'エージェントがメッセージを返します。aic がそれを git 履歴に適用 — バッチ処理、コンベンショナル、カラー、いつも通り。',
+        },
+      ],
+    },
+    presets: {
+      h2: '4つのエージェント、1つのバックエンド',
+      lede: '4つのプリセットが最初から同梱されています。それぞれが自身の認証を再利用 — エージェントが既にインストールされていれば追加セットアップ不要。',
+      items: [
+        {
+          h: 'Claude Code',
+          n: '<code>thinking_delta</code> で推論をライブストリーミング。エージェントが考えるのを見て、それからコミット。',
+        },
+        {
+          h: 'Codex',
+          n: '読み取り専用サンドボックスでサイレントに動作し、完了したらメッセージを返します。',
+        },
+        {
+          h: 'Pi',
+          n: 'Claude Code と同じく、推論をライブストリーミング。',
+        },
+        {
+          h: 'OpenCode',
+          n: 'サイレントに動作し、既存のプロバイダキー（例：Cursor OAuth）を再利用。',
+        },
+      ],
+    },
+    eitherOr: {
+      h2: 'バックエンドを切り替える — 両方は動かさない',
+      lede: '<code>backend_kind</code> は判別子：実行ごとにアクティブなバックエンドは1つだけ。API パス（provider · key · model）とエージェントパス（あなたのローカル CLI）はレイヤーではなく、代替関係です。',
+      body: '切り替えるには再度 <code>aic setup</code> を実行します。aic は1つの設定を保持し、最後に選んだバックエンドが使われます。',
+    },
+    custom: {
+      h2: 'または任意のカスタムエージェント',
+      body: '4つのプリセットのほか、任意の CLI コマンドをエージェントとして設定できます。stdin でプロンプトを受け取り stdout に出力するなら、aic で駆動できます。',
+    },
+    speed: {
+      h2: 'なぜ速いのか',
+      lede: 'API 経由なし、新たな認証なし。あなたのエージェントは既にモデルを読み込み認証済み — aic は diff を渡してメッセージを読み戻すだけ。',
+      body: '速さはセットアップの省略から来るものであり、より速いモデルからではありません。エージェントのセッションと資格情報を再利用しています。',
+    },
+    verdict: {
+      h2: '要するに',
+      body: '<code>aic</code> + あなたのコーディングエージェント：エージェントが推論し、aic がコミットを出荷。API キーも中間業者も、選ぶモデルも不要 — あるのは aic がいつも生成するのと同じ、バッチ処理されたコンベンショナルなカラー履歴だけ。',
+      releaseNotes: 'v0.5.0 リリースノート',
     },
   },
 
