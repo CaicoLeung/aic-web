@@ -203,6 +203,7 @@ export const messages: Messages = {
     aside: '无中间人 · 无按提交计费 · 调用直接从你的机器发出',
     link: '阅读供应商代码 →',
     yourModel: '（你的模型）',
+    profilesHint: '保存配置 · 用 <code>aic use</code> 切换',
   },
 
   install: {

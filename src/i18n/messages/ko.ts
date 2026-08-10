@@ -200,6 +200,7 @@ export const messages: Messages = {
     aside: '중간자 없음 · 커밋별 추가 비용 없음 · 호출은 당신의 기계에서 직접',
     link: '프로바이더 코드 읽기 →',
     yourModel: '(당신의 모델)',
+    profilesHint: '프로필 저장 · <code>aic use</code>로 전환',
   },
 
   install: {

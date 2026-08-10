@@ -226,6 +226,7 @@ export const messages = {
     aside: 'no middleman · no per-commit markup · calls go straight from your machine',
     link: 'read the provider code →',
     yourModel: '(your model)',
+    profilesHint: 'save profiles · switch with <code>aic use</code>',
   },
 
   install: {

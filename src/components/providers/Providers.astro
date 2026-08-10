@@ -46,6 +46,7 @@ const t = useLocalizer(locale);
     <p class="aside">
       {t('providers.aside')}
     </p>
+    <p class="aside" set:html={t('providers.profilesHint')} />
     <a
       class="link"
       href={`${GITHUB_URL}/blob/main/src/llm.rs`}
