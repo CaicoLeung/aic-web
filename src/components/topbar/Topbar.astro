@@ -226,6 +226,22 @@ const versionTitle = t('topbar.versionTitle', { version });
       display: inline-flex;
     }
   }
+  /* Mobile: the nav is hidden, so only brand · chip · meta share the row.
+     Hide the tagline (widest element) and tighten the row gap so nothing
+     clips or overflows. */
+  @media (max-width: 767px) {
+    .topbar {
+      gap: 0.75rem;
+    }
+    .brand-tag {
+      display: none;
+    }
+  }
+  @media (max-width: 359px) {
+    .topbar {
+      padding-inline: 0.6rem;
+    }
+  }
   .feature-chip {
     display: inline-flex;
     align-items: center;
@@ -255,8 +271,20 @@ const versionTitle = t('topbar.versionTitle', { version });
   .chip-arrow {
     font-size: 0.68rem;
   }
-  @media (max-width: 480px) {
+  /* Narrow screens: the promo chip collapses to its badge so it stops
+     fighting the brand/meta row for space (tablet widths include the nav). */
+  @media (max-width: 950px) {
+    .nav {
+      gap: 1rem;
+    }
     .chip-text {
+      display: none;
+    }
+  }
+  /* Phones: version pill is pure chrome — changelog stays reachable via
+     the footer. */
+  @media (max-width: 480px) {
+    .version {
       display: none;
     }
   }
