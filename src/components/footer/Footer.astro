@@ -15,6 +15,7 @@ const roundupBase = localizedHref(locale, 'best-ai-commit-tools');
 const changelogBase = localizedHref(locale, 'changelog');
 const alternativesBase = localizedHref(locale, 'alternatives');
 const deepseekBase = localizedHref(locale, 'deepseek');
+const agentsBase = localizedHref(locale, 'agents');
 ---
 
 <footer class="footer">
@@ -129,7 +130,21 @@ const deepseekBase = localizedHref(locale, 'deepseek');
           </svg>
           <span>{t('footer.nav.changelog')}</span>
         </a>
+        <a href={agentsBase}>
+          <svg
+            class="flink-icon"
+            viewBox="0 0 24 24"
+            width="15"
+            height="15"
+            aria-hidden="true"
+          >
+            <path d="M4 5h16v11H4z"></path>
+            <path d="M8 9h8M8 12h5"></path>
+          </svg>
+          <span>{t('footer.nav.agents')}</span>
+        </a>
       </nav>
+
       <p>{t('footer.meta')}</p>
     </div>
   </div>

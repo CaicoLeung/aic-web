@@ -1,0 +1,22 @@
+---
+/**
+ * /[locale]/agents/ — localized agents page (ADR-0010).
+ *
+ * Renders the same `AgentsPage` component as the English route; Base
+ * self-determines locale from the URL. Stubbed keys fall back to the EN
+ * source (soft parity, Q7=B).
+ */
+import { isLocalePrefix, LOCALE_PREFIXES } from '@/i18n/config';
+import AgentsPage from '@/components/content/AgentsPage.astro';
+
+export function getStaticPaths() {
+  return LOCALE_PREFIXES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params;
+if (!isLocalePrefix(locale)) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+---
+
+<AgentsPage />

@@ -104,6 +104,11 @@ export const messages = {
       description:
         'Use DeepSeek to write Conventional Commits with aic: first-class provider, one setup wizard, your key never leaves your machine. No Node.js.',
     },
+    agents: {
+      title: 'aic + your AI coding agent — Claude Code, Codex, Pi, OpenCode',
+      description:
+        'aic can delegate to your local AI coding agent — Claude Code, Codex, Pi, or OpenCode — in headless mode. No API key, no middleman: your agent reads the diff and writes the commit, reusing its own model.',
+    },
     changelog: {
       title: 'aic changelog — every release',
       /** `{version}` substituted at render. */
@@ -123,6 +128,10 @@ export const messages = {
       providers: 'providers',
       install: 'install',
     },
+    featureChip: {
+      label: 'New',
+      text: 'bring your agent',
+    },
     switcher: {
       label: 'Language',
     },
@@ -137,6 +146,7 @@ export const messages = {
     compare: 'compare',
     changelog: 'changelog',
     github: 'GitHub',
+    agents: 'agents',
   },
 
   copyButton: {
@@ -182,7 +192,7 @@ export const messages = {
     // translate. Prose details (reads the diff, …) translate normally.
     steps: {
       '01': { label: 'install', detail: 'brew install aic' },
-      '02': { label: 'setup', detail: 'provider · key · model' },
+      '02': { label: 'setup', detail: 'provider · key · model — or your local agent' },
       '03': { label: 'run', detail: 'type:  aic' },
       '04': { label: 'read', detail: 'reads the diff' },
       '05': { label: 'draft', detail: 'writes the message' },
@@ -260,6 +270,7 @@ export const messages = {
       alternatives: 'alternatives',
       deepseek: 'DeepSeek',
       changelog: 'changelog',
+      agents: 'agents',
     },
     meta: 'MIT licensed · built with Astro + Tailwind + GSAP',
   },
@@ -351,6 +362,79 @@ export const messages = {
       // Contains <code>; render via set:html.
       body: '<code>aic resolve</code> reads your conflicted files, proposes resolutions you can actually review, and writes only what you approve — then finishes the merge. It\'s the same "read the diff, draft the fix, ship it" loop aic uses for commits, pointed at the ugliest part of git.',
       releaseNotes: 'v0.3.0 release notes',
+    },
+  },
+
+  agents: {
+    eyebrow: 'Capability · CLI-agent backend',
+    h1: 'Bring your agent, not your key.',
+    // Contains <b>; render via set:html.
+    lede: '<b>aic</b> can delegate to your local AI coding agent — Claude Code, Codex, Pi, or OpenCode — in headless mode. No API key, no default model, no middleman: your agent reads the diff and writes the commit, reusing its own model and auth.',
+    // Contains <code>; render via set:html.
+    ctaHint: 'then run <code>aic setup</code> → pick agent backend',
+    how: {
+      h2: 'How it works',
+      lede: 'Same loop, different backend. Instead of calling an LLM API, aic shells out to your agent in print mode, passes the diff, and lets it do what it does best — reason about the change and write the message.',
+      // `h` may contain <code>; `n` may contain <code> — render both via set:html.
+      steps: [
+        {
+          h: 'Pick the agent backend',
+          n: 'Run <code>aic setup</code> and choose a CLI agent instead of an API provider. aic remembers it.',
+        },
+        {
+          h: 'Delegate, not call',
+          n: 'When you run <code>aic</code>, it shells out to your agent — e.g. <code>claude -p</code> — with the diff and the prompt. The agent does the reasoning.',
+        },
+        {
+          h: 'Same commit output',
+          n: 'Your agent returns the message. aic applies it to your git history — batched, conventional, colored, same as always.',
+        },
+      ],
+    },
+    presets: {
+      h2: 'Four agents, one backend',
+      lede: 'Four presets ship out of the box. Each reuses its own auth — no extra setup if the agent is already installed.',
+      // `h` is the display name; `n` may contain <code> — render via set:html.
+      items: [
+        {
+          h: 'Claude Code',
+          n: 'Streams reasoning live via <code>thinking_delta</code>. You watch the agent think, then commit.',
+        },
+        {
+          h: 'Codex',
+          n: 'Runs silently in a read-only sandbox, returns the message when done.',
+        },
+        {
+          h: 'Pi',
+          n: 'Streams reasoning live, same as Claude Code.',
+        },
+        {
+          h: 'OpenCode',
+          n: 'Runs silently, reuses your existing provider keys (e.g. Cursor OAuth).',
+        },
+      ],
+    },
+    eitherOr: {
+      h2: "Switch your backend — don't run both",
+      // Contains <code>; render via set:html.
+      lede: '<code>backend_kind</code> is a discriminator: only one backend is active per run. The API path (provider · key · model) and the agent path (your local CLI) are alternatives, not layers.',
+      body: 'Run <code>aic setup</code> again to switch. aic stores one config; whichever backend you last picked is the one it uses.',
+    },
+    custom: {
+      h2: 'Or any custom agent',
+      // Contains <code>; render via set:html.
+      body: 'Beyond the four presets, you can configure any CLI command as your agent. If it accepts a prompt on stdin and prints to stdout, aic can drive it.',
+    },
+    speed: {
+      h2: "Why it's fast",
+      lede: 'No API hop, no new auth. Your agent already has the model loaded and authenticated — aic just passes the diff and reads the message back.',
+      body: "The speed comes from skipping the setup, not from a faster model. You're reusing your agent's session and credentials.",
+    },
+    verdict: {
+      h2: 'The short version',
+      // Contains <code>; render via set:html.
+      body: '<code>aic</code> + your coding agent: the agent reasons, aic ships the commit. No API key, no middleman, no model to pick — just the same batched, conventional, colored history aic always produces.',
+      releaseNotes: 'v0.5.0 release notes',
     },
   },
 
