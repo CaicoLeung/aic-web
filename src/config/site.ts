@@ -200,3 +200,56 @@ export const HUNK_SPLITTING: HunkSplitting = {
     { at: 134, type: 'refactor', summary: 'extract token store' },
   ],
 } as const;
+
+/**
+ * v0.5.0 CLI-agent backend presets (#118). `BackendKind::Cli` — aic delegates
+ * to a local coding-agent CLI in headless/print mode, reusing that agent's
+ * own auth. No API key, no default model. Listed in source-repo preset order
+ * (`["claude", "codex", "pi", "opencode"]`). See ADR-0015.
+ */
+export interface AgentPreset {
+  readonly id: string;
+  readonly displayName: string;
+  /** `stream` = reasoning arrives live (thinking_delta); `batch` = silent until done. */
+  readonly reasoning: 'stream' | 'batch';
+}
+
+export const AGENT_PRESETS: readonly AgentPreset[] = [
+  { id: 'claude', displayName: 'Claude Code', reasoning: 'stream' },
+  { id: 'codex', displayName: 'Codex', reasoning: 'batch' },
+  { id: 'pi', displayName: 'Pi', reasoning: 'stream' },
+  { id: 'opencode', displayName: 'OpenCode', reasoning: 'batch' },
+] as const;
+
+/**
+ * v0.5.0 WCAG-safe commit-type palette (#116). Each of the 17 Conventional
+ * Commit types gets a distinct, readable color in CLI terminal output — all
+ * clearing WCAG AA Large (3:1) on light and dark backgrounds. The swatch
+ * strip in batching section (#03) mirrors these exact hues. Source: aic
+ * `types.rs` `NAMED_PALETTE`. See ADR-0016.
+ */
+export interface CommitTypeColor {
+  readonly type: string;
+  /** WCAG-safe hex for light & dark terminals. */
+  readonly color: string;
+}
+
+export const COMMIT_TYPE_PALETTE: readonly CommitTypeColor[] = [
+  { type: 'feat', color: '#15803d' },
+  { type: 'improvement', color: '#059669' },
+  { type: 'fix', color: '#ea580c' },
+  { type: 'perf', color: '#dc2626' },
+  { type: 'hotfix', color: '#e11d48' },
+  { type: 'revert', color: '#c026d3' },
+  { type: 'docs', color: '#2563eb' },
+  { type: 'deps', color: '#0284c7' },
+  { type: 'style', color: '#7c3aed' },
+  { type: 'ci', color: '#6366f1' },
+  { type: 'refactor', color: '#0891b2' },
+  { type: 'chore', color: '#0f766e' },
+  { type: 'build', color: '#a16207' },
+  { type: 'release', color: '#4d7c0f' },
+  { type: 'security', color: '#b45309' },
+  { type: 'test', color: '#db2777' },
+  { type: 'wip', color: '#64748b' },
+] as const;
