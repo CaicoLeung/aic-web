@@ -1,5 +1,0 @@
-{
-  "worktree": {
-    "setup": "git pull origin main --rebase"
-  }
-}
