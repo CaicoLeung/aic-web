@@ -10,6 +10,22 @@ import assert from 'node:assert/strict';
 
 import { COMMIT_TYPE_PALETTE, AGENT_PRESETS } from '../src/config/site.ts';
 
+// ── WCAG relative luminance + contrast (W3C formula) ──
+// Mirrors the source repo's all_colors_pass_wcag_aa_large_on_both_themes
+// guard so a palette edit can't silently break readability here either.
+function relativeLuminance(hex: string): number {
+  const chan = (off: number) => {
+    const c = parseInt(hex.slice(off, off + 2), 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * chan(1) + 0.7152 * chan(3) + 0.0722 * chan(5);
+}
+
+function contrastRatio(fg: string, bg: string): number {
+  const [l1, l2] = [relativeLuminance(fg), relativeLuminance(bg)].sort((a, b) => b - a);
+  return (l1 + 0.05) / (l2 + 0.05);
+}
+
 describe('commit-type palette', () => {
   it('has exactly 17 types', () => {
     assert.equal(COMMIT_TYPE_PALETTE.length, 17);
@@ -24,6 +40,22 @@ describe('commit-type palette', () => {
   it('types are unique', () => {
     const types = COMMIT_TYPE_PALETTE.map((c) => c.type);
     assert.equal(new Set(types).size, types.length, 'duplicate commit types');
+  });
+
+  it('every color clears WCAG AA Large (3:1) on light (#ffffff) and dark (#0d1117)', () => {
+    // Spec #116: single static palette, no theme detection.
+    for (const c of COMMIT_TYPE_PALETTE) {
+      const onLight = contrastRatio(c.color, '#ffffff');
+      const onDark = contrastRatio(c.color, '#0d1117');
+      assert.ok(
+        onLight >= 3,
+        `${c.type} ${c.color}: ${onLight.toFixed(2)}:1 on white < 3:1`,
+      );
+      assert.ok(
+        onDark >= 3,
+        `${c.type} ${c.color}: ${onDark.toFixed(2)}:1 on dark < 3:1`,
+      );
+    }
   });
 });
 
