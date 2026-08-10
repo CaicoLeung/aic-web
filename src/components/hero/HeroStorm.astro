@@ -245,28 +245,6 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
       transparent 100%
     );
   }
-
-  /* Content-lane scrim — sits between the storm (z:0) and the content
-     (z:2). A dark vertical lane behind the centered copy column so the
-     bright t0 rain fragments don't cut through the headline/lede. Linear
-     (rectangular), feathered at the lateral edges so the storm keeps
-     glowing on both sides; 85% base-deep keeps a faint rain presence in
-     the lane instead of a dead black box (design review, option A). */
-  .storm-hero::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    --lane: color-mix(in oklch, var(--color-base-deep) 85%, transparent);
-    background: linear-gradient(
-      to right,
-      transparent,
-      var(--lane) 22%,
-      var(--lane) 78%,
-      transparent
-    );
-  }
   .col {
     position: absolute;
     top: 0;
@@ -378,9 +356,6 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
   }
   .hline .htext {
     display: inline;
-    text-shadow:
-      0 2px 10px rgba(0, 0, 0, 0.6),
-      0 0 22px rgba(0, 0, 0, 0.35);
   }
   h1 .ital {
     font-style: italic;
@@ -626,9 +601,6 @@ const columns: StormCol[] = Array.from({ length: COLS }, (_, i) => {
     font-size: var(--text-lede);
     color: var(--color-ink-muted);
     line-height: 1.65;
-    text-shadow:
-      0 1px 4px rgba(0, 0, 0, 0.65),
-      0 0 12px rgba(0, 0, 0, 0.4);
     max-width: 34rem;
     margin: 0;
     text-align: center;
