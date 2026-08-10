@@ -124,3 +124,52 @@ localized equivalent of the current path; it does not persist a
 preference — each page honors its own URL (ADR-0010).
 _Avoid_: language picker, dropdown (generic — say switcher when naming this
 element).
+
+## Backends
+
+**Backend**:
+The execution source for aic's reasoning — what aic talks to when it drafts a
+commit message or resolves a conflict. Two kinds, mutually exclusive at run
+time: an API **Provider** (key + model) or a CLI **Agent backend** (a local
+agent's auth). The user selects one; only one is active per run. The site's
+Providers section (#04) covers the API kind; a capability page covers the
+Agent kind.
+_Avoid_: engine, driver (generic — say backend when naming the execution source).
+
+**Agent backend** (CLI-agent backend):
+A Backend kind where aic delegates to a local coding-agent CLI — Claude Code,
+Codex, OpenCode, or Pi — in headless/print mode, reusing that agent's own auth.
+No API key, no default model, no middleman: aic never calls an LLM API directly.
+Distinct from a Provider (the API kind): a Provider has a key and a model; an
+Agent backend has a command. The two are co-equal backends, not subtypes.
+_Avoid_: agent provider, CLI integration (muddies the Provider distinction — say
+Agent backend to name the backend kind).
+
+**Provider profile**:
+A remembered API-Provider configuration — the key/model/base-URL bundle a user
+configured once, saved so switching providers restores the bundle instead of
+re-prompting. Switched via `aic use` or the setup wizard. Lives only on the API
+side; an Agent backend has no profile (its config is the command itself).
+_Avoid_: preset (that names a built-in Agent-backend command template, not a
+saved Provider config).
+
+**Preset**:
+A built-in command template for an Agent backend — the resolved
+`command`/`args`/`encoding` aic writes to config when a user picks a known agent
+(Claude Code, Codex, OpenCode, Pi) in `aic setup`. Not a reserved backend name:
+selection is purely "a command is set," and a user may supply a custom command
+instead. An Agent-backend concern; it has no analog on the API-Provider side.
+_Avoid_: template, profile (a Profile is a saved Provider config — say Preset
+when naming a built-in agent command template).
+
+**Commit-type palette**:
+The set of colors aic assigns to Conventional Commit type prefixes in its
+terminal output — seventeen named types (feat, fix, refactor, docs, …) each
+mapped to a distinct hue, plus a deterministic hash fallback for unrecognized
+types. Every color clears WCAG AA Large (3:1) on both light and dark terminals
+via a single palette with no theme detection. The site's batching section (#03)
+demonstrates this palette as a swatch strip; the frozen `HUNK_SPLITTING`
+illustration is a separate concept (per-hunk decomposition) and is not coupled
+to the palette.
+_Avoid_: commit colors, type colors (generic — say Commit-type palette when
+naming the feature).
