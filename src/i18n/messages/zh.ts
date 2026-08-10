@@ -131,7 +131,7 @@ export const messages: Messages = {
     roundup: '工具榜单',
     compare: '对比',
     changelog: '更新日志',
-    agents: 'agents',
+    agents: 'agent',
     github: 'GitHub',
   },
 
@@ -246,7 +246,7 @@ export const messages: Messages = {
       alternatives: '替代方案',
       deepseek: 'DeepSeek',
       changelog: '更新日志',
-      agents: 'agents',
+      agents: 'agent',
     },
     meta: 'MIT 协议 · 基于 Astro + Tailwind + GSAP 构建',
   },
