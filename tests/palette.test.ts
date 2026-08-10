@@ -64,15 +64,15 @@ describe('agent presets', () => {
     assert.equal(AGENT_PRESETS.length, 4);
   });
 
-  it('all reasoning values are stream or batch', () => {
-    for (const a of AGENT_PRESETS) {
-      assert.ok(
-        a.reasoning === 'stream' || a.reasoning === 'batch',
-        `${a.id}: invalid reasoning "${a.reasoning}"`,
-      );
-    }
+  it('matches source Encoding::streams_reasoning_live classification', () => {
+    // Spec #118: ClaudeStreamJson + PiStreamJson stream; CodexJson +
+    // OpenCodeJson are batch (answer arrives whole, no live token stream).
+    const byId = Object.fromEntries(AGENT_PRESETS.map((a) => [a.id, a.reasoning]));
+    assert.equal(byId.claude, 'stream', 'claude must stream (ClaudeStreamJson)');
+    assert.equal(byId.pi, 'stream', 'pi must stream (PiStreamJson)');
+    assert.equal(byId.codex, 'batch', 'codex must batch (CodexJson)');
+    assert.equal(byId.opencode, 'batch', 'opencode must batch (OpenCodeJson)');
   });
-
   it('ids are unique', () => {
     const ids = AGENT_PRESETS.map((a) => a.id);
     assert.equal(new Set(ids).size, ids.length, 'duplicate agent ids');
