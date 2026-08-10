@@ -190,6 +190,7 @@ export const messages: Messages = {
     h2: '一个文件，多个提交',
     lede: 'aic 在 hunk 层级读取你的 diff——这样一个文件也能拆成多个聚焦的提交，每个只讲一件事。没有暂存、一条命令、一份干净的历史——即使一个文件涉及三处不同的改动。',
     aside: '按 hunk 批处理 ✦',
+    swatchLabel: '17 种提交类型 · WCAG 安全配色',
     stripLabel: '推理 · 按 hunk',
     shipBadge: '随 v{version} 发布',
     cmpLink: '查看 aic 在最佳 AI 提交工具中的位置 →',

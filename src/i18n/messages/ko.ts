@@ -187,6 +187,7 @@ export const messages: Messages = {
     h2: '한 파일, 여러 커밋',
     lede: 'aic는 hunk 단위로 diff를 읽습니다 — 그래서 한 파일도 여러 개의 집중된 커밋이 될 수 있고, 각각 하나의 아이디어. 스테이지 없이, 명령 한 번, 깔끔한 히스토리 — 한 파일이 세 가지 관심사에 걸쳐 있어도.',
     aside: 'hunk별 배치 ✦',
+    swatchLabel: '17가지 커밋 타입 · WCAG 안전 색상',
     stripLabel: '추론 · hunk별',
     shipBadge: 'v{version}에 탑재',
     cmpLink: '최고 AI 커밋 도구들 사이의 aic 보기 →',

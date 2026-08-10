@@ -212,6 +212,7 @@ export const messages = {
     h2: 'one file, many commits',
     lede: 'aic reads your diff at the hunk level — so a single file can become several focused commits, each one idea. Nothing staged, one command, a clean history — even when one file touches three concerns.',
     aside: 'per-hunk batching ✦',
+    swatchLabel: '17 commit types · WCAG-safe colors',
     stripLabel: 'reasoning · per hunk',
     /** `{version}` is the shipped-in semver (HUNK_SPLITTING.shippedIn). */
     shipBadge: 'shipped in v{version}',
