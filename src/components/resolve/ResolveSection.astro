@@ -11,8 +11,7 @@
  * eyebrow / lede / link are section-specific. Scoped CSS mirrors Providers.
  */
 import ResolveTerminal from '@/components/resolve/ResolveTerminal.astro';
-import { localeFromUrl } from '@/i18n/config';
-import { localizedHref } from '@/i18n/config';
+import { localeFromUrl, localizedHref } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 
 const locale = localeFromUrl(Astro.url.pathname);
