@@ -157,23 +157,18 @@ export const messages = {
   hero: {
     eyebrow: '01 — Introduction',
     h1: {
-      stopWriting: 'Stop writing',
-      commit: 'commit',
-      messages: 'messages.',
-      stopUntangling: 'Stop untangling',
-      merge: 'merge',
-      conflicts: 'conflicts.',
+      line1: 'one file',
+      line2: 'three concerns',
+      line3: 'three commits',
     },
     // Contains <b>; render via set:html. Split at the resolve link (dynamic href).
     ledeBefore:
-      'Your history shouldn\'t say <em>"fix stuff"</em> and <em>"WIP"</em>. <b>aic</b> reads your diff, writes a real conventional commit, and ships it — one command. Mid-merge? It ',
-    ledeLink: 'proposes a clean resolution',
+      'aic reads your diff at the hunk level and splits unstaged work into focused, conventional commits — so one file touching three concerns becomes three commits, not one. Mid-merge? It ',
+    ledeLink: 'resolves every conflict',
     ledeAfter:
-      ' for each conflicted file — and nothing lands until you approve the diff. Nothing staged? It splits one file into several focused commits, automatically.',
+      ' and shows you the diff before anything lands. Already live in Claude Code or Codex? Point aic at your agent — no API key, no middleman.',
     // Contains <code>; render via set:html. `{cmd}` is the literal command.
     ctaHint: 'then run <code>{cmd}</code> — one wizard: provider → key → model',
-    /** Above-the-fold credibility line. `{version}` substituted at render. */
-    trust: '★ {stars} · MIT · no Node.js · ships weekly',
     /** Names the primary action above the command (CRO). */
     ctaLabel: 'Install aic — one command',
     /** Platform microcopy under the hero CTA (CRO). */

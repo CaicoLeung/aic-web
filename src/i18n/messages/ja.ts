@@ -140,21 +140,16 @@ export const messages: Messages = {
   hero: {
     eyebrow: '01 — はじめに',
     h1: {
-      stopWriting: 'もう書かない、',
-      commit: 'コミット',
-      messages: 'メッセージ。',
-      stopUntangling: 'もう解かない、',
-      merge: 'マージ',
-      conflicts: 'コンフリクト。',
+      line1: '1つのファイル',
+      line2: '3つの関心事',
+      line3: '3つのコミット',
     },
     ledeBefore:
-      '履歴が <em>"fix stuff"</em> や <em>"WIP"</em> だらけでいいはずがない。<b>aic</b> は diff を読み、本物の conventional コミットを書いて送り出します — コマンド1つ。マージ中なら、',
-    ledeLink: 'クリーンな解決を提案',
+      'aic は hunk レベルで diff を読み、未ステージの作業を焦点を絞った conventional コミットに分割します — 1つのファイルが3つの関心事に触れていれば、1つではなく3つのコミットに。マージ中なら、',
+    ledeLink: 'すべてのコンフリクトを解決',
     ledeAfter:
-      'します — ファイルごとに、あなたが diff を承認するまで何も適用されません。ステージなし？1つのファイルを複数の焦点を絞ったコミットに、自動で分割します。',
+      'し、何かが適用される前に diff を示します。すでに Claude Code や Codex を使っている？ aic をあなたのエージェントに向けるだけ — API キー不要、中間業者なし。',
     ctaHint: 'そして <code>{cmd}</code> を実行',
-    /** Above-the-fold credibility line. `{version}` substituted at render. */
-    trust: '★ {stars} · MIT · Node.js 不要 · 毎週リリース',
     /** 主アクションの命名(CRO)。 */
     ctaLabel: 'aic をインストール — コマンド1つ',
     /** CTA 下のプラットフォーム微コピー(CRO)。 */

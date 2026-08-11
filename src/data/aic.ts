@@ -12,9 +12,7 @@
 
 import {
   FALLBACK_PROVIDERS,
-  FALLBACK_STARS,
   FALLBACK_VERSION,
-  GITHUB_API_URL,
   GITHUB_RAW_BASE,
   PROVIDER_DISPLAY_NAMES,
   type ProviderInfo,
@@ -26,8 +24,6 @@ export interface AicFacts {
   readonly version: string;
   /** Provider list, in source-repo declaration order. */
   readonly providers: readonly ProviderInfo[];
-  /** GitHub star count for the trust line (fallback FALLBACK_STARS). */
-  readonly stars: number;
 }
 
 /** Fetch a source-repo file. Build-time only; null degrades to FALLBACK_* (ADR-0003). */
@@ -102,33 +98,12 @@ function parseDefaultModels(src: string): Map<string, string> {
   return out;
 }
 
-/**
- * GitHub star count for the hero trust line. Public API; falls back to
- * FALLBACK_STARS on any failure so the build never breaks (ADR-0003).
- */
-async function loadStars(): Promise<number> {
-  const res = await fetchBuildTime(GITHUB_API_URL);
-  if (!res) return FALLBACK_STARS;
-  try {
-    const json = (await res.json()) as { stargazers_count?: unknown };
-    return typeof json.stargazers_count === 'number'
-      ? json.stargazers_count
-      : FALLBACK_STARS;
-  } catch {
-    return FALLBACK_STARS;
-  }
-}
-
 let cached: AicFacts | null = null;
 
 export async function loadAicFacts(): Promise<AicFacts> {
   if (cached) return cached;
 
-  const [version, providers, stars] = await Promise.all([
-    loadVersion(),
-    loadProviders(),
-    loadStars(),
-  ]);
-  cached = { version, providers, stars };
+  const [version, providers] = await Promise.all([loadVersion(), loadProviders()]);
+  cached = { version, providers };
   return cached;
 }

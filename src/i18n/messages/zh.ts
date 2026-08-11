@@ -142,21 +142,16 @@ export const messages: Messages = {
   hero: {
     eyebrow: '01 — 介绍',
     h1: {
-      stopWriting: '别再写',
-      commit: '提交',
-      messages: '信息。',
-      stopUntangling: '别再费力解开',
-      merge: '合并',
-      conflicts: '冲突。',
+      line1: '一个文件',
+      line2: '三处改动',
+      line3: '三个提交',
     },
     ledeBefore:
-      '你的历史不该满是 <em>"fix stuff"</em> 和 <em>"WIP"</em>。<b>aic</b> 读取你的 diff、写出真正的约定式提交并交付——一条命令。合并进行中？它会',
-    ledeLink: '提出干净的解决方案',
+      'aic 在 hunk 层级读取你的 diff，把未暂存的工作拆成聚焦的约定式提交——一个文件涉及三处改动，就变成三个提交，而不是一个。合并进行中？它会',
+    ledeLink: '逐个解决冲突',
     ledeAfter:
-      '——针对每个冲突文件，而且在你批准 diff 之前什么都不会落地。没有暂存？它会把一个文件拆成多个聚焦的提交，自动完成。',
+      '，并在任何内容落地前向你展示 diff。已经在用 Claude Code 或 Codex？把 aic 指向你的 agent——无需 API 密钥，没有中间人。',
     ctaHint: '然后运行 <code>{cmd}</code>',
-    /** Above-the-fold credibility line. `{version}` substituted at render. */
-    trust: '★ {stars} · MIT 协议 · 无需 Node.js · 每周发布',
     /** 主动作命名(CRO)。 */
     ctaLabel: '安装 aic——一条命令',
     /** CTA 下方平台微文案(CRO)。 */

@@ -26,12 +26,6 @@ export const FETCH_TIMEOUT_MS = 8000;
 /** Visible across the site; overwritten by loadAicFacts() when reachable. */
 export const FALLBACK_VERSION = '0.3.0';
 
-/** GitHub API base for repo facts (stars). Fallback shown when unreachable (ADR-0003). */
-export const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`;
-
-/** Stars as of 2026-08-01 — used by the hero trust line until the live fetch lands. */
-export const FALLBACK_STARS = 8;
-
 export interface ProviderInfo {
   /** Lowercase id as used in config/env (`openai`, `anthropic`, …). */
   readonly id: string;
