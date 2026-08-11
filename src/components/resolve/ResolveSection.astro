@@ -1,0 +1,70 @@
+---
+/**
+ * ResolveSection — homepage spine section #04 (ADR-0017).
+ *
+ * Compact teaser for the `aic resolve` capability, surfacing merge-conflict
+ * resolution as a co-equal verb alongside auto-batching. The animated
+ * ResolveTerminal mockup is the proof; the link hands off to the full
+ * capability page (/resolve/) for the workflow narrative.
+ *
+ * h2 reuses `resolve.h1.main` (single source for the headline); only the
+ * eyebrow / lede / link are section-specific. Scoped CSS mirrors Providers.
+ */
+import ResolveTerminal from '@/components/resolve/ResolveTerminal.astro';
+import { localeFromUrl, localizedHref } from '@/i18n/config';
+import { useLocalizer } from '@/i18n/t';
+
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useLocalizer(locale);
+const resolvePage = localizedHref(locale, 'resolve');
+---
+
+<section id="resolve" class="section resolve-section">
+  <div class="container">
+    <p class="eyebrow">
+      <span class="line" aria-hidden="true"></span>{t('resolveSection.eyebrow')}
+    </p>
+    <h2>{t('resolve.h1.main')}</h2>
+    <p class="lede" set:html={t('resolveSection.lede')} />
+
+    <div class="terminal-wrap">
+      <ResolveTerminal />
+    </div>
+
+    <a class="link" href={resolvePage}>{t('resolveSection.link')}</a>
+  </div>
+</section>
+
+<style>
+  .resolve-section {
+    padding: clamp(3rem, 1rem + 6vw, 6rem) 0;
+    position: relative;
+    z-index: 2;
+  }
+  h2 {
+    font-size: var(--text-h2);
+    line-height: 1.05;
+    margin: 0.75rem 0 0;
+  }
+  .lede {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    margin-top: 1rem;
+    max-width: 40rem;
+    font-size: var(--text-lede);
+  }
+  .terminal-wrap {
+    max-width: 46rem;
+    margin: 2.5rem auto 1.5rem;
+  }
+  .link {
+    color: var(--color-amber);
+    text-decoration: none;
+    font-size: 0.88rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--duration-fast) ease;
+  }
+  .link:hover {
+    border-bottom-color: var(--color-amber);
+  }
+</style>

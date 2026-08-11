@@ -35,11 +35,6 @@ import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 
-interface Props {
-  readonly stars?: number;
-}
-const { stars } = Astro.props;
-
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const resolveUrl = localizedHref(locale, 'resolve');
@@ -58,18 +53,13 @@ const resolveUrl = localizedHref(locale, 'resolve');
 
     <h1 class="hero-h1">
       <span class="kin-line">
-        <span class="kin-inner">
-          {t('hero.h1.stopWriting')}{' '}
-          <em class="ital">{t('hero.h1.commit')}</em>{' '}
-          <span class="pop">{t('hero.h1.messages')}</span>
-        </span>
+        <span class="kin-inner">{t('hero.h1.line1')}</span>
       </span>
       <span class="kin-line">
-        <span class="kin-inner">
-          {t('hero.h1.stopUntangling')}{' '}
-          <em class="ital">{t('hero.h1.merge')}</em>{' '}
-          <span class="pop">{t('hero.h1.conflicts')}</span>
-        </span>
+        <span class="kin-inner">{t('hero.h1.line2')}</span>
+      </span>
+      <span class="kin-line">
+        <span class="kin-inner pop">{t('hero.h1.line3')}</span>
       </span>
     </h1>
 
@@ -84,14 +74,6 @@ const resolveUrl = localizedHref(locale, 'resolve');
     </p>
 
     <div class="hero-actions">
-      {
-        stars !== undefined && (
-          <p class="hero-trust" data-reveal>
-            {t('hero.trust', { stars })}
-          </p>
-        )
-      }
-
       <div class="hero-cta" data-reveal>
         <div class="cta-stack">
           <span class="cta-label">{t('hero.ctaLabel')}</span>

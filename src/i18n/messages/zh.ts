@@ -112,12 +112,10 @@ export const messages: Messages = {
     nav: {
       how: '原理',
       batching: '批处理',
+      resolve: '解决冲突',
+      agents: 'agent',
       providers: '供应商',
       install: '安装',
-    },
-    featureChip: {
-      label: '新',
-      text: '带上你的 agent',
     },
     switcher: {
       label: '语言',
@@ -144,21 +142,16 @@ export const messages: Messages = {
   hero: {
     eyebrow: '01 — 介绍',
     h1: {
-      stopWriting: '别再写',
-      commit: '提交',
-      messages: '信息。',
-      stopUntangling: '别再费力解开',
-      merge: '合并',
-      conflicts: '冲突。',
+      line1: '一个文件',
+      line2: '三处改动',
+      line3: '三个提交',
     },
     ledeBefore:
-      '你的历史不该满是 <em>"fix stuff"</em> 和 <em>"WIP"</em>。<b>aic</b> 读取你的 diff、写出真正的约定式提交并交付——一条命令。合并进行中？它会',
-    ledeLink: '提出干净的解决方案',
+      'aic 在 hunk 层级读取你的 diff，把未暂存的工作拆成聚焦的约定式提交——一个文件涉及三处改动，就变成三个提交，而不是一个。合并进行中？它会',
+    ledeLink: '逐个解决冲突',
     ledeAfter:
-      '——针对每个冲突文件，而且在你批准 diff 之前什么都不会落地。没有暂存？它会把一个文件拆成多个聚焦的提交，自动完成。',
+      '，并在任何内容落地前向你展示 diff。已经在用 Claude Code 或 Codex？把 aic 指向你的 agent——无需 API 密钥，没有中间人。',
     ctaHint: '然后运行 <code>{cmd}</code>',
-    /** Above-the-fold credibility line. `{version}` substituted at render. */
-    trust: '★ {stars} · MIT 协议 · 无需 Node.js · 每周发布',
     /** 主动作命名(CRO)。 */
     ctaLabel: '安装 aic——一条命令',
     /** CTA 下方平台微文案(CRO)。 */
@@ -186,18 +179,29 @@ export const messages: Messages = {
 
   batching: {
     eyebrow: '03 — 自动批处理',
-    kicker: '没有暂存内容？',
+    kicker: '到文件边界为止',
     h2: '一个文件，多个提交',
-    lede: 'aic 在 hunk 层级读取你的 diff——这样一个文件也能拆成多个聚焦的提交，每个只讲一件事。没有暂存、一条命令、一份干净的历史——即使一个文件涉及三处不同的改动。',
+    lede: '其他提交工具都止步于文件边界——一个文件，一条信息。aic 在 hunk 层级读取你的 diff，所以一个涉及三处改动的文件会变成三个聚焦的约定式提交。没有暂存、一条命令、一份真正能干净回读的历史。',
     aside: '按 hunk 批处理 ✦',
     swatchLabel: '17 种提交类型 · WCAG 安全配色',
     stripLabel: '推理 · 按 hunk',
     shipBadge: '随 v{version} 发布',
     cmpLink: '查看 aic 在最佳 AI 提交工具中的位置 →',
   },
+  resolveSection: {
+    eyebrow: '04 — 解决冲突',
+    lede: '合并到一半？一条命令。aic 读取每个冲突文件，提出无标记的解决方案，并在落盘前展示合并后的 diff。每个文件单独 <code>y/n</code>——批准你信任的，拒绝其余的，然后它完成合并。',
+    link: '查看 aic 如何解决冲突 →',
+  },
+
+  agentsSection: {
+    eyebrow: '05 — 带上你的 agent',
+    lede: '已经在用 Claude Code、Codex、Pi 或 OpenCode？以无头模式把 aic 指向你的 agent——它传递 diff，你的 agent 写提交信息，aic 提交。无需 API 密钥，无需默认模型：复用你 agent 自己的认证。',
+    link: '查看 agent 后端 →',
+  },
 
   providers: {
-    eyebrow: '04 — 供应商与隐私',
+    eyebrow: '06 — 供应商与隐私',
     h2: '你的密钥 · 你的模型',
     lede: '自带供应商。aic 直连你的 LLM——没有中间人，没有按提交计费，没有代理。你的 API 密钥永不离开你的机器。',
     aside: '无中间人 · 无按提交计费 · 调用直接从你的机器发出',
@@ -207,7 +211,7 @@ export const messages: Messages = {
   },
 
   install: {
-    eyebrow: '05 — 安装',
+    eyebrow: '07 — 安装',
     h2: '一行安装 aic。',
     // CRO 信任条——在安装方式前回答主要顾虑。
     trust: [

@@ -110,12 +110,10 @@ export const messages: Messages = {
     nav: {
       how: '使い方',
       batching: 'バッチ処理',
+      resolve: '解決',
+      agents: 'エージェント',
       providers: 'プロバイダ',
       install: 'インストール',
-    },
-    featureChip: {
-      label: '新機能',
-      text: 'あなたのエージェントを連携',
     },
     switcher: {
       label: '言語',
@@ -142,21 +140,16 @@ export const messages: Messages = {
   hero: {
     eyebrow: '01 — はじめに',
     h1: {
-      stopWriting: 'もう書かない、',
-      commit: 'コミット',
-      messages: 'メッセージ。',
-      stopUntangling: 'もう解かない、',
-      merge: 'マージ',
-      conflicts: 'コンフリクト。',
+      line1: '1つのファイル',
+      line2: '3つの関心事',
+      line3: '3つのコミット',
     },
     ledeBefore:
-      '履歴が <em>"fix stuff"</em> や <em>"WIP"</em> だらけでいいはずがない。<b>aic</b> は diff を読み、本物の conventional コミットを書いて送り出します — コマンド1つ。マージ中なら、',
-    ledeLink: 'クリーンな解決を提案',
+      'aic は hunk レベルで diff を読み、未ステージの作業を焦点を絞った conventional コミットに分割します — 1つのファイルが3つの関心事に触れていれば、1つではなく3つのコミットに。マージ中なら、',
+    ledeLink: 'すべてのコンフリクトを解決',
     ledeAfter:
-      'します — ファイルごとに、あなたが diff を承認するまで何も適用されません。ステージなし？1つのファイルを複数の焦点を絞ったコミットに、自動で分割します。',
+      'し、何かが適用される前に diff を示します。すでに Claude Code や Codex を使っている？ aic をあなたのエージェントに向けるだけ — API キー不要、中間業者なし。',
     ctaHint: 'そして <code>{cmd}</code> を実行',
-    /** Above-the-fold credibility line. `{version}` substituted at render. */
-    trust: '★ {stars} · MIT · Node.js 不要 · 毎週リリース',
     /** 主アクションの命名(CRO)。 */
     ctaLabel: 'aic をインストール — コマンド1つ',
     /** CTA 下のプラットフォーム微コピー(CRO)。 */
@@ -188,17 +181,28 @@ export const messages: Messages = {
   batching: {
     eyebrow: '03 — 自動バッチ処理',
     swatchLabel: '17 種類のコミット · WCAG セーフな色',
-    kicker: '何もステージしていない？',
+    kicker: 'ファイル境界のさらに下へ',
     h2: '1つのファイル、複数のコミット',
-    lede: 'aic は hunk レベルで diff を読みます — だから1つのファイルでも複数の焦点を絞ったコミットになり、それぞれが1つのアイデア。ステージなし、コマンド1つ、クリーンな履歴 — 1つのファイルが3つの関心事に触れていても。',
+    lede: '他のコミットツールはファイル境界で止まります — 1ファイル、1メッセージ。aic は hunk レベルで diff を読むので、3つの関心事に触れる1つのファイルが3つの焦点を絞った conventional コミットになります。ステージなし、コマンド1つ、本当にクリーンに読み返せる履歴。',
     aside: 'hunk ごとのバッチ処理 ✦',
     stripLabel: '推論 · hunk ごと',
     shipBadge: 'v{version} で搭載',
     cmpLink: 'ベスト AI コミットツールの中の aic を見る →',
   },
+  resolveSection: {
+    eyebrow: '04 — コンフリクト解決',
+    lede: 'マージ途中でコマンド一本。aic は衝突した各ファイルを読み、マーカーのない解決案を提示し、書き込む前に統合 diff を示します。各ファイルは個別の <code>y/n</code> です — 信頼できるものを承認し、残りを拒否し、マージを完了します。',
+    link: 'aic がコンフリクトを解決する流れ →',
+  },
+
+  agentsSection: {
+    eyebrow: '05 — あなたのエージェントを連携',
+    lede: 'Claude Code、Codex、Pi、OpenCode を既に使っていますか？aic をヘッドレスモードであなたのエージェントに向けます — diff を渡し、エージェントがメッセージを書き、aic がコミットします。API キーもデフォルトモデルも不要：エージェント自身の認証を再利用します。',
+    link: 'エージェントバックエンドを見る →',
+  },
 
   providers: {
-    eyebrow: '04 — プロバイダとプライバシー',
+    eyebrow: '06 — プロバイダとプライバシー',
     h2: 'あなたのキー · あなたのモデル',
     profilesHint: 'プロファイルを保存 · <code>aic use</code> で切り替え',
     lede: 'プロバイダを自分で。aic は LLM と直接通信 — 中間業者なし、コミットごとの課金なし、プロキシなし。API キーはあなたのマシンから出ません。',
@@ -208,7 +212,7 @@ export const messages: Messages = {
   },
 
   install: {
-    eyebrow: '05 — インストール',
+    eyebrow: '07 — インストール',
     h2: '1行で aic をインストール。',
     // CRO トラストストリップ — インストール方法の前に主な懸念へ回答。
     trust: [

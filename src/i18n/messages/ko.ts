@@ -109,12 +109,10 @@ export const messages: Messages = {
     nav: {
       how: '사용법',
       batching: '배치',
+      resolve: '충돌 해결',
+      agents: '에이전트',
       providers: '프로바이더',
       install: '설치',
-    },
-    featureChip: {
-      label: '신규',
-      text: '에이전트 가져오기',
     },
     switcher: {
       label: '언어',
@@ -141,21 +139,16 @@ export const messages: Messages = {
   hero: {
     eyebrow: '01 — 소개',
     h1: {
-      stopWriting: '그만 쓰자,',
-      commit: '커밋',
-      messages: '메시지.',
-      stopUntangling: '그만 풀자,',
-      merge: '병합',
-      conflicts: '충돌.',
+      line1: '하나의 파일',
+      line2: '세 가지 관심사',
+      line3: '세 개의 커밋',
     },
     ledeBefore:
-      '히스토리가 <em>"fix stuff"</em>와 <em>"WIP"</em>뿐이어선 안 됩니다. <b>aic</b>는 diff를 읽고 진짜 conventional 커밋을 작성해 보냅니다 — 명령 한 번. 병합 중이라면, ',
-    ledeLink: '깔끔한 해결책을 제안',
+      'aic는 hunk 단위로 diff를 읽고 미스테이지 작업을 집중된 conventional 커밋으로 분할합니다 — 한 파일이 세 가지 관심사에 걸쳐 있으면 한 개가 아닌 세 개의 커밋으로. 병합 중이라면, ',
+    ledeLink: '모든 충돌을 해결',
     ledeAfter:
-      '합니다 — 파일마다, 당신이 diff를 승인하기 전에는 아무것도 적용되지 않습니다. 스테이징 없음? 한 파일을 여러 집중 커밋으로 자동 분할합니다.',
+      '하고, 무엇이든 적용되기 전에 diff를 보여줍니다. 이미 Claude Code나 Codex를 쓰고 있다면? aic를 당신의 에이전트로 향하게 하세요 — API 키 불필요, 중간자 없음.',
     ctaHint: '그런 다음 <code>{cmd}</code> 실행',
-    /** Above-the-fold credibility line. `{version}` substituted at render. */
-    trust: '★ {stars} · MIT · Node.js 불필요 · 매주 릴리스',
     /** 기본 동작 이름 표시(CRO). */
     ctaLabel: 'aic 설치 — 명령 하나',
     /** CTA 아래 플랫폼 안내(CRO). */
@@ -183,18 +176,29 @@ export const messages: Messages = {
 
   batching: {
     eyebrow: '03 — 자동 배치',
-    kicker: '스테이지된 게 없어?',
+    kicker: '파일 경계 아래로',
     h2: '한 파일, 여러 커밋',
-    lede: 'aic는 hunk 단위로 diff를 읽습니다 — 그래서 한 파일도 여러 개의 집중된 커밋이 될 수 있고, 각각 하나의 아이디어. 스테이지 없이, 명령 한 번, 깔끔한 히스토리 — 한 파일이 세 가지 관심사에 걸쳐 있어도.',
+    lede: '다른 커밋 도구들은 모두 파일 경계에서 멈춥니다 — 한 파일, 한 메시지. aic는 hunk 단위로 diff를 읽으므로, 세 가지 관심사에 걸친 한 파일이 세 개의 집중된 conventional 커밋이 됩니다. 스테이지 없이, 명령 한 번, 실제로 깔끔하게 읽히는 히스토리.',
     aside: 'hunk별 배치 ✦',
     swatchLabel: '17가지 커밋 타입 · WCAG 안전 색상',
     stripLabel: '추론 · hunk별',
     shipBadge: 'v{version}에 탑재',
     cmpLink: '최고 AI 커밋 도구들 사이의 aic 보기 →',
   },
+  resolveSection: {
+    eyebrow: '04 — 충돌 해결',
+    lede: '병합 중이라면 명령 한 번. aic는 충돌된 각 파일을 읽고 마커 없는 해결안을 제안하며, 디스크에 쓰기 전에 통합 diff를 보여줍니다. 각 파일은 별도의 <code>y/n</code>입니다 — 신뢰하는 것은 승인하고, 나머지는 거부하세요. 그리고 병합을 마칩니다.',
+    link: 'aic가 충돌을 해결하는 흐름 →',
+  },
+
+  agentsSection: {
+    eyebrow: '05 — 에이전트 가져오기',
+    lede: '이미 Claude Code, Codex, Pi, 또는 OpenCode를 쓰고 계신가요? 헤드리스 모드에서 aic를 당신의 에이전트로 향하게 하세요 — diff를 넘기고, 에이전트가 메시지를 쓰고, aic가 커밋합니다. API 키도 기본 모델도 없음: 에이전트 자체의 인증을 재사용합니다.',
+    link: '에이전트 백엔드 보기 →',
+  },
 
   providers: {
-    eyebrow: '04 — 프로바이더와 프라이버시',
+    eyebrow: '06 — 프로바이더와 프라이버시',
     h2: '당신의 키 · 당신의 모델',
     lede: '프로바이더를 직접. aic는 LLM과 직접 통신 — 중간자 없음, 커밋별 추가 비용 없음, 프록시 없음. API 키는 당신의 기계를 떠나지 않습니다.',
     aside: '중간자 없음 · 커밋별 추가 비용 없음 · 호출은 당신의 기계에서 직접',
@@ -204,7 +208,7 @@ export const messages: Messages = {
   },
 
   install: {
-    eyebrow: '05 — 설치',
+    eyebrow: '07 — 설치',
     h2: '한 줄로 aic 설치.',
     // CRO 신뢰 스트립 — 설치 방법 전에 주요 우려에 답합니다.
     trust: [

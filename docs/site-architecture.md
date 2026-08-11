@@ -3,7 +3,7 @@
 **Generated**: 2026-08-01 · **Scope**: marketing site for aic (AI git commit CLI)
 **Site type**: Hybrid SaaS-marketing + SEO content (single-page product home + content pages)
 **Locale model**: ADR-0010 — `en` canonical at root, `zh`/`ja`/`ko` prefixed (`/{locale}/`)
-**Constraint**: homepage spine is a fixed 7 sections (CONTEXT.md) — content pages are the growth surface
+**Constraint**: homepage spine is 9 sections (ADR-0017, was 7; CONTEXT.md) — content pages are the growth surface
 
 ---
 
@@ -11,7 +11,7 @@
 
 ```
 Homepage (/)                                    L0
-├── [homepage spine, anchored sections]         L1  (fixed 7: Topbar · Hero · How it works · Auto-batching · Providers · Install · Footer)
+├── [homepage spine, anchored sections]         L1  (V2 nine: Topbar · Hero · How it works · Auto-batching · Resolve · Bring your agent · Providers · Install · Footer)
 ├── Resolve (/resolve)                          L1  capability page (ADR-0006)
 ├── Roundup (/best-ai-commit-tools)             L1  SEO survey hub
 │   ├── vs aicommits (/vs/aicommits)            L2  comparison
@@ -99,7 +99,7 @@ URL conventions already compliant: lowercase, hyphens, trailing slash, no dates/
 
 **Current:**
 
-- Homepage Topbar (anchors): `how · batching · providers · install` + version chip + GitHub + language switcher — fixed spine, leave as-is.
+- Homepage Topbar (anchors): `how · batching · resolve · agents · providers · install` + version chip + GitHub + language switcher — V2 spine (ADR-0017).
 - Content pages use `ContentHeader`: brand · home · changelog · GitHub + version chip.
 - Footer: Resolve · Roundup · Compare (vs/aicommits) · Changelog + Star CTA.
 
@@ -113,6 +113,11 @@ URL conventions already compliant: lowercase, hyphens, trailing slash, no dates/
 > section's internal visual treatment. The Hero section's chrome + motion were
 > redesigned per ADR-0013; the other six sections are untouched. See
 > `docs/adr/0013-hero-parallax-deck.md`.
+> **Spine expanded (ADR-0017).** The fixed-seven grew to nine: resolve + the
+> agent backend were promoted to permanent spine sections (#04, #05),
+> symmetrically — dissolving the asymmetry ADR-0015 had defended. The
+> ADR-0015 Feature-highlight chip is retired (agents is now permanent, not
+> transient). See `docs/adr/0017-v2-respine-promote-resolve-agents.md`.
 
 **P1:** rename ContentHeader "Compare" target to a comparison hub if one is built; add "Alternatives" footer column when P2 ships.
 

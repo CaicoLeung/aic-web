@@ -27,10 +27,12 @@ A decorative in-page graphic that reinforces copy — the animated
 _Avoid_: screenshot, picture, photo (there are none).
 
 **Section**:
-A permanent anchored block of the homepage spine (the fixed seven: Topbar ·
-Hero · How it works · Auto-batching · Providers · Install · Footer). A
-co-equal pillar of the product story that survives version churn. Adding an
-eighth is a deliberate, ADR-grade break of the fixed-spine decision.
+A permanent anchored block of the homepage spine (the V2 nine: Topbar · Hero ·
+How it works · Auto-batching · Resolve · Bring your agent · Providers · Install
+· Footer — see ADR-0017). A co-equal pillar of the product story that survives
+version churn. The original fixed-seven was expanded to nine by symmetrically
+promoting resolve + the agent backend (ADR-0017); further additions remain an
+ADR-grade break.
 _Avoid_: block, panel (generic — say section when naming a spine unit).
 
 **Feature highlight**:
