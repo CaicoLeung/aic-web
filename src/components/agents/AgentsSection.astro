@@ -1,0 +1,70 @@
+---
+/**
+ * AgentsSection — homepage spine section #05 (ADR-0017).
+ *
+ * Compact teaser for the CLI-agent backend, surfacing delegation to a local
+ * coding agent (Claude Code / Codex / Pi / OpenCode) as a co-equal verb.
+ * The animated AgentTerminal mockup is the proof; the link hands off to the
+ * full capability page (/agents/) for the presets + how-it-works narrative.
+ *
+ * h2 reuses `agents.h1` (single source for the headline); only the eyebrow /
+ * lede / link are section-specific. Scoped CSS mirrors Providers.
+ */
+import AgentTerminal from '@/components/agents/AgentTerminal.astro';
+import { localeFromUrl, localizedHref } from '@/i18n/config';
+import { useLocalizer } from '@/i18n/t';
+
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useLocalizer(locale);
+const agentsPage = localizedHref(locale, 'agents');
+---
+
+<section id="agents" class="section agents-section">
+  <div class="container">
+    <p class="eyebrow">
+      <span class="line" aria-hidden="true"></span>{t('agentsSection.eyebrow')}
+    </p>
+    <h2>{t('agents.h1')}</h2>
+    <p class="lede">{t('agentsSection.lede')}</p>
+
+    <div class="terminal-wrap">
+      <AgentTerminal />
+    </div>
+
+    <a class="link" href={agentsPage}>{t('agentsSection.link')}</a>
+  </div>
+</section>
+
+<style>
+  .agents-section {
+    padding: clamp(3rem, 1rem + 6vw, 6rem) 0;
+    position: relative;
+    z-index: 2;
+  }
+  h2 {
+    font-size: var(--text-h2);
+    line-height: 1.05;
+    margin: 0.75rem 0 0;
+  }
+  .lede {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    margin-top: 1rem;
+    max-width: 40rem;
+    font-size: var(--text-lede);
+  }
+  .terminal-wrap {
+    max-width: 46rem;
+    margin: 2.5rem auto 1.5rem;
+  }
+  .link {
+    color: var(--color-amber);
+    text-decoration: none;
+    font-size: 0.88rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--duration-fast) ease;
+  }
+  .link:hover {
+    border-bottom-color: var(--color-amber);
+  }
+</style>

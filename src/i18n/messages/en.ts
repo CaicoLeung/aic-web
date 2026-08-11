@@ -208,9 +208,9 @@ export const messages = {
 
   batching: {
     eyebrow: '03 — Auto-batching',
-    kicker: 'nothing staged?',
+    kicker: 'below the file boundary',
     h2: 'one file, many commits',
-    lede: 'aic reads your diff at the hunk level — so a single file can become several focused commits, each one idea. Nothing staged, one command, a clean history — even when one file touches three concerns.',
+    lede: 'Every other commit tool stops at the file boundary — one file, one message. aic reads your diff at the hunk level, so a single file touching three concerns becomes three focused, conventional commits. Nothing staged, one command, a history that actually reads back cleanly.',
     aside: 'per-hunk batching ✦',
     swatchLabel: '17 commit types · WCAG-safe colors',
     stripLabel: 'reasoning · per hunk',
@@ -218,9 +218,23 @@ export const messages = {
     shipBadge: 'shipped in v{version}',
     cmpLink: 'see aic among the best AI commit tools →',
   },
+  resolveSection: {
+    eyebrow: '04 — Resolve',
+    // h2 reuses `resolve.h1.main` — single source for the headline.
+    // Contains <code>; render via set:html.
+    lede: 'Mid-merge, run one command. aic reads every conflicted file, proposes a marker-free resolution, and shows you the combined diff before anything lands. Each file is a separate <code>y/n</code> — approve what you trust, reject the rest, and it finalizes the merge.',
+    link: 'how aic resolves a conflict →',
+  },
+
+  agentsSection: {
+    eyebrow: '05 — Bring your agent',
+    // h2 reuses `agents.h1` — single source for the headline.
+    lede: "Already running Claude Code, Codex, Pi, or OpenCode? Point aic at your agent in headless mode — it passes the diff, your agent writes the message, aic ships the commit. No API key, no default model: it reuses your agent's own auth.",
+    link: 'see the agent backend →',
+  },
 
   providers: {
-    eyebrow: '04 — Providers & privacy',
+    eyebrow: '06 — Providers & privacy',
     h2: 'your key · your model',
     lede: 'Bring your own provider. aic talks straight to your LLM — no middleman, no per-commit markup, no proxy. Your API key never leaves your machine.',
     aside: 'no middleman · no per-commit markup · calls go straight from your machine',
@@ -230,7 +244,7 @@ export const messages = {
   },
 
   install: {
-    eyebrow: '05 — Install',
+    eyebrow: '07 — Install',
     h2: 'install aic in one line.',
     // CRO trust strip — answers the top objections before install methods.
     trust: [
