@@ -1,0 +1,104 @@
+---
+/**
+ * CompareBand — connective band between Providers (#06) and Install (#07).
+ *
+ * NOT a numbered spine section (ADR-0017). It is a navigation/routing
+ * element: funnels comparison-intent visitors into the SEO cluster
+ * (/vs/{rival} pages + /best-ai-commit-tools roundup) before the install
+ * close. Adding a rival is automatic — the chip list is driven by
+ * COMPARISON_RIVALS, the single source of truth for which competitors own
+ * a vs page.
+ *
+ * Scoped CSS mirrors Providers; chips are links (vs chips are static text).
+ */
+import { COMPARISON_RIVALS, COMPARISONS } from '@/config/competitors';
+import { localeFromUrl, localizedHref } from '@/i18n/config';
+import { useLocalizer } from '@/i18n/t';
+
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useLocalizer(locale);
+const rivals = COMPARISON_RIVALS.map((id) => ({
+  id,
+  name: COMPARISONS[id].rival.name,
+  href: localizedHref(locale, `vs/${id}`),
+}));
+const roundupHref = localizedHref(locale, 'best-ai-commit-tools');
+---
+
+<section id="compare" class="section compare-band">
+  <div class="container">
+    <h2>{t('compareBand.heading')}</h2>
+    <p class="lede">{t('compareBand.lede')}</p>
+
+    <ul class="rival-list" aria-label="aic vs competing tools">
+      {
+        rivals.map((r) => (
+          <li>
+            <a class="rival-chip" href={r.href}>
+              {t('vs.more.vsLabel', { name: r.name })}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <a class="link roundup-link" href={roundupHref}>{t('compareBand.roundupLink')}</a>
+  </div>
+</section>
+
+<style>
+  .compare-band {
+    padding: clamp(3rem, 1rem + 6vw, 5rem) 0;
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid var(--color-border);
+  }
+  h2 {
+    font-size: var(--text-h2);
+    line-height: 1.05;
+    margin: 0;
+  }
+  .lede {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    margin-top: 1rem;
+    max-width: 40rem;
+    font-size: var(--text-lede);
+  }
+  .rival-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 2rem 0 1.5rem;
+    padding: 0;
+  }
+  .rival-chip {
+    display: inline-block;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    color: var(--color-ink-muted);
+    text-decoration: none;
+    font-size: 0.88rem;
+    transition:
+      color var(--duration-fast) ease,
+      border-color var(--duration-fast) ease,
+      background var(--duration-fast) ease;
+  }
+  .rival-chip:hover {
+    color: var(--color-ink);
+    border-color: var(--color-amber);
+    background: color-mix(in srgb, var(--color-amber) 8%, transparent);
+  }
+  .link {
+    color: var(--color-amber);
+    text-decoration: none;
+    font-size: 0.88rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--duration-fast) ease;
+  }
+  .link:hover {
+    border-bottom-color: var(--color-amber);
+  }
+</style>

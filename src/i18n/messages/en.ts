@@ -267,6 +267,14 @@ export const messages = {
       },
     },
   },
+  compareBand: {
+    // Connective band (not a numbered spine section — a navigation/routing
+    // element toward the SEO comparison cluster). Sits between Providers
+    // (#06) and Install (#07). Plain text; render via t().
+    heading: 'how aic compares',
+    lede: 'Curious how aic holds up against aicommits, OpenCommit, or the rest? Each comparison concedes where the rival wins and shows exactly where aic pulls ahead.',
+    roundupLink: 'see the full field →',
+  },
 
   footer: {
     eyebrow: 'ship cleaner commits today',

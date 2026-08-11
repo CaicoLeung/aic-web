@@ -1,7 +1,7 @@
 ---
 /**
  * aic-web — single page composing the homepage spine (Q5, ADR-0017):
- *   Topbar · Hero · How it works · Auto-batching · Resolve · Bring your agent · Providers · Install · Footer
+ *   Topbar · Hero · How it works · Auto-batching · Resolve · Bring your agent · Providers · Compare · Install · Footer
  *
  * Build-time fact fetch (ADR-0003): version + providers are pulled from
  * the aic source repo `main` branch on every build, with safe fallbacks.
@@ -15,6 +15,7 @@ import Batching from '@/components/batching/Batching.astro';
 import ResolveSection from '@/components/resolve/ResolveSection.astro';
 import AgentsSection from '@/components/agents/AgentsSection.astro';
 import Providers from '@/components/providers/Providers.astro';
+import CompareBand from '@/components/compare/CompareBand.astro';
 import Install from '@/components/install/Install.astro';
 import Footer from '@/components/footer/Footer.astro';
 
@@ -30,6 +31,7 @@ const facts = await loadAicFacts();
     <ResolveSection />
     <AgentsSection />
     <Providers providers={facts.providers} />
+    <CompareBand />
     <Install />
   </main>
   <Footer />
