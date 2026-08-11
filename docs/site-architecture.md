@@ -12,6 +12,7 @@
 ```
 Homepage (/)                                    L0
 ├── [homepage spine, anchored sections]         L1  (V2 nine: Topbar · Hero · How it works · Auto-batching · Resolve · Bring your agent · Providers · Install · Footer)
+│   └── CompareBand (#compare)                  connective band (Providers→Install): links to all /vs/* + roundup — not a spine section
 ├── Resolve (/resolve)                          L1  capability page (ADR-0006)
 ├── Roundup (/best-ai-commit-tools)             L1  SEO survey hub
 │   ├── vs aicommits (/vs/aicommits)            L2  comparison
@@ -79,19 +80,19 @@ graph TD
 
 ## 4. URL Map
 
-| Page                    | URL (en)                | Parent  | Nav location                                     | Priority |
-| ----------------------- | ----------------------- | ------- | ------------------------------------------------ | -------- |
-| Homepage                | `/`                     | —       | Header (anchors)                                 | High     |
-| Resolve                 | `/resolve`              | Home    | Hero link, Footer                                | High     |
-| Roundup                 | `/best-ai-commit-tools` | Home    | Footer, Batching section                         | High     |
-| vs aicommits            | `/vs/aicommits`         | Roundup | Footer "compare", Roundup card, More-comparisons | High     |
-| vs ai-commit            | `/vs/ai-commit`         | Roundup | Roundup card, More-comparisons                   | Medium   |
-| vs llmc                 | `/vs/llmc`              | Roundup | Roundup card, More-comparisons                   | Medium   |
-| Changelog               | `/changelog`            | Home    | Topbar/Header version chip, Footer               | Medium   |
-| vs opencommit _(P1)_    | `/vs/opencommit`        | Roundup | Roundup card, More-comparisons                   | Low      |
-| vs git-ai _(P1)_        | `/vs/git-ai`            | Roundup | Roundup card, More-comparisons                   | Low      |
-| Alternatives hub _(P2)_ | `/alternatives`         | Home    | Footer                                           | Low      |
-| Docs _(P2)_             | `/docs`                 | Home    | Footer                                           | Low      |
+| Page                    | URL (en)                | Parent  | Nav location                                                   | Priority |
+| ----------------------- | ----------------------- | ------- | -------------------------------------------------------------- | -------- |
+| Homepage                | `/`                     | —       | Header (anchors)                                               | High     |
+| Resolve                 | `/resolve`              | Home    | Hero link, Footer                                              | High     |
+| Roundup                 | `/best-ai-commit-tools` | Home    | Footer, Batching section, Compare band                         | High     |
+| vs aicommits            | `/vs/aicommits`         | Roundup | Footer "compare", Roundup card, More-comparisons, Compare band | High     |
+| vs ai-commit            | `/vs/ai-commit`         | Roundup | Roundup card, More-comparisons, Compare band                   | Medium   |
+| vs llmc                 | `/vs/llmc`              | Roundup | Roundup card, More-comparisons, Compare band                   | Medium   |
+| Changelog               | `/changelog`            | Home    | Topbar/Header version chip, Footer                             | Medium   |
+| vs opencommit _(P1)_    | `/vs/opencommit`        | Roundup | Roundup card, More-comparisons, Compare band                   | Low      |
+| vs git-ai _(P1)_        | `/vs/git-ai`            | Roundup | Roundup card, More-comparisons, Compare band                   | Low      |
+| Alternatives hub _(P2)_ | `/alternatives`         | Home    | Footer                                                         | Low      |
+| Docs _(P2)_             | `/docs`                 | Home    | Footer                                                         | Low      |
 
 URL conventions already compliant: lowercase, hyphens, trailing slash, no dates/IDs, hierarchy-mirroring (`/vs/{name}`).
 
@@ -118,6 +119,13 @@ URL conventions already compliant: lowercase, hyphens, trailing slash, no dates/
 > symmetrically — dissolving the asymmetry ADR-0015 had defended. The
 > ADR-0015 Feature-highlight chip is retired (agents is now permanent, not
 > transient). See `docs/adr/0017-v2-respine-promote-resolve-agents.md`.
+> **Connective band (not a spine break).** The `CompareBand` (#compare) sits
+> between Providers (#06) and Install (#07). It is a navigation/routing
+> element — not a co-equal product-story pillar — so it is excluded from the
+> nine-section count and needs no ADR. It funnels comparison-intent visitors
+> into the SEO cluster: rival chips → `/vs/{rival}`, a roundup link →
+> `/best-ai-commit-tools`. The chip list is data-driven from
+> `COMPARISON_RIVALS`, so new rivals appear automatically.
 
 **P1:** rename ContentHeader "Compare" target to a comparison hub if one is built; add "Alternatives" footer column when P2 ships.
 

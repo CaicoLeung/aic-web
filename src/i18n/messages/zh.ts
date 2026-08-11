@@ -238,6 +238,11 @@ export const messages: Messages = {
       },
     },
   },
+  compareBand: {
+    heading: 'aic 的横向对比',
+    lede: '想知道 aic 与 aicommits、OpenCommit 等工具相比如何？每篇对比都诚实标注竞品胜出的地方，也清晰展示 aic 领先之处。',
+    roundupLink: '查看完整榜单 →',
+  },
 
   footer: {
     eyebrow: '今天就交出更干净的提交',

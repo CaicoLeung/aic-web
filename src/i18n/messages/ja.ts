@@ -239,6 +239,11 @@ export const messages: Messages = {
       },
     },
   },
+  compareBand: {
+    heading: 'aic の比較',
+    lede: 'aicommits や OpenCommit などと比べて aic はどう違う？各比較は相手が勝る点を率直に認めつつ、aic が前に出る箇所を正確に示します。',
+    roundupLink: '全ツールの一覧を見る →',
+  },
 
   footer: {
     eyebrow: '今日からよりクリーンなコミットを',

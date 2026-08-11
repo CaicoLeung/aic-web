@@ -235,6 +235,11 @@ export const messages: Messages = {
       },
     },
   },
+  compareBand: {
+    heading: 'aic 비교',
+    lede: 'aic가 aicommits, OpenCommit 등과 비교해 어떨지 궁금하시나요? 각 비교는 경쟁 도구가 앞서는 점은 솔직히 인정하고, aic가 앞서는 부분을 정확히 보여줍니다。',
+    roundupLink: '전체 목록 보기 →',
+  },
 
   footer: {
     eyebrow: '오늘부터 더 깔끔한 커밋을',
