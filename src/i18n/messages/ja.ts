@@ -110,12 +110,10 @@ export const messages: Messages = {
     nav: {
       how: '使い方',
       batching: 'バッチ処理',
+      resolve: '解決',
+      agents: 'エージェント',
       providers: 'プロバイダ',
       install: 'インストール',
-    },
-    featureChip: {
-      label: '新機能',
-      text: 'あなたのエージェントを連携',
     },
     switcher: {
       label: '言語',

@@ -109,12 +109,10 @@ export const messages: Messages = {
     nav: {
       how: '사용법',
       batching: '배치',
+      resolve: '충돌 해결',
+      agents: '에이전트',
       providers: '프로바이더',
       install: '설치',
-    },
-    featureChip: {
-      label: '신규',
-      text: '에이전트 가져오기',
     },
     switcher: {
       label: '언어',

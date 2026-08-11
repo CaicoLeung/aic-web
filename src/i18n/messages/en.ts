@@ -125,12 +125,10 @@ export const messages = {
     nav: {
       how: 'how',
       batching: 'batching',
+      resolve: 'resolve',
+      agents: 'agents',
       providers: 'providers',
       install: 'install',
-    },
-    featureChip: {
-      label: 'New',
-      text: 'bring your agent',
     },
     switcher: {
       label: 'Language',

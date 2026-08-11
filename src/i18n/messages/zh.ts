@@ -112,12 +112,10 @@ export const messages: Messages = {
     nav: {
       how: '原理',
       batching: '批处理',
+      resolve: '解决冲突',
+      agents: 'agent',
       providers: '供应商',
       install: '安装',
-    },
-    featureChip: {
-      label: '新',
-      text: '带上你的 agent',
     },
     switcher: {
       label: '语言',
