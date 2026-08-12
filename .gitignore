@@ -26,10 +26,10 @@ pnpm-debug.log*
 
 # Paseo worktree config
 paseo.json
- # agent tooling local state
- .omc/
- .claude/
- .pi-subagents/
+# agent tooling local state
+**/.omc/
+.claude/
+.pi-subagents/
 
 # Lighthouse CI
 .lighthouseci/
