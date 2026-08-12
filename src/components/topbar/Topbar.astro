@@ -221,12 +221,26 @@ const versionTitle = t('topbar.versionTitle', { version });
       display: inline-flex;
     }
   }
-  /* Mobile: the nav is hidden, so only brand · meta share the row. Hide
-     the tagline (widest element) and tighten the row gap so nothing
-     clips or overflows. */
+  /* Mobile re-flow: brand + utilities share row 1, the section-nav drops
+     to a full-width centered row beneath (mirrors ContentHeader). Every
+     anchor stays one-tap reachable — no disclosure, no JS. */
   @media (max-width: 767px) {
     .topbar {
+      flex-wrap: wrap;
       gap: 0.75rem;
+    }
+    .brand {
+      order: 1;
+    }
+    .meta {
+      order: 2;
+    }
+    .nav {
+      display: flex;
+      order: 3;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
     }
     .brand-tag {
       display: none;
