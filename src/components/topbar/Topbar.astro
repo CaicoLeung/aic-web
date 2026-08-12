@@ -240,8 +240,14 @@ const versionTitle = t('topbar.versionTitle', { version });
       display: flex;
       order: 3;
       width: 100%;
-      flex-wrap: wrap;
-      justify-content: center;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      justify-content: flex-start;
+      gap: 1.25rem;
+      scrollbar-width: none;
+    }
+    .nav::-webkit-scrollbar {
+      display: none;
     }
     .brand-tag {
       display: none;
