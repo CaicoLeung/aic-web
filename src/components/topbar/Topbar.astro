@@ -231,15 +231,6 @@ const versionTitle = t('topbar.versionTitle', { version });
       gap: 0.7rem;
       padding-block: 0.7rem;
     }
-    .topbar.is-hidden {
-      transform: translateY(-100%);
-    }
-    .brand {
-      order: 1;
-    }
-    .meta {
-      order: 2;
-    }
     .nav {
       display: flex;
       order: 3;
@@ -249,6 +240,20 @@ const versionTitle = t('topbar.versionTitle', { version });
       justify-content: flex-start;
       gap: 1.25rem;
       scrollbar-width: none;
+      transition:
+        opacity var(--duration-normal) var(--ease-out-expo),
+        transform var(--duration-normal) var(--ease-out-expo);
+    }
+    .nav.is-hidden {
+      opacity: 0;
+      transform: translateY(-100%);
+      pointer-events: none;
+    }
+    .brand {
+      order: 1;
+    }
+    .meta {
+      order: 2;
     }
     .nav::-webkit-scrollbar {
       display: none;
@@ -279,24 +284,22 @@ const versionTitle = t('topbar.versionTitle', { version });
 </style>
 
 <script>
-  const topbar = document.querySelector('[data-topbar]');
-  if (topbar) {
+  const nav = document.querySelector('[data-topbar] .nav');
+  if (nav) {
     let lastScroll = 0;
     const mqMobile = window.matchMedia('(max-width: 767px)');
 
     const onScroll = () => {
       const y = window.scrollY;
-      topbar.setAttribute('data-blur', String(y > 80));
-
       // Mobile: hide nav on scroll-down, reveal on scroll-up
       if (mqMobile.matches) {
-        if (y > lastScroll + 8 && y > 100) {
-          topbar.classList.add('is-hidden');
-        } else if (y < lastScroll - 4 || y < 100) {
-          topbar.classList.remove('is-hidden');
+        if (y > lastScroll + 8 && y > 0) {
+          nav.classList.add('is-hidden');
+        } else if (y < lastScroll - 4 || y <= 0) {
+          nav.classList.remove('is-hidden');
         }
       } else {
-        topbar.classList.remove('is-hidden');
+        nav.classList.remove('is-hidden');
       }
       lastScroll = y;
     };
