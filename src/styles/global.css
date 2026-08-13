@@ -366,35 +366,44 @@ html.v2 #agents .container {
    hover transitions, terminal/card depth. ════════════════════════════ */
 
 /* ── Scroll-driven fade-up reveals ─────────────────────────────────────
-   Zero-JS: animation-timeline: view(). Duration MUST be non-zero or
-   the animation is inert. Browsers without support show content normally. */
+   Zero-JS: animation-timeline: view(). Browsers without support show
+   content normally. Three tiers stagger for coordination:
+   headers → primary content → secondary content. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    html.v2 #batching .eyebrow,
-    html.v2 #batching h2,
-    html.v2 #batching .lede,
-    html.v2 #resolve .eyebrow,
-    html.v2 #resolve h2,
-    html.v2 #resolve .lede,
-    html.v2 #agents .eyebrow,
-    html.v2 #agents h2,
-    html.v2 #agents .lede,
-    html.v2 #how .eyebrow,
-    html.v2 #how h2,
-    html.v2 #install .eyebrow,
-    html.v2 #install h2 {
-      animation: v2-fade-up 1s both;
+    /* Tier 1 — section headers (eyebrow → h2 → lede) */
+    html.v2 :is(section:not(#top), .footer) .eyebrow,
+    html.v2 :is(section:not(#top), .footer) h2,
+    html.v2 :is(section:not(#top), .footer) .lede {
+      animation: v2-fade-up 0.9s both;
       animation-timeline: view();
-      animation-range: entry 5% cover 30%;
+      animation-range: entry 5% cover 28%;
     }
-    /* Terminal + cards get a slightly delayed, subtler reveal */
-    html.v2 #resolve .terminal-wrap,
-    html.v2 #agents .terminal-wrap,
-    html.v2 #batching .source-card,
-    html.v2 #batching .diff-result {
-      animation: v2-fade-up 1s both;
+    /* Tier 2 — primary content blocks */
+    html.v2 .flow,
+    html.v2 .terminal-wrap,
+    html.v2 .source-card,
+    html.v2 .diff-result,
+    html.v2 #install .panel:not(.is-hidden),
+    html.v2 .provider-list,
+    html.v2 .default-models,
+    html.v2 .rival-list {
+      animation: v2-fade-up 0.9s both;
       animation-timeline: view();
-      animation-range: entry 10% cover 35%;
+      animation-range: entry 10% cover 32%;
+    }
+    /* Tier 3 — secondary content (links, asides, footer) */
+    html.v2 .aside,
+    html.v2 .link,
+    html.v2 .trust-strip,
+    html.v2 .tabs-row,
+    html.v2 .postinstall,
+    html.v2 .roundup-link,
+    html.v2 .footer-cta,
+    html.v2 .footer-meta {
+      animation: v2-fade-up 0.8s both;
+      animation-timeline: view();
+      animation-range: entry 12% cover 35%;
     }
     @keyframes v2-fade-up {
       from {
