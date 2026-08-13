@@ -14,6 +14,7 @@ import { loadAicFacts } from '@/data/aic';
 import Base from '@/layouts/Base.astro';
 import Topbar from '@/components/topbar/Topbar.astro';
 import HeroStorm from '@/components/hero/HeroStorm.astro';
+import ScrollDemo from '@/components/scroll-demo/ScrollDemo.astro';
 import HowItWorks from '@/components/how-it-works/HowItWorks.astro';
 import Batching from '@/components/batching/Batching.astro';
 import ResolveSection from '@/components/resolve/ResolveSection.astro';
@@ -31,6 +32,7 @@ const facts = await loadAicFacts();
   <main id="main">
     <HeroStorm />
     <HowItWorks />
+    <ScrollDemo />
     <Batching />
     <ResolveSection />
     <AgentsSection />

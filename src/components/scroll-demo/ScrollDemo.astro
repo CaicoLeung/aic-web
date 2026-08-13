@@ -1,0 +1,414 @@
+---
+/**
+ * ScrollDemo — V2 scroll-driven product demo.
+ *
+ * A 300vh section that pins a terminal + git-graph pair. As the user
+ * scrolls, three frames cross-fade through the aic workflow:
+ *   0 → Stage ($ aic detects changes)
+ *   1 → Review (batched commit plan)
+ *   2 → Ship (commits landed on graph)
+ *
+ * A mini git-graph on the left grows nodes in sync with the frames.
+ *
+ * No-JS / reduced-motion: the final frame (Ship) is visible by default.
+ * JS progressively hides it and reveals frames on scroll.
+ *
+ * V2-only: mounted only on /v2 routes.
+ */
+---
+
+<section class="scroll-demo" data-scroll-demo>
+  <div class="demo-pin">
+    <div class="demo-inner container">
+      <!-- Left: persistent git-graph track -->
+      <div class="demo-graph" aria-hidden="true">
+        <div class="graph-origin" title="main"></div>
+        <div class="graph-seg" data-seg="1">
+          <span class="seg-line"></span>
+          <span class="seg-node" data-node="1">
+            <span class="node-label">feat</span>
+          </span>
+        </div>
+        <div class="graph-seg" data-seg="2">
+          <span class="seg-line"></span>
+          <span class="seg-node" data-node="2">
+            <span class="node-label">fix</span>
+          </span>
+        </div>
+        <div class="graph-seg" data-seg="3">
+          <span class="seg-line"></span>
+          <span class="seg-node" data-node="3">
+            <span class="node-label">chore</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Right: terminal frames -->
+      <div class="demo-terminal">
+        <div class="term-chrome">
+          <div class="term-dots">
+            <i></i><i></i><i></i>
+          </div>
+          <span class="term-title">aic — live demo</span>
+        </div>
+
+        <!-- Frame 0: Stage -->
+        <div class="demo-frame" data-frame="0">
+          <pre
+            class="term-body">
+<span class="prompt">$</span> <span class="cmd">aic</span>
+
+<span class="muted">Scanning 12 changed files…</span>
+<span class="cyan">3 logical commits detected</span>
+<span class="muted">━ reviewing plan ━</span></pre>
+        </div>
+
+        <!-- Frame 1: Review -->
+        <div class="demo-frame" data-frame="1">
+          <pre
+            class="term-body">
+<span class="label">commit 1</span>  <span class="amber">feat(auth): refresh token rotation</span>
+           <span class="muted">auth/refresh.ts, auth/verify.ts</span>
+
+<span class="label">commit 2</span>  <span class="amber">fix(ui): redirect on session expiry</span>
+           <span class="muted">components/Redirect.tsx</span>
+
+<span class="label">commit 3</span>  <span class="amber">chore: bump dependencies</span>
+           <span class="muted">package.json, lock.json</span>
+
+<span class="prompt">→</span> <span class="cmd">aic commit --all</span></pre>
+        </div>
+
+        <!-- Frame 2: Ship -->
+        <div class="demo-frame" data-frame="2">
+          <pre
+            class="term-body">
+<span class="mint">✓ 3 commits created</span>
+
+<span class="hash">abc1234</span>  <span class="muted">chore: bump dependencies</span>
+<span class="hash">def5678</span>  <span class="muted">fix(ui): redirect on expiry</span>
+<span class="hash">ghi9012</span>  <span class="amber">feat(auth): refresh token rotation</span>
+
+<span class="cyan">12 files → 3 commits in 4.2s</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll hint -->
+    <div class="demo-hint" aria-hidden="true">
+      <span class="hint-text">scroll</span>
+      <span class="hint-arrow">↓</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .scroll-demo {
+    position: relative;
+    height: 300vh;
+    background: var(--color-base-deep);
+  }
+
+  .demo-pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .demo-inner {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(2rem, 1rem + 4vw, 5rem);
+    align-items: center;
+    width: 100%;
+  }
+
+  /* ── Git graph track ─────────────────────────────────────────────── */
+  .demo-graph {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 0;
+    min-height: 280px;
+  }
+
+  .graph-origin {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--color-ink-dim);
+    background: var(--color-base);
+    flex-shrink: 0;
+  }
+
+  .graph-seg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease;
+  }
+  .graph-seg.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .seg-line {
+    width: 2px;
+    height: 48px;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--color-amber) 50%, transparent),
+      var(--color-amber)
+    );
+  }
+
+  .seg-node {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-amber);
+    box-shadow: 0 0 16px -2px color-mix(in oklch, var(--color-amber) 60%, transparent);
+    flex-shrink: 0;
+  }
+
+  .node-label {
+    position: absolute;
+    left: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-ink-muted);
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Terminal ────────────────────────────────────────────────────── */
+  .demo-terminal {
+    position: relative;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--color-surface);
+    min-height: 320px;
+  }
+
+  .term-chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--color-line);
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .term-dots {
+    display: flex;
+    gap: 6px;
+  }
+  .term-dots i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: block;
+  }
+  .term-dots i:nth-child(1) {
+    background: #ff5f57;
+  }
+  .term-dots i:nth-child(2) {
+    background: #febc2e;
+  }
+  .term-dots i:nth-child(3) {
+    background: #28c840;
+  }
+
+  .term-title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-ink-dim);
+    margin-left: 0.5rem;
+  }
+
+  .demo-frame {
+    padding: 1.25rem 1.5rem;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  /* No-JS fallback: show final frame only */
+  .demo-frame[data-frame='2'] {
+    opacity: 1;
+  }
+  /* When JS runs, it manages all opacity */
+  .scroll-demo[data-js] .demo-frame {
+    opacity: 0;
+  }
+  .scroll-demo[data-js] .demo-frame.is-active {
+    opacity: 1;
+  }
+
+  .term-body {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    color: var(--color-ink);
+  }
+
+  .prompt {
+    color: var(--color-cyan);
+    font-weight: 600;
+  }
+  .cmd {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .muted {
+    color: var(--color-ink-dim);
+  }
+  .cyan {
+    color: var(--color-cyan);
+  }
+  .amber {
+    color: var(--color-amber);
+  }
+  .mint {
+    color: var(--color-mint);
+    font-weight: 600;
+  }
+  .hash {
+    color: var(--color-ink-muted);
+  }
+  .label {
+    color: var(--color-cyan);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* ── Scroll hint ─────────────────────────────────────────────────── */
+  .demo-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+  }
+  .demo-hint.is-hidden {
+    opacity: 0;
+  }
+  .hint-text {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-ink-dim);
+  }
+  .hint-arrow {
+    color: var(--color-ink-dim);
+    font-size: 1rem;
+    animation: hint-bounce 1.5s ease-in-out infinite;
+  }
+  @keyframes hint-bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+
+  /* ── Mobile ──────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .demo-inner {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .demo-graph {
+      flex-direction: row;
+      min-height: auto;
+      justify-content: center;
+    }
+    .graph-seg {
+      flex-direction: row;
+    }
+    .seg-line {
+      width: 32px;
+      height: 2px;
+    }
+    .node-label {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hint-arrow {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('[data-scroll-demo]');
+  if (!section) {
+    // V1 page — no scroll demo
+  } else {
+    const frames = section.querySelectorAll<HTMLElement>('.demo-frame');
+    const segs = section.querySelectorAll<HTMLElement>('.graph-seg');
+    const hint = section.querySelector<HTMLElement>('.demo-hint');
+    const totalFrames = frames.length; // 3
+
+    // Mark JS active — takes over opacity management
+    section.setAttribute('data-js', '');
+
+    let ticking = false;
+
+    function update() {
+      ticking = false;
+      const rect = section.getBoundingClientRect();
+      const scrollable = rect.height - window.innerHeight;
+      // Progress: 0 when section top hits viewport top, 1 when bottom reaches viewport bottom
+      const raw = -rect.top / scrollable;
+      const progress = Math.max(0, Math.min(1, raw));
+
+      // Map progress to frame index
+      // 0.00-0.33 → frame 0, 0.33-0.66 → frame 1, 0.66-1.0 → frame 2
+      const frame = Math.min(totalFrames - 1, Math.floor(progress * totalFrames));
+
+      frames.forEach((f, i) => f.classList.toggle('is-active', i === frame));
+
+      // Graph nodes: grow with frames, show all on final (ship) frame
+      const visibleCount = frame === totalFrames - 1 ? segs.length : frame;
+      segs.forEach((s, i) => s.classList.toggle('is-visible', i < visibleCount));
+
+      // Hide scroll hint after first frame
+      if (hint) hint.classList.toggle('is-hidden', progress > 0.05);
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>
