@@ -1,0 +1,42 @@
+---
+/**
+ * V2 preview home — `/v2/` (English).
+ *
+ * Parallel route for testing the V2 visual redesign (Space Grotesk +
+ * duotone atmosphere + section rhythm) before replacing V1 at `/`.
+ * Same composition as `src/pages/index.astro` — the only difference is
+ * `design="v2"` which adds `class="v2"` to <html> and activates the
+ * scoped overrides at the bottom of `src/styles/global.css`.
+ *
+ * noindex: prevent duplicate-content issues while the preview is live.
+ */
+import { loadAicFacts } from '@/data/aic';
+import Base from '@/layouts/Base.astro';
+import Topbar from '@/components/topbar/Topbar.astro';
+import HeroStorm from '@/components/hero/HeroStorm.astro';
+import HowItWorks from '@/components/how-it-works/HowItWorks.astro';
+import Batching from '@/components/batching/Batching.astro';
+import ResolveSection from '@/components/resolve/ResolveSection.astro';
+import AgentsSection from '@/components/agents/AgentsSection.astro';
+import Providers from '@/components/providers/Providers.astro';
+import CompareBand from '@/components/compare/CompareBand.astro';
+import Install from '@/components/install/Install.astro';
+import Footer from '@/components/footer/Footer.astro';
+
+const facts = await loadAicFacts();
+---
+
+<Base version={facts.version} design="v2" noindex>
+  <Topbar version={facts.version} />
+  <main id="main">
+    <HeroStorm />
+    <HowItWorks />
+    <Batching />
+    <ResolveSection />
+    <AgentsSection />
+    <Providers providers={facts.providers} />
+    <CompareBand />
+    <Install />
+  </main>
+  <Footer />
+</Base>

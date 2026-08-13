@@ -75,7 +75,8 @@ export function localeFromUrl(
   baseUrl: string = import.meta.env.BASE_URL,
 ): Locale {
   const base = baseHref(baseUrl);
-  const rest = pathname.startsWith(base) ? pathname.slice(base.length) : pathname;
+  let rest = pathname.startsWith(base) ? pathname.slice(base.length) : pathname;
+  if (rest === 'v2/' || rest.startsWith('v2/')) rest = rest.slice(3);
   const first = rest.split('/').filter(Boolean)[0] ?? '';
   return isLocale(first) ? first : DEFAULT_LOCALE;
 }

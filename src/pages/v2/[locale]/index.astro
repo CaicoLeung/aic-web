@@ -1,0 +1,48 @@
+---
+/**
+ * V2 preview home — localized: `/v2/zh/`, `/v2/ja/`, `/v2/ko/`.
+ *
+ * Parallel to `src/pages/[locale]/index.astro` but with V2 design.
+ * `localeFromUrl` strips the `v2/` prefix so locale detection works
+ * correctly within the preview routes.
+ */
+import { isLocalePrefix, LOCALE_PREFIXES } from '@/i18n/config';
+import { loadAicFacts } from '@/data/aic';
+import Base from '@/layouts/Base.astro';
+import Topbar from '@/components/topbar/Topbar.astro';
+import HeroStorm from '@/components/hero/HeroStorm.astro';
+import HowItWorks from '@/components/how-it-works/HowItWorks.astro';
+import Batching from '@/components/batching/Batching.astro';
+import ResolveSection from '@/components/resolve/ResolveSection.astro';
+import AgentsSection from '@/components/agents/AgentsSection.astro';
+import Providers from '@/components/providers/Providers.astro';
+import CompareBand from '@/components/compare/CompareBand.astro';
+import Install from '@/components/install/Install.astro';
+import Footer from '@/components/footer/Footer.astro';
+
+export function getStaticPaths() {
+  return LOCALE_PREFIXES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params;
+if (!isLocalePrefix(locale)) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+
+const facts = await loadAicFacts();
+---
+
+<Base version={facts.version} design="v2" noindex>
+  <Topbar version={facts.version} />
+  <main id="main">
+    <HeroStorm />
+    <HowItWorks />
+    <Batching />
+    <ResolveSection />
+    <AgentsSection />
+    <Providers providers={facts.providers} />
+    <CompareBand />
+    <Install />
+  </main>
+  <Footer />
+</Base>

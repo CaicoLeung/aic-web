@@ -44,9 +44,8 @@
      system CJK families below, which cover the rare CJK glyph in EN
      content with zero webfont cost. */
   --font-display:
-    'Space Grotesk', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI',
-    system-ui, var(--font-cjk, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei'),
-    sans-serif;
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui,
+    var(--font-cjk, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei'), sans-serif;
   --font-body:
     -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui,
     var(--font-cjk, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei'), sans-serif;
@@ -130,7 +129,7 @@
     font-family: var(--font-mono);
   }
 
-  /* global atmosphere — V2 duotone: amber (top-right) + cyan (bottom-left) glows */
+  /* global atmosphere — amber + mint radial glows from intro.png */
   body::before {
     content: '';
     position: fixed;
@@ -138,8 +137,8 @@
     z-index: 0;
     pointer-events: none;
     background-image:
-      radial-gradient(1000px 640px at 82% 10%, rgba(243, 179, 64, 0.09), transparent 62%),
-      radial-gradient(900px 600px at 8% 88%, rgba(93, 212, 232, 0.07), transparent 60%),
+      radial-gradient(1000px 640px at 82% 10%, rgba(243, 179, 64, 0.1), transparent 62%),
+      radial-gradient(820px 560px at 6% 94%, rgba(116, 201, 138, 0.055), transparent 60%),
       linear-gradient(180deg, var(--color-base) 0%, var(--color-base-deep) 100%);
   }
 
@@ -171,7 +170,7 @@
   h2,
   h3 {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: -0.035em;
     line-height: 1.02;
   }
@@ -249,4 +248,33 @@
     border-radius: 6px;
     font-size: 0.85em;
   }
+}
+
+/* ── V2 design overrides — scoped under html.v2 ──────────────────────
+   Loaded globally (zero effect on V1 pages that lack the class).
+   Applied when Base layout receives design="v2" → <html class="v2">. */
+html.v2 {
+  --font-display:
+    'Space Grotesk', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI',
+    system-ui, var(--font-cjk, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei'),
+    sans-serif;
+}
+html.v2 h1,
+html.v2 h2,
+html.v2 h3 {
+  font-weight: 700;
+}
+html.v2 body::before {
+  background-image:
+    radial-gradient(1000px 640px at 82% 10%, rgba(243, 179, 64, 0.09), transparent 62%),
+    radial-gradient(900px 600px at 8% 88%, rgba(93, 212, 232, 0.07), transparent 60%),
+    linear-gradient(180deg, var(--color-base) 0%, var(--color-base-deep) 100%);
+}
+html.v2 #batching,
+html.v2 #providers {
+  background-color: var(--color-surface);
+}
+html.v2 #resolve,
+html.v2 #compare {
+  background-color: var(--color-base-deep);
 }
