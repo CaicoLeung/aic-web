@@ -253,7 +253,6 @@
 
   /* ── Terminal lines — opacity-only reveal (no transform = no jitter) ─ */
   .tline {
-    white-space: pre;
     transition: opacity 0.2s ease;
   }
   /* No-JS fallback */
@@ -336,13 +335,14 @@
 
   /* ── Blinking cursor ─────────────────────────────────────────────── */
   .term-cursor {
-    display: none;
+    opacity: 0;
     color: var(--color-cyan);
     font-weight: 700;
     animation: blink 1s step-end infinite;
+    transition: opacity 0.2s ease;
   }
   .scroll-demo[data-js].is-streaming .term-cursor {
-    display: inline;
+    opacity: 1;
   }
   @keyframes blink {
     50% {
@@ -386,6 +386,7 @@
     color: var(--color-ink-dim);
   }
   .num {
+    white-space: pre;
     color: var(--color-cyan);
     font-weight: 600;
   }
