@@ -278,3 +278,105 @@ html.v2 #resolve,
 html.v2 #compare {
   background-color: var(--color-base-deep);
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   Phase 2: Layout Revolution — html.v2 scoped
+   Breaks centered monotony, applies duotone cyan, creates asymmetry. ═══ */
+
+/* ── Hero: left-aligned content ────────────────────────────────────────
+   The ONLY centered section → left-anchor creates instant asymmetry. */
+html.v2 .storm-hero .storm-grid {
+  align-items: flex-start;
+  text-align: left;
+}
+html.v2 .storm-hero .storm-eyebrow {
+  justify-content: flex-start;
+}
+html.v2 .storm-hero .storm-grid h1 {
+  text-align: left;
+}
+html.v2 .storm-hero .hline {
+  justify-content: flex-start;
+}
+/* Cyan on hero "+" prefixes — the diff "uncommitted/before" signal */
+html.v2 .storm-hero .hline .plus {
+  color: var(--color-cyan);
+  text-shadow: 0 0 12px color-mix(in oklch, var(--color-cyan) 55%, transparent);
+}
+
+/* ── Resolve + Agents: mirrored 2-col grids ────────────────────────────
+   Adjacent identical twins → differentiated: resolve = terminal-left,
+   agents = terminal-right. Breaks the biggest monotony offender. */
+@media (min-width: 900px) {
+  html.v2 #resolve .container,
+  html.v2 #agents .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2.5rem, 1rem + 3vw, 4rem);
+    align-items: center;
+  }
+  /* Resolve: terminal in col 1 (left), copy auto-fills col 2 (right) */
+  html.v2 #resolve .terminal-wrap {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    max-width: none;
+    margin: 0;
+  }
+  /* Agents: terminal in col 2 (right), copy auto-fills col 1 (left) — mirrored */
+  html.v2 #agents .terminal-wrap {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    max-width: none;
+    margin: 0;
+  }
+}
+
+/* ── Cyan duotone application ──────────────────────────────────────────
+   cyan = uncommitted/before/pending, amber = committed/after/done. */
+
+/* Batching source card: cyan border (the uncommitted "before" state) */
+html.v2 #batching .source-card {
+  border-color: color-mix(in oklch, var(--color-cyan) 35%, var(--color-line));
+  box-shadow: 0 0 24px -12px var(--color-cyan-soft);
+}
+
+/* Compare chips: cyan hover (comparison = pre-decision state) */
+html.v2 #compare .rival-chip:hover {
+  border-color: var(--color-cyan);
+  color: var(--color-cyan);
+}
+
+/* HowItWorks step arrows: cyan (flow direction = uncommitted→committed) */
+html.v2 #how .step-arrow {
+  color: var(--color-cyan);
+}
+
+/* Install active tab: cyan (selected-but-not-yet-run = uncommitted) */
+html.v2 #install .tab.is-active {
+  color: var(--color-cyan);
+  border-bottom-color: var(--color-cyan);
+}
+
+/* ── Eyebrow variation: cyan on "before/process" sections ────────────── */
+html.v2 #batching .eyebrow,
+html.v2 #agents .eyebrow {
+  color: var(--color-cyan);
+}
+html.v2 #batching .eyebrow .line,
+html.v2 #agents .eyebrow .line {
+  background: var(--color-cyan);
+}
+
+/* ── Visual rhythm: vary section padding to break monotony ─────────────
+   List-style sections (how, providers) get tighter padding — they're
+   scannable strips, not narrative blocks. Terminal sections (resolve,
+   agents) get wider containers so terminals breathe. */
+html.v2 #how,
+html.v2 #providers {
+  padding-top: clamp(2rem, 0.5rem + 4vw, 3.5rem);
+  padding-bottom: clamp(2rem, 0.5rem + 4vw, 3.5rem);
+}
+html.v2 #resolve .container,
+html.v2 #agents .container {
+  max-width: min(1320px, 100%);
+}
