@@ -2,22 +2,30 @@
 /**
  * ScrollDemo — V2 scroll-driven product demo.
  *
- * A 300vh section that pins a terminal + git-graph pair. As the user
- * scrolls, three frames cross-fade through the aic workflow:
+ * A 300vh section. Heading scrolls normally, then a terminal + git-graph
+ * pair pins and cross-fades through the aic workflow:
  *   0 → Stage ($ aic detects changes)
  *   1 → Review (batched commit plan)
  *   2 → Ship (commits landed on graph)
  *
- * A mini git-graph on the left grows nodes in sync with the frames.
+ * Frames are position: absolute (overlap, no layout shift). A stage badge
+ * in the terminal chrome tracks the current step. A mini git-graph grows
+ * nodes in sync with the frames.
  *
  * No-JS / reduced-motion: the final frame (Ship) is visible by default.
- * JS progressively hides it and reveals frames on scroll.
- *
  * V2-only: mounted only on /v2 routes.
  */
 ---
 
 <section class="scroll-demo" data-scroll-demo>
+  <!-- Heading — scrolls normally before the pin -->
+  <div class="demo-heading container">
+    <p class="demo-eyebrow">
+      <span class="line" aria-hidden="true"></span>see it work
+    </p>
+    <h2 class="demo-h2">From 12 files<br />to 3 commits</h2>
+  </div>
+
   <div class="demo-pin">
     <div class="demo-inner container">
       <!-- Left: persistent git-graph track -->
@@ -50,24 +58,24 @@
             <i></i><i></i><i></i>
           </div>
           <span class="term-title">aic — live demo</span>
+          <span class="stage-badge" data-stage-badge>stage</span>
         </div>
 
-        <!-- Frame 0: Stage -->
-        <div class="demo-frame" data-frame="0">
-          <pre
-            class="term-body">
-<span class="prompt">$</span> <span class="cmd">aic</span>
+        <div class="frame-stack">
+          <!-- Frame 0: Stage -->
+          <div class="demo-frame" data-frame="0">
+            <pre
+              class="term-body"><span class="prompt">$</span> <span class="cmd">aic</span>
 
 <span class="muted">Scanning 12 changed files…</span>
 <span class="cyan">3 logical commits detected</span>
 <span class="muted">━ reviewing plan ━</span></pre>
-        </div>
+          </div>
 
-        <!-- Frame 1: Review -->
-        <div class="demo-frame" data-frame="1">
-          <pre
-            class="term-body">
-<span class="label">commit 1</span>  <span class="amber">feat(auth): refresh token rotation</span>
+          <!-- Frame 1: Review -->
+          <div class="demo-frame" data-frame="1">
+            <pre
+              class="term-body"><span class="label">commit 1</span>  <span class="amber">feat(auth): refresh token rotation</span>
            <span class="muted">auth/refresh.ts, auth/verify.ts</span>
 
 <span class="label">commit 2</span>  <span class="amber">fix(ui): redirect on session expiry</span>
@@ -77,19 +85,19 @@
            <span class="muted">package.json, lock.json</span>
 
 <span class="prompt">→</span> <span class="cmd">aic commit --all</span></pre>
-        </div>
+          </div>
 
-        <!-- Frame 2: Ship -->
-        <div class="demo-frame" data-frame="2">
-          <pre
-            class="term-body">
-<span class="mint">✓ 3 commits created</span>
+          <!-- Frame 2: Ship -->
+          <div class="demo-frame" data-frame="2">
+            <pre
+              class="term-body"><span class="mint">✓ 3 commits created</span>
 
 <span class="hash">abc1234</span>  <span class="muted">chore: bump dependencies</span>
 <span class="hash">def5678</span>  <span class="muted">fix(ui): redirect on expiry</span>
 <span class="hash">ghi9012</span>  <span class="amber">feat(auth): refresh token rotation</span>
 
 <span class="cyan">12 files → 3 commits in 4.2s</span></pre>
+          </div>
         </div>
       </div>
     </div>
@@ -105,10 +113,42 @@
 <style>
   .scroll-demo {
     position: relative;
-    height: 300vh;
     background: var(--color-base-deep);
   }
 
+  /* ── Heading (scrolls normally before pin) ────────────────────────── */
+  .demo-heading {
+    padding-top: clamp(3rem, 1rem + 6vw, 5rem);
+    padding-bottom: 0;
+    max-width: 48rem;
+  }
+  .demo-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-cyan);
+    margin: 0 0 0.75rem;
+  }
+  .demo-eyebrow .line {
+    width: 2rem;
+    height: 2px;
+    background: var(--color-cyan);
+    border-radius: 1px;
+  }
+  .demo-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1rem + 3vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.05;
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  /* ── Pinned area ──────────────────────────────────────────────────── */
   .demo-pin {
     position: sticky;
     top: 0;
@@ -198,7 +238,10 @@
     border-radius: 12px;
     overflow: hidden;
     background: var(--color-surface);
-    min-height: 320px;
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.03),
+      0 20px 60px -20px rgba(0, 0, 0, 0.5),
+      0 0 80px -40px var(--color-cyan-soft, transparent);
   }
 
   .term-chrome {
@@ -237,21 +280,63 @@
     margin-left: 0.5rem;
   }
 
+  /* Stage badge — shows current workflow step */
+  .stage-badge {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-cyan);
+    padding: 0.2rem 0.6rem;
+    border: 1px solid color-mix(in oklch, var(--color-cyan) 30%, var(--color-line));
+    border-radius: 99px;
+    background: color-mix(in oklch, var(--color-cyan) 8%, transparent);
+    transition:
+      color 0.3s ease,
+      border-color 0.3s ease,
+      background 0.3s ease;
+  }
+  .stage-badge[data-stage='1'] {
+    color: var(--color-amber);
+    border-color: color-mix(in oklch, var(--color-amber) 30%, var(--color-line));
+    background: color-mix(in oklch, var(--color-amber) 8%, transparent);
+  }
+  .stage-badge[data-stage='2'] {
+    color: var(--color-mint);
+    border-color: color-mix(in oklch, var(--color-mint) 30%, var(--color-line));
+    background: color-mix(in oklch, var(--color-mint) 8%, transparent);
+  }
+
+  /* ── Frame stack — absolute overlap, no layout shift ─────────────── */
+  .frame-stack {
+    position: relative;
+    min-height: 280px;
+  }
+
   .demo-frame {
+    position: absolute;
+    inset: 0;
     padding: 1.25rem 1.5rem;
     opacity: 0;
-    transition: opacity 0.35s ease;
+    transform: translateY(8px);
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease;
   }
   /* No-JS fallback: show final frame only */
   .demo-frame[data-frame='2'] {
     opacity: 1;
+    transform: translateY(0);
   }
-  /* When JS runs, it manages all opacity */
+  /* When JS runs, it manages all state */
   .scroll-demo[data-js] .demo-frame {
     opacity: 0;
+    transform: translateY(8px);
   }
   .scroll-demo[data-js] .demo-frame.is-active {
     opacity: 1;
+    transform: translateY(0);
   }
 
   .term-body {
@@ -360,6 +445,9 @@
     .hint-arrow {
       animation: none;
     }
+    .demo-frame {
+      transform: none !important;
+    }
   }
 </style>
 
@@ -371,7 +459,9 @@
     const frames = section.querySelectorAll<HTMLElement>('.demo-frame');
     const segs = section.querySelectorAll<HTMLElement>('.graph-seg');
     const hint = section.querySelector<HTMLElement>('.demo-hint');
-    const totalFrames = frames.length; // 3
+    const badge = section.querySelector<HTMLElement>('[data-stage-badge]');
+    const totalFrames = frames.length;
+    const stageNames = ['stage', 'review', 'ship'];
 
     // Mark JS active — takes over opacity management
     section.setAttribute('data-js', '');
@@ -382,12 +472,10 @@
       ticking = false;
       const rect = section.getBoundingClientRect();
       const scrollable = rect.height - window.innerHeight;
-      // Progress: 0 when section top hits viewport top, 1 when bottom reaches viewport bottom
       const raw = -rect.top / scrollable;
       const progress = Math.max(0, Math.min(1, raw));
 
       // Map progress to frame index
-      // 0.00-0.33 → frame 0, 0.33-0.66 → frame 1, 0.66-1.0 → frame 2
       const frame = Math.min(totalFrames - 1, Math.floor(progress * totalFrames));
 
       frames.forEach((f, i) => f.classList.toggle('is-active', i === frame));
@@ -396,7 +484,13 @@
       const visibleCount = frame === totalFrames - 1 ? segs.length : frame;
       segs.forEach((s, i) => s.classList.toggle('is-visible', i < visibleCount));
 
-      // Hide scroll hint after first frame
+      // Stage badge
+      if (badge) {
+        badge.textContent = stageNames[frame];
+        badge.setAttribute('data-stage', String(frame));
+      }
+
+      // Hide scroll hint after scrolling starts
       if (hint) hint.classList.toggle('is-hidden', progress > 0.05);
     }
 
