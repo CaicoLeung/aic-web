@@ -153,41 +153,36 @@
     background: var(--color-surface);
     box-shadow:
       inset 0 1px 0 0 rgba(255, 255, 255, 0.03),
-      0 20px 60px -20px rgba(0, 0, 0, 0.5),
-      0 0 var(--glow-size, 0px) var(--glow-spread, 0px) var(--glow-color, transparent);
-    transition:
-      box-shadow 0.6s ease,
-      border-color 0.6s ease;
+      0 20px 60px -20px rgba(0, 0, 0, 0.5);
   }
 
-  /* Stage-based glow — the border IS the progress indicator */
-  .demo-terminal[data-stage='0'] {
-    --glow-color: color-mix(in oklch, var(--color-cyan) 30%, transparent);
-    --glow-size: 12px;
-    --glow-spread: -4px;
-    border-color: color-mix(in oklch, var(--color-cyan) 25%, var(--color-line));
+  /* Glow lives on a separate pseudo-element — only opacity transitions
+   * (GPU-composited, zero repaint). Eliminates the box-shadow jitter
+   * caused by animating CSS custom properties in box-shadow. */
+  .demo-terminal::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 1px solid transparent;
+    pointer-events: none;
+    will-change: opacity;
+    transition: opacity 0.5s ease;
   }
-  .demo-terminal[data-stage='1'] {
-    --glow-color: color-mix(in oklch, var(--color-amber) 35%, transparent);
-    --glow-size: 20px;
-    --glow-spread: -6px;
-    border-color: color-mix(in oklch, var(--color-amber) 30%, var(--color-line));
-    animation: think-pulse 2s ease-in-out infinite;
+  .demo-terminal[data-stage='0']::after {
+    opacity: 1;
+    border-color: color-mix(in oklch, var(--color-cyan) 40%, transparent);
+    box-shadow: 0 0 16px -4px color-mix(in oklch, var(--color-cyan) 30%, transparent);
   }
-  .demo-terminal[data-stage='2'] {
-    --glow-color: color-mix(in oklch, var(--color-mint) 30%, transparent);
-    --glow-size: 16px;
-    --glow-spread: -4px;
-    border-color: color-mix(in oklch, var(--color-mint) 25%, var(--color-line));
+  .demo-terminal[data-stage='1']::after {
+    opacity: 1;
+    border-color: color-mix(in oklch, var(--color-amber) 45%, transparent);
+    box-shadow: 0 0 24px -6px color-mix(in oklch, var(--color-amber) 35%, transparent);
   }
-  @keyframes think-pulse {
-    0%,
-    100% {
-      --glow-size: 16px;
-    }
-    50% {
-      --glow-size: 28px;
-    }
+  .demo-terminal[data-stage='2']::after {
+    opacity: 1;
+    border-color: color-mix(in oklch, var(--color-mint) 40%, transparent);
+    box-shadow: 0 0 20px -4px color-mix(in oklch, var(--color-mint) 30%, transparent);
   }
 
   /* Top progress bar — fills with scroll progress */
@@ -450,9 +445,6 @@
       content: '...';
     }
     .term-cursor {
-      animation: none;
-    }
-    .demo-terminal[data-stage='1'] {
       animation: none;
     }
     .tline {
