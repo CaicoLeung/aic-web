@@ -34,14 +34,14 @@
           <!-- AMBER group: session refactor -->
           <div class="hunk" data-hunk data-group="1" style="--gc: var(--color-amber)">
             <div class="hunk-glow" data-hunk-glow></div>
-            <div class="hunk-line">
-              <span class="ln">3</span><span class="del"
-                >-<span class="kw">const</span> session = getStoredSession()</span
+            <div class="hunk-line" data-i="0">
+              <span class="ln">3</span><span class="sign del">-</span><span class="code"
+                ><span class="kw">const</span> session = getStoredSession()</span
               >
             </div>
-            <div class="hunk-line">
-              <span class="ln">4</span><span class="add"
-                >+<span class="kw">const</span> session = <span class="kw">await</span>
+            <div class="hunk-line" data-i="0">
+              <span class="ln">4</span><span class="sign add">+</span><span class="code"
+                ><span class="kw">const</span> session = <span class="kw">await</span>
                 <span class="fn">refreshToken</span>(stored)</span
               >
             </div>
@@ -52,41 +52,49 @@
           <!-- CYAN group: new refresh function -->
           <div class="hunk" data-hunk data-group="0" style="--gc: var(--color-cyan)">
             <div class="hunk-glow" data-hunk-glow></div>
-            <div class="hunk-line">
-              <span class="ln">6</span><span class="add"
-                >+<span class="kw">export async function</span>
+            <div class="hunk-line" data-i="0">
+              <span class="ln">6</span><span class="sign add">+</span><span class="code"
+                ><span class="kw">export async function</span>
                 <span class="fn">refreshToken</span>(t: <span class="ty">string</span>)
                 &#123;</span
               >
             </div>
-            <div class="hunk-line">
-              <span class="ln">7</span><span class="add"
-                >+ <span class="kw">const</span> res = <span class="kw">await</span>
-                <span class="fn">fetch</span>(<span class="str">'/api/refresh'</span>,
-                &#123;</span
+            <div class="hunk-line" data-i="1">
+              <span class="ln">7</span><span class="sign add">+</span><span class="code"
+                ><span class="kw">const</span> res = <span class="kw">await</span>
+                <span class="fn">fetch</span>(&#123;</span
               >
             </div>
-            <div class="hunk-line">
-              <span class="ln">8</span><span class="add"
-                >+ method: <span class="str">'POST'</span>,</span
+            <div class="hunk-line" data-i="2">
+              <span class="ln">8</span><span class="sign add">+</span><span class="code"
+                >url: <span class="str">'/api/refresh'</span>,</span
               >
             </div>
-            <div class="hunk-line">
-              <span class="ln">9</span><span class="add"
-                >+ body: <span class="fn">JSON</span>.<span class="fn">stringify</span
+            <div class="hunk-line" data-i="2">
+              <span class="ln">9</span><span class="sign add">+</span><span class="code"
+                >method: <span class="str">'POST'</span>,</span
+              >
+            </div>
+            <div class="hunk-line" data-i="2">
+              <span class="ln">10</span><span class="sign add">+</span><span class="code"
+                >body: <span class="fn">JSON</span>.<span class="fn">stringify</span
                 >(&#123; t &#125;),</span
               >
             </div>
-            <div class="hunk-line">
-              <span class="ln">10</span><span class="add">+ })</span>
-            </div>
-            <div class="hunk-line">
-              <span class="ln">11</span><span class="add"
-                >+ <span class="kw">return</span> res.<span class="fn">json</span>()</span
+            <div class="hunk-line" data-i="1">
+              <span class="ln">11</span><span class="sign add">+</span><span class="code"
+                >&#125;)</span
               >
             </div>
-            <div class="hunk-line">
-              <span class="ln">12</span><span class="add">+}</span>
+            <div class="hunk-line" data-i="1">
+              <span class="ln">12</span><span class="sign add">+</span><span class="code"
+                ><span class="kw">return</span> res.<span class="fn">json</span>()</span
+              >
+            </div>
+            <div class="hunk-line" data-i="0">
+              <span class="ln">13</span><span class="sign add">+</span><span class="code"
+                >&#125;</span
+              >
             </div>
           </div>
 
@@ -95,21 +103,23 @@
           <!-- AMBER group continued: session redirect -->
           <div class="hunk" data-hunk data-group="1" style="--gc: var(--color-amber)">
             <div class="hunk-glow" data-hunk-glow></div>
-            <div class="hunk-line">
-              <span class="ln">14</span><span class="add"
-                >+<span class="kw">if</span> (session.expired) &#123;</span
+            <div class="hunk-line" data-i="0">
+              <span class="ln">15</span><span class="sign add">+</span><span class="code"
+                ><span class="kw">if</span> (session.expired) &#123;</span
               >
             </div>
-            <div class="hunk-line">
-              <span class="ln">15</span><span class="add"
-                >+ <span class="kw">return</span>
+            <div class="hunk-line" data-i="1">
+              <span class="ln">16</span><span class="sign add">+</span><span class="code"
+                ><span class="kw">return</span>
                 <span class="fn">redirect</span>(<span class="str"
                   >'/login?reason=expired'</span
                 >)</span
               >
             </div>
-            <div class="hunk-line">
-              <span class="ln">16</span><span class="add">+}</span>
+            <div class="hunk-line" data-i="0">
+              <span class="ln">17</span><span class="sign add">+</span><span class="code"
+                >&#125;</span
+              >
             </div>
           </div>
           <div class="hunk-gap"></div>
@@ -117,10 +127,9 @@
           <div class="hunk-file">package.json</div>
           <div class="hunk" data-hunk data-group="2" style="--gc: var(--color-mint)">
             <div class="hunk-glow" data-hunk-glow></div>
-            <div class="hunk-line">
-              <span class="ln">18</span><span class="add"
-                >+ <span class="str">"next"</span>: <span class="str">"^14.2.0"</span
-                ></span
+            <div class="hunk-line" data-i="1">
+              <span class="ln">19</span><span class="sign add">+</span><span class="code"
+                ><span class="str">"next"</span>: <span class="str">"^14.2.0"</span></span
               >
             </div>
           </div>
@@ -389,11 +398,25 @@
     user-select: none;
     flex-shrink: 0;
   }
-  .add {
+  .sign {
+    width: 1ch;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+  .sign.add {
     color: #b8d5a0;
   }
-  .del {
+  .sign.del {
     color: #d59090;
+  }
+  .code {
+    color: var(--color-ink);
+  }
+  .hunk-line[data-i='1'] .code {
+    margin-left: 2ch;
+  }
+  .hunk-line[data-i='2'] .code {
+    margin-left: 4ch;
   }
   .kw {
     color: #c792ea;
