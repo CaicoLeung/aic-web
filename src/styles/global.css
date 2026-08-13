@@ -35,6 +35,11 @@
      Maps to the diff metaphor — cyan = uncommitted/before, amber = committed/after. */
   --color-cyan: #5dd4e8;
   --color-cyan-soft: rgba(93, 212, 232, 0.12);
+  /* macOS traffic-light chrome — shared across every terminal/editor mock
+     (TerminalShell, HeroV2 editor, ScrollDemo). One source, no per-component hex. */
+  --dot-close: #ff5f57;
+  --dot-min: #febc2e;
+  --dot-max: #28c840;
 
   /* type — three registers (ADR-0004):
      display = headings, body = prose, mono = code/chrome.
@@ -251,8 +256,8 @@
 }
 
 /* ── V2 design overrides — scoped under html.v2 ──────────────────────
-   Loaded globally (zero effect on V1 pages that lack the class).
-   Applied when Base layout receives design="v2" → <html class="v2">. */
+   Applied via the hardcoded class="v2" on <html> in Base.astro (V1 is
+   fully superseded — no design prop, no V1 pages remain). */
 html.v2 {
   --font-display:
     'Space Grotesk', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI',
@@ -471,39 +476,42 @@ html.v2 #agents .terminal-wrap {
    Thin duotone bar at viewport top. Zero JS: animation-timeline: scroll().
    Progressive enhancement — absent in browsers without support. */
 @supports (animation-timeline: scroll()) {
-  html.v2 body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 2px;
-    width: 100%;
-    background: linear-gradient(
-      90deg,
-      var(--color-cyan),
-      color-mix(in oklch, var(--color-cyan) 50%, var(--color-amber)),
-      var(--color-amber)
-    );
-    transform-origin: left;
-    transform: scaleX(0);
-    animation: v2-progress 1s linear;
-    animation-timeline: scroll(root);
-    z-index: 1000;
-    pointer-events: none;
-  }
-  @keyframes v2-progress {
-    to {
-      transform: scaleX(1);
+  @media (prefers-reduced-motion: no-preference) {
+    html.v2 body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 100%;
+      background: linear-gradient(
+        90deg,
+        var(--color-cyan),
+        color-mix(in oklch, var(--color-cyan) 50%, var(--color-amber)),
+        var(--color-amber)
+      );
+      transform-origin: left;
+      transform: scaleX(0);
+      animation: v2-progress 1s linear;
+      animation-timeline: scroll(root);
+      z-index: 1000;
+      pointer-events: none;
+    }
+    @keyframes v2-progress {
+      to {
+        transform: scaleX(1);
+      }
     }
   }
 }
 
 /* ════════════════════════════════════════════════════════════════════
    V2 Fluid Scaling — large-screen adaptation
-   All dimension axes scale harmoniously past 1200px.
-   clamps use min(1200px,…) breakpoint logic: the vw slope is steeper
-   and ceilings are higher, so 1440–2560px screens grow proportionally
-   instead of flatlining at ~800px viewport. ═════════════════════════ */
+   Type ceilings and section padding raise their maxes so large screens
+   get real breathing room (hero type reaches 6rem, sections up to 11rem
+   block padding). The reading-measure container stays capped at 1280px
+   to keep line length ergonomic — type and padding scale, measure does
+   not. ═════════════════════════════════════════════════════════════ */
 
 /* ── Type: raise ceilings ────────────────────────────────────────────── */
 html.v2 {
