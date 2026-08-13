@@ -240,14 +240,19 @@ const versionTitle = t('topbar.versionTitle', { version });
       justify-content: flex-start;
       gap: 1.25rem;
       scrollbar-width: none;
+      max-height: 4rem;
+      overflow: hidden;
       transition:
-        opacity var(--duration-normal) var(--ease-out-expo),
-        transform var(--duration-normal) var(--ease-out-expo);
+        max-height var(--duration-normal) var(--ease-out-expo),
+        opacity var(--duration-fast) var(--ease-out-expo);
     }
     .nav.is-hidden {
+      max-height: 0;
       opacity: 0;
-      transform: translateY(-100%);
       pointer-events: none;
+    }
+    .topbar:has(.nav.is-hidden) {
+      row-gap: 0;
     }
     .brand {
       order: 1;
