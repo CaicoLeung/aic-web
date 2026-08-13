@@ -479,3 +479,34 @@ html.v2 #agents .terminal-wrap {
     }
   }
 }
+
+/* ── Scroll progress bar ───────────────────────────────────────────────
+   Thin duotone bar at viewport top. Zero JS: animation-timeline: scroll().
+   Progressive enhancement — absent in browsers without support. */
+@supports (animation-timeline: scroll()) {
+  html.v2 body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--color-cyan),
+      color-mix(in oklch, var(--color-cyan) 50%, var(--color-amber)),
+      var(--color-amber)
+    );
+    transform-origin: left;
+    transform: scaleX(0);
+    animation: v2-progress 1s linear;
+    animation-timeline: scroll(root);
+    z-index: 1000;
+    pointer-events: none;
+  }
+  @keyframes v2-progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
