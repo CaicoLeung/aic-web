@@ -2,13 +2,16 @@
 /**
  * ScrollDemo — V2 scroll-driven product demo.
  *
- * ONE terminal, content builds up as the user scrolls. Three phases:
- *   r0: Agent startup ($ aic → init → ready)
- *   r1: Agent thinking (analyze files → group → propose plan)
- *   r2: Ship (commit --all → results → summary)
+ * ONE terminal, content streams in line-by-line as the user scrolls.
+ * Three phases with different feel:
+ *   r0 (0-10%):  Agent startup — instant, all lines together
+ *   loading (10-28%): Spinner + "thinking..." indicator
+ *   r1 (28-62%): Agent analysis — streams one line at a time
+ *   r2 (66-76%): Ship — quick burst of commit results
  *
- * Terminal is position: sticky — pins and stays fixed during scroll.
- * Git-graph on the left grows commit nodes in sync.
+ * Terminal border glows as a progress bar — color shifts cyan→amber→mint,
+ * top accent bar fills with scroll progress. Terminal is position: sticky,
+ * stays fixed during the animation.
  *
  * No-JS / reduced-motion: all lines visible (final state).
  * V2-only.
@@ -18,98 +21,104 @@
 <section class="scroll-demo" data-scroll-demo>
   <div class="demo-pin">
     <div class="demo-inner container">
-      <!-- Left: persistent git-graph track -->
-      <div class="demo-graph" aria-hidden="true">
-        <div class="graph-seg" data-seg="1">
-          <span class="seg-node" data-node="1">
-            <span class="node-label">feat</span>
-          </span>
-          <span class="seg-line"></span>
-        </div>
-        <div class="graph-seg" data-seg="2">
-          <span class="seg-node" data-node="2">
-            <span class="node-label">fix</span>
-          </span>
-          <span class="seg-line"></span>
-        </div>
-        <div class="graph-seg" data-seg="3">
-          <span class="seg-node" data-node="3">
-            <span class="node-label">chore</span>
-          </span>
-          <span class="seg-line"></span>
-        </div>
-      </div>
-
-      <!-- Right: single terminal with progressive lines -->
-      <div class="demo-terminal">
+      <div class="demo-terminal" data-terminal>
         <div class="term-chrome">
           <div class="term-dots"><i></i><i></i><i></i></div>
           <span class="term-title">aic</span>
+          <span class="term-stage" data-stage-label></span>
         </div>
 
         <div class="term-scroll" data-term-scroll>
           <div class="term-body">
-            <!-- r0: Agent startup -->
-            <div class="tline r0">
+            <!-- r0: Agent startup (instant) -->
+            <div class="tline r0" data-reveal="0.00">
               <span class="prompt">$</span>
               <span class="cmd">aic</span>
             </div>
-            <div class="tline r0 blank"></div>
-            <div class="tline r0 accent">⟢ agent starting</div>
-            <div class="tline r0 muted">config <span class="val">.aic.yml</span></div>
-            <div class="tline r0 muted">
+            <div class="tline r0 blank" data-reveal="0.00"></div>
+            <div class="tline r0 accent" data-reveal="0.02">⟢ agent starting</div>
+            <div class="tline r0 muted" data-reveal="0.03">
+              config <span class="val">.aic.yml</span>
+            </div>
+            <div class="tline r0 muted" data-reveal="0.04">
               model <span class="val">gpt-4o-mini</span> · fast
             </div>
-            <div class="tline r0 muted">ready <span class="mint">✓ 0.8s</span></div>
+            <div class="tline r0 muted" data-reveal="0.05">
+              ready <span class="mint">✓ 0.8s</span>
+            </div>
 
-            <!-- r1: Agent thinking + plan -->
-            <div class="tline r1 blank"></div>
-            <div class="tline r1 accent">⟢ analyzing 12 changed files</div>
-            <div class="tline r1 muted">
+            <!-- Loading spinner bridge -->
+            <div class="tline load" data-reveal="0.10">
+              <span class="spinner"></span>
+              <span class="cyan">analyzing repository</span><span
+                class="dot-anim"
+                aria-hidden="true"></span>
+            </div>
+
+            <!-- r1: Agent thinking — streams one-by-one -->
+            <div class="tline r1 blank" data-reveal="0.28"></div>
+            <div class="tline r1 accent" data-reveal="0.30">
+              ⟢ analyzing 12 changed files
+            </div>
+            <div class="tline r1 muted" data-reveal="0.33">
               auth/refresh.ts <span class="bracket">┐</span> token rotation
             </div>
-            <div class="tline r1 muted">
+            <div class="tline r1 muted" data-reveal="0.35">
               auth/verify.ts <span class="bracket">┘</span>
             </div>
-            <div class="tline r1 muted">Redirect.tsx session expiry fix</div>
-            <div class="tline r1 muted">
+            <div class="tline r1 muted" data-reveal="0.38">
+              Redirect.tsx session expiry fix
+            </div>
+            <div class="tline r1 muted" data-reveal="0.40">
               package.json <span class="bracket">┐</span> dependency bump
             </div>
-            <div class="tline r1 muted">lock.json <span class="bracket">┘</span></div>
-            <div class="tline r1 cyan">3 commit groups identified</div>
-            <div class="tline r1 blank"></div>
-            <div class="tline r1 muted sep">━━ proposed plan ━━</div>
-            <div class="tline r1">
+            <div class="tline r1 muted" data-reveal="0.42">
+              lock.json <span class="bracket">┘</span>
+            </div>
+            <div class="tline r1 cyan" data-reveal="0.45">3 commit groups identified</div>
+            <div class="tline r1 blank" data-reveal="0.47"></div>
+            <div class="tline r1 muted sep" data-reveal="0.49">━━ proposed plan ━━</div>
+            <div class="tline r1" data-reveal="0.52">
               <span class="num"> 1</span>
               <span class="amber">feat(auth): refresh token rotation</span>
             </div>
-            <div class="tline r1">
+            <div class="tline r1" data-reveal="0.55">
               <span class="num"> 2</span>
               <span class="amber">fix(ui): redirect on session expiry</span>
             </div>
-            <div class="tline r1">
+            <div class="tline r1" data-reveal="0.58">
               <span class="num"> 3</span>
               <span class="amber">chore: bump dependencies</span>
             </div>
 
             <!-- r2: Ship -->
-            <div class="tline r2 blank"></div>
-            <div class="tline r2">
+            <div class="tline r2 blank" data-reveal="0.66"></div>
+            <div class="tline r2" data-reveal="0.67">
               <span class="prompt">→</span>
               <span class="cmd">aic commit --all</span>
             </div>
-            <div class="tline r2 blank"></div>
-            <div class="tline r2 mint">✓ abc1234 chore: bump dependencies</div>
-            <div class="tline r2 mint">✓ def5678 fix(ui): redirect on expiry</div>
-            <div class="tline r2 mint">✓ ghi9012 feat(auth): refresh token rotation</div>
-            <div class="tline r2 blank"></div>
-            <div class="tline r2 cyan">12 files → 3 commits in 4.2s</div>
+            <div class="tline r2 blank" data-reveal="0.68"></div>
+            <div class="tline r2 mint" data-reveal="0.70">
+              ✓ abc1234 chore: bump dependencies
+            </div>
+            <div class="tline r2 mint" data-reveal="0.72">
+              ✓ def5678 fix(ui): redirect on expiry
+            </div>
+            <div class="tline r2 mint" data-reveal="0.74">
+              ✓ ghi9012 feat(auth): refresh token rotation
+            </div>
+            <div class="tline r2 blank" data-reveal="0.75"></div>
+            <div class="tline r2 cyan" data-reveal="0.76">
+              12 files → 3 commits in 4.2s
+            </div>
+
+            <!-- Blinking cursor — JS toggles during streaming -->
+            <span class="term-cursor" data-cursor>▋</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Scroll hint -->
     <div class="demo-hint" aria-hidden="true">
       <span class="hint-text">scroll</span>
       <span class="hint-arrow">↓</span>
@@ -134,78 +143,73 @@
   }
 
   .demo-inner {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: clamp(2rem, 1rem + 4vw, 5rem);
-    align-items: center;
     width: 100%;
-  }
-
-  /* ── Git graph track ─────────────────────────────────────────────── */
-  .demo-graph {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-    min-height: 280px;
-  }
-
-  .graph-seg {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    opacity: 0;
-    transform: translateY(-0.5rem);
-    transition:
-      opacity 0.4s ease,
-      transform 0.4s ease;
-  }
-  .graph-seg.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .seg-node {
-    position: relative;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--color-amber);
-    box-shadow: 0 0 16px -2px color-mix(in oklch, var(--color-amber) 60%, transparent);
-    flex-shrink: 0;
-  }
-
-  .seg-line {
-    width: 2px;
-    height: 48px;
-    background: linear-gradient(
-      to bottom,
-      var(--color-amber),
-      color-mix(in oklch, var(--color-amber) 50%, transparent)
-    );
-  }
-
-  .node-label {
-    position: absolute;
-    left: 28px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--color-ink-muted);
-    white-space: nowrap;
-    letter-spacing: 0.05em;
+    max-width: 720px;
+    margin: 0 auto;
   }
 
   /* ── Terminal ────────────────────────────────────────────────────── */
   .demo-terminal {
+    position: relative;
     border: 1px solid var(--color-line);
     border-radius: 12px;
     overflow: hidden;
     background: var(--color-surface);
     box-shadow:
       inset 0 1px 0 0 rgba(255, 255, 255, 0.03),
-      0 20px 60px -20px rgba(0, 0, 0, 0.5);
+      0 20px 60px -20px rgba(0, 0, 0, 0.5),
+      0 0 var(--glow-size, 0px) var(--glow-spread, 0px) var(--glow-color, transparent);
+    transition:
+      box-shadow 0.6s ease,
+      border-color 0.6s ease;
+  }
+
+  /* Stage-based glow — the border IS the progress indicator */
+  .demo-terminal[data-stage='0'] {
+    --glow-color: color-mix(in oklch, var(--color-cyan) 30%, transparent);
+    --glow-size: 12px;
+    --glow-spread: -4px;
+    border-color: color-mix(in oklch, var(--color-cyan) 25%, var(--color-line));
+  }
+  .demo-terminal[data-stage='1'] {
+    --glow-color: color-mix(in oklch, var(--color-amber) 35%, transparent);
+    --glow-size: 20px;
+    --glow-spread: -6px;
+    border-color: color-mix(in oklch, var(--color-amber) 30%, var(--color-line));
+    animation: think-pulse 2s ease-in-out infinite;
+  }
+  .demo-terminal[data-stage='2'] {
+    --glow-color: color-mix(in oklch, var(--color-mint) 30%, transparent);
+    --glow-size: 16px;
+    --glow-spread: -4px;
+    border-color: color-mix(in oklch, var(--color-mint) 25%, var(--color-line));
+  }
+  @keyframes think-pulse {
+    0%,
+    100% {
+      --glow-size: 16px;
+    }
+    50% {
+      --glow-size: 28px;
+    }
+  }
+
+  /* Top progress bar — fills with scroll progress */
+  .demo-terminal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: var(--progress, 0%);
+    background: linear-gradient(
+      to right,
+      var(--color-cyan),
+      var(--color-amber),
+      var(--color-mint)
+    );
+    z-index: 2;
+    transition: width 0.1s linear;
   }
 
   .term-chrome {
@@ -244,6 +248,15 @@
     margin-left: 0.5rem;
   }
 
+  .term-stage {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-dim);
+  }
+
   .term-scroll {
     max-height: clamp(380px, 68vh, 540px);
     overflow-y: auto;
@@ -261,32 +274,106 @@
     color: var(--color-ink);
   }
 
-  /* Each terminal line is a block — no fragile newline management.
-   * No-JS fallback: visible by default. JS hides them, then reveals
-   * progressively via .is-shown. */
+  /* ── Terminal lines ──────────────────────────────────────────────── */
   .tline {
     white-space: pre;
     transition:
-      opacity 0.3s ease,
-      transform 0.3s ease;
+      opacity 0.25s ease,
+      transform 0.25s ease;
   }
+  /* No-JS fallback */
   .scroll-demo:not([data-js]) .tline {
     opacity: 1;
     transform: none;
   }
+  /* JS hidden */
   .scroll-demo[data-js] .tline {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateX(-6px);
   }
+  /* JS revealed — streaming slide-in */
   .scroll-demo[data-js] .tline.is-shown {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
-
   .tline.blank {
     min-height: 0.4em;
   }
 
+  /* ── Loading spinner ─────────────────────────────────────────────── */
+  .tline.load {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .spinner {
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid var(--color-cyan);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .dot-anim::after {
+    content: '';
+    animation: dots 1.5s steps(4) infinite;
+  }
+  @keyframes dots {
+    0% {
+      content: '';
+    }
+    25% {
+      content: '.';
+    }
+    50% {
+      content: '..';
+    }
+    75%,
+    100% {
+      content: '...';
+    }
+  }
+  /* When past loading phase, spinner freezes into a checkmark */
+  .tline.load.done .spinner {
+    animation: none;
+    border: none;
+    border-radius: 0;
+    width: auto;
+    height: auto;
+  }
+  .tline.load.done .spinner::after {
+    content: '✓';
+    color: var(--color-mint);
+    font-weight: 700;
+  }
+  .tline.load.done .dot-anim::after {
+    animation: none;
+    content: '';
+  }
+
+  /* ── Blinking cursor ─────────────────────────────────────────────── */
+  .term-cursor {
+    display: none;
+    color: var(--color-cyan);
+    font-weight: 700;
+    animation: blink 1s step-end infinite;
+  }
+  .scroll-demo[data-js].is-streaming .term-cursor {
+    display: inline;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* ── Text colors ─────────────────────────────────────────────────── */
   .prompt {
     color: var(--color-cyan);
     font-weight: 600;
@@ -364,31 +451,21 @@
     }
   }
 
-  /* ── Mobile ──────────────────────────────────────────────────────── */
-  @media (max-width: 768px) {
-    .demo-inner {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-    .demo-graph {
-      flex-direction: row;
-      min-height: auto;
-      justify-content: center;
-    }
-    .graph-seg {
-      flex-direction: row;
-    }
-    .seg-line {
-      width: 32px;
-      height: 2px;
-    }
-    .node-label {
-      display: none;
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .hint-arrow {
+      animation: none;
+    }
+    .spinner {
+      animation: none;
+    }
+    .dot-anim::after {
+      animation: none;
+      content: '...';
+    }
+    .term-cursor {
+      animation: none;
+    }
+    .demo-terminal[data-stage='1'] {
       animation: none;
     }
     .tline {
@@ -404,11 +481,12 @@
     // V1 page
   } else {
     const lines = section.querySelectorAll<HTMLElement>('.tline');
-    const segs = section.querySelectorAll<HTMLElement>('.graph-seg');
     const hint = section.querySelector<HTMLElement>('.demo-hint');
+    const terminal = section.querySelector<HTMLElement>('[data-terminal]');
     const termScroll = section.querySelector<HTMLElement>('[data-term-scroll]');
+    const stageLabel = section.querySelector<HTMLElement>('[data-stage-label]');
 
-    const STAGE_OF: Record<string, number> = { r0: 0, r1: 1, r2: 2 };
+    const STAGES = ['startup', 'analyzing', 'shipping'] as const;
 
     section.setAttribute('data-js', '');
 
@@ -420,19 +498,47 @@
       const scrollable = rect.height - window.innerHeight;
       const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
 
-      const stage = Math.min(2, Math.floor(progress * 3));
-
-      lines.forEach((line) => {
-        const cls = Array.from(line.classList).find((c) => c in STAGE_OF);
-        if (cls !== undefined) {
-          const lineStage = STAGE_OF[cls];
-          line.classList.toggle('is-shown', lineStage <= stage);
-        }
+      // Fine-grained line reveal — each line has data-reveal (0..1)
+      let lastShownIdx = -1;
+      lines.forEach((line, i) => {
+        const reveal = parseFloat(line.dataset.reveal || '0');
+        const shown = progress >= reveal;
+        line.classList.toggle('is-shown', shown);
+        if (shown) lastShownIdx = i;
       });
 
-      const visibleCount = stage === 2 ? segs.length : stage;
-      segs.forEach((s, i) => s.classList.toggle('is-visible', i < visibleCount));
+      // Determine stage from progress
+      let stage: number;
+      if (progress < 0.28) stage = 0;
+      else if (progress < 0.65) stage = 1;
+      else stage = 2;
 
+      // Terminal glow + progress bar
+      if (terminal) {
+        terminal.setAttribute('data-stage', String(stage));
+        terminal.style.setProperty('--progress', `${(progress * 100).toFixed(1)}%`);
+      }
+      if (stageLabel) {
+        stageLabel.textContent = STAGES[stage];
+      }
+      // Toggle loading line done state (spinner→checkmark)
+      const loadLine = section.querySelector<HTMLElement>('.tline.load');
+      if (loadLine) loadLine.classList.toggle('done', stage >= 1);
+
+      // Streaming cursor: show when there are hidden lines in the current
+      // streaming zone (between first r1 reveal and last r1 reveal)
+      const r1Lines = section.querySelectorAll('.tline.r1, .tline.load');
+      const r1Shown = section.querySelectorAll(
+        '.tline.r1.is-shown, .tline.load.is-shown',
+      );
+      const r2Lines = section.querySelectorAll('.tline.r2');
+      const r2Shown = section.querySelectorAll('.tline.r2.is-shown');
+      const isStreaming =
+        (r1Shown.length > 0 && r1Shown.length < r1Lines.length) ||
+        (r2Shown.length > 0 && r2Shown.length < r2Lines.length);
+      section.classList.toggle('is-streaming', isStreaming);
+
+      // Auto-scroll terminal to keep latest content visible
       if (termScroll) {
         termScroll.scrollTop = termScroll.scrollHeight;
       }
