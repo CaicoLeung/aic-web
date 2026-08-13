@@ -28,101 +28,97 @@
           <span class="term-stage" data-stage-label></span>
         </div>
 
-        <div class="term-scroll" data-term-scroll>
-          <div class="term-body">
-            <!-- r0: Agent startup (instant) -->
-            <div class="tline r0" data-reveal="0.00">
-              <span class="prompt">$</span>
-              <span class="cmd">aic</span>
-            </div>
-            <div class="tline r0 blank" data-reveal="0.00"></div>
-            <div class="tline r0 accent" data-reveal="0.02">⟢ agent starting</div>
-            <div class="tline r0 muted" data-reveal="0.03">
-              config <span class="val">.aic.yml</span>
-            </div>
-            <div class="tline r0 muted" data-reveal="0.04">
-              model <span class="val">gpt-4o-mini</span> · fast
-            </div>
-            <div class="tline r0 muted" data-reveal="0.05">
-              ready <span class="mint">✓ 0.8s</span>
-            </div>
-
-            <!-- Loading spinner bridge -->
-            <div class="tline load" data-reveal="0.10">
-              <span class="spinner"></span>
-              <span class="cyan">analyzing repository</span><span
-                class="dot-anim"
-                aria-hidden="true"></span>
-            </div>
-
-            <!-- r1: Agent thinking — streams one-by-one -->
-            <div class="tline r1 blank" data-reveal="0.28"></div>
-            <div class="tline r1 accent" data-reveal="0.30">
-              ⟢ analyzing 12 changed files
-            </div>
-            <div class="tline r1 muted" data-reveal="0.33">
-              auth/refresh.ts <span class="bracket">┐</span> token rotation
-            </div>
-            <div class="tline r1 muted" data-reveal="0.35">
-              auth/verify.ts <span class="bracket">┘</span>
-            </div>
-            <div class="tline r1 muted" data-reveal="0.38">
-              Redirect.tsx session expiry fix
-            </div>
-            <div class="tline r1 muted" data-reveal="0.40">
-              package.json <span class="bracket">┐</span> dependency bump
-            </div>
-            <div class="tline r1 muted" data-reveal="0.42">
-              lock.json <span class="bracket">┘</span>
-            </div>
-            <div class="tline r1 cyan" data-reveal="0.45">3 commit groups identified</div>
-            <div class="tline r1 blank" data-reveal="0.47"></div>
-            <div class="tline r1 muted sep" data-reveal="0.49">━━ proposed plan ━━</div>
-            <div class="tline r1" data-reveal="0.52">
-              <span class="num"> 1</span>
-              <span class="amber">feat(auth): refresh token rotation</span>
-            </div>
-            <div class="tline r1" data-reveal="0.55">
-              <span class="num"> 2</span>
-              <span class="amber">fix(ui): redirect on session expiry</span>
-            </div>
-            <div class="tline r1" data-reveal="0.58">
-              <span class="num"> 3</span>
-              <span class="amber">chore: bump dependencies</span>
-            </div>
-
-            <!-- r2: Ship -->
-            <div class="tline r2 blank" data-reveal="0.66"></div>
-            <div class="tline r2" data-reveal="0.67">
-              <span class="prompt">→</span>
-              <span class="cmd">aic commit --all</span>
-            </div>
-            <div class="tline r2 blank" data-reveal="0.68"></div>
-            <div class="tline r2 mint" data-reveal="0.70">
-              ✓ abc1234 chore: bump dependencies
-            </div>
-            <div class="tline r2 mint" data-reveal="0.72">
-              ✓ def5678 fix(ui): redirect on expiry
-            </div>
-            <div class="tline r2 mint" data-reveal="0.74">
-              ✓ ghi9012 feat(auth): refresh token rotation
-            </div>
-            <div class="tline r2 blank" data-reveal="0.75"></div>
-            <div class="tline r2 cyan" data-reveal="0.76">
-              12 files → 3 commits in 4.2s
-            </div>
-
-            <!-- Blinking cursor — JS toggles during streaming -->
-            <span class="term-cursor" data-cursor>▋</span>
+        <div class="term-body">
+          <!-- r0: Agent startup (instant) -->
+          <div class="tline r0" data-reveal="0.00">
+            <span class="prompt">$</span>
+            <span class="cmd">aic</span>
           </div>
+          <div class="tline r0 blank" data-reveal="0.00"></div>
+          <div class="tline r0 accent" data-reveal="0.02">⟢ agent starting</div>
+          <div class="tline r0 muted" data-reveal="0.03">
+            config <span class="val">.aic.yml</span>
+          </div>
+          <div class="tline r0 muted" data-reveal="0.04">
+            model <span class="val">gpt-4o-mini</span> · fast
+          </div>
+          <div class="tline r0 muted" data-reveal="0.05">
+            ready <span class="mint">✓ 0.8s</span>
+          </div>
+
+          <!-- Loading spinner bridge -->
+          <div class="tline load" data-reveal="0.10">
+            <span class="spinner"></span>
+            <span class="cyan">analyzing repository</span><span
+              class="dot-anim"
+              aria-hidden="true"></span>
+          </div>
+
+          <!-- r1: Agent thinking — streams one-by-one -->
+          <div class="tline r1 blank" data-reveal="0.28"></div>
+          <div class="tline r1 accent" data-reveal="0.30">
+            ⟢ analyzing 12 changed files
+          </div>
+          <div class="tline r1 muted" data-reveal="0.33">
+            auth/refresh.ts <span class="bracket">┐</span> token rotation
+          </div>
+          <div class="tline r1 muted" data-reveal="0.35">
+            auth/verify.ts <span class="bracket">┘</span>
+          </div>
+          <div class="tline r1 muted" data-reveal="0.38">
+            Redirect.tsx session expiry fix
+          </div>
+          <div class="tline r1 muted" data-reveal="0.40">
+            package.json <span class="bracket">┐</span> dependency bump
+          </div>
+          <div class="tline r1 muted" data-reveal="0.42">
+            lock.json <span class="bracket">┘</span>
+          </div>
+          <div class="tline r1 cyan" data-reveal="0.45">3 commit groups identified</div>
+          <div class="tline r1 blank" data-reveal="0.47"></div>
+          <div class="tline r1 muted sep" data-reveal="0.49">━━ proposed plan ━━</div>
+          <div class="tline r1" data-reveal="0.52">
+            <span class="num"> 1</span>
+            <span class="amber">feat(auth): refresh token rotation</span>
+          </div>
+          <div class="tline r1" data-reveal="0.55">
+            <span class="num"> 2</span>
+            <span class="amber">fix(ui): redirect on session expiry</span>
+          </div>
+          <div class="tline r1" data-reveal="0.58">
+            <span class="num"> 3</span>
+            <span class="amber">chore: bump dependencies</span>
+          </div>
+
+          <!-- r2: Ship -->
+          <div class="tline r2 blank" data-reveal="0.66"></div>
+          <div class="tline r2" data-reveal="0.67">
+            <span class="prompt">→</span>
+            <span class="cmd">aic commit --all</span>
+          </div>
+          <div class="tline r2 blank" data-reveal="0.68"></div>
+          <div class="tline r2 mint" data-reveal="0.70">
+            ✓ abc1234 chore: bump dependencies
+          </div>
+          <div class="tline r2 mint" data-reveal="0.72">
+            ✓ def5678 fix(ui): redirect on expiry
+          </div>
+          <div class="tline r2 mint" data-reveal="0.74">
+            ✓ ghi9012 feat(auth): refresh token rotation
+          </div>
+          <div class="tline r2 blank" data-reveal="0.75"></div>
+          <div class="tline r2 cyan" data-reveal="0.76">12 files → 3 commits in 4.2s</div>
+
+          <!-- Blinking cursor — JS toggles during streaming -->
+          <span class="term-cursor" data-cursor>▋</span>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="demo-hint" aria-hidden="true">
-      <span class="hint-text">scroll</span>
-      <span class="hint-arrow">↓</span>
-    </div>
+  <div class="demo-hint" aria-hidden="true">
+    <span class="hint-text">scroll</span>
+    <span class="hint-arrow">↓</span>
   </div>
 </section>
 
@@ -255,15 +251,6 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-ink-dim);
-  }
-
-  .term-scroll {
-    max-height: clamp(380px, 68vh, 540px);
-    overflow-y: auto;
-    scrollbar-width: none;
-  }
-  .term-scroll::-webkit-scrollbar {
-    display: none;
   }
 
   .term-body {
@@ -483,7 +470,6 @@
     const lines = section.querySelectorAll<HTMLElement>('.tline');
     const hint = section.querySelector<HTMLElement>('.demo-hint');
     const terminal = section.querySelector<HTMLElement>('[data-terminal]');
-    const termScroll = section.querySelector<HTMLElement>('[data-term-scroll]');
     const stageLabel = section.querySelector<HTMLElement>('[data-stage-label]');
 
     const STAGES = ['startup', 'analyzing', 'shipping'] as const;
@@ -537,11 +523,6 @@
         (r1Shown.length > 0 && r1Shown.length < r1Lines.length) ||
         (r2Shown.length > 0 && r2Shown.length < r2Lines.length);
       section.classList.toggle('is-streaming', isStreaming);
-
-      // Auto-scroll terminal to keep latest content visible
-      if (termScroll) {
-        termScroll.scrollTop = termScroll.scrollHeight;
-      }
 
       if (hint) hint.classList.toggle('is-hidden', progress > 0.05);
     }
