@@ -2,17 +2,14 @@
 /**
  * ScrollDemo — V2 scroll-driven product demo.
  *
- * A 300vh section that pins a terminal + git-graph pair. As the user
- * scrolls, three frames cross-fade through the aic workflow:
- *   0 → Stage ($ aic detects changes)
- *   1 → Review (batched commit plan)
- *   2 → Ship (commits landed on graph)
+ * ONE terminal, content builds up line-by-line as the user scrolls.
+ * Nothing disappears — output accumulates like a real session.
  *
- * A mini git-graph on the left grows nodes in sync with the frames.
+ * The terminal is position: sticky — it pins and stays fixed while
+ * the 300vh outer section provides scroll room. A git-graph on the
+ * left grows nodes in sync.
  *
- * No-JS / reduced-motion: the final frame (Ship) is visible by default.
- * JS progressively hides it and reveals frames on scroll.
- *
+ * No-JS / reduced-motion: all lines visible (final state).
  * V2-only: mounted only on /v2 routes.
  */
 ---
@@ -43,53 +40,29 @@
         </div>
       </div>
 
-      <!-- Right: terminal frames -->
+      <!-- Right: single terminal with progressive lines -->
       <div class="demo-terminal">
         <div class="term-chrome">
           <div class="term-dots">
             <i></i><i></i><i></i>
           </div>
-          <span class="term-title">aic — live demo</span>
+          <span class="term-title">aic</span>
         </div>
 
-        <!-- Frame 0: Stage -->
-        <div class="demo-frame" data-frame="0">
+        <div class="term-scroll" data-term-scroll>
           <pre
-            class="term-body">
-<span class="prompt">$</span> <span class="cmd">aic</span>
-
-<span class="muted">Scanning 12 changed files…</span>
-<span class="cyan">3 logical commits detected</span>
-<span class="muted">━ reviewing plan ━</span></pre>
-        </div>
-
-        <!-- Frame 1: Review -->
-        <div class="demo-frame" data-frame="1">
-          <pre
-            class="term-body">
-<span class="label">commit 1</span>  <span class="amber">feat(auth): refresh token rotation</span>
-           <span class="muted">auth/refresh.ts, auth/verify.ts</span>
-
-<span class="label">commit 2</span>  <span class="amber">fix(ui): redirect on session expiry</span>
-           <span class="muted">components/Redirect.tsx</span>
-
-<span class="label">commit 3</span>  <span class="amber">chore: bump dependencies</span>
-           <span class="muted">package.json, lock.json</span>
-
-<span class="prompt">→</span> <span class="cmd">aic commit --all</span></pre>
-        </div>
-
-        <!-- Frame 2: Ship -->
-        <div class="demo-frame" data-frame="2">
-          <pre
-            class="term-body">
-<span class="mint">✓ 3 commits created</span>
-
-<span class="hash">abc1234</span>  <span class="muted">chore: bump dependencies</span>
-<span class="hash">def5678</span>  <span class="muted">fix(ui): redirect on expiry</span>
-<span class="hash">ghi9012</span>  <span class="amber">feat(auth): refresh token rotation</span>
-
-<span class="cyan">12 files → 3 commits in 4.2s</span></pre>
+            class="term-body"><span class="line r0"><span class="prompt">$</span> <span class="cmd">aic</span></span>
+<span class="line r0 muted">Scanning 12 changed files…</span>
+<span class="line r0 cyan">3 logical commits detected</span>
+<span class="line r0 muted sep">━━ reviewing plan ━━</span>
+<span class="line r1 label">commit 1</span><span class="line r1 amber">  feat(auth): refresh token rotation</span>
+<span class="line r1 muted sub">  auth/refresh.ts, auth/verify.ts</span>
+<span class="line r1 label">commit 2</span><span class="line r1 amber">  fix(ui): redirect on session expiry</span>
+<span class="line r1 muted sub">  components/Redirect.tsx</span>
+<span class="line r1 label">commit 3</span><span class="line r1 amber">  chore: bump dependencies</span>
+<span class="line r1 muted sub">  package.json, lock.json</span>
+<span class="line r2 mint">✓ 3 commits created</span>
+<span class="line r2 cyan dim">12 files → 3 commits in 4.2s</span></pre>
         </div>
       </div>
     </div>
@@ -193,12 +166,13 @@
 
   /* ── Terminal ────────────────────────────────────────────────────── */
   .demo-terminal {
-    position: relative;
     border: 1px solid var(--color-line);
     border-radius: 12px;
     overflow: hidden;
     background: var(--color-surface);
-    min-height: 320px;
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.03),
+      0 20px 60px -20px rgba(0, 0, 0, 0.5);
   }
 
   .term-chrome {
@@ -237,30 +211,52 @@
     margin-left: 0.5rem;
   }
 
-  .demo-frame {
-    padding: 1.25rem 1.5rem;
-    opacity: 0;
-    transition: opacity 0.35s ease;
+  /* Scrollable terminal body — auto-scrolls to show latest content */
+  .term-scroll {
+    max-height: clamp(280px, 50vh, 380px);
+    overflow-y: auto;
+    scrollbar-width: none;
   }
-  /* No-JS fallback: show final frame only */
-  .demo-frame[data-frame='2'] {
-    opacity: 1;
-  }
-  /* When JS runs, it manages all opacity */
-  .scroll-demo[data-js] .demo-frame {
-    opacity: 0;
-  }
-  .scroll-demo[data-js] .demo-frame.is-active {
-    opacity: 1;
+  .term-scroll::-webkit-scrollbar {
+    display: none;
   }
 
   .term-body {
     margin: 0;
+    padding: 1.25rem 1.5rem;
     font-family: var(--font-mono);
     font-size: 0.82rem;
     line-height: 1.65;
     white-space: pre-wrap;
     color: var(--color-ink);
+  }
+
+  /* Progressive line reveal — default hidden, JS reveals by stage */
+  .line {
+    display: inline;
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+  .line.is-shown {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* No-JS fallback: everything visible */
+  .term-body .line {
+    opacity: 1;
+    transform: none;
+  }
+  /* JS takes over */
+  .scroll-demo[data-js] .line {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  .scroll-demo[data-js] .line.is-shown {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .prompt {
@@ -274,6 +270,10 @@
   .muted {
     color: var(--color-ink-dim);
   }
+  .sub {
+    font-size: 0.78rem;
+    opacity: 0.8;
+  }
   .cyan {
     color: var(--color-cyan);
   }
@@ -284,8 +284,11 @@
     color: var(--color-mint);
     font-weight: 600;
   }
-  .hash {
-    color: var(--color-ink-muted);
+  .dim {
+    opacity: 0.7;
+  }
+  .sep {
+    letter-spacing: 0.1em;
   }
   .label {
     color: var(--color-cyan);
@@ -360,20 +363,26 @@
     .hint-arrow {
       animation: none;
     }
+    .line {
+      transform: none !important;
+      transition: opacity 0.15s ease;
+    }
   }
 </style>
 
 <script>
   const section = document.querySelector<HTMLElement>('[data-scroll-demo]');
   if (!section) {
-    // V1 page — no scroll demo
+    // V1 page
   } else {
-    const frames = section.querySelectorAll<HTMLElement>('.demo-frame');
+    const lines = section.querySelectorAll<HTMLElement>('.line');
     const segs = section.querySelectorAll<HTMLElement>('.graph-seg');
     const hint = section.querySelector<HTMLElement>('.demo-hint');
-    const totalFrames = frames.length; // 3
+    const termScroll = section.querySelector<HTMLElement>('[data-term-scroll]');
 
-    // Mark JS active — takes over opacity management
+    // Stages: r0 (0-33%), r1 (33-66%), r2 (66-100%)
+    const STAGE_OF: Record<string, number> = { r0: 0, r1: 1, r2: 2 };
+
     section.setAttribute('data-js', '');
 
     let ticking = false;
@@ -382,21 +391,30 @@
       ticking = false;
       const rect = section.getBoundingClientRect();
       const scrollable = rect.height - window.innerHeight;
-      // Progress: 0 when section top hits viewport top, 1 when bottom reaches viewport bottom
-      const raw = -rect.top / scrollable;
-      const progress = Math.max(0, Math.min(1, raw));
+      const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
 
-      // Map progress to frame index
-      // 0.00-0.33 → frame 0, 0.33-0.66 → frame 1, 0.66-1.0 → frame 2
-      const frame = Math.min(totalFrames - 1, Math.floor(progress * totalFrames));
+      // Current stage: 0, 1, or 2
+      const stage = Math.min(2, Math.floor(progress * 3));
 
-      frames.forEach((f, i) => f.classList.toggle('is-active', i === frame));
+      // Reveal lines whose stage <= current
+      lines.forEach((line) => {
+        const cls = Array.from(line.classList).find((c) => c in STAGE_OF);
+        if (cls !== undefined) {
+          const lineStage = STAGE_OF[cls];
+          line.classList.toggle('is-shown', lineStage <= stage);
+        }
+      });
 
-      // Graph nodes: grow with frames, show all on final (ship) frame
-      const visibleCount = frame === totalFrames - 1 ? segs.length : frame;
+      // Graph nodes: grow with stages, all on final
+      const visibleCount = stage === 2 ? segs.length : stage;
       segs.forEach((s, i) => s.classList.toggle('is-visible', i < visibleCount));
 
-      // Hide scroll hint after first frame
+      // Auto-scroll terminal to bottom so latest content is visible
+      if (termScroll) {
+        termScroll.scrollTop = termScroll.scrollHeight;
+      }
+
+      // Hide scroll hint
       if (hint) hint.classList.toggle('is-hidden', progress > 0.05);
     }
 
