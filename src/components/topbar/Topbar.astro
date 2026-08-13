@@ -93,7 +93,8 @@ const versionTitle = t('topbar.versionTitle', { version });
     transition:
       border-color var(--duration-normal) var(--ease-out-expo),
       backdrop-filter var(--duration-normal) var(--ease-out-expo),
-      background var(--duration-normal) var(--ease-out-expo);
+      background var(--duration-normal) var(--ease-out-expo),
+      transform var(--duration-normal) var(--ease-out-expo);
   }
   .topbar[data-blur='true'] {
     border-bottom-color: var(--color-line-soft);
@@ -230,21 +231,35 @@ const versionTitle = t('topbar.versionTitle', { version });
       gap: 0.7rem;
       padding-block: 0.7rem;
     }
-    .brand {
-      order: 1;
-    }
-    .meta {
-      order: 2;
-    }
     .nav {
       display: flex;
       order: 3;
       width: 100%;
       flex-wrap: nowrap;
       overflow-x: auto;
-      justify-content: flex-start;
-      gap: 1.25rem;
+      justify-content: safe center;
+      gap: 0.5rem;
+      font-size: 0.76rem;
       scrollbar-width: none;
+      max-height: 4rem;
+      overflow-y: hidden;
+      transition:
+        max-height var(--duration-normal) var(--ease-out-expo),
+        opacity var(--duration-fast) var(--ease-out-expo);
+    }
+    .nav.is-hidden {
+      max-height: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .topbar:has(.nav.is-hidden) {
+      row-gap: 0;
+    }
+    .brand {
+      order: 1;
+    }
+    .meta {
+      order: 2;
     }
     .nav::-webkit-scrollbar {
       display: none;
@@ -260,7 +275,7 @@ const versionTitle = t('topbar.versionTitle', { version });
   }
   /* Tablet widths: tighten the nav gap so all six anchors fit alongside
      the brand and meta. */
-  @media (max-width: 950px) {
+  @media (min-width: 768px) and (max-width: 950px) {
     .nav {
       gap: 1rem;
     }
@@ -275,11 +290,24 @@ const versionTitle = t('topbar.versionTitle', { version });
 </style>
 
 <script>
-  // Toggle blur after the hero scrolls past — cheap, scroll-driven.
-  const topbar = document.querySelector('[data-topbar]');
-  if (topbar) {
+  const nav = document.querySelector('[data-topbar] .nav');
+  if (nav) {
+    let lastScroll = 0;
+    const mqMobile = window.matchMedia('(max-width: 767px)');
+
     const onScroll = () => {
-      topbar.setAttribute('data-blur', String(window.scrollY > 80));
+      const y = window.scrollY;
+      // Mobile: hide nav on scroll-down, reveal on scroll-up
+      if (mqMobile.matches) {
+        if (y > lastScroll + 8 && y > 0) {
+          nav.classList.add('is-hidden');
+        } else if (y < lastScroll - 4 || y <= 0) {
+          nav.classList.remove('is-hidden');
+        }
+      } else {
+        nav.classList.remove('is-hidden');
+      }
+      lastScroll = y;
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });

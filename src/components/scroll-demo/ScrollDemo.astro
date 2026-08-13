@@ -1,0 +1,528 @@
+---
+/**
+ * ScrollDemo — V2 scroll-driven product demo.
+ *
+ * ONE terminal, content streams in line-by-line as the user scrolls.
+ * Three phases with different feel:
+ *   r0 (0-10%):  Agent startup — instant, all lines together
+ *   loading (10-28%): Spinner + "thinking..." indicator
+ *   r1 (28-62%): Agent analysis — streams one line at a time
+ *   r2 (66-76%): Ship — quick burst of commit results
+ *
+ * Terminal border glows as a progress bar — color shifts cyan→amber→mint,
+ * top accent bar fills with scroll progress. Terminal is position: sticky,
+ * stays fixed during the animation.
+ *
+ * No-JS / reduced-motion: all lines visible (final state).
+ * V2-only.
+ */
+---
+
+<section class="scroll-demo" data-scroll-demo>
+  <div class="demo-pin">
+    <div class="demo-inner container">
+      <div class="demo-terminal" data-terminal>
+        <div class="term-chrome">
+          <div class="term-dots"><i></i><i></i><i></i></div>
+          <span class="term-title">aic</span>
+          <span class="term-stage" data-stage-label></span>
+        </div>
+
+        <div class="term-body">
+          <!-- r0: Agent startup (instant) -->
+          <div class="tline r0" data-reveal="0.00">
+            <span class="prompt">$</span>
+            <span class="cmd">aic</span>
+          </div>
+          <div class="tline r0 blank" data-reveal="0.00"></div>
+          <div class="tline r0 accent" data-reveal="0.02">⟢ agent starting</div>
+          <div class="tline r0 muted" data-reveal="0.03">
+            config <span class="val">.aic.yml</span>
+          </div>
+          <div class="tline r0 muted" data-reveal="0.04">
+            model <span class="val">gpt-4o-mini</span> · fast
+          </div>
+          <div class="tline r0 muted" data-reveal="0.05">
+            ready <span class="mint">✓ 0.8s</span>
+          </div>
+
+          <!-- Loading spinner bridge -->
+          <div class="tline load" data-reveal="0.10">
+            <span class="spinner"></span><span class="cyan">analyzing repository</span
+            ><span class="dot-anim" aria-hidden="true"></span>
+          </div>
+
+          <!-- r1: Agent thinking — streams one-by-one -->
+          <div class="tline r1 blank" data-reveal="0.28"></div>
+          <div class="tline r1 accent" data-reveal="0.30">
+            ⟢ analyzing 12 changed files
+          </div>
+          <div class="tline r1 muted" data-reveal="0.33">
+            auth/refresh.ts <span class="bracket">┐</span> token rotation
+          </div>
+          <div class="tline r1 muted" data-reveal="0.35">
+            auth/verify.ts <span class="bracket">┘</span>
+          </div>
+          <div class="tline r1 muted" data-reveal="0.38">
+            Redirect.tsx session expiry fix
+          </div>
+          <div class="tline r1 muted" data-reveal="0.40">
+            package.json <span class="bracket">┐</span> dependency bump
+          </div>
+          <div class="tline r1 muted" data-reveal="0.42">
+            lock.json <span class="bracket">┘</span>
+          </div>
+          <div class="tline r1 cyan" data-reveal="0.45">3 commit groups identified</div>
+          <div class="tline r1 blank" data-reveal="0.47"></div>
+          <div class="tline r1 muted sep" data-reveal="0.49">━━ proposed plan ━━</div>
+          <div class="tline r1" data-reveal="0.52">
+            <span class="num"> 1</span>
+            <span class="amber">feat(auth): refresh token rotation</span>
+          </div>
+          <div class="tline r1" data-reveal="0.55">
+            <span class="num"> 2</span>
+            <span class="amber">fix(ui): redirect on session expiry</span>
+          </div>
+          <div class="tline r1" data-reveal="0.58">
+            <span class="num"> 3</span>
+            <span class="amber">chore: bump dependencies</span>
+          </div>
+
+          <!-- r2: Ship -->
+          <div class="tline r2 blank" data-reveal="0.66"></div>
+          <div class="tline r2" data-reveal="0.67">
+            <span class="prompt">→</span>
+            <span class="cmd">aic commit --all</span>
+          </div>
+          <div class="tline r2 blank" data-reveal="0.68"></div>
+          <div class="tline r2 mint" data-reveal="0.70">
+            ✓ abc1234 chore: bump dependencies
+          </div>
+          <div class="tline r2 mint" data-reveal="0.72">
+            ✓ def5678 fix(ui): redirect on expiry
+          </div>
+          <div class="tline r2 mint" data-reveal="0.74">
+            ✓ ghi9012 feat(auth): refresh token rotation
+          </div>
+          <div class="tline r2 blank" data-reveal="0.75"></div>
+          <div class="tline r2 cyan" data-reveal="0.76">12 files → 3 commits in 4.2s</div>
+
+          <!-- Blinking cursor — JS toggles during streaming -->
+          <span class="term-cursor" data-cursor>▋</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-hint" aria-hidden="true">
+    <span class="hint-text">scroll</span>
+    <span class="hint-arrow">↓</span>
+  </div>
+</section>
+
+<style>
+  .scroll-demo {
+    position: relative;
+    height: 300vh;
+    background: var(--color-base-deep);
+  }
+
+  .demo-pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .demo-inner {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* ── Terminal ────────────────────────────────────────────────────── */
+  .demo-terminal {
+    position: relative;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--color-surface);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.03),
+      0 20px 60px -20px rgba(0, 0, 0, 0.5);
+    /* No transition on box-shadow/border — stage changes are instant,
+     * zero repaint cost during scroll. */
+  }
+
+  /* Static per-stage glow — instant change, no animation, no jitter */
+  .demo-terminal[data-stage='0'] {
+    border-color: color-mix(in oklch, var(--color-cyan) 30%, var(--color-line));
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.03),
+      0 20px 60px -20px rgba(0, 0, 0, 0.5),
+      0 0 14px -4px color-mix(in oklch, var(--color-cyan) 20%, transparent);
+  }
+  .demo-terminal[data-stage='1'] {
+    border-color: color-mix(in oklch, var(--color-amber) 35%, var(--color-line));
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.03),
+      0 20px 60px -20px rgba(0, 0, 0, 0.5),
+      0 0 18px -5px color-mix(in oklch, var(--color-amber) 25%, transparent);
+  }
+  .demo-terminal[data-stage='2'] {
+    border-color: color-mix(in oklch, var(--color-mint) 30%, var(--color-line));
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.03),
+      0 20px 60px -20px rgba(0, 0, 0, 0.5),
+      0 0 14px -4px color-mix(in oklch, var(--color-mint) 20%, transparent);
+  }
+
+  /* Top progress bar — scaleX (GPU-composited, no per-frame layout) */
+  .demo-terminal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    transform: scaleX(var(--progress, 0));
+    transform-origin: left center;
+    background: linear-gradient(
+      to right,
+      var(--color-cyan),
+      var(--color-amber),
+      var(--color-mint)
+    );
+    z-index: 2;
+  }
+
+  .term-chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--color-line);
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .term-dots {
+    display: flex;
+    gap: 6px;
+  }
+  .term-dots i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: block;
+  }
+  .term-dots i:nth-child(1) {
+    background: var(--dot-close);
+  }
+  .term-dots i:nth-child(2) {
+    background: var(--dot-min);
+  }
+  .term-dots i:nth-child(3) {
+    background: var(--dot-max);
+  }
+
+  .term-title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-ink-dim);
+    margin-left: 0.5rem;
+  }
+
+  .term-stage {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-dim);
+  }
+
+  .term-body {
+    padding: 1.1rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: var(--color-ink);
+  }
+
+  /* ── Terminal lines — opacity-only reveal (no transform = no jitter) ─ */
+  .tline {
+    transition: opacity 0.2s ease;
+  }
+  /* No-JS fallback */
+  .scroll-demo:not([data-js]) .tline {
+    opacity: 1;
+  }
+  /* JS hidden */
+  .scroll-demo[data-js] .tline {
+    opacity: 0;
+  }
+  /* JS revealed */
+  .scroll-demo[data-js] .tline.is-shown {
+    opacity: 1;
+  }
+  .tline.blank {
+    min-height: 0.3em;
+  }
+  /* Phase separators — taller blank at r1/r2 boundaries for visual scope */
+  .tline.r1.blank,
+  .tline.r2.blank {
+    min-height: 0.9em;
+  }
+
+  /* ── Loading spinner ─────────────────────────────────────────────── */
+  .tline.load {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .spinner {
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid var(--color-cyan);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .dot-anim::after {
+    content: '';
+    animation: dots 1.5s steps(4) infinite;
+  }
+  @keyframes dots {
+    0% {
+      content: '';
+    }
+    25% {
+      content: '.';
+    }
+    50% {
+      content: '..';
+    }
+    75%,
+    100% {
+      content: '...';
+    }
+  }
+  /* When past loading phase, spinner freezes into a checkmark */
+  .tline.load.done .spinner {
+    animation: none;
+    border: none;
+    border-radius: 0;
+    width: auto;
+    height: auto;
+  }
+  .tline.load.done .spinner::after {
+    content: '✓';
+    color: var(--color-mint);
+    font-weight: 700;
+  }
+  .tline.load.done .dot-anim::after {
+    animation: none;
+    content: '';
+  }
+
+  /* ── Blinking cursor ─────────────────────────────────────────────── */
+  .term-cursor {
+    opacity: 0;
+    color: var(--color-cyan);
+    font-weight: 700;
+    animation: blink 1s step-end infinite;
+    transition: opacity 0.2s ease;
+  }
+  .scroll-demo[data-js].is-streaming .term-cursor {
+    opacity: 1;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* ── Text colors ─────────────────────────────────────────────────── */
+  .prompt {
+    color: var(--color-cyan);
+    font-weight: 600;
+  }
+  .cmd {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .muted {
+    color: var(--color-ink-dim);
+  }
+  .cyan {
+    color: var(--color-cyan);
+  }
+  .amber {
+    color: var(--color-amber);
+  }
+  .mint {
+    color: var(--color-mint);
+    font-weight: 600;
+  }
+  .accent {
+    color: var(--color-cyan);
+    font-weight: 600;
+  }
+  .sep {
+    letter-spacing: 0.1em;
+  }
+  .val {
+    color: var(--color-ink-muted);
+  }
+  .bracket {
+    color: var(--color-ink-dim);
+  }
+  .num {
+    white-space: pre;
+    color: var(--color-cyan);
+    font-weight: 600;
+  }
+
+  /* ── Scroll hint ─────────────────────────────────────────────────── */
+  .demo-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+  }
+  .demo-hint.is-hidden {
+    opacity: 0;
+  }
+  .hint-text {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-ink-dim);
+  }
+  .hint-arrow {
+    color: var(--color-ink-dim);
+    font-size: 1rem;
+    animation: hint-bounce 1.5s ease-in-out infinite;
+  }
+  @keyframes hint-bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hint-arrow {
+      animation: none;
+    }
+    .spinner {
+      animation: none;
+    }
+    .dot-anim::after {
+      animation: none;
+      content: '...';
+    }
+    .term-cursor {
+      animation: none;
+    }
+    .tline {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('[data-scroll-demo]');
+  if (!section) {
+    // V1 page
+  } else {
+    const lines = section.querySelectorAll<HTMLElement>('.tline');
+    const hint = section.querySelector<HTMLElement>('.demo-hint');
+    const terminal = section.querySelector<HTMLElement>('[data-terminal]');
+    const stageLabel = section.querySelector<HTMLElement>('[data-stage-label]');
+
+    const STAGES = ['startup', 'analyzing', 'shipping'] as const;
+
+    section.setAttribute('data-js', '');
+
+    let ticking = false;
+
+    function update() {
+      ticking = false;
+      const rect = section.getBoundingClientRect();
+      const scrollable = rect.height - window.innerHeight;
+      const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
+
+      // Fine-grained line reveal — each line has data-reveal (0..1)
+      let lastShownIdx = -1;
+      lines.forEach((line, i) => {
+        const reveal = parseFloat(line.dataset.reveal || '0');
+        const shown = progress >= reveal;
+        line.classList.toggle('is-shown', shown);
+        if (shown) lastShownIdx = i;
+      });
+
+      // Determine stage from progress
+      let stage: number;
+      if (progress < 0.28) stage = 0;
+      else if (progress < 0.65) stage = 1;
+      else stage = 2;
+
+      // Terminal glow + progress bar
+      if (terminal) {
+        terminal.setAttribute('data-stage', String(stage));
+        terminal.style.setProperty('--progress', progress.toFixed(4));
+      }
+      if (stageLabel) {
+        stageLabel.textContent = STAGES[stage];
+      }
+      // Toggle loading line done state (spinner→checkmark)
+      const loadLine = section.querySelector<HTMLElement>('.tline.load');
+      if (loadLine) loadLine.classList.toggle('done', stage >= 1);
+
+      // Streaming cursor: show when there are hidden lines in the current
+      // streaming zone (between first r1 reveal and last r1 reveal)
+      const r1Lines = section.querySelectorAll('.tline.r1, .tline.load');
+      const r1Shown = section.querySelectorAll(
+        '.tline.r1.is-shown, .tline.load.is-shown',
+      );
+      const r2Lines = section.querySelectorAll('.tline.r2');
+      const r2Shown = section.querySelectorAll('.tline.r2.is-shown');
+      const isStreaming =
+        (r1Shown.length > 0 && r1Shown.length < r1Lines.length) ||
+        (r2Shown.length > 0 && r2Shown.length < r2Lines.length);
+      section.classList.toggle('is-streaming', isStreaming);
+
+      if (hint) hint.classList.toggle('is-hidden', progress > 0.05);
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>

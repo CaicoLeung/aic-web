@@ -17,6 +17,7 @@ import { SITE_ORIGIN } from '@/config/site';
 
 interface Props {
   readonly version: string;
+  readonly noindex?: boolean;
   readonly title?: string;
   readonly description?: string;
   /** Per-page structured data. Omit on the home page to keep the default
@@ -26,7 +27,6 @@ interface Props {
 }
 
 const { version, title, description, schema } = Astro.props;
-
 // Locale self-determined from the URL (ADR-0010).
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
@@ -53,7 +53,7 @@ const canonical = new URL(Astro.url.pathname, site).toString();
 const ogImage = new URL(`${base}og.png`, site).toString();
 // Mirror builds (e.g. Pages) opt out of indexing so only the primary domain
 // (cPanel) competes in search — avoids duplicate-content split.
-const noindex = process.env.NOINDEX === 'true';
+const noindex = process.env.NOINDEX === 'true' || Astro.props.noindex === true;
 const themeColor = '#0e0f14';
 const ogLocale = LOCALE_HREFLANG[locale].replace('-', '_').replace(/^en$/, 'en_US');
 const hreflangAlternates = buildHreflangAlternates(Astro.url.pathname, site);
@@ -76,6 +76,7 @@ const cjkStack =
 <html
   lang={LOCALE_HREFLANG[locale]}
   style={cjkStack ? `--font-cjk:${cjkStack}` : undefined}
+  class="v2"
 >
   <head>
     <meta charset="utf-8" />
