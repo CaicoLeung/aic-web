@@ -268,11 +268,14 @@
   /* ═══ Stage: split layout ═════════════════════════════════════════ */
   .lab-stage {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 0;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(1.5rem, 3vw, 3rem);
     align-items: center;
     padding: 0 clamp(1rem, 4vw, 3rem);
     position: relative;
+    max-width: 1040px;
+    margin: 0 auto;
+    width: 100%;
   }
 
   /* ═══ Editor ══════════════════════════════════════════════════════ */

@@ -93,7 +93,8 @@ const versionTitle = t('topbar.versionTitle', { version });
     transition:
       border-color var(--duration-normal) var(--ease-out-expo),
       backdrop-filter var(--duration-normal) var(--ease-out-expo),
-      background var(--duration-normal) var(--ease-out-expo);
+      background var(--duration-normal) var(--ease-out-expo),
+      transform var(--duration-normal) var(--ease-out-expo);
   }
   .topbar[data-blur='true'] {
     border-bottom-color: var(--color-line-soft);
@@ -230,6 +231,9 @@ const versionTitle = t('topbar.versionTitle', { version });
       gap: 0.7rem;
       padding-block: 0.7rem;
     }
+    .topbar.is-hidden {
+      transform: translateY(-100%);
+    }
     .brand {
       order: 1;
     }
@@ -275,11 +279,26 @@ const versionTitle = t('topbar.versionTitle', { version });
 </style>
 
 <script>
-  // Toggle blur after the hero scrolls past — cheap, scroll-driven.
   const topbar = document.querySelector('[data-topbar]');
   if (topbar) {
+    let lastScroll = 0;
+    const mqMobile = window.matchMedia('(max-width: 767px)');
+
     const onScroll = () => {
-      topbar.setAttribute('data-blur', String(window.scrollY > 80));
+      const y = window.scrollY;
+      topbar.setAttribute('data-blur', String(y > 80));
+
+      // Mobile: hide nav on scroll-down, reveal on scroll-up
+      if (mqMobile.matches) {
+        if (y > lastScroll + 8 && y > 100) {
+          topbar.classList.add('is-hidden');
+        } else if (y < lastScroll - 4 || y < 100) {
+          topbar.classList.remove('is-hidden');
+        }
+      } else {
+        topbar.classList.remove('is-hidden');
+      }
+      lastScroll = y;
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
