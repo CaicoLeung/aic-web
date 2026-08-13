@@ -237,11 +237,12 @@ const versionTitle = t('topbar.versionTitle', { version });
       width: 100%;
       flex-wrap: nowrap;
       overflow-x: auto;
-      justify-content: flex-start;
-      gap: 1.25rem;
+      justify-content: safe center;
+      gap: 0.5rem;
+      font-size: 0.76rem;
       scrollbar-width: none;
       max-height: 4rem;
-      overflow: hidden;
+      overflow-y: hidden;
       transition:
         max-height var(--duration-normal) var(--ease-out-expo),
         opacity var(--duration-fast) var(--ease-out-expo);
@@ -274,7 +275,7 @@ const versionTitle = t('topbar.versionTitle', { version });
   }
   /* Tablet widths: tighten the nav gap so all six anchors fit alongside
      the brand and meta. */
-  @media (max-width: 950px) {
+  @media (min-width: 768px) and (max-width: 950px) {
     .nav {
       gap: 1rem;
     }
