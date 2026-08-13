@@ -1,0 +1,535 @@
+---
+/**
+ * HeroV2 — the V2 hero. Typography-first, GSAP scroll-driven.
+ *
+ * Replaces HeroStorm's 154-element particle rain (performance killer)
+ * with a single parallax background glyph + staggered GSAP entrance +
+ * scroll-bound depth parallax. Matches V2's Space Grotesk + duotone
+ * design language.
+ *
+ * Motion layers (all under prefers-reduced-motion: no-preference):
+ *   1. Load: staggered fade-up of eyebrow → headline → lede → CTA
+ *   2. Scroll: content parallaxes up + fades; background glyph drifts
+ *
+ * No-JS / reduced-motion: everything renders in final state.
+ */
+import Terminal from './Terminal.astro';
+import { GITHUB_URL } from '@/config/site';
+import { localizedHref, localeFromUrl } from '@/i18n/config';
+import { useLocalizer } from '@/i18n/t';
+
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useLocalizer(locale);
+const resolveUrl = localizedHref(locale, 'resolve');
+---
+
+<section class="hero-v2" id="top" data-hero>
+  <!-- Background parallax glyph — single element, GPU-cheap -->
+  <div class="hero-bg" aria-hidden="true" data-hero-bg>
+    <span class="bg-plus">+</span>
+  </div>
+
+  <div class="hero-grid container" data-hero-content>
+    <p class="eyebrow hero-eyebrow" data-hero-reveal>
+      <span class="line" aria-hidden="true"></span>{t('hero.eyebrow')}
+    </p>
+
+    <h1 class="hero-h1">
+      <span class="hline" data-hero-line>
+        <span class="plus" aria-hidden="true">+</span>
+        <span class="htext">{t('hero.h1.line1')}</span>
+      </span>
+      <span class="hline" data-hero-line>
+        <span class="plus" aria-hidden="true">+</span>
+        <span class="htext">{t('hero.h1.line2')}</span>
+      </span>
+      <span class="hline" data-hero-line>
+        <span class="plus" aria-hidden="true">+</span>
+        <span class="htext pop">{t('hero.h1.line3')}</span>
+      </span>
+    </h1>
+
+    <p class="lede hero-lede" data-hero-reveal>
+      <Fragment set:html={t('hero.ledeBefore')} /><a href={resolveUrl}
+        >{t('hero.ledeLink')}</a
+      ><Fragment set:html={t('hero.ledeAfter')} />
+    </p>
+
+    <div class="hero-cta" data-hero-reveal>
+      <div class="cta-stack">
+        <span class="cta-label">{t('hero.ctaLabel')}</span>
+        <button class="aic-trigger" type="button" data-term-open>
+          <span class="aic-prompt" aria-hidden="true">$</span>
+          <span class="aic-cmd">aic</span>
+          <span class="aic-play" aria-hidden="true">▶</span>
+        </button>
+        <span class="cta-hint">
+          <span class="arrow" aria-hidden="true">→</span>
+          <Fragment set:html={t('hero.ctaHint', { cmd: 'aic setup' })} />
+        </span>
+      </div>
+      <a
+        class="cta-link hero-star"
+        href={GITHUB_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {t('footer.star')}
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Terminal modal (same pattern as HeroStorm — top-level for z-index) -->
+<div class="term-modal" data-term-modal aria-hidden="true">
+  <div class="term-backdrop" data-term-close></div>
+  <div class="term-panel" role="dialog" aria-modal="true" aria-label="aic demo">
+    <button class="term-x" type="button" data-term-close aria-label="Close"> × </button>
+    <div class="term-stage-modal">
+      <Terminal variant="wire" autoPlay={false} />
+    </div>
+    <div class="term-install">
+      <span class="term-install-label">install</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hero-v2 {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: clamp(4rem, 2rem + 6vw, 7rem) 0 clamp(3rem, 1rem + 4vw, 5rem);
+    overflow: hidden;
+    background: var(--color-base-deep);
+    display: flex;
+    align-items: center;
+  }
+
+  /* ── Background glyph ───────────────────────────────────────────── */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+  .bg-plus {
+    font-family: var(--font-mono);
+    font-size: clamp(20rem, 45vw, 42rem);
+    font-weight: 700;
+    line-height: 0.8;
+    color: var(--color-cyan);
+    opacity: 0.04;
+    margin-right: -2vw;
+    user-select: none;
+    /* No will-change here — GSAP sets it via ScrollTrigger only when scrolling */
+  }
+
+  /* ── Content ────────────────────────────────────────────────────── */
+  .hero-grid {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .hero-eyebrow {
+    justify-content: flex-start;
+  }
+
+  .hero-h1 {
+    font-size: clamp(2.8rem, 1rem + 6vw, 5.4rem);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    margin: 0.4rem 0 0;
+    text-align: left;
+    max-width: 16ch;
+    font-weight: 700;
+  }
+  .hline {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35em;
+  }
+  .hline .plus {
+    font-family: var(--font-mono);
+    color: var(--color-cyan);
+    font-weight: 700;
+    font-size: 0.62em;
+    text-shadow: 0 0 12px color-mix(in oklch, var(--color-cyan) 55%, transparent);
+    transform: translateY(-0.06em);
+  }
+  .hline .htext {
+    display: inline;
+  }
+  .hline .pop {
+    color: var(--color-amber);
+  }
+
+  /* ── Lede ───────────────────────────────────────────────────────── */
+  .hero-lede {
+    font-size: var(--text-lede);
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    max-width: 34rem;
+    margin: 0;
+  }
+  .hero-lede b {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .hero-lede a {
+    color: var(--color-cyan);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-cyan) 40%, transparent);
+    transition:
+      color var(--duration-fast) ease,
+      border-color var(--duration-fast) ease;
+  }
+  @media (hover: hover) {
+    .hero-lede a:hover {
+      color: var(--color-amber);
+      border-bottom-color: var(--color-amber);
+    }
+  }
+
+  /* ── CTA ────────────────────────────────────────────────────────── */
+  .hero-cta {
+    display: flex;
+    align-items: flex-end;
+    gap: 2rem;
+    margin-top: 0.5rem;
+  }
+  .cta-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .cta-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+  .aic-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.72rem 1.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-cyan);
+    background: var(--color-cyan);
+    color: #07191c;
+    cursor: pointer;
+    transition:
+      transform var(--duration-fast) ease,
+      box-shadow var(--duration-fast) ease,
+      background var(--duration-fast) ease;
+    box-shadow: 0 12px 32px -10px color-mix(in oklch, var(--color-cyan) 50%, transparent);
+  }
+  .aic-trigger:active {
+    transform: translateY(0);
+  }
+  @media (hover: hover) {
+    .aic-trigger:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 40px -10px
+        color-mix(in oklch, var(--color-cyan) 65%, transparent);
+    }
+  }
+  .aic-prompt {
+    opacity: 0.6;
+  }
+  .aic-play {
+    font-size: 0.76rem;
+    margin-left: 0.15rem;
+  }
+  .cta-hint {
+    font-size: 0.9375rem;
+    color: var(--color-ink-muted);
+  }
+  .cta-hint .arrow {
+    color: var(--color-cyan);
+  }
+  .cta-hint code {
+    color: var(--color-cyan);
+    background: var(--color-cyan-soft);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.78rem;
+  }
+  .hero-star {
+    border-color: var(--color-cyan);
+    color: var(--color-cyan);
+  }
+  @media (hover: hover) {
+    .hero-star:hover {
+      background: var(--color-cyan-soft);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-cta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  }
+
+  /* ── Terminal modal ─────────────────────────────────────────────── */
+  .term-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.25s ease,
+      visibility 0.25s ease;
+  }
+  .term-modal.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .term-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 6, 9, 0.72);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .term-modal.open .term-backdrop {
+    opacity: 1;
+  }
+  .term-panel {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    padding: 1.6rem;
+    border-radius: 18px;
+    background: rgba(16, 18, 25, 0.92);
+    border: 1px solid color-mix(in oklch, var(--color-cyan) 22%, transparent);
+    box-shadow:
+      0 40px 90px -30px rgba(0, 0, 0, 0.8),
+      0 0 50px -14px color-mix(in oklch, var(--color-cyan) 18%, transparent);
+    transform: scale(0.92) translateY(12px);
+    opacity: 0;
+    transition:
+      transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 0.25s ease;
+  }
+  .term-modal.open .term-panel {
+    transform: none;
+    opacity: 1;
+  }
+  .term-x {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.75rem;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--color-ink-dim);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      color var(--duration-fast) ease,
+      background var(--duration-fast) ease;
+  }
+  @media (hover: hover) {
+    .term-x:hover {
+      color: var(--color-cyan);
+      background: var(--color-cyan-soft);
+    }
+  }
+  .term-stage-modal {
+    margin-top: 1.25rem;
+  }
+  .term-stage-modal :global(.terminal.wire) {
+    max-width: none;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.015);
+    box-shadow: none;
+  }
+  .term-stage-modal :global(.terminal.wire .termbar) {
+    border-bottom: 1px solid var(--color-line-soft);
+  }
+  .term-stage-modal :global(.terminal.wire .reasoning) {
+    border: none;
+    background: transparent;
+  }
+  .term-stage-modal :global(.terminal.wire .planline) {
+    border-top-color: var(--color-line-soft);
+  }
+  .term-install {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    margin-top: 1.25rem;
+  }
+  .term-install-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-dim);
+  }
+  @media (max-width: 640px) {
+    .term-modal {
+      padding: 0.6rem;
+    }
+    .term-panel {
+      padding: 0.85rem;
+    }
+    .term-x {
+      top: 0.4rem;
+      right: 0.5rem;
+    }
+    .term-stage-modal {
+      margin-top: 0.6rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .term-modal,
+    .term-panel,
+    .term-backdrop {
+      transition: none;
+    }
+    .term-panel {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, whenMotionOk } from '@/lib/motion';
+
+  whenMotionOk(() => {
+    const hero = document.querySelector<HTMLElement>('[data-hero]');
+    if (!hero) return;
+
+    const reveals = gsap.utils.toArray<HTMLElement>('[data-hero-reveal]');
+    const lines = gsap.utils.toArray<HTMLElement>('[data-hero-line]');
+    const content = document.querySelector<HTMLElement>('[data-hero-content]');
+    const bg = document.querySelector<HTMLElement>('[data-hero-bg]');
+
+    // ── 1. Entrance — staggered fade-up ────────────────────────────
+    // Eyebrow + lede + CTA fade in as a group; headline lines stagger
+    // individually for a typographic build-in.
+    if (reveals.length > 0) {
+      gsap.from(reveals, {
+        opacity: 0,
+        y: 24,
+        duration: 0.7,
+        stagger: 0.1,
+        ease: 'power3.out',
+        delay: 0.15,
+      });
+    }
+    if (lines.length > 0) {
+      gsap.from(lines, {
+        opacity: 0,
+        x: -20,
+        duration: 0.6,
+        stagger: 0.08,
+        ease: 'power3.out',
+        delay: 0.25,
+      });
+    }
+
+    // ── 2. Scroll parallax — content drifts up, bg drifts slower ────
+    // scrub: 0.5 = catches up over 0.5s, smooth not janky.
+    if (content) {
+      gsap.to(content, {
+        yPercent: -18,
+        opacity: 0.15,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: hero,
+          start: 'top top',
+          end: 'bottom 20%',
+          scrub: 0.5,
+        },
+      });
+    }
+    if (bg) {
+      gsap.to(bg, {
+        yPercent: 25,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: hero,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.8,
+        },
+      });
+    }
+  });
+</script>
+
+<script is:inline>
+  // Terminal popup — inline so the handler attaches before GSAP loads.
+  (function () {
+    var modal = document.querySelector('[data-term-modal]');
+    var openBtn = document.querySelector('[data-term-open]');
+    if (!modal || !openBtn) return;
+    var termBody = modal.querySelector('[data-term-body]');
+    var lastFocus = null;
+
+    function open() {
+      lastFocus = document.activeElement;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (termBody)
+        termBody.dispatchEvent(new CustomEvent('term:replay', { bubbles: true }));
+      requestAnimationFrame(function () {
+        var x = modal.querySelector('.term-x');
+        if (x) x.focus();
+      });
+    }
+    function close() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (termBody)
+        termBody.dispatchEvent(new CustomEvent('term:pause', { bubbles: true }));
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    openBtn.addEventListener('click', open);
+    modal.addEventListener('click', function (e) {
+      if (e.target.closest('[data-term-close]')) close();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal.classList.contains('open')) close();
+    });
+  })();
+</script>

@@ -283,27 +283,6 @@ html.v2 #compare {
    Phase 2: Layout Revolution — html.v2 scoped
    Breaks centered monotony, applies duotone cyan, creates asymmetry. ═══ */
 
-/* ── Hero: left-aligned content ────────────────────────────────────────
-   The ONLY centered section → left-anchor creates instant asymmetry. */
-html.v2 .storm-hero .storm-grid {
-  align-items: flex-start;
-  text-align: left;
-}
-html.v2 .storm-hero .storm-eyebrow {
-  justify-content: flex-start;
-}
-html.v2 .storm-hero .storm-grid h1 {
-  text-align: left;
-}
-html.v2 .storm-hero .hline {
-  justify-content: flex-start;
-}
-/* Cyan on hero "+" prefixes — the diff "uncommitted/before" signal */
-html.v2 .storm-hero .hline .plus {
-  color: var(--color-cyan);
-  text-shadow: 0 0 12px color-mix(in oklch, var(--color-cyan) 55%, transparent);
-}
-
 /* ── Resolve + Agents: mirrored 2-col grids ────────────────────────────
    Adjacent identical twins → differentiated: resolve = terminal-left,
    agents = terminal-right. Breaks the biggest monotony offender. */
