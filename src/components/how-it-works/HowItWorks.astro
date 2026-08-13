@@ -34,7 +34,9 @@ const m = useMessages(locale);
                 <span class="step-detail">{s.detail}</span>
               </div>
               {i < HOW_IT_WORKS_STEPS.length - 1 && (
-                <span class="step-arrow" aria-hidden="true">↓</span>
+                <span class="step-arrow" aria-hidden="true">
+                  ↓
+                </span>
               )}
             </li>
           );
@@ -132,11 +134,6 @@ const m = useMessages(locale);
     }
     .step-arrow {
       display: none;
-    }
-  }
-  @media (min-width: 1280px) {
-    .flow {
-      grid-template-columns: repeat(6, 1fr);
     }
   }
 </style>

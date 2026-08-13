@@ -504,11 +504,7 @@ html.v2 {
   --text-lede: clamp(1rem, 0.85rem + 0.5vw, 1.4rem);
 }
 
-/* Body text + eyebrows scale too */
-html.v2 .section p:not(.step *) {
-  font-size: clamp(0.95rem, 0.85rem + 0.3vw, 1.125rem);
-  line-height: 1.7;
-}
+/* Eyebrows scale slightly */
 html.v2 .eyebrow {
   font-size: clamp(0.65rem, 0.58rem + 0.12vw, 0.85rem);
 }
@@ -550,33 +546,4 @@ html.v2 .container {
 html.v2 #resolve .container,
 html.v2 #agents .container {
   max-width: min(1400px, 100%);
-}
-
-/* ── Border-radius: fluid tokens ─────────────────────────────────────── */
-html.v2 {
-  --v2-radius-sm: clamp(6px, 4px + 0.25vw, 10px);
-  --v2-radius-md: clamp(10px, 6px + 0.5vw, 18px);
-  --v2-radius-lg: clamp(14px, 8px + 0.8vw, 28px);
-}
-html.v2 .step {
-  border-radius: var(--v2-radius-md);
-}
-html.v2 .source-card {
-  border-radius: var(--v2-radius-lg);
-}
-html.v2 #install .card-box,
-html.v2 .install-card {
-  border-radius: var(--v2-radius-md);
-}
-
-/* ── Step / card internal padding scales ─────────────────────────────── */
-html.v2 .step {
-  padding: clamp(1rem, 0.6rem + 1vw, 1.75rem) clamp(1.25rem, 0.6rem + 1.5vw, 2.25rem);
-  gap: clamp(1rem, 0.5rem + 1vw, 1.75rem);
-}
-html.v2 .source-card {
-  padding-block: clamp(2rem, 0.5rem + 4vw, 4.5rem);
-}
-html.v2 .flow {
-  gap: clamp(0.75rem, 0.3rem + 0.8vw, 1.25rem);
 }
