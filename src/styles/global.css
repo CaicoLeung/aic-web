@@ -25,12 +25,16 @@
   --color-ink-muted: #8a8f9f;
   --color-ink-dim: #54586a;
 
-  /* accents — amber product accent + mint success */
+  /* accents — amber product accent + mint success + cyan "before/uncommitted" */
   --color-amber: #f3b340;
   --color-amber-warm: #e88a4f;
   --color-amber-soft: rgba(243, 179, 64, 0.12);
   --color-mint: #74c98a;
   --color-mint-soft: rgba(116, 201, 138, 0.14);
+  /* V2 duotone: cyan is the cool counterpoint to amber's warmth.
+     Maps to the diff metaphor — cyan = uncommitted/before, amber = committed/after. */
+  --color-cyan: #5dd4e8;
+  --color-cyan-soft: rgba(93, 212, 232, 0.12);
 
   /* type — three registers (ADR-0004):
      display = headings, body = prose, mono = code/chrome.
@@ -40,8 +44,9 @@
      system CJK families below, which cover the rare CJK glyph in EN
      content with zero webfont cost. */
   --font-display:
-    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui,
-    var(--font-cjk, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei'), sans-serif;
+    'Space Grotesk', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI',
+    system-ui, var(--font-cjk, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei'),
+    sans-serif;
   --font-body:
     -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui,
     var(--font-cjk, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei'), sans-serif;
@@ -79,6 +84,18 @@
   unicode-range: U+0000-007F, U+00A0-00FF, U+2000-206F, U+2190-21FF, U+2500-259F;
 }
 
+/* ── Font face — Space Grotesk (V2 display), self-hosted variable woff2 ── */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('../fonts/SpaceGrotesk-Variable.woff2') format('woff2');
+  unicode-range:
+    U+0000-007F, U+00A0-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
+}
+
 /* ── Base layer ── */
 @layer base {
   html {
@@ -113,7 +130,7 @@
     font-family: var(--font-mono);
   }
 
-  /* global atmosphere — amber + mint radial glows from intro.png */
+  /* global atmosphere — V2 duotone: amber (top-right) + cyan (bottom-left) glows */
   body::before {
     content: '';
     position: fixed;
@@ -121,8 +138,8 @@
     z-index: 0;
     pointer-events: none;
     background-image:
-      radial-gradient(1000px 640px at 82% 10%, rgba(243, 179, 64, 0.1), transparent 62%),
-      radial-gradient(820px 560px at 6% 94%, rgba(116, 201, 138, 0.055), transparent 60%),
+      radial-gradient(1000px 640px at 82% 10%, rgba(243, 179, 64, 0.09), transparent 62%),
+      radial-gradient(900px 600px at 8% 88%, rgba(93, 212, 232, 0.07), transparent 60%),
       linear-gradient(180deg, var(--color-base) 0%, var(--color-base-deep) 100%);
   }
 
@@ -154,7 +171,7 @@
   h2,
   h3 {
     font-family: var(--font-display);
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: -0.035em;
     line-height: 1.02;
   }
@@ -191,6 +208,14 @@
   .section {
     position: relative;
     z-index: 2;
+  }
+  /* V2 section background variation — breaks the monotone by alternating
+     between the three surface tones. Apply via .section--deep / .section--raised. */
+  .section--deep {
+    background-color: var(--color-base-deep);
+  }
+  .section--raised {
+    background-color: var(--color-surface);
   }
 
   /* Eyebrow label — small amber uppercase line + 0N — label pattern.
