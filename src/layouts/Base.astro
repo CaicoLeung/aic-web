@@ -16,7 +16,6 @@ import { buildHreflangAlternates } from '@/i18n/hreflang';
 import { SITE_ORIGIN } from '@/config/site';
 
 interface Props {
-  readonly design?: 'v2';
   readonly noindex?: boolean;
   readonly title?: string;
   readonly description?: string;
@@ -26,8 +25,7 @@ interface Props {
   readonly schema?: Record<string, unknown> | readonly Record<string, unknown>[];
 }
 
-const { version, design, title, description, schema } = Astro.props;
-
+const { version, title, description, schema } = Astro.props;
 // Locale self-determined from the URL (ADR-0010).
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
@@ -77,7 +75,7 @@ const cjkStack =
 <html
   lang={LOCALE_HREFLANG[locale]}
   style={cjkStack ? `--font-cjk:${cjkStack}` : undefined}
-  class={design === 'v2' ? 'v2' : undefined}
+  class="v2"
 >
   <head>
     <meta charset="utf-8" />
