@@ -479,12 +479,15 @@ html.v2 #agents .terminal-wrap {
 }
 
 /* ── Scroll progress bar ───────────────────────────────────────────────
-   Thin duotone bar at viewport top. Zero JS: animation-timeline: scroll().
-   Progressive enhancement — absent in browsers without support. */
+   Thin duotone bar at viewport top (div in Base.astro). Zero JS:
+   animation-timeline: scroll(). A real fixed element — not a root
+   pseudo-element — so the scroll-driven transform composites reliably;
+   duration auto + fill forwards keeps the bar pinned at scaleX(1) at the
+   scroll boundary instead of dropping to its base style. The div is
+   inert (no size, no paint) in browsers without support. */
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
-    html.v2::after {
-      content: '';
+    html.v2 .scroll-progress {
       position: fixed;
       top: 0;
       left: 0;
@@ -499,12 +502,15 @@ html.v2 #agents .terminal-wrap {
       transform-origin: left;
       transform: scaleX(0);
       will-change: transform;
-      animation: v2-progress 1s linear;
+      animation: v2-progress auto linear forwards;
       animation-timeline: scroll(root);
       z-index: 1000;
       pointer-events: none;
     }
     @keyframes v2-progress {
+      from {
+        transform: scaleX(0);
+      }
       to {
         transform: scaleX(1);
       }
