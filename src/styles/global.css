@@ -325,9 +325,11 @@ html.v2 #batching .source-card {
 }
 
 /* Compare chips: cyan hover (comparison = pre-decision state) */
-html.v2 #compare .rival-chip:hover {
-  border-color: var(--color-cyan);
-  color: var(--color-cyan);
+@media (hover: hover) {
+  html.v2 #compare .rival-chip:hover {
+    border-color: var(--color-cyan);
+    color: var(--color-cyan);
+  }
 }
 
 /* HowItWorks step arrows: cyan (flow direction = uncommitted→committed) */
@@ -422,28 +424,30 @@ html.v2 #agents .container {
 /* ── Hover transitions ───────────────────────────────────────────────── */
 html.v2 #batching .source-card {
   transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
-}
-html.v2 #batching .source-card:hover {
-  border-color: color-mix(in oklch, var(--color-cyan) 50%, var(--color-line));
-  box-shadow: 0 0 32px -10px var(--color-cyan-soft);
-  transform: translateY(-2px);
+    border-color var(--duration-fast) var(--ease-out-expo),
+    box-shadow var(--duration-fast) var(--ease-out-expo),
+    transform var(--duration-fast) var(--ease-out-expo);
 }
 html.v2 #compare .rival-chip {
   transition:
-    border-color 0.2s ease,
-    color 0.2s ease,
-    background-color 0.2s ease;
+    border-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo),
+    background-color var(--duration-fast) var(--ease-out-expo);
 }
 html.v2 #batching .diff-result {
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow var(--duration-normal) var(--ease-out-expo);
 }
-html.v2 #batching .diff-result:hover {
-  box-shadow:
-    0 0 0 1px color-mix(in oklch, var(--color-amber) 40%, transparent),
-    0 8px 40px -12px color-mix(in oklch, var(--color-amber) 20%, transparent);
+@media (hover: hover) {
+  html.v2 #batching .source-card:hover {
+    border-color: color-mix(in oklch, var(--color-cyan) 50%, var(--color-line));
+    box-shadow: 0 0 32px -10px var(--color-cyan-soft);
+    transform: translateY(-2px);
+  }
+  html.v2 #batching .diff-result:hover {
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--color-amber) 40%, transparent),
+      0 8px 40px -12px color-mix(in oklch, var(--color-amber) 20%, transparent);
+  }
 }
 
 /* ── Terminal depth: inner glow + refined shadow ───────────────────────
