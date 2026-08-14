@@ -482,7 +482,7 @@ html.v2 #agents .terminal-wrap {
    Progressive enhancement — absent in browsers without support. */
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
-    html.v2 body::after {
+    html.v2::after {
       content: '';
       position: fixed;
       top: 0;
