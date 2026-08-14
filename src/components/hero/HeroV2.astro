@@ -16,7 +16,13 @@
 ---
 
 <section class="hero-lab" id="top" data-hero-lab>
-  <div class="lab-pin">
+  <!-- Set the JS flag synchronously at parse time, before any reveal target
+       paints, so the [data-js] hide below applies with no flash-of-content.
+       A deferred module script would run too late (FOUC). -->
+  <script is:inline>
+    document.currentScript.closest('[data-hero-lab]')?.setAttribute('data-js', '');
+  </script>
+  <div class="lab-pin" data-lab-pin>
     <div class="lab-stage" data-lab-stage>
       <!-- ═══ LEFT: Code editor ═══ -->
       <div class="editor" data-editor>
@@ -627,8 +633,6 @@
 <script>
   import { gsap, ScrollTrigger, whenMotionOk } from '@/lib/motion';
 
-  document.querySelector('[data-hero-lab]')?.setAttribute('data-js', '');
-
   whenMotionOk(() => {
     const section = document.querySelector<HTMLElement>('[data-hero-lab]');
     if (!section) return;
@@ -641,7 +645,7 @@
     const cards = gsap.utils.toArray<HTMLElement>('[data-commit-card]');
     const term = section.querySelector<HTMLElement>('[data-lab-term]');
     const hint = section.querySelector<HTMLElement>('[data-lab-hint]');
-    const pin = section.querySelector<HTMLElement>('.lab-pin');
+    const pin = section.querySelector<HTMLElement>('[data-lab-pin]');
     if (!stage || !editor || !pin) return;
 
     // ── Initial states ──────────────────────────────────────────────
