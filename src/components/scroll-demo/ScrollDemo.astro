@@ -9,9 +9,9 @@
  *   r1 (28-62%): Agent analysis — streams one line at a time
  *   r2 (66-76%): Ship — quick burst of commit results
  *
- * Terminal border glows as a progress bar — color shifts cyan→amber→mint,
- * top accent bar fills with scroll progress. Terminal is position: sticky,
- * stays fixed during the animation.
+ * Terminal border glows across three stages — color shifts cyan→amber→mint
+ * as the user scrolls. Terminal is position: sticky, stays fixed during
+ * the animation.
  *
  * No-JS / reduced-motion: all lines visible (final state).
  * V2-only.
@@ -178,26 +178,6 @@
       0 20px 60px -20px rgba(0, 0, 0, 0.5),
       0 0 14px -4px color-mix(in oklch, var(--color-mint) 20%, transparent);
   }
-
-  /* Top progress bar — scaleX (GPU-composited, no per-frame layout) */
-  .demo-terminal::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 2px;
-    width: 100%;
-    transform: scaleX(var(--progress, 0));
-    transform-origin: left center;
-    background: linear-gradient(
-      to right,
-      var(--color-cyan),
-      var(--color-amber),
-      var(--color-mint)
-    );
-    z-index: 2;
-  }
-
   .term-chrome {
     display: flex;
     align-items: center;
@@ -486,10 +466,9 @@
       else if (progress < 0.65) stage = 1;
       else stage = 2;
 
-      // Terminal glow + progress bar
+      // Terminal glow stage (border color + shadow shift)
       if (terminal) {
         terminal.setAttribute('data-stage', String(stage));
-        terminal.style.setProperty('--progress', progress.toFixed(4));
       }
       if (stageLabel) {
         stageLabel.textContent = STAGES[stage];
