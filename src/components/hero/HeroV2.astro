@@ -382,7 +382,7 @@
     width: 3px;
     background: var(--gc);
     border-radius: 0 2px 2px 0;
-    opacity: 0;
+    opacity: 0.9;
     will-change: opacity;
   }
   .hunk-file {
@@ -453,7 +453,7 @@
     fill: none;
     stroke-width: 2;
     stroke-linecap: round;
-    opacity: 0;
+    opacity: 0.7;
     will-change: stroke-dashoffset, opacity;
   }
 
@@ -475,8 +475,7 @@
     border: 1px solid var(--color-line);
     border-radius: 8px;
     max-width: 280px;
-    opacity: 0;
-    transform: translateX(16px);
+    opacity: 1;
     will-change: transform, opacity;
     box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.4);
   }
@@ -543,7 +542,7 @@
     flex-direction: column;
     align-items: center;
     gap: 0.4rem;
-    opacity: 0;
+    opacity: 1;
     will-change: opacity;
   }
   .term-line {
@@ -561,8 +560,11 @@
   }
   .term-cursor {
     color: var(--color-cyan);
-    opacity: 0;
-    animation: term-blink 1s steps(2) infinite;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .term-cursor {
+      animation: term-blink 1s steps(2) infinite;
+    }
   }
   @keyframes term-blink {
     50% {
@@ -600,10 +602,32 @@
       font-size: 0.68rem;
     }
   }
+
+  /* ── Progressive enhancement ──
+     Reveal targets default to their final state. Hide them only when JS
+     is on and motion is allowed — GSAP then drives the scroll reveal.
+     No-JS + prefers-reduced-motion see the finished hero. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-lab[data-js] .hunk-glow {
+      opacity: 0;
+    }
+    .hero-lab[data-js] .curve {
+      opacity: 0;
+    }
+    .hero-lab[data-js] .commit-card {
+      opacity: 0;
+      transform: translateX(16px);
+    }
+    .hero-lab[data-js] .lab-term {
+      opacity: 0;
+    }
+  }
 </style>
 
 <script>
   import { gsap, ScrollTrigger, whenMotionOk } from '@/lib/motion';
+
+  document.querySelector('[data-hero-lab]')?.setAttribute('data-js', '');
 
   whenMotionOk(() => {
     const section = document.querySelector<HTMLElement>('[data-hero-lab]');
