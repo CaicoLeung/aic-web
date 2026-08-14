@@ -244,7 +244,7 @@
 <style>
   /* ═══ Section: scroll track ═══════════════════════════════════════ */
   .hero-lab {
-    height: 300vh;
+    height: 160vh;
     position: relative;
     background: var(--color-base-deep);
   }
@@ -258,6 +258,14 @@
     justify-content: center;
     align-items: stretch;
     overflow: hidden;
+  }
+  @media (min-width: 769px) {
+    /* Desktop stage content is ~57vh; a shorter pin trims the post-reveal
+       exit so the next section arrives sooner. Mobile keeps 100vh (content
+       stacks to ~80vh and would clip). */
+    .lab-pin {
+      height: 76vh;
+    }
   }
 
   /* ═══ Scroll hint ══════════════════════════════════════════════════ */
@@ -609,7 +617,8 @@
     const cards = gsap.utils.toArray<HTMLElement>('[data-commit-card]');
     const term = section.querySelector<HTMLElement>('[data-lab-term]');
     const hint = section.querySelector<HTMLElement>('[data-lab-hint]');
-    if (!stage || !editor) return;
+    const pin = section.querySelector<HTMLElement>('.lab-pin');
+    if (!stage || !editor || !pin) return;
 
     // ── Initial states ──────────────────────────────────────────────
     gsap.set(glows, { opacity: 0 });
@@ -655,12 +664,12 @@
     // Build after layout settles
     requestAnimationFrame(() => requestAnimationFrame(buildCurves));
 
-    // ── Scroll timeline (padded to 1.0 so everything settles by 60% scroll) ─
+    // ── Scroll timeline (spans the pin's sticky range; padded 0.5, ~96%) ─
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
         start: 'top top',
-        end: 'bottom bottom',
+        end: () => `+=${section.offsetHeight - pin!.offsetHeight}`,
         scrub: 0.6,
         onRefresh: buildCurves,
       },
@@ -726,8 +735,9 @@
       0.38,
     );
 
-    // Pad timeline to 1.0 — last 40% of scroll = settle/view
-    tl.set({}, {}, 1.0);
+    // Pad timeline to 0.5 — animation fills ~96% of the pin range, so there's
+    // no dead tail; a tiny settle, then the stage unpins.
+    tl.set({}, {}, 0.5);
 
     // ── Resize: rebuild curves ──────────────────────────────────────
     let resizeTimer: ReturnType<typeof setTimeout>;
