@@ -89,10 +89,9 @@ const versionTitle = t('topbar.versionTitle', { version });
     padding: 1rem clamp(1rem, 0.4rem + 2vw, 3rem);
     background: color-mix(in oklch, var(--color-base-deep) 70%, transparent);
     border-bottom: 1px solid transparent;
-    backdrop-filter: blur(0);
+    backdrop-filter: none;
     transition:
       border-color var(--duration-normal) var(--ease-out-expo),
-      backdrop-filter var(--duration-normal) var(--ease-out-expo),
       background var(--duration-normal) var(--ease-out-expo),
       transform var(--duration-normal) var(--ease-out-expo);
   }
