@@ -16,7 +16,13 @@
 ---
 
 <section class="hero-lab" id="top" data-hero-lab>
-  <div class="lab-pin">
+  <!-- Set the JS flag synchronously at parse time, before any reveal target
+       paints, so the [data-js] hide below applies with no flash-of-content.
+       A deferred module script would run too late (FOUC). -->
+  <script is:inline>
+    document.currentScript.closest('[data-hero-lab]')?.setAttribute('data-js', '');
+  </script>
+  <div class="lab-pin" data-lab-pin>
     <div class="lab-stage" data-lab-stage>
       <!-- ═══ LEFT: Code editor ═══ -->
       <div class="editor" data-editor>
@@ -244,7 +250,7 @@
 <style>
   /* ═══ Section: scroll track ═══════════════════════════════════════ */
   .hero-lab {
-    height: 300vh;
+    height: 160vh;
     position: relative;
     background: var(--color-base-deep);
   }
@@ -258,6 +264,14 @@
     justify-content: center;
     align-items: stretch;
     overflow: hidden;
+  }
+  @media (min-width: 769px) {
+    /* Desktop stage content is ~57vh; a shorter pin trims the post-reveal
+       exit so the next section arrives sooner. Mobile keeps 100vh (content
+       stacks to ~80vh and would clip). */
+    .lab-pin {
+      height: 76vh;
+    }
   }
 
   /* ═══ Scroll hint ══════════════════════════════════════════════════ */
@@ -374,7 +388,7 @@
     width: 3px;
     background: var(--gc);
     border-radius: 0 2px 2px 0;
-    opacity: 0;
+    opacity: 0.9;
     will-change: opacity;
   }
   .hunk-file {
@@ -445,7 +459,7 @@
     fill: none;
     stroke-width: 2;
     stroke-linecap: round;
-    opacity: 0;
+    opacity: 0.7;
     will-change: stroke-dashoffset, opacity;
   }
 
@@ -467,8 +481,7 @@
     border: 1px solid var(--color-line);
     border-radius: 8px;
     max-width: 280px;
-    opacity: 0;
-    transform: translateX(16px);
+    opacity: 1;
     will-change: transform, opacity;
     box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.4);
   }
@@ -535,7 +548,7 @@
     flex-direction: column;
     align-items: center;
     gap: 0.4rem;
-    opacity: 0;
+    opacity: 1;
     will-change: opacity;
   }
   .term-line {
@@ -553,8 +566,11 @@
   }
   .term-cursor {
     color: var(--color-cyan);
-    opacity: 0;
-    animation: term-blink 1s steps(2) infinite;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .term-cursor {
+      animation: term-blink 1s steps(2) infinite;
+    }
   }
   @keyframes term-blink {
     50% {
@@ -592,6 +608,26 @@
       font-size: 0.68rem;
     }
   }
+
+  /* ── Progressive enhancement ──
+     Reveal targets default to their final state. Hide them only when JS
+     is on and motion is allowed — GSAP then drives the scroll reveal.
+     No-JS + prefers-reduced-motion see the finished hero. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-lab[data-js] .hunk-glow {
+      opacity: 0;
+    }
+    .hero-lab[data-js] .curve {
+      opacity: 0;
+    }
+    .hero-lab[data-js] .commit-card {
+      opacity: 0;
+      transform: translateX(16px);
+    }
+    .hero-lab[data-js] .lab-term {
+      opacity: 0;
+    }
+  }
 </style>
 
 <script>
@@ -609,7 +645,8 @@
     const cards = gsap.utils.toArray<HTMLElement>('[data-commit-card]');
     const term = section.querySelector<HTMLElement>('[data-lab-term]');
     const hint = section.querySelector<HTMLElement>('[data-lab-hint]');
-    if (!stage || !editor) return;
+    const pin = section.querySelector<HTMLElement>('[data-lab-pin]');
+    if (!stage || !editor || !pin) return;
 
     // ── Initial states ──────────────────────────────────────────────
     gsap.set(glows, { opacity: 0 });
@@ -655,12 +692,12 @@
     // Build after layout settles
     requestAnimationFrame(() => requestAnimationFrame(buildCurves));
 
-    // ── Scroll timeline (padded to 1.0 so everything settles by 60% scroll) ─
+    // ── Scroll timeline (spans the pin's sticky range; padded 0.5, ~96%) ─
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
         start: 'top top',
-        end: 'bottom bottom',
+        end: () => `+=${section.offsetHeight - pin!.offsetHeight}`,
         scrub: 0.6,
         onRefresh: buildCurves,
       },
@@ -726,8 +763,9 @@
       0.38,
     );
 
-    // Pad timeline to 1.0 — last 40% of scroll = settle/view
-    tl.set({}, {}, 1.0);
+    // Pad timeline to 0.5 — animation fills ~96% of the pin range, so there's
+    // no dead tail; a tiny settle, then the stage unpins.
+    tl.set({}, {}, 0.5);
 
     // ── Resize: rebuild curves ──────────────────────────────────────
     let resizeTimer: ReturnType<typeof setTimeout>;
