@@ -89,10 +89,9 @@ const versionTitle = t('topbar.versionTitle', { version });
     padding: 1rem clamp(1rem, 0.4rem + 2vw, 3rem);
     background: color-mix(in oklch, var(--color-base-deep) 70%, transparent);
     border-bottom: 1px solid transparent;
-    backdrop-filter: blur(0);
+    backdrop-filter: none;
     transition:
       border-color var(--duration-normal) var(--ease-out-expo),
-      backdrop-filter var(--duration-normal) var(--ease-out-expo),
       background var(--duration-normal) var(--ease-out-expo),
       transform var(--duration-normal) var(--ease-out-expo);
   }
@@ -241,20 +240,12 @@ const versionTitle = t('topbar.versionTitle', { version });
       gap: 0.5rem;
       font-size: 0.76rem;
       scrollbar-width: none;
-      max-height: 4rem;
       overflow-y: hidden;
-      transition:
-        max-height var(--duration-normal) var(--ease-out-expo),
-        opacity var(--duration-fast) var(--ease-out-expo);
     }
-    .nav.is-hidden {
-      max-height: 0;
-      opacity: 0;
-      pointer-events: none;
+    .topbar.is-hidden {
+      transform: translateY(-100%);
     }
-    .topbar:has(.nav.is-hidden) {
-      row-gap: 0;
-    }
+
     .brand {
       order: 1;
     }
@@ -290,26 +281,42 @@ const versionTitle = t('topbar.versionTitle', { version });
 </style>
 
 <script>
-  const nav = document.querySelector('[data-topbar] .nav');
-  if (nav) {
+  const topbar = document.querySelector('[data-topbar]');
+  if (topbar) {
     let lastScroll = 0;
     const mqMobile = window.matchMedia('(max-width: 767px)');
 
     const onScroll = () => {
       const y = window.scrollY;
-      // Mobile: hide nav on scroll-down, reveal on scroll-up
+      // Mobile: slide entire topbar away on scroll-down, reveal on scroll-up.
+      // Uses transform (compositor-only) — never touches document height,
+      // so no scroll-position feedback loop.
       if (mqMobile.matches) {
         if (y > lastScroll + 8 && y > 0) {
-          nav.classList.add('is-hidden');
+          topbar.classList.add('is-hidden');
         } else if (y < lastScroll - 4 || y <= 0) {
-          nav.classList.remove('is-hidden');
+          topbar.classList.remove('is-hidden');
         }
       } else {
-        nav.classList.remove('is-hidden');
+        topbar.classList.remove('is-hidden');
       }
       lastScroll = y;
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Backdrop blur kicks in once the hero (first section in <main>) has
+    // scrolled completely out of view. IntersectionObserver — no scroll
+    // handler, fires only on the enter/leave transition.
+    const hero = document.querySelector('main section');
+    if (hero) {
+      new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) topbar.removeAttribute('data-blur');
+          else topbar.setAttribute('data-blur', 'true');
+        },
+        { threshold: 0 },
+      ).observe(hero);
+    }
   }
 </script>
