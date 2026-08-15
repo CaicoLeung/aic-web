@@ -299,7 +299,6 @@ body::before {
     .flow,
     .terminal-wrap,
     .source-card,
-    #install .panel:not(.is-hidden),
     .provider-list,
     .default-models,
     .rival-list {

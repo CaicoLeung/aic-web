@@ -37,8 +37,11 @@ const resolvedTitle = title ?? t('meta.title');
 const resolvedDescription = description ?? t('meta.description');
 
 // Home keeps SoftwareApplication; content pages pass their own schema.
-const jsonLd =
+// Normalized to an array at this single render site so every page emits
+// the same JSON-LD shape (thin-path object passers included).
+const jsonLdNode =
   schema ?? softwareApplicationSchema({ version, description: resolvedDescription });
+const jsonLd = Array.isArray(jsonLdNode) ? jsonLdNode : [jsonLdNode];
 
 const site = Astro.site?.toString() ?? SITE_ORIGIN;
 // Build-time base path (trailing slash guaranteed by Astro). Parameterized

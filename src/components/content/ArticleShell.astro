@@ -40,6 +40,8 @@ interface Props {
   readonly faq?: readonly FaqItem[];
   /** Visible crumb chain; the last crumb is the current page (path ignored). */
   readonly crumbs?: readonly CrumbInput[];
+  /** Short top padding under a Hybrid hero (resolve, agents). */
+  readonly postHero?: boolean;
 }
 
 const {

@@ -113,6 +113,19 @@ const m = useMessages(locale);
   .panel.is-hidden {
     display: none;
   }
+  /* Tier-2 scroll reveal for the active panel. Moved out of global.css's
+     cross-page list (ADR-0020: global keeps no component selectors). Inside
+     these guards `.panel:not(.is-hidden)` (0,2,0) outranks `.panel`'s
+     fade-in, matching the old `#install` rule's cascade outcome. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .panel:not(.is-hidden) {
+        animation: v2-fade-up 0.9s both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 32%;
+      }
+    }
+  }
   @keyframes fade-in {
     from {
       opacity: 0;
