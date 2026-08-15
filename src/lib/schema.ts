@@ -1,12 +1,14 @@
 /**
  * Structured-data builders (JSON-LD).
  *
- * Centralizes the Article / FAQPage / BreadcrumbList nodes so every content
- * page emits the same field set — including the absolute `url`, lead
- * `image`, and publisher `logo` that Google's Article rich-result validator
- * looks for, plus the `BreadcrumbList` that mirrors the visible breadcrumb
- * nav. Pages pass canonical + site; the image/logo defaults live here so a
- * page never hand-builds a schema node (ADR-0006).
+ * Centralizes every JSON-LD node the site emits — Article / FAQPage /
+ * BreadcrumbList for content pages, SoftwareApplication for the home page —
+ * plus the absolute-URL rules (`canonicalUrl`, `assetUrl`) the head needs,
+ * so every page (and Base) emits the same field set. Includes the absolute
+ * `url`, lead `image`, and publisher `logo` that Google's Article
+ * rich-result validator looks for, plus the `BreadcrumbList` that mirrors
+ * the visible breadcrumb nav. Pages pass canonical + site; the image/logo
+ * defaults live here so a page never hand-builds a schema node (ADR-0006).
  */
 import { baseHref } from '@/lib/href';
 
@@ -117,5 +119,31 @@ export function articleSchema(i: ArticleInput) {
       logo: { '@type': 'ImageObject', url: logo },
     },
     ...(i.about ? { about: i.about } : {}),
+  };
+}
+
+export interface SoftwareApplicationInput {
+  /** Crate version from the build facts — no leading `v`; it is prefixed here. */
+  readonly version: string;
+  /** Localized default description (the page's meta description). */
+  readonly description: string;
+}
+
+/**
+ * SoftwareApplication node — the home page's structured data. Only the
+ * version (build facts) and description (locale) vary, so the constants
+ * live here. Content pages pass their own schema to Base instead, so a
+ * comparison page is not mistagged as the app itself (ADR-0006).
+ */
+export function softwareApplicationSchema(i: SoftwareApplicationInput) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'aic',
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'macOS, Linux, Windows',
+    softwareVersion: `v${i.version}`,
+    description: i.description,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   };
 }

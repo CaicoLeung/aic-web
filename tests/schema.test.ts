@@ -15,6 +15,7 @@ import {
   breadcrumbSchema,
   canonicalUrl,
   faqSchema,
+  softwareApplicationSchema,
 } from '../src/lib/schema.ts';
 
 const ORIGIN = 'https://caicoleung.github.io';
@@ -133,5 +134,24 @@ describe('articleSchema', () => {
     });
     assert.equal(node.dateModified, '2026-08-05');
     assert.deepEqual(node.about, ['aic', 'DeepSeek']);
+  });
+});
+
+describe('softwareApplicationSchema', () => {
+  it('emits the home page node with the version prefixed and free offer', () => {
+    const node = softwareApplicationSchema({
+      version: '0.3.1',
+      description: 'AI-powered git commit messages',
+    });
+    assert.deepEqual(node, {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'aic',
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'macOS, Linux, Windows',
+      softwareVersion: 'v0.3.1',
+      description: 'AI-powered git commit messages',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    });
   });
 });

@@ -13,7 +13,7 @@ import '@/styles/global.css';
 import { LOCALE_HREFLANG, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 import { buildHreflangAlternates } from '@/i18n/hreflang';
-import { SITE_ORIGIN } from '@/config/site';
+import { assetUrl, canonicalUrl, softwareApplicationSchema } from '@/lib/schema';
 // Vite-processed font URL — correct under any base in both dev and prod
 // (public/ assets referenced from CSS break dev's router under a non-root base).
 import fontRegularUrl from '@/assets/fonts/JetBrainsMono-Regular.woff2';
@@ -37,23 +37,15 @@ const resolvedTitle = title ?? t('meta.title');
 const resolvedDescription = description ?? t('meta.description');
 
 // Home keeps SoftwareApplication; content pages pass their own schema.
-const jsonLd = schema ?? {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'aic',
-  applicationCategory: 'DeveloperApplication',
-  operatingSystem: 'macOS, Linux, Windows',
-  softwareVersion: `v${version}`,
-  description: resolvedDescription,
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-};
+const jsonLd =
+  schema ?? softwareApplicationSchema({ version, description: resolvedDescription });
 
 const site = Astro.site?.toString() ?? SITE_ORIGIN;
 // Build-time base path (trailing slash guaranteed by Astro). Parameterized
 // so one source tree builds for any base (cPanel /aic/, Pages /aic-web/).
 const base = import.meta.env.BASE_URL;
-const canonical = new URL(Astro.url.pathname, site).toString();
-const ogImage = new URL(`${base}og.png`, site).toString();
+const canonical = canonicalUrl(Astro.url.pathname, site);
+const ogImage = assetUrl('og.png', site, base);
 // Mirror builds (e.g. Pages) opt out of indexing so only the primary domain
 // (cPanel) competes in search — avoids duplicate-content split.
 const noindex = process.env.NOINDEX === 'true' || Astro.props.noindex === true;
