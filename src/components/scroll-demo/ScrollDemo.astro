@@ -136,9 +136,10 @@
     overflow: hidden;
   }
 
+  /* No max-width: the element also carries .container, whose global
+     width has always out-specified any local cap (see ADR-0020). */
   .demo-inner {
     width: 100%;
-    max-width: 720px;
     margin: 0 auto;
   }
 

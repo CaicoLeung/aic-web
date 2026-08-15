@@ -154,5 +154,46 @@ const cjkStack =
         progress bar above — below later sections. */
     }
     <slot />
+
+    <style>
+      /* Scroll progress bar — thin duotone bar at viewport top (div above).
+     Zero JS: animation-timeline: scroll(). A real fixed element — not a
+     root pseudo-element — so the scroll-driven transform composites
+     reliably; duration auto + fill forwards keeps the bar pinned at
+     scaleX(1) at the scroll boundary instead of dropping to its base
+     style. Inert (no size, no paint) in browsers without support. */
+      @supports (animation-timeline: scroll()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            width: 100%;
+            background: linear-gradient(
+              90deg,
+              var(--color-cyan),
+              color-mix(in oklch, var(--color-cyan) 50%, var(--color-amber)),
+              var(--color-amber)
+            );
+            transform-origin: left;
+            transform: scaleX(0);
+            will-change: transform;
+            animation: v2-progress auto linear forwards;
+            animation-timeline: scroll(root);
+            z-index: 1000;
+            pointer-events: none;
+          }
+          @keyframes v2-progress {
+            from {
+              transform: scaleX(0);
+            }
+            to {
+              transform: scaleX(1);
+            }
+          }
+        }
+      }
+    </style>
   </body>
 </html>

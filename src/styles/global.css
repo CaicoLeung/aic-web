@@ -276,97 +276,6 @@ html.v2 body::before {
     radial-gradient(900px 600px at 8% 88%, rgba(93, 212, 232, 0.07), transparent 60%),
     linear-gradient(180deg, var(--color-base) 0%, var(--color-base-deep) 100%);
 }
-html.v2 #batching,
-html.v2 #providers {
-  background-color: var(--color-surface);
-}
-html.v2 #resolve,
-html.v2 #compare {
-  background-color: var(--color-base-deep);
-}
-
-/* ════════════════════════════════════════════════════════════════════
-   Phase 2: Layout Revolution — html.v2 scoped
-   Breaks centered monotony, applies duotone cyan, creates asymmetry. ═══ */
-
-/* ── Resolve + Agents: mirrored 2-col grids ────────────────────────────
-   Adjacent identical twins → differentiated: resolve = terminal-left,
-   agents = terminal-right. Breaks the biggest monotony offender. */
-@media (min-width: 900px) {
-  html.v2 #resolve .container,
-  html.v2 #agents .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(2.5rem, 1rem + 3vw, 4rem);
-    align-items: center;
-  }
-  /* Resolve: terminal in col 1 (left), copy auto-fills col 2 (right) */
-  html.v2 #resolve .terminal-wrap {
-    grid-column: 1;
-    grid-row: 1 / -1;
-    max-width: none;
-    margin: 0;
-  }
-  /* Agents: terminal in col 2 (right), copy auto-fills col 1 (left) — mirrored */
-  html.v2 #agents .terminal-wrap {
-    grid-column: 2;
-    grid-row: 1 / -1;
-    max-width: none;
-    margin: 0;
-  }
-}
-
-/* ── Cyan duotone application ──────────────────────────────────────────
-   cyan = uncommitted/before/pending, amber = committed/after/done. */
-
-/* Batching source card: cyan border (the uncommitted "before" state) */
-html.v2 #batching .source-card {
-  border-color: color-mix(in oklch, var(--color-cyan) 35%, var(--color-line));
-  box-shadow: 0 0 24px -12px var(--color-cyan-soft);
-}
-
-/* Compare chips: cyan hover (comparison = pre-decision state) */
-@media (hover: hover) {
-  html.v2 #compare .rival-chip:hover {
-    border-color: var(--color-cyan);
-    color: var(--color-cyan);
-  }
-}
-
-/* HowItWorks step arrows: cyan (flow direction = uncommitted→committed) */
-html.v2 #how .step-arrow {
-  color: var(--color-cyan);
-}
-
-/* Install active tab: cyan (selected-but-not-yet-run = uncommitted) */
-html.v2 #install .tab.is-active {
-  color: var(--color-cyan);
-  border-bottom-color: var(--color-cyan);
-}
-
-/* ── Eyebrow variation: cyan on "before/process" sections ────────────── */
-html.v2 #batching .eyebrow,
-html.v2 #agents .eyebrow {
-  color: var(--color-cyan);
-}
-html.v2 #batching .eyebrow .line,
-html.v2 #agents .eyebrow .line {
-  background: var(--color-cyan);
-}
-
-/* ── Visual rhythm: vary section padding to break monotony ─────────────
-   List-style sections (how, providers) get tighter padding — they're
-   scannable strips, not narrative blocks. Terminal sections (resolve,
-   agents) get wider containers so terminals breathe. */
-html.v2 #how,
-html.v2 #providers {
-  padding-top: clamp(2rem, 0.5rem + 4vw, 3.5rem);
-  padding-bottom: clamp(2rem, 0.5rem + 4vw, 3.5rem);
-}
-html.v2 #resolve .container,
-html.v2 #agents .container {
-  max-width: min(1320px, 100%);
-}
 
 /* ════════════════════════════════════════════════════════════════════
    Phase 3: Motion polish — html.v2 scoped
@@ -391,7 +300,6 @@ html.v2 #agents .container {
     html.v2 .flow,
     html.v2 .terminal-wrap,
     html.v2 .source-card,
-    html.v2 .diff-result,
     html.v2 #install .panel:not(.is-hidden),
     html.v2 .provider-list,
     html.v2 .default-models,
@@ -422,45 +330,6 @@ html.v2 #agents .container {
   }
 }
 
-/* ── Hover transitions ───────────────────────────────────────────────── */
-html.v2 #batching .source-card {
-  transition:
-    border-color var(--duration-fast) var(--ease-out-expo),
-    box-shadow var(--duration-fast) var(--ease-out-expo),
-    transform var(--duration-fast) var(--ease-out-expo);
-}
-html.v2 #compare .rival-chip {
-  transition:
-    border-color var(--duration-fast) var(--ease-out-expo),
-    color var(--duration-fast) var(--ease-out-expo),
-    background-color var(--duration-fast) var(--ease-out-expo);
-}
-html.v2 #batching .diff-result {
-  transition: box-shadow var(--duration-normal) var(--ease-out-expo);
-}
-@media (hover: hover) {
-  html.v2 #batching .source-card:hover {
-    border-color: color-mix(in oklch, var(--color-cyan) 50%, var(--color-line));
-    box-shadow: 0 0 32px -10px var(--color-cyan-soft);
-    transform: translateY(-2px);
-  }
-  html.v2 #batching .diff-result:hover {
-    box-shadow:
-      0 0 0 1px color-mix(in oklch, var(--color-amber) 40%, transparent),
-      0 8px 40px -12px color-mix(in oklch, var(--color-amber) 20%, transparent);
-  }
-}
-
-/* ── Terminal depth: inner glow + refined shadow ───────────────────────
-   Section ID prefix boosts specificity over scoped component styles. */
-html.v2 #resolve .terminal-wrap,
-html.v2 #agents .terminal-wrap {
-  border-radius: 15px;
-  box-shadow:
-    0 20px 60px -20px rgba(0, 0, 0, 0.5),
-    0 0 80px -40px var(--color-cyan-soft);
-}
-
 /* ── Eyebrow bar slide-in on scroll ──────────────────────────────────── */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
@@ -473,46 +342,6 @@ html.v2 #agents .terminal-wrap {
     @keyframes v2-bar-grow {
       from {
         transform: scaleX(0);
-      }
-    }
-  }
-}
-
-/* ── Scroll progress bar ───────────────────────────────────────────────
-   Thin duotone bar at viewport top (div in Base.astro). Zero JS:
-   animation-timeline: scroll(). A real fixed element — not a root
-   pseudo-element — so the scroll-driven transform composites reliably;
-   duration auto + fill forwards keeps the bar pinned at scaleX(1) at the
-   scroll boundary instead of dropping to its base style. The div is
-   inert (no size, no paint) in browsers without support. */
-@supports (animation-timeline: scroll()) {
-  @media (prefers-reduced-motion: no-preference) {
-    html.v2 .scroll-progress {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 2px;
-      width: 100%;
-      background: linear-gradient(
-        90deg,
-        var(--color-cyan),
-        color-mix(in oklch, var(--color-cyan) 50%, var(--color-amber)),
-        var(--color-amber)
-      );
-      transform-origin: left;
-      transform: scaleX(0);
-      will-change: transform;
-      animation: v2-progress auto linear forwards;
-      animation-timeline: scroll(root);
-      z-index: 1000;
-      pointer-events: none;
-    }
-    @keyframes v2-progress {
-      from {
-        transform: scaleX(0);
-      }
-      to {
-        transform: scaleX(1);
       }
     }
   }
@@ -538,41 +367,8 @@ html.v2 .eyebrow {
   font-size: clamp(0.65rem, 0.58rem + 0.12vw, 0.85rem);
 }
 
-/* ── Section spacing: raise ceilings for breathing room ──────────────── */
-html.v2 .how,
-html.v2 .batching,
-html.v2 .resolve-section,
-html.v2 .agents-section,
-html.v2 .install {
-  padding-block: clamp(4rem, 0.5rem + 9vw, 11rem);
-}
-html.v2 .providers {
-  padding-block: clamp(3rem, 0.5rem + 6vw, 8rem);
-}
-html.v2 .compare-band {
-  padding-block: clamp(3.5rem, 0.5rem + 7vw, 9rem);
-}
-/* Tighter scannable strips override above */
-html.v2 #how,
-html.v2 #providers {
-  padding-top: clamp(3rem, 0.5rem + 6vw, 7rem);
-  padding-bottom: clamp(3rem, 0.5rem + 6vw, 7rem);
-}
-/* Section head → content gap */
-html.v2 .section-head {
-  margin-bottom: clamp(2rem, 0.5rem + 4vw, 4.5rem);
-}
-/* Footer */
-html.v2 .footer {
-  padding-top: clamp(4rem, 0.5rem + 8vw, 9rem);
-}
-
 /* ── Container: widen gutter on large screens ────────────────────────── */
 html.v2 .container {
   padding-inline: clamp(1.25rem, 0.2rem + 4vw, 6rem);
   max-width: min(1280px, 100%);
-}
-html.v2 #resolve .container,
-html.v2 #agents .container {
-  max-width: min(1400px, 100%);
 }

@@ -100,7 +100,8 @@ const changelog = `${localizedHref(locale, 'changelog')}#${HUNK_SPLITTING.shippe
 
 <style>
   .batching {
-    padding: clamp(3rem, 1rem + 6vw, 6rem) 0;
+    padding: clamp(4rem, 0.5rem + 9vw, 11rem) 0;
+    background-color: var(--color-surface);
     position: relative;
     z-index: 2;
   }
@@ -146,12 +147,23 @@ const changelog = `${localizedHref(locale, 'changelog')}#${HUNK_SPLITTING.shippe
     justify-content: space-between;
     gap: 0.75rem;
     padding: 0.7rem 1rem;
-    border: 1px solid var(--color-line);
+    border: 1px solid color-mix(in oklch, var(--color-cyan) 35%, var(--color-line));
     border-radius: 10px;
     background: var(--color-surface-raised);
     font-family: var(--font-mono);
     font-size: 0.8rem;
-    box-shadow: 0 12px 28px -18px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 24px -12px var(--color-cyan-soft);
+    transition:
+      border-color var(--duration-fast) var(--ease-out-expo),
+      box-shadow var(--duration-fast) var(--ease-out-expo),
+      transform var(--duration-fast) var(--ease-out-expo);
+  }
+  @media (hover: hover) {
+    .source-card:hover {
+      border-color: color-mix(in oklch, var(--color-cyan) 50%, var(--color-line));
+      box-shadow: 0 0 32px -10px var(--color-cyan-soft);
+      transform: translateY(-2px);
+    }
   }
   .source-card .file-label {
     color: var(--color-ink);
@@ -367,6 +379,14 @@ const changelog = `${localizedHref(locale, 'changelog')}#${HUNK_SPLITTING.shippe
     height: 0.5rem;
     border-radius: 50%;
     flex-shrink: 0;
+  }
+  /* Cyan duotone: batching is a "before/process" section (cyan =
+     uncommitted/pending) — eyebrow carries the cool counterpoint. */
+  .eyebrow {
+    color: var(--color-cyan);
+  }
+  .eyebrow .line {
+    background: var(--color-cyan);
   }
 </style>
 

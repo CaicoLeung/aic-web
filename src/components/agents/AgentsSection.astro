@@ -37,9 +37,16 @@ const agentsPage = localizedHref(locale, 'agents');
 
 <style>
   .agents-section {
-    padding: clamp(3rem, 1rem + 6vw, 6rem) 0;
+    padding: clamp(4rem, 0.5rem + 9vw, 11rem) 0;
     position: relative;
     z-index: 2;
+  }
+  /* Cyan duotone: agents is a "before/process" section — eyebrow cool. */
+  .eyebrow {
+    color: var(--color-cyan);
+  }
+  .eyebrow .line {
+    background: var(--color-cyan);
   }
   h2 {
     font-size: var(--text-h2);
@@ -56,6 +63,27 @@ const agentsPage = localizedHref(locale, 'agents');
   .terminal-wrap {
     max-width: 46rem;
     margin: 2.5rem auto 1.5rem;
+    border-radius: 15px;
+    box-shadow:
+      0 20px 60px -20px rgba(0, 0, 0, 0.5),
+      0 0 80px -40px var(--color-cyan-soft);
+  }
+  /* Mirrored 2-col grid ≥900px: terminal right, copy left — the
+     mirror of the resolve section. Wider container to breathe. */
+  @media (min-width: 900px) {
+    .agents-section .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2.5rem, 1rem + 3vw, 4rem);
+      align-items: center;
+      max-width: min(1400px, 100%);
+    }
+    .terminal-wrap {
+      grid-column: 2;
+      grid-row: 1 / -1;
+      max-width: none;
+      margin: 0;
+    }
   }
   .link {
     color: var(--color-amber);
