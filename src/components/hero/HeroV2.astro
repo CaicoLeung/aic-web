@@ -261,16 +261,24 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /* Reserve the fixed-topbar band (Topbar exports --topbar-h) so the
+       centered stage never starts under the overlay bar. safe center: when
+       the content is taller than the box, it top-aligns below the bar
+       instead of center-clipping both ends (unsupported browsers fall back
+       to flex-start — same guarantee). */
+    justify-content: safe center;
+    padding-top: var(--topbar-h, 78px);
     align-items: stretch;
     overflow: hidden;
   }
-  @media (min-width: 769px) {
+  @media (min-width: 769px) and (min-height: 600px) {
     /* Desktop stage content is ~57vh; a shorter pin trims the post-reveal
        exit so the next section arrives sooner. Mobile keeps 100vh (content
-       stacks to ~80vh and would clip). */
+       stacks to ~80vh and would clip). Floor keeps short windows (720p)
+       tall enough for content (~493px) + topbar band (~78px). Viewports
+       under 600px tall skip this floor — see the short-viewport block. */
     .lab-pin {
-      height: 76vh;
+      height: max(76vh, 590px);
     }
   }
 
@@ -368,7 +376,10 @@
     font-family: var(--font-mono);
     font-size: 0.76rem;
     line-height: 1.7;
-    max-height: 56vh;
+    /* Cap keeps the editor ≤56vh on tall screens, but the diff's natural
+       height is ~387px — a bare 56vh clipped the package.json hunk on
+       short viewports (landscape). Floor the cap above natural height. */
+    max-height: max(56vh, 26rem);
     overflow: hidden;
   }
 
@@ -609,6 +620,29 @@
     }
   }
 
+  /* ── Short viewports (landscape phones, ≤560px tall) ────────────────
+     The pinned 100vh theater needs ~562px of stack (topbar 78 + editor
+     ~426 + terminal ~58); landscape phones offer ~300-480px. Centering
+     inside an oversized pin pushed the stage below the fold and clipped
+     the package.json hunk. Unpin: the hero flows like a plain section,
+     every hunk reachable by page scroll; ScrollTrigger still scrubs (its
+     range clamps to ≥1px, so the reveal plays as an entrance). */
+  @media (max-height: 560px) {
+    .hero-lab {
+      height: auto;
+    }
+    .lab-pin {
+      position: static;
+      height: auto;
+      padding-top: calc(var(--topbar-h, 78px) + 1.5rem);
+      padding-bottom: 1.5rem;
+      overflow: visible;
+    }
+    .lab-hint {
+      display: none;
+    }
+  }
+
   /* ── Progressive enhancement ──
      Reveal targets default to their final state. Hide them only when JS
      is on and motion is allowed — GSAP then drives the scroll reveal.
@@ -697,7 +731,10 @@
       scrollTrigger: {
         trigger: section,
         start: 'top top',
-        end: () => `+=${section.offsetHeight - pin!.offsetHeight}`,
+        // Unpinned short viewports (max-height: 560px) make the section
+        // wrap its content, so this range can hit 0/negative — clamp to
+        // keep the scrub valid (reveal plays as an entrance).
+        end: () => `+=${Math.max(section.offsetHeight - pin!.offsetHeight, 1)}`,
         scrub: 0.6,
         onRefresh: buildCurves,
       },
