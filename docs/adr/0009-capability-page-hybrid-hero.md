@@ -37,6 +37,11 @@ mockup.
 
 - **Pro:** the resolve workflow's review-gate safety gets visual proof; the page
   reads as product, not docs.
+- **Named module (commit `0ab6709`):** the Hybrid Hero template is
+  `src/components/content/HybridHero.astro` — copy + CTA in via props/slots,
+  terminal out via the `terminal` slot. Demo-less capability-adjacent pages
+  (`/deepseek/`, a provider guide) use the article template; the split keys on
+  leading with a mockup, per the Argument-led / Demo-led line above.
 - **Cost:** two content-page templates instead of one. New comparison pages
   inherit the article template; new capability pages inherit the Hybrid Hero
   template. The split tracks page type (CONTEXT.md), not whim.
