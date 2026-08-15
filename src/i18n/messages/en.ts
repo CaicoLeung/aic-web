@@ -154,27 +154,6 @@ export const messages = {
     copied: 'Copied ✓',
   },
 
-  hero: {
-    eyebrow: '01 — Introduction',
-    h1: {
-      line1: 'one file',
-      line2: 'three concerns',
-      line3: 'three commits',
-    },
-    // Contains <b>; render via set:html. Split at the resolve link (dynamic href).
-    ledeBefore:
-      'aic reads your diff at the hunk level and splits unstaged work into focused, conventional commits — so one file touching three concerns becomes three commits, not one. Mid-merge? It ',
-    ledeLink: 'resolves every conflict',
-    ledeAfter:
-      ' and shows you the diff before anything lands. Already live in Claude Code or Codex? Point aic at your agent — no API key, no middleman.',
-    // Contains <code>; render via set:html. `{cmd}` is the literal command.
-    ctaHint: 'then run <code>{cmd}</code> — one wizard: provider → key → model',
-    /** Names the primary action above the command (CRO). */
-    ctaLabel: 'Install aic — one command',
-    /** Platform microcopy under the hero CTA (CRO). */
-    platformNote: 'Homebrew (macOS · Linux) — Windows & Unix installers below ↓',
-  },
-
   how: {
     eyebrow: '02 — How it works',
     // Contains <code>; render via set:html. `{cmd}` is the literal command.
@@ -191,12 +170,6 @@ export const messages = {
       '05': { label: 'draft', detail: 'writes the message' },
       '06': { label: 'commit', detail: 'ships it  ✓' },
     },
-  },
-
-  commands: {
-    aic: { description: 'commit staged work · or batch-plan unstaged' },
-    'aic-setup': { description: 'one-time wizard — provider → key → model' },
-    'aic-list': { description: 'show resolved config + masked API key' },
   },
 
   batching: {

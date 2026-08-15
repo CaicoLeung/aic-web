@@ -1,0 +1,345 @@
+---
+/**
+ * Article shell (CONTEXT.md → "Article shell") — the shared scaffold of
+ * every narrative content page (ADR-0006): Base chrome (ContentHeader +
+ * Footer), the article column, the visible crumb nav, and the page's
+ * JSON-LD. A page supplies meta strings and its body; the shell assembles
+ * everything else, so all content pages share one definition of
+ * "content page" instead of a ~30-line ritual per route.
+ *
+ * The shell owns the article CSS layer under the `.article` namespace
+ * (TerminalShell `:global` precedent — Astro scoped styles don't reach
+ * slotted or `set:html` content). Page-unique styles stay in the page.
+ *
+ * i18n (ADR-0010): locale is self-determined from the URL exactly like
+ * Base — no prop threading. Crumb `path`s are localized here.
+ *
+ * Variants:
+ *  - `postHero`  short top padding under a Hybrid hero (resolve, agents)
+ *
+ * Thin path: a page that owns its schema outright (changelog's dated
+ * Article) passes `schema` directly and skips the ritual props.
+ */
+import { loadAicFacts } from '@/data/aic';
+import Base from '@/layouts/Base.astro';
+import ContentHeader from '@/components/content/ContentHeader.astro';
+import Footer from '@/components/footer/Footer.astro';
+import { SITE_ORIGIN } from '@/config/site';
+import { localeFromUrl, localizedHref } from '@/i18n/config';
+import { assembleArticleSchema, buildCrumbs, type CrumbInput } from '@/lib/article';
+import { canonicalUrl, type FaqItem } from '@/lib/schema';
+
+interface Props {
+  readonly title: string;
+  readonly description: string;
+  /** Thin path: pass a pre-built schema node — skips the ritual props. */
+  readonly schema?: Record<string, unknown> | readonly Record<string, unknown>[];
+  readonly datePublished?: string;
+  readonly dateModified?: string;
+  readonly about?: readonly string[];
+  readonly faq?: readonly FaqItem[];
+  /** Visible crumb chain; the last crumb is the current page (path ignored). */
+  readonly crumbs?: readonly CrumbInput[];
+  /** Short top padding under a Hybrid hero (resolve, agents). */
+  readonly postHero?: boolean;
+}
+
+const {
+  title,
+  description,
+  schema,
+  datePublished,
+  dateModified,
+  about,
+  faq,
+  crumbs,
+  postHero,
+} = Astro.props;
+
+if (!schema && !datePublished) {
+  throw new Error('ArticleShell: pass datePublished (or schema for the thin path)');
+}
+
+const facts = await loadAicFacts();
+const locale = localeFromUrl(Astro.url.pathname);
+const site = Astro.site ?? SITE_ORIGIN;
+const canonical = canonicalUrl(Astro.url.pathname, site);
+
+const jsonLd =
+  schema ??
+  assembleArticleSchema({
+    title,
+    description,
+    datePublished,
+    dateModified,
+    about,
+    faq,
+    crumbs: crumbs ? buildCrumbs(locale, crumbs, canonical, site) : undefined,
+    url: canonical,
+    site,
+  });
+
+const parents = crumbs?.slice(0, -1) ?? [];
+const current = crumbs?.[crumbs.length - 1];
+---
+
+<Base version={facts.version} title={title} description={description} schema={jsonLd}>
+  <ContentHeader version={facts.version} />
+
+  <main id="main">
+    <slot name="hero" />
+    <article class:list={['article', 'container', { 'post-hero': postHero }]}>
+      {
+        current && (
+          <nav class="crumbs" aria-label="Breadcrumb">
+            {parents.map((crumb) => (
+              <>
+                <a href={localizedHref(locale, crumb.path)}>{crumb.name}</a>
+                <span aria-hidden="true">›</span>
+              </>
+            ))}
+            <span aria-current="page">{current.name}</span>
+          </nav>
+        )
+      }
+      <slot />
+    </article>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  /* ── Article column ── */
+  .article {
+    padding-block: clamp(2.5rem, 1rem + 4vw, 4.5rem) clamp(3rem, 1rem + 5vw, 5rem);
+    position: relative;
+    z-index: 2;
+  }
+  .article.post-hero {
+    padding-block-start: clamp(1rem, 0.5rem + 2vw, 2rem);
+  }
+
+  /* ── Crumb nav (own markup) ── */
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-ink-dim);
+    margin-bottom: 0.5rem;
+  }
+  .crumbs a {
+    color: var(--color-ink-muted);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--color-amber);
+  }
+  .crumbs span[aria-current='page'] {
+    color: var(--color-ink);
+  }
+
+  /* ── Article CSS layer — everything below is slotted/set:html content,
+        so selectors are :global under the .article namespace (TerminalShell
+        precedent). ── */
+
+  /* Code chip — same values as global `.lede code`, so every code span in
+     an article renders identically (plain mono before on some pages). */
+  :global(.article code) {
+    color: var(--color-amber);
+    font-family: var(--font-mono);
+    background: var(--color-amber-soft);
+    padding: 0.1rem 0.4rem;
+    border-radius: 5px;
+    font-size: 0.85em;
+  }
+
+  :global(.article > h1) {
+    font-size: var(--text-h2);
+    line-height: 1.05;
+    margin: 0.75rem 0 0;
+  }
+
+  :global(.article .lede) {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    margin-top: 1rem;
+    font-size: var(--text-lede);
+  }
+
+  :global(.article .block) {
+    margin-top: 2.75rem;
+  }
+  :global(.article .block h2) {
+    font-size: 1.5rem;
+    margin: 0 0 1rem;
+  }
+  :global(.article .block-lede) {
+    color: var(--color-ink-muted);
+    margin: -0.25rem 0 1.25rem;
+    line-height: 1.6;
+    font-size: 0.975rem;
+  }
+  :global(.article .block-body) {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  /* Numbered workflow steps */
+  :global(.article .steps) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    counter-reset: step;
+  }
+  :global(.article .steps li) {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem 0.85rem;
+    align-items: baseline;
+  }
+  :global(.article .steps li::before) {
+    counter-increment: step;
+    content: counter(step, decimal-leading-zero);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--color-ink-dim);
+    padding-top: 0.15rem;
+  }
+  :global(.article .step-h) {
+    grid-column: 2;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  :global(.article .step-n) {
+    grid-column: 2;
+    color: var(--color-ink-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  /* Point lists */
+  :global(.article .points) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  :global(.article .points li) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  :global(.article .point-h) {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  :global(.article .point-n) {
+    color: var(--color-ink-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  /* Callout — margin-carrying by default; `.flush` opts out where the
+     callout follows a block-lede directly (resolve). */
+  :global(.article .callout) {
+    margin-top: 1.75rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-line);
+    border-left: 3px solid var(--color-amber);
+    border-radius: 10px;
+    background: var(--color-amber-soft);
+    color: var(--color-ink);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  :global(.article .callout.flush) {
+    margin-top: 0;
+  }
+
+  /* FAQ */
+  :global(.article .faq) {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  :global(.article .faq-item h3) {
+    font-size: 1rem;
+    margin: 0 0 0.35rem;
+    color: var(--color-ink);
+  }
+  :global(.article .faq-item p) {
+    color: var(--color-ink-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  /* Verdict + CTA. CTA-only verdicts (first child) drop the margin-top. */
+  :global(.article .verdict) {
+    margin-top: 2.75rem;
+    padding: 1.75rem;
+    border: 1px solid var(--color-line-soft);
+    border-radius: 14px;
+    background: var(--color-surface);
+  }
+  :global(.article .verdict h2) {
+    font-size: 1.5rem;
+    margin: 0 0 0.75rem;
+  }
+  :global(.article .verdict p) {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+  }
+  :global(.article .cta) {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  :global(.article .verdict > .cta:first-child) {
+    margin-top: 0;
+  }
+  :global(.article .cta-link) {
+    color: var(--color-ink);
+    text-decoration: none;
+    padding: 0.55rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition:
+      border-color var(--duration-fast) ease,
+      color var(--duration-fast) ease;
+  }
+  :global(.article .cta-link:hover) {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+  }
+
+  :global(.article .inline-cta) {
+    margin-top: 1.5rem;
+  }
+  :global(.article .inline-cta a) {
+    color: var(--color-amber);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-amber) 40%, transparent);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  :global(.article .inline-cta a:hover) {
+    color: var(--color-ink);
+  }
+</style>

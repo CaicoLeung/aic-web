@@ -13,7 +13,7 @@ import '@/styles/global.css';
 import { LOCALE_HREFLANG, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 import { buildHreflangAlternates } from '@/i18n/hreflang';
-import { SITE_ORIGIN } from '@/config/site';
+import { assetUrl, canonicalUrl, softwareApplicationSchema } from '@/lib/schema';
 // Vite-processed font URL — correct under any base in both dev and prod
 // (public/ assets referenced from CSS break dev's router under a non-root base).
 import fontRegularUrl from '@/assets/fonts/JetBrainsMono-Regular.woff2';
@@ -37,23 +37,18 @@ const resolvedTitle = title ?? t('meta.title');
 const resolvedDescription = description ?? t('meta.description');
 
 // Home keeps SoftwareApplication; content pages pass their own schema.
-const jsonLd = schema ?? {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'aic',
-  applicationCategory: 'DeveloperApplication',
-  operatingSystem: 'macOS, Linux, Windows',
-  softwareVersion: `v${version}`,
-  description: resolvedDescription,
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-};
+// Normalized to an array at this single render site so every page emits
+// the same JSON-LD shape (thin-path object passers included).
+const jsonLdNode =
+  schema ?? softwareApplicationSchema({ version, description: resolvedDescription });
+const jsonLd = Array.isArray(jsonLdNode) ? jsonLdNode : [jsonLdNode];
 
 const site = Astro.site?.toString() ?? SITE_ORIGIN;
 // Build-time base path (trailing slash guaranteed by Astro). Parameterized
 // so one source tree builds for any base (cPanel /aic/, Pages /aic-web/).
 const base = import.meta.env.BASE_URL;
-const canonical = new URL(Astro.url.pathname, site).toString();
-const ogImage = new URL(`${base}og.png`, site).toString();
+const canonical = canonicalUrl(Astro.url.pathname, site);
+const ogImage = assetUrl('og.png', site, base);
 // Mirror builds (e.g. Pages) opt out of indexing so only the primary domain
 // (cPanel) competes in search — avoids duplicate-content split.
 const noindex = process.env.NOINDEX === 'true' || Astro.props.noindex === true;
@@ -79,7 +74,6 @@ const cjkStack =
 <html
   lang={LOCALE_HREFLANG[locale]}
   style={cjkStack ? `--font-cjk:${cjkStack}` : undefined}
-  class="v2"
 >
   <head>
     <meta charset="utf-8" />
@@ -150,9 +144,50 @@ const cjkStack =
     {
       /* Page content flows directly into <body>. Do NOT wrap the slot in a
         positioned box (position: relative + z-index): that establishes a
-        stacking context and traps fixed descendants — e.g. the hero's
-        term-modal — below later sections. See HeroStorm.astro / ADR-0013. */
+        stacking context and traps fixed descendants — e.g. the scroll
+        progress bar above — below later sections. */
     }
     <slot />
+
+    <style>
+      /* Scroll progress bar — thin duotone bar at viewport top (div above).
+     Zero JS: animation-timeline: scroll(). A real fixed element — not a
+     root pseudo-element — so the scroll-driven transform composites
+     reliably; duration auto + fill forwards keeps the bar pinned at
+     scaleX(1) at the scroll boundary instead of dropping to its base
+     style. Inert (no size, no paint) in browsers without support. */
+      @supports (animation-timeline: scroll()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            width: 100%;
+            background: linear-gradient(
+              90deg,
+              var(--color-cyan),
+              color-mix(in oklch, var(--color-cyan) 50%, var(--color-amber)),
+              var(--color-amber)
+            );
+            transform-origin: left;
+            transform: scaleX(0);
+            will-change: transform;
+            animation: v2-progress auto linear forwards;
+            animation-timeline: scroll(root);
+            z-index: 1000;
+            pointer-events: none;
+          }
+          @keyframes v2-progress {
+            from {
+              transform: scaleX(0);
+            }
+            to {
+              transform: scaleX(1);
+            }
+          }
+        }
+      }
+    </style>
   </body>
 </html>

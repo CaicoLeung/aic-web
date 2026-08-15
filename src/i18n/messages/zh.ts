@@ -139,25 +139,6 @@ export const messages: Messages = {
     copied: '已复制 ✓',
   },
 
-  hero: {
-    eyebrow: '01 — 介绍',
-    h1: {
-      line1: '一个文件',
-      line2: '三处改动',
-      line3: '三个提交',
-    },
-    ledeBefore:
-      'aic 在 hunk 层级读取你的 diff，把未暂存的工作拆成聚焦的约定式提交——一个文件涉及三处改动，就变成三个提交，而不是一个。合并进行中？它会',
-    ledeLink: '逐个解决冲突',
-    ledeAfter:
-      '，并在任何内容落地前向你展示 diff。已经在用 Claude Code 或 Codex？把 aic 指向你的 agent——无需 API 密钥，没有中间人。',
-    ctaHint: '然后运行 <code>{cmd}</code>',
-    /** 主动作命名(CRO)。 */
-    ctaLabel: '安装 aic——一条命令',
-    /** CTA 下方平台微文案(CRO)。 */
-    platformNote: 'Homebrew（macOS · Linux）——Windows 和 Unix 安装器在下方 ↓',
-  },
-
   how: {
     eyebrow: '02 — 工作原理',
     h2: '安装一次 → 输入 <code>{cmd}</code> → 干净提交。',
@@ -169,12 +150,6 @@ export const messages: Messages = {
       '05': { label: '起草', detail: '写好提交信息' },
       '06': { label: '提交', detail: '搞定  ✓' },
     },
-  },
-
-  commands: {
-    aic: { description: '提交已暂存的改动 · 或为未暂存内容做批处理规划' },
-    'aic-setup': { description: '一次性向导 —— 供应商 → 密钥 → 模型' },
-    'aic-list': { description: '显示已解析的配置 + 脱敏的 API 密钥' },
   },
 
   batching: {

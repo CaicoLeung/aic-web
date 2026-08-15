@@ -37,7 +37,8 @@ const resolvePage = localizedHref(locale, 'resolve');
 
 <style>
   .resolve-section {
-    padding: clamp(3rem, 1rem + 6vw, 6rem) 0;
+    padding: clamp(4rem, 0.5rem + 9vw, 11rem) 0;
+    background-color: var(--color-base-deep);
     position: relative;
     z-index: 2;
   }
@@ -56,6 +57,27 @@ const resolvePage = localizedHref(locale, 'resolve');
   .terminal-wrap {
     max-width: 46rem;
     margin: 2.5rem auto 1.5rem;
+    border-radius: 15px;
+    box-shadow:
+      0 20px 60px -20px rgba(0, 0, 0, 0.5),
+      0 0 80px -40px var(--color-cyan-soft);
+  }
+  /* Mirrored 2-col grid ≥900px: terminal left, copy right. Wider
+     container than the default so the terminal breathes. */
+  @media (min-width: 900px) {
+    .resolve-section .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2.5rem, 1rem + 3vw, 4rem);
+      align-items: center;
+      max-width: min(1400px, 100%);
+    }
+    .terminal-wrap {
+      grid-column: 1;
+      grid-row: 1 / -1;
+      max-width: none;
+      margin: 0;
+    }
   }
   .link {
     color: var(--color-amber);

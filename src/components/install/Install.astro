@@ -69,7 +69,7 @@ const m = useMessages(locale);
 
 <style>
   .install {
-    padding: clamp(3rem, 1rem + 6vw, 6rem) 0;
+    padding: clamp(4rem, 0.5rem + 9vw, 11rem) 0;
     position: relative;
     z-index: 2;
   }
@@ -104,14 +104,27 @@ const m = useMessages(locale);
     color: var(--color-ink);
   }
   .tab.is-active {
-    color: var(--color-amber);
-    border-bottom-color: var(--color-amber);
+    color: var(--color-cyan);
+    border-bottom-color: var(--color-cyan);
   }
   .panel {
     animation: fade-in var(--duration-normal) var(--ease-out-expo);
   }
   .panel.is-hidden {
     display: none;
+  }
+  /* Tier-2 scroll reveal for the active panel. Moved out of global.css's
+     cross-page list (ADR-0020: global keeps no component selectors). Inside
+     these guards `.panel:not(.is-hidden)` (0,2,0) outranks `.panel`'s
+     fade-in, matching the old `#install` rule's cascade outcome. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .panel:not(.is-hidden) {
+        animation: v2-fade-up 0.9s both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 32%;
+      }
+    }
   }
   @keyframes fade-in {
     from {

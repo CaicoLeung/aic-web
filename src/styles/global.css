@@ -256,122 +256,30 @@
   }
 }
 
-/* ── V2 design overrides — scoped under html.v2 ──────────────────────
-   Applied via the hardcoded class="v2" on <html> in Base.astro (V1 is
-   fully superseded — no design prop, no V1 pages remain). */
-html.v2 {
+/* ── V2 design overrides ─────────────────────────────────────────────
+   The html.v2 era namespace was dissolved (ADR-0020): V1 is fully
+   superseded, so these apply unconditionally. */
+:root {
   --font-display:
     'Space Grotesk', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI',
     system-ui, var(--font-cjk, 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei'),
     sans-serif;
 }
-html.v2 h1,
-html.v2 h2,
-html.v2 h3 {
+h1,
+h2,
+h3 {
   font-weight: 700;
 }
-html.v2 body::before {
+body::before {
   background-image:
     radial-gradient(1000px 640px at 82% 10%, rgba(243, 179, 64, 0.09), transparent 62%),
     radial-gradient(900px 600px at 8% 88%, rgba(93, 212, 232, 0.07), transparent 60%),
     linear-gradient(180deg, var(--color-base) 0%, var(--color-base-deep) 100%);
 }
-html.v2 #batching,
-html.v2 #providers {
-  background-color: var(--color-surface);
-}
-html.v2 #resolve,
-html.v2 #compare {
-  background-color: var(--color-base-deep);
-}
 
 /* ════════════════════════════════════════════════════════════════════
-   Phase 2: Layout Revolution — html.v2 scoped
-   Breaks centered monotony, applies duotone cyan, creates asymmetry. ═══ */
-
-/* ── Resolve + Agents: mirrored 2-col grids ────────────────────────────
-   Adjacent identical twins → differentiated: resolve = terminal-left,
-   agents = terminal-right. Breaks the biggest monotony offender. */
-@media (min-width: 900px) {
-  html.v2 #resolve .container,
-  html.v2 #agents .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(2.5rem, 1rem + 3vw, 4rem);
-    align-items: center;
-  }
-  /* Resolve: terminal in col 1 (left), copy auto-fills col 2 (right) */
-  html.v2 #resolve .terminal-wrap {
-    grid-column: 1;
-    grid-row: 1 / -1;
-    max-width: none;
-    margin: 0;
-  }
-  /* Agents: terminal in col 2 (right), copy auto-fills col 1 (left) — mirrored */
-  html.v2 #agents .terminal-wrap {
-    grid-column: 2;
-    grid-row: 1 / -1;
-    max-width: none;
-    margin: 0;
-  }
-}
-
-/* ── Cyan duotone application ──────────────────────────────────────────
-   cyan = uncommitted/before/pending, amber = committed/after/done. */
-
-/* Batching source card: cyan border (the uncommitted "before" state) */
-html.v2 #batching .source-card {
-  border-color: color-mix(in oklch, var(--color-cyan) 35%, var(--color-line));
-  box-shadow: 0 0 24px -12px var(--color-cyan-soft);
-}
-
-/* Compare chips: cyan hover (comparison = pre-decision state) */
-@media (hover: hover) {
-  html.v2 #compare .rival-chip:hover {
-    border-color: var(--color-cyan);
-    color: var(--color-cyan);
-  }
-}
-
-/* HowItWorks step arrows: cyan (flow direction = uncommitted→committed) */
-html.v2 #how .step-arrow {
-  color: var(--color-cyan);
-}
-
-/* Install active tab: cyan (selected-but-not-yet-run = uncommitted) */
-html.v2 #install .tab.is-active {
-  color: var(--color-cyan);
-  border-bottom-color: var(--color-cyan);
-}
-
-/* ── Eyebrow variation: cyan on "before/process" sections ────────────── */
-html.v2 #batching .eyebrow,
-html.v2 #agents .eyebrow {
-  color: var(--color-cyan);
-}
-html.v2 #batching .eyebrow .line,
-html.v2 #agents .eyebrow .line {
-  background: var(--color-cyan);
-}
-
-/* ── Visual rhythm: vary section padding to break monotony ─────────────
-   List-style sections (how, providers) get tighter padding — they're
-   scannable strips, not narrative blocks. Terminal sections (resolve,
-   agents) get wider containers so terminals breathe. */
-html.v2 #how,
-html.v2 #providers {
-  padding-top: clamp(2rem, 0.5rem + 4vw, 3.5rem);
-  padding-bottom: clamp(2rem, 0.5rem + 4vw, 3.5rem);
-}
-html.v2 #resolve .container,
-html.v2 #agents .container {
-  max-width: min(1320px, 100%);
-}
-
-/* ════════════════════════════════════════════════════════════════════
-   Phase 3: Motion polish — html.v2 scoped
-   Scroll-driven reveals (CSS-only, progressive enhancement),
-   hover transitions, terminal/card depth. ════════════════════════════ */
+   Phase 3: Motion polish — cross-page motion system
+   Scroll-driven reveals (CSS-only, progressive enhancement). ═════════ */
 
 /* ── Scroll-driven fade-up reveals ─────────────────────────────────────
    Zero-JS: animation-timeline: view(). Browsers without support show
@@ -380,35 +288,33 @@ html.v2 #agents .container {
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     /* Tier 1 — section headers (eyebrow → h2 → lede) */
-    html.v2 :is(section:not(#top), .footer) .eyebrow,
-    html.v2 :is(section:not(#top), .footer) h2,
-    html.v2 :is(section:not(#top), .footer) .lede {
+    :is(section:not(#top), .footer) .eyebrow,
+    :is(section:not(#top), .footer) h2,
+    :is(section:not(#top), .footer) .lede {
       animation: v2-fade-up 0.9s both;
       animation-timeline: view();
       animation-range: entry 5% cover 28%;
     }
     /* Tier 2 — primary content blocks */
-    html.v2 .flow,
-    html.v2 .terminal-wrap,
-    html.v2 .source-card,
-    html.v2 .diff-result,
-    html.v2 #install .panel:not(.is-hidden),
-    html.v2 .provider-list,
-    html.v2 .default-models,
-    html.v2 .rival-list {
+    .flow,
+    .terminal-wrap,
+    .source-card,
+    .provider-list,
+    .default-models,
+    .rival-list {
       animation: v2-fade-up 0.9s both;
       animation-timeline: view();
       animation-range: entry 10% cover 32%;
     }
     /* Tier 3 — secondary content (links, asides, footer) */
-    html.v2 .aside,
-    html.v2 .link,
-    html.v2 .trust-strip,
-    html.v2 .tabs-row,
-    html.v2 .postinstall,
-    html.v2 .roundup-link,
-    html.v2 .footer-cta,
-    html.v2 .footer-meta {
+    .aside,
+    .link,
+    .trust-strip,
+    .tabs-row,
+    .postinstall,
+    .roundup-link,
+    .footer-cta,
+    .footer-meta {
       animation: v2-fade-up 0.8s both;
       animation-timeline: view();
       animation-range: entry 12% cover 35%;
@@ -422,49 +328,10 @@ html.v2 #agents .container {
   }
 }
 
-/* ── Hover transitions ───────────────────────────────────────────────── */
-html.v2 #batching .source-card {
-  transition:
-    border-color var(--duration-fast) var(--ease-out-expo),
-    box-shadow var(--duration-fast) var(--ease-out-expo),
-    transform var(--duration-fast) var(--ease-out-expo);
-}
-html.v2 #compare .rival-chip {
-  transition:
-    border-color var(--duration-fast) var(--ease-out-expo),
-    color var(--duration-fast) var(--ease-out-expo),
-    background-color var(--duration-fast) var(--ease-out-expo);
-}
-html.v2 #batching .diff-result {
-  transition: box-shadow var(--duration-normal) var(--ease-out-expo);
-}
-@media (hover: hover) {
-  html.v2 #batching .source-card:hover {
-    border-color: color-mix(in oklch, var(--color-cyan) 50%, var(--color-line));
-    box-shadow: 0 0 32px -10px var(--color-cyan-soft);
-    transform: translateY(-2px);
-  }
-  html.v2 #batching .diff-result:hover {
-    box-shadow:
-      0 0 0 1px color-mix(in oklch, var(--color-amber) 40%, transparent),
-      0 8px 40px -12px color-mix(in oklch, var(--color-amber) 20%, transparent);
-  }
-}
-
-/* ── Terminal depth: inner glow + refined shadow ───────────────────────
-   Section ID prefix boosts specificity over scoped component styles. */
-html.v2 #resolve .terminal-wrap,
-html.v2 #agents .terminal-wrap {
-  border-radius: 15px;
-  box-shadow:
-    0 20px 60px -20px rgba(0, 0, 0, 0.5),
-    0 0 80px -40px var(--color-cyan-soft);
-}
-
 /* ── Eyebrow bar slide-in on scroll ──────────────────────────────────── */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    html.v2 .eyebrow .line {
+    .eyebrow .line {
       transform-origin: left;
       animation: v2-bar-grow 1s both;
       animation-timeline: view();
@@ -478,101 +345,28 @@ html.v2 #agents .terminal-wrap {
   }
 }
 
-/* ── Scroll progress bar ───────────────────────────────────────────────
-   Thin duotone bar at viewport top (div in Base.astro). Zero JS:
-   animation-timeline: scroll(). A real fixed element — not a root
-   pseudo-element — so the scroll-driven transform composites reliably;
-   duration auto + fill forwards keeps the bar pinned at scaleX(1) at the
-   scroll boundary instead of dropping to its base style. The div is
-   inert (no size, no paint) in browsers without support. */
-@supports (animation-timeline: scroll()) {
-  @media (prefers-reduced-motion: no-preference) {
-    html.v2 .scroll-progress {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 2px;
-      width: 100%;
-      background: linear-gradient(
-        90deg,
-        var(--color-cyan),
-        color-mix(in oklch, var(--color-cyan) 50%, var(--color-amber)),
-        var(--color-amber)
-      );
-      transform-origin: left;
-      transform: scaleX(0);
-      will-change: transform;
-      animation: v2-progress auto linear forwards;
-      animation-timeline: scroll(root);
-      z-index: 1000;
-      pointer-events: none;
-    }
-    @keyframes v2-progress {
-      from {
-        transform: scaleX(0);
-      }
-      to {
-        transform: scaleX(1);
-      }
-    }
-  }
-}
-
 /* ════════════════════════════════════════════════════════════════════
-   V2 Fluid Scaling — large-screen adaptation
-   Type ceilings and section padding raise their maxes so large screens
-   get real breathing room (hero type reaches 6rem, sections up to 11rem
-   block padding). The reading-measure container stays capped at 1280px
-   to keep line length ergonomic — type and padding scale, measure does
-   not. ═════════════════════════════════════════════════════════════ */
+   Fluid Scaling — large-screen adaptation (cross-page)
+   Type ceilings raise their maxes so large screens get real breathing
+   room (hero type reaches 6rem). Section paddings scaled too, but
+   those were repatriated into their components (ADR-0020). The
+   reading-measure container stays capped at 1280px to keep line
+   length ergonomic — type and padding scale, measure does not. ══════ */
 
 /* ── Type: raise ceilings ────────────────────────────────────────────── */
-html.v2 {
+:root {
   --text-hero: clamp(2.75rem, 0.2rem + 8vw, 6rem);
   --text-h2: clamp(2rem, 0.9rem + 3.4vw, 3.75rem);
   --text-lede: clamp(1rem, 0.85rem + 0.5vw, 1.4rem);
 }
 
 /* Eyebrows scale slightly */
-html.v2 .eyebrow {
+.eyebrow {
   font-size: clamp(0.65rem, 0.58rem + 0.12vw, 0.85rem);
 }
 
-/* ── Section spacing: raise ceilings for breathing room ──────────────── */
-html.v2 .how,
-html.v2 .batching,
-html.v2 .resolve-section,
-html.v2 .agents-section,
-html.v2 .install {
-  padding-block: clamp(4rem, 0.5rem + 9vw, 11rem);
-}
-html.v2 .providers {
-  padding-block: clamp(3rem, 0.5rem + 6vw, 8rem);
-}
-html.v2 .compare-band {
-  padding-block: clamp(3.5rem, 0.5rem + 7vw, 9rem);
-}
-/* Tighter scannable strips override above */
-html.v2 #how,
-html.v2 #providers {
-  padding-top: clamp(3rem, 0.5rem + 6vw, 7rem);
-  padding-bottom: clamp(3rem, 0.5rem + 6vw, 7rem);
-}
-/* Section head → content gap */
-html.v2 .section-head {
-  margin-bottom: clamp(2rem, 0.5rem + 4vw, 4.5rem);
-}
-/* Footer */
-html.v2 .footer {
-  padding-top: clamp(4rem, 0.5rem + 8vw, 9rem);
-}
-
 /* ── Container: widen gutter on large screens ────────────────────────── */
-html.v2 .container {
+.container {
   padding-inline: clamp(1.25rem, 0.2rem + 4vw, 6rem);
   max-width: min(1280px, 100%);
-}
-html.v2 #resolve .container,
-html.v2 #agents .container {
-  max-width: min(1400px, 100%);
 }

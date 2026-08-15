@@ -32,31 +32,39 @@ async function fetchSource(path: string): Promise<string | null> {
   return res ? await res.text() : null;
 }
 
+/**
+ * Parse the crate version from `Cargo.toml` source. The **first**
+ * `version = "…"` line wins — `[package]` precedes every other table in the
+ * aic crate, so that first line is the crate version. Null when absent →
+ * caller falls back (ADR-0003).
+ */
+export function parseVersion(toml: string): string | null {
+  return toml.match(/^version\s*=\s*"([^"]+)"/m)?.[1] ?? null;
+}
+
 async function loadVersion(): Promise<string> {
   const toml = await fetchSource('Cargo.toml');
-  if (!toml) return FALLBACK_VERSION;
-  // First `version = "..."` after [package] is the crate version.
-  const match = toml.match(/^version\s*=\s*"([^"]+)"/m);
-  return match?.[1] ?? FALLBACK_VERSION;
+  return (toml !== null ? parseVersion(toml) : null) ?? FALLBACK_VERSION;
 }
 
 /**
- * Parse the `Provider` enum from src/llm.rs.
+ * Parse the `Provider` enum from src/llm.rs source.
+ *
  * Looks for `pub enum Provider { Variant1, Variant2, ... }` and returns each
  * variant as a `ProviderInfo` — `id` is lowercased, `name` applies
  * `PROVIDER_DISPLAY_NAMES` for brand casing the parser can't derive
- * (`xAI`, `OpenAI-compatible`), else the raw variant.
+ * (`xAI`, `OpenAI-compatible`), else the raw variant. Doc comments and
+ * attributes inside the enum body are tolerated (uppercase tokens dedupe;
+ * lowercase attribute names can't match the variant pattern).
  *
  * Each provider's default model is parsed from the `default_model()` match
  * arms; on any miss it falls back to the matching `FALLBACK_PROVIDERS`
- * entry so a parse failure degrades gracefully (ADR-0003).
+ * entry. Null (no enum, or fewer than 3 variants — a truncated fetch)
+ * → caller degrades to the full fallback list (ADR-0003).
  */
-async function loadProviders(): Promise<readonly ProviderInfo[]> {
-  const src = await fetchSource('src/llm.rs');
-  if (!src) return FALLBACK_PROVIDERS;
-
-  const enumMatch = src.match(/pub\s+enum\s+Provider\s*\{([^}]*)\}/);
-  if (!enumMatch) return FALLBACK_PROVIDERS;
+export function parseProviders(rs: string): readonly ProviderInfo[] | null {
+  const enumMatch = rs.match(/pub\s+enum\s+Provider\s*\{([^}]*)\}/);
+  if (!enumMatch) return null;
 
   // Variant identifiers start uppercase; ignore attributes / discriminants.
   const variants = Array.from(enumMatch[1].matchAll(/\b([A-Z][A-Za-z0-9_]*)\b/g)).map(
@@ -65,9 +73,9 @@ async function loadProviders(): Promise<readonly ProviderInfo[]> {
   const unique = [...new Set(variants)];
 
   // Sanity: expect at least a handful of providers.
-  if (unique.length < 3) return FALLBACK_PROVIDERS;
+  if (unique.length < 3) return null;
 
-  const liveModelById = parseDefaultModels(src);
+  const liveModelById = parseDefaultModels(rs);
   const fallbackModelById = new Map<string, string>();
   for (const p of FALLBACK_PROVIDERS) {
     if (p.defaultModel) fallbackModelById.set(p.id, p.defaultModel);
@@ -79,6 +87,11 @@ async function loadProviders(): Promise<readonly ProviderInfo[]> {
     const defaultModel = liveModelById.get(id) ?? fallbackModelById.get(id);
     return defaultModel !== undefined ? { ...base, defaultModel } : base;
   });
+}
+
+async function loadProviders(): Promise<readonly ProviderInfo[]> {
+  const src = await fetchSource('src/llm.rs');
+  return (src !== null ? parseProviders(src) : null) ?? FALLBACK_PROVIDERS;
 }
 
 /**

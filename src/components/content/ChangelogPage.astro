@@ -8,21 +8,21 @@
  *
  * Rendered by both `/changelog/` and `/[locale]/changelog/` (ADR-0010).
  * The body is fetched EN markdown and stays EN in every locale (ADR-0011);
- * Base self-determines locale for chrome + hreflang. The localized
+ * the shell self-determines locale for chrome + hreflang. The localized
  * "release notes are in English" note (ADR-0011) renders via
  * `t('changelog.englishNote')` on non-en locales.
+ *
+ * Takes the Article shell's thin path: entry dates are dynamic (earliest
+ * published / latest modified), so the hand-built Article schema is passed
+ * directly instead of the ritual props.
  */
-import { loadAicFacts } from '@/data/aic';
 import { loadChangelog } from '@/data/changelog';
-import Base from '@/layouts/Base.astro';
-import ContentHeader from '@/components/content/ContentHeader.astro';
-import Footer from '@/components/footer/Footer.astro';
+import ArticleShell from '@/components/content/ArticleShell.astro';
 import Changelog from '@/components/changelog/Changelog.astro';
 import { GITHUB_URL } from '@/config/site';
 import { localeFromUrl, DEFAULT_LOCALE } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 
-const facts = await loadAicFacts();
 const entries = await loadChangelog();
 
 const locale = localeFromUrl(Astro.url.pathname);
@@ -49,55 +49,34 @@ const schema = {
 };
 ---
 
-<Base version={facts.version} title={title} description={description} schema={schema}>
-  <ContentHeader version={facts.version} />
+<ArticleShell title={title} description={description} schema={schema}>
+  <p class="eyebrow">
+    <span class="line" aria-hidden="true"></span>{t('changelog.eyebrow')}
+  </p>
+  <h1>{t('changelog.h1')}</h1>
+  <p class="lede">
+    <Fragment set:html={t('changelog.ledeBefore')} /><a
+      class="inline-link"
+      href={`${GITHUB_URL}/blob/main/CHANGELOG.md`}
+      target="_blank"
+      rel="noopener noreferrer">{t('changelog.ledeLink')}</a
+    ><Fragment set:html={t('changelog.ledeAfter')} />
+  </p>
 
-  <main id="main">
-    <article class="container article">
-      <p class="eyebrow"><span class="line" aria-hidden="true"></span>{t('changelog.eyebrow')}</p>
-      <h1>{t('changelog.h1')}</h1>
-      <p class="lede"><Fragment set:html={t('changelog.ledeBefore')} /><a
-          class="inline-link"
-          href={`${GITHUB_URL}/blob/main/CHANGELOG.md`}
-          target="_blank"
-          rel="noopener noreferrer">{t('changelog.ledeLink')}</a><Fragment set:html={t('changelog.ledeAfter')} /></p>
+  {
+    locale !== DEFAULT_LOCALE && (
+      <p class="en-note" role="note">
+        {t('changelog.englishNote')}
+      </p>
+    )
+  }
 
-      {locale !== DEFAULT_LOCALE && (
-        <p class="en-note" role="note">{t('changelog.englishNote')}</p>
-      )}
-
-      <Changelog entries={entries} />
-    </article>
-  </main>
-
-  <Footer />
-</Base>
+  <Changelog entries={entries} />
+</ArticleShell>
 
 <style>
-  .article {
-    max-width: 880px;
-    padding-block: clamp(2.5rem, 1rem + 4vw, 4.5rem) clamp(3rem, 1rem + 5vw, 5rem);
-    position: relative;
-    z-index: 2;
-  }
-  h1 {
-    font-size: var(--text-h2);
-    line-height: 1.05;
-    margin: 0.75rem 0 0;
-  }
-  .lede {
-    color: var(--color-ink-muted);
-    line-height: 1.65;
-    margin-top: 1rem;
-    font-size: var(--text-lede);
-  }
-  .lede code {
-    color: var(--color-amber);
-    background: var(--color-amber-soft);
-    padding: 0.1rem 0.45rem;
-    border-radius: 6px;
-    font-size: 0.85em;
-  }
+  /* Page-unique styles. The article CSS layer (.article namespace) lives in
+     ArticleShell. */
   .inline-link {
     color: var(--color-amber);
     text-decoration: none;
