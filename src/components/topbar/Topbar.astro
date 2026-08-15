@@ -1,8 +1,8 @@
 ---
 /**
- * Sticky topbar — brand left, anchor nav center, version + GitHub + locale
- * switcher right. Background blur kicks in after the hero scrolls past
- * (Tier 2 motion).
+ * Fixed overlay topbar — brand left, anchor nav center, version + GitHub +
+ * locale switcher right. Overlays the hero (no flow height), background
+ * blur kicks in after the hero scrolls past (Tier 2 motion).
  *
  * i18n (ADR-0010): locale is read from the URL; all visible strings come
  * from the message module via `t()`. This component is the reference
@@ -79,15 +79,23 @@ const versionTitle = t('topbar.versionTitle', { version });
 
 <style>
   .topbar {
-    position: sticky;
+    /* Fixed (not sticky): the topbar overlays the hero instead of sitting
+       above it in flow, so the hero pins flush at viewport top — no
+       topbar-height of dead scroll before the lab-pin sticks. */
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 50;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
     padding: 1rem clamp(1rem, 0.4rem + 2vw, 3rem);
-    background: color-mix(in oklch, var(--color-base-deep) 70%, transparent);
+    /* base (not base-deep): matches the page atmosphere gradient, which is
+       --color-base at the viewport top — the bar reads in-tone, not as a
+       near-black band over the warmer page. */
+    background: color-mix(in oklch, var(--color-base) 70%, transparent);
     border-bottom: 1px solid transparent;
     backdrop-filter: none;
     transition:
@@ -95,10 +103,16 @@ const versionTitle = t('topbar.versionTitle', { version });
       background var(--duration-normal) var(--ease-out-expo),
       transform var(--duration-normal) var(--ease-out-expo);
   }
+  /* Exported band height so fixed-overlay-aware sections (hero .lab-pin)
+     can reserve it. Keep in sync with the bar's own metrics:
+     desktop = 1rem×2 padding + ~46px row; mobile = 0.7rem×2 + 38px mark. */
+  :global(:root) {
+    --topbar-h: 78px;
+  }
   .topbar[data-blur='true'] {
     border-bottom-color: var(--color-line-soft);
     backdrop-filter: blur(14px) saturate(140%);
-    background: color-mix(in oklch, var(--color-base-deep) 80%, transparent);
+    background: color-mix(in oklch, var(--color-base) 80%, transparent);
   }
   .brand {
     display: inline-flex;
@@ -221,39 +235,19 @@ const versionTitle = t('topbar.versionTitle', { version });
       display: inline-flex;
     }
   }
-  /* Mobile re-flow: brand + utilities share row 1, the section-nav drops
-     to a full-width centered row beneath (mirrors ContentHeader). Every
-     anchor stays one-tap reachable — no disclosure, no JS. */
+  /* Mobile: section-nav stays hidden (base .nav is display:none; it only
+     turns on at ≥768px) — the topbar is one brand + meta row. Section
+     anchors remain reachable by scrolling the page itself. */
   @media (max-width: 767px) {
     .topbar {
-      flex-wrap: wrap;
       gap: 0.7rem;
       padding-block: 0.7rem;
     }
-    .nav {
-      display: flex;
-      order: 3;
-      width: 100%;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      justify-content: safe center;
-      gap: 0.5rem;
-      font-size: 0.76rem;
-      scrollbar-width: none;
-      overflow-y: hidden;
+    :global(:root) {
+      --topbar-h: 61px;
     }
     .topbar.is-hidden {
       transform: translateY(-100%);
-    }
-
-    .brand {
-      order: 1;
-    }
-    .meta {
-      order: 2;
-    }
-    .nav::-webkit-scrollbar {
-      display: none;
     }
     .brand-tag {
       display: none;
