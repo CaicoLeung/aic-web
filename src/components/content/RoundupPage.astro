@@ -9,27 +9,17 @@
  * message tools" / comparison cluster.
  *
  * Rendered by both `/best-ai-commit-tools/` and
- * `/[locale]/best-ai-commit-tools/` (ADR-0010). Base self-determines
- * locale; all prose + meta wire `t()`/`useMessages`; stubbed keys fall
- * back to EN (soft parity, Q7=B).
+ * `/[locale]/best-ai-commit-tools/` (ADR-0010). The Article shell
+ * self-determines locale; all prose + meta wire `t()`/`useMessages`;
+ * stubbed keys fall back to EN (soft parity, Q7=B).
  */
-import { loadAicFacts } from '@/data/aic';
-import Base from '@/layouts/Base.astro';
-import ContentHeader from '@/components/content/ContentHeader.astro';
-import Footer from '@/components/footer/Footer.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
+import ArticleShell from '@/components/content/ArticleShell.astro';
 import { ROUNDUP } from '@/config/competitors';
-import {
-  GITHUB_URL,
-  HUNK_SPLITTING,
-  PRIMARY_INSTALL_COMMAND,
-  SITE_ORIGIN,
-} from '@/config/site';
+import { GITHUB_URL, HUNK_SPLITTING, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer, useMessages } from '@/i18n/t';
-import { articleSchema, canonicalUrl } from '@/lib/schema';
 
-const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const m = useMessages(locale);
@@ -38,179 +28,118 @@ const resolve = localizedHref(locale, 'resolve');
 
 const title = t('meta.roundup.title', { year: '2026' });
 const description = t('meta.roundup.description');
-
-const site = Astro.site ?? SITE_ORIGIN;
-const canonical = canonicalUrl(Astro.url.pathname, site);
-
-const schema = articleSchema({
-  headline: title,
-  description,
-  datePublished: '2026-07-08',
-  about: ['AI commit message tools', 'git', 'conventional commits'],
-  url: canonical,
-  site,
-});
 ---
 
-<Base version={facts.version} title={title} description={description} schema={schema}>
-  <ContentHeader version={facts.version} />
+<ArticleShell
+  title={title}
+  description={description}
+  datePublished="2026-07-08"
+  about={['AI commit message tools', 'git', 'conventional commits']}
+>
+  <p class="eyebrow">
+    <span class="line" aria-hidden="true"></span>{t('roundup.eyebrow')}
+  </p>
+  <h1>{t('roundup.h1')}</h1>
+  <p class="lede" set:html={t('roundup.lede')} />
 
-  <main id="main">
-    <article class="article container">
-      <p class="eyebrow">
-        <span class="line" aria-hidden="true"></span>{t('roundup.eyebrow')}
-      </p>
-      <h1>{t('roundup.h1')}</h1>
-      <p class="lede" set:html={t('roundup.lede')} />
+  <aside class="callout" set:html={t('roundup.callout')} />
 
-      <aside class="callout" set:html={t('roundup.callout')} />
+  <!-- How to choose -->
+  <section class="block">
+    <h2>{t('roundup.choose.h2')}</h2>
+    <ul class="chooser">
+      {
+        m.roundup.choose.items.map((item) => (
+          <li>
+            <>
+              <span class="need">{item.need}</span>
+              <span class="pick">{item.pick}</span>
+            </>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 
-      <!-- How to choose -->
-      <section class="block">
-        <h2>{t('roundup.choose.h2')}</h2>
-        <ul class="chooser">
-          {
-            m.roundup.choose.items.map((item) => (
-              <li>
+  <!-- Cards -->
+  <section class="block">
+    <h2>{t('roundup.field.h2')}</h2>
+    <ul class="cards">
+      {
+        ROUNDUP.map((tool) => (
+          <li class:list={['card', { home: tool.homeTeam }]}>
+            <div class="card-head">
+              <h3>{tool.name}</h3>
+              {tool.homeTeam && <span class="badge">{t('roundup.field.badge')}</span>}
+            </div>
+            <p class="runtime">{tool.runtime}</p>
+            {tool.homeTeam && (
+              <div class="hl">
+                <span class="hl-eyebrow">
+                  {t('roundup.field.hlEyebrow', {
+                    version: HUNK_SPLITTING.shippedIn,
+                  })}
+                </span>
+                <p class="hl-head">{t('roundup.field.hlHead')}</p>
+                <p class="hl-sub">{t('roundup.field.hlSub')}</p>
+              </div>
+            )}
+            <p class="strength">{m.roundup.tools[tool.id].strength}</p>
+            <div class="card-links">
+              {tool.homeTeam ? (
                 <>
-                  <span class="need">{item.need}</span>
-                  <span class="pick">{item.pick}</span>
+                  <CopyButton
+                    text={PRIMARY_INSTALL_COMMAND}
+                    label="brew install aic"
+                    variant="primary"
+                  />
+                  <a class="card-link" href={vsAicommits}>
+                    {t('roundup.field.vsAicommitsLink')}
+                  </a>
                 </>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-
-      <!-- Cards -->
-      <section class="block">
-        <h2>{t('roundup.field.h2')}</h2>
-        <ul class="cards">
-          {
-            ROUNDUP.map((tool) => (
-              <li class:list={['card', { home: tool.homeTeam }]}>
-                <div class="card-head">
-                  <h3>{tool.name}</h3>
-                  {tool.homeTeam && <span class="badge">{t('roundup.field.badge')}</span>}
-                </div>
-                <p class="runtime">{tool.runtime}</p>
-                {tool.homeTeam && (
-                  <div class="hl">
-                    <span class="hl-eyebrow">
-                      {t('roundup.field.hlEyebrow', {
-                        version: HUNK_SPLITTING.shippedIn,
-                      })}
-                    </span>
-                    <p class="hl-head">{t('roundup.field.hlHead')}</p>
-                    <p class="hl-sub">{t('roundup.field.hlSub')}</p>
-                  </div>
-                )}
-                <p class="strength">{m.roundup.tools[tool.id].strength}</p>
-                <div class="card-links">
-                  {tool.homeTeam ? (
-                    <>
-                      <CopyButton
-                        text={PRIMARY_INSTALL_COMMAND}
-                        label="brew install aic"
-                        variant="primary"
-                      />
-                      <a class="card-link" href={vsAicommits}>
-                        {t('roundup.field.vsAicommitsLink')}
-                      </a>
-                    </>
-                  ) : (
-                    <>
-                      <a
-                        class="card-link"
-                        href={tool.repo}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {t('roundup.field.repoLink')}
-                      </a>
-                      {tool.vsPath && (
-                        <a class="card-link" href={localizedHref(locale, tool.vsPath)}>
-                          {t('roundup.field.compareLink')}
-                        </a>
-                      )}
-                    </>
+              ) : (
+                <>
+                  <a
+                    class="card-link"
+                    href={tool.repo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {t('roundup.field.repoLink')}
+                  </a>
+                  {tool.vsPath && (
+                    <a class="card-link" href={localizedHref(locale, tool.vsPath)}>
+                      {t('roundup.field.compareLink')}
+                    </a>
                   )}
-                </div>
-              </li>
-            ))
-          }
-        </ul>
-        <p class="field-note" set:html={t('roundup.field.note')} />
-      </section>
+                </>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="field-note" set:html={t('roundup.field.note')} />
+  </section>
 
-      <!-- Closing -->
-      <section class="verdict">
-        <h2>{t('roundup.verdict.h2')}</h2>
-        <p set:html={t('roundup.verdict.body')} />
-        <div class="cta">
-          <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
-          <a class="cta-link" href={resolve}>{t('footer.nav.resolve')}</a>
-          <a class="cta-link" href={vsAicommits}>{t('roundup.verdict.seeVs')}</a>
-          <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer"
-            >{t('footer.star')}</a
-          >
-        </div>
-      </section>
-    </article>
-  </main>
-
-  <Footer />
-</Base>
+  <!-- Closing -->
+  <section class="verdict">
+    <h2>{t('roundup.verdict.h2')}</h2>
+    <p set:html={t('roundup.verdict.body')} />
+    <div class="cta">
+      <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
+      <a class="cta-link" href={resolve}>{t('footer.nav.resolve')}</a>
+      <a class="cta-link" href={vsAicommits}>{t('roundup.verdict.seeVs')}</a>
+      <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer"
+        >{t('footer.star')}</a
+      >
+    </div>
+  </section>
+</ArticleShell>
 
 <style>
-  .article {
-    max-width: 880px;
-    padding-block: clamp(2.5rem, 1rem + 4vw, 4.5rem) clamp(3rem, 1rem + 5vw, 5rem);
-    position: relative;
-    z-index: 2;
-  }
-  h1 {
-    font-size: var(--text-h2);
-    line-height: 1.05;
-    margin: 0.75rem 0 0;
-  }
-  .lede {
-    color: var(--color-ink-muted);
-    line-height: 1.65;
-    margin-top: 1rem;
-    font-size: var(--text-lede);
-  }
-  .lede code {
-    color: var(--color-amber);
-    background: var(--color-amber-soft);
-    padding: 0.1rem 0.45rem;
-    border-radius: 6px;
-    font-size: 0.85em;
-  }
-
-  .callout {
-    margin-top: 1.75rem;
-    padding: 1rem 1.25rem;
-    border: 1px solid var(--color-line);
-    border-left: 3px solid var(--color-amber);
-    border-radius: 10px;
-    background: var(--color-amber-soft);
-    color: var(--color-ink);
-    font-size: 0.95rem;
-    line-height: 1.6;
-  }
-  .callout code {
-    color: var(--color-amber);
-    font-family: var(--font-mono);
-  }
-
-  .block {
-    margin-top: 2.75rem;
-  }
-  .block h2 {
-    font-size: 1.5rem;
-    margin: 0 0 1.1rem;
-  }
+  /* Page-unique styles. The article CSS layer (.article namespace) lives in
+     ArticleShell. */
 
   /* Chooser */
   .chooser {
@@ -349,49 +278,5 @@ const schema = articleSchema({
     font-size: 0.88rem;
     line-height: 1.6;
     margin-top: 1.25rem;
-  }
-  .field-note code {
-    font-family: var(--font-mono);
-    color: var(--color-ink-muted);
-  }
-
-  /* Verdict */
-  .verdict {
-    margin-top: 2.75rem;
-    padding: 1.75rem;
-    border: 1px solid var(--color-line-soft);
-    border-radius: 14px;
-    background: var(--color-surface);
-  }
-  .verdict h2 {
-    font-size: 1.5rem;
-    margin: 0 0 0.75rem;
-  }
-  .verdict p {
-    color: var(--color-ink-muted);
-    line-height: 1.65;
-  }
-  .cta {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-  .cta-link {
-    color: var(--color-ink);
-    text-decoration: none;
-    padding: 0.55rem 1rem;
-    border: 1px solid var(--color-line);
-    border-radius: 999px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    transition:
-      border-color var(--duration-fast) ease,
-      color var(--duration-fast) ease;
-  }
-  .cta-link:hover {
-    border-color: var(--color-amber);
-    color: var(--color-amber);
   }
 </style>

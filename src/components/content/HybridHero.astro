@@ -1,0 +1,128 @@
+---
+/**
+ * Hybrid hero (ADR-0009, CONTEXT.md → "Hybrid hero") — the two-column
+ * copy + Terminal template that capability pages open with: eyebrow and
+ * headline on the left, the terminal mockup on the right, install CTA
+ * under the lede. Full container width; the article body below is
+ * narrower (ArticleShell).
+ *
+ * Slots: `h1` (page-authored so pages keep their own accent markup) and
+ * `terminal`. The install CTA + hint are identical on every page, so
+ * they live here as props.
+ */
+import CopyButton from '@/components/ui/CopyButton.astro';
+import { PRIMARY_INSTALL_COMMAND } from '@/config/site';
+
+interface Props {
+  /** `id` for the section's `aria-labelledby`. */
+  readonly h1Id: string;
+  readonly eyebrow: string;
+  /** HTML string — lede prose from the message module (`set:html`). */
+  readonly lede: string;
+  /** HTML string — the hint after the install button. */
+  readonly ctaHint: string;
+}
+
+const { h1Id, eyebrow, lede, ctaHint } = Astro.props;
+---
+
+<section class="hybrid-hero container" aria-labelledby={h1Id}>
+  <p class="eyebrow hybrid-eyebrow">
+    <span class="line" aria-hidden="true"></span>{eyebrow}
+  </p>
+  <h1 id={h1Id} class="hybrid-h1"><slot name="h1" /></h1>
+
+  <div class="hybrid-terminal"><slot name="terminal" /></div>
+
+  <p class="lede hybrid-lede" set:html={lede} />
+
+  <div class="hybrid-cta">
+    <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
+    <span class="cta-hint">
+      <span class="arrow" aria-hidden="true">→</span>
+      <Fragment set:html={ctaHint} />
+    </span>
+  </div>
+</section>
+
+<style>
+  .hybrid-hero {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-block: clamp(2rem, 1rem + 5vw, 5rem) clamp(2rem, 1rem + 3vw, 3rem);
+  }
+  .hybrid-h1 {
+    font-size: var(--text-hero);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    margin: 0;
+  }
+  .hybrid-terminal {
+    margin-block: 0.5rem;
+  }
+  .hybrid-lede {
+    font-size: var(--text-lede);
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    max-width: 32rem;
+    margin: 0;
+  }
+  .hybrid-lede b {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .hybrid-cta {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .cta-hint {
+    font-size: 0.9375rem;
+    color: var(--color-ink-muted);
+  }
+  .cta-hint .arrow {
+    color: var(--color-amber);
+  }
+  .cta-hint code {
+    color: var(--color-amber);
+    background: var(--color-amber-soft);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.78rem;
+  }
+
+  @media (min-width: 1024px) {
+    .hybrid-hero {
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      grid-template-areas:
+        'eyebrow  terminal'
+        'h1       terminal'
+        'lede     terminal'
+        'cta      terminal';
+      gap: 1.25rem 2.5rem;
+      align-items: center;
+    }
+    .hybrid-eyebrow {
+      grid-area: eyebrow;
+    }
+    .hybrid-h1 {
+      grid-area: h1;
+    }
+    .hybrid-terminal {
+      grid-area: terminal;
+      margin-block: 0;
+    }
+    .hybrid-lede {
+      grid-area: lede;
+    }
+    .hybrid-cta {
+      grid-area: cta;
+    }
+  }
+</style>

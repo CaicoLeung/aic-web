@@ -96,7 +96,7 @@ export function localeFromUrl(
 export function localizedHref(
   locale: Locale,
   slug: string,
-  baseUrl: string = import.meta.env.BASE_URL,
+  baseUrl: string = import.meta.env?.BASE_URL ?? '/',
 ): string {
   const base = baseHref(baseUrl);
   const prefix = locale === DEFAULT_LOCALE ? '' : `${locale}/`;

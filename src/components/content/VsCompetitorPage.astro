@@ -12,32 +12,22 @@
  * Targets the "{rival} alternative" / migration cluster. Article schema
  * (not SoftwareApplication) since this is content, not the app listing.
  *
- * Rendered by both `/vs/{id}/` and `/[locale]/vs/{id}/` (ADR-0010). Base
- * self-determines locale; all prose + meta wire `t()`/`useMessages`; stubbed
- * keys fall back to EN (soft parity, Q7=B).
+ * Rendered by both `/vs/{id}/` and `/[locale]/vs/{id}/` (ADR-0010). The
+ * Article shell self-determines locale; all prose + meta wire
+ * `t()`/`useMessages`; stubbed keys fall back to EN (soft parity, Q7=B).
  */
-import { loadAicFacts } from '@/data/aic';
-import Base from '@/layouts/Base.astro';
-import ContentHeader from '@/components/content/ContentHeader.astro';
-import Footer from '@/components/footer/Footer.astro';
 import CopyButton from '@/components/ui/CopyButton.astro';
+import ArticleShell from '@/components/content/ArticleShell.astro';
 import {
   COMPARISONS,
   COMPARISON_RIVALS,
   type CompetitorComparison,
 } from '@/config/competitors';
-import { GITHUB_URL, PRIMARY_INSTALL_COMMAND, SITE_ORIGIN } from '@/config/site';
-import { localeFromUrl, localizedHref } from '@/i18n/config';
+import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
+import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { assertRivalMessages } from '@/i18n/assert';
 import { useLocalizer, useMessages } from '@/i18n/t';
 import FeatureMatrix from '@/components/content/FeatureMatrix.astro';
-import {
-  articleSchema,
-  breadcrumbSchema,
-  canonicalUrl,
-  faqSchema,
-  type Crumb,
-} from '@/lib/schema';
 
 interface Props {
   /**
@@ -47,21 +37,14 @@ interface Props {
    * contract can never drift from the rivals that actually have a page.
    */
   comparison: CompetitorComparison;
-  datePublished?: string;
-  dateModified?: string;
 }
 
-const {
-  comparison,
-  datePublished = '2026-08-01',
-  dateModified = '2026-08-01',
-} = Astro.props;
+const { comparison } = Astro.props;
 
 // Derive every id-keyed lookup from the data: message block, breadcrumb,
 // and the More-comparisons filter all read this, not a parallel prop.
 const id = comparison.rival.id;
 
-const facts = await loadAicFacts();
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const m = useMessages(locale);
@@ -77,264 +60,145 @@ const ties = axes.filter((a) => a.winner === 'tie');
 
 const title = t(`meta.vs.${id}.title`);
 const description = t(`meta.vs.${id}.description`);
-
-// Canonical URL + absolute crumb URLs for Article.url / BreadcrumbList.
-const site = Astro.site ?? SITE_ORIGIN;
-const canonical = canonicalUrl(Astro.url.pathname, site);
-const absolutizeUrl = (slug: string) => canonicalUrl(localizedHref(locale, slug), site);
-const crumbs: readonly Crumb[] = [
-  { name: t('contentHeader.home'), url: absolutizeUrl('') },
-  { name: t('footer.nav.roundup'), url: absolutizeUrl('best-ai-commit-tools') },
-  { name: vsBlock.h1, url: canonical },
-];
-
-const schema = [
-  articleSchema({
-    headline: title,
-    description,
-    datePublished,
-    dateModified,
-    about: ['aic', rival.name, 'AI commit message tools'],
-    url: canonical,
-    site,
-  }),
-  faqSchema(vsBlock.faq.items),
-  breadcrumbSchema(crumbs),
-];
 ---
 
-<Base version={facts.version} title={title} description={description} schema={schema}>
-  <ContentHeader version={facts.version} />
+<ArticleShell
+  title={title}
+  description={description}
+  datePublished="2026-08-01"
+  dateModified="2026-08-01"
+  about={['aic', rival.name, 'AI commit message tools']}
+  faq={vsBlock.faq.items}
+  crumbs={[
+    { name: t('contentHeader.home'), path: '' },
+    { name: t('footer.nav.roundup'), path: 'best-ai-commit-tools' },
+    { name: vsBlock.h1, path: '' },
+  ]}
+>
+  <p class="eyebrow">
+    <span class="line" aria-hidden="true"></span>{vsBlock.eyebrow}
+  </p>
+  <h1>{vsBlock.h1}</h1>
+  <p class="lede">
+    <a href={rival.repo} target="_blank" rel="noopener noreferrer">{rival.name}</a
+    ><Fragment set:html={vsBlock.ledeAfter} />
+  </p>
 
-  <main id="main">
-    <article class="article container">
-      <nav class="crumbs" aria-label="Breadcrumb">
-        <a href={localizedHref(locale, '')}>{t('contentHeader.home')}</a>
-        <span aria-hidden="true">›</span>
-        <a href={localizedHref(locale, 'best-ai-commit-tools')}
-          >{t('footer.nav.roundup')}</a
-        >
-        <span aria-hidden="true">›</span>
-        <span aria-current="page">{vsBlock.h1}</span>
-      </nav>
-      <p class="eyebrow">
-        <span class="line" aria-hidden="true"></span>{vsBlock.eyebrow}
-      </p>
-      <h1>{vsBlock.h1}</h1>
-      <p class="lede">
-        <a href={rival.repo} target="_blank" rel="noopener noreferrer">{rival.name}</a
-        ><Fragment set:html={vsBlock.ledeAfter} />
-      </p>
+  <aside class="callout" set:html={vsBlock.callout} />
 
-      <aside class="callout" set:html={vsBlock.callout} />
+  <!-- Feature matrix -->
+  <FeatureMatrix
+    axes={axes}
+    axisLabels={vsBlock.axes}
+    rivalName={rival.name}
+    labels={m.vs.matrix}
+  />
 
-      <!-- Feature matrix -->
-      <FeatureMatrix
-        axes={axes}
-        axisLabels={vsBlock.axes}
-        rivalName={rival.name}
-        labels={m.vs.matrix}
-      />
+  <p class="inline-cta">
+    <a href="#cta">{m.vs.more.installCta}</a>
+  </p>
 
-      <p class="inline-cta">
-        <a href="#cta">{m.vs.more.installCta}</a>
-      </p>
-
-      <!-- Where aic wins -->
-      <section class="block">
-        <h2>{vsBlock.winsH2}</h2>
-        <ul class="points">
-          {
-            aicWins.map((axis) => (
-              <li>
-                <span class="point-h">{vsBlock.axes[axis.id].feature}</span>
-                <span class="point-n">{vsBlock.axes[axis.id].note}</span>
-              </li>
-            ))
-          }
-          {
-            ties.map((axis) => (
-              <li>
-                <span class="point-h">
-                  {vsBlock.axes[axis.id].feature}{' '}
-                  <span class="tie-tag">{vsBlock.tieTag}</span>
-                </span>
-                <span class="point-n">{vsBlock.axes[axis.id].note}</span>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-
-      <!-- Where the rival wins (the fair concession) -->
-      <section class="block">
-        <h2>{vsBlock.rivalH2}</h2>
-        <p class="block-lede">{vsBlock.rivalLede}</p>
-        <ul class="points">
-          {
-            rivalWins.map((axis) => (
-              <li>
-                <span class="point-h">{vsBlock.axes[axis.id].feature}</span>
-                <span class="point-n">{vsBlock.axes[axis.id].note}</span>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-
-      <!-- FAQ (migration-intent keywords + FAQPage schema) -->
-      <section class="block">
-        <h2>{vsBlock.faq.h2}</h2>
-        <div class="faq">
-          {
-            vsBlock.faq.items.map((item) => (
-              <div class="faq-item">
-                <h3>{item.q}</h3>
-                <p>{item.a}</p>
-              </div>
-            ))
-          }
-        </div>
-      </section>
-
-      <!-- More comparisons (spoke-to-spoke internal links) -->
-      <section class="more block">
-        <h2>{m.vs.more.h2}</h2>
-        <ul class="more-links">
-          {
-            COMPARISON_RIVALS.filter((rivalId) => rivalId !== id).map((rivalId) => (
-              <li>
-                <a href={localizedHref(locale, `vs/${rivalId}`)}>
-                  {t('vs.more.vsLabel', { name: COMPARISONS[rivalId].rival.name })}
-                </a>
-              </li>
-            ))
-          }
+  <!-- Where aic wins -->
+  <section class="block">
+    <h2>{vsBlock.winsH2}</h2>
+    <ul class="points">
+      {
+        aicWins.map((axis) => (
           <li>
-            <a href={localizedHref(locale, 'best-ai-commit-tools')}>{m.vs.more.roundup}</a
-            >
+            <span class="point-h">{vsBlock.axes[axis.id].feature}</span>
+            <span class="point-n">{vsBlock.axes[axis.id].note}</span>
           </li>
-        </ul>
-      </section>
+        ))
+      }
+      {
+        ties.map((axis) => (
+          <li>
+            <span class="point-h">
+              {vsBlock.axes[axis.id].feature}{' '}
+              <span class="tie-tag">{vsBlock.tieTag}</span>
+            </span>
+            <span class="point-n">{vsBlock.axes[axis.id].note}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 
-      <!-- Verdict + CTA (spec §6: roundup back-link lives in the verdict/more area) -->
-      <section class="verdict" id="cta">
-        <h2>{vsBlock.verdict.h2}</h2>
-        <p set:html={vsBlock.verdict.body} />
-        <div class="cta">
-          <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
-          <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
-            {t('footer.star')}
-          </a>
-        </div>
-        <p class="verdict-roundup">
-          <a href={localizedHref(locale, 'best-ai-commit-tools')}>{m.vs.more.roundup}</a>
-        </p>
-      </section>
-    </article>
-  </main>
+  <!-- Where the rival wins (the fair concession) -->
+  <section class="block">
+    <h2>{vsBlock.rivalH2}</h2>
+    <p class="block-lede">{vsBlock.rivalLede}</p>
+    <ul class="points">
+      {
+        rivalWins.map((axis) => (
+          <li>
+            <span class="point-h">{vsBlock.axes[axis.id].feature}</span>
+            <span class="point-n">{vsBlock.axes[axis.id].note}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 
-  <Footer />
-</Base>
+  <!-- FAQ (migration-intent keywords + FAQPage schema) -->
+  <section class="block">
+    <h2>{vsBlock.faq.h2}</h2>
+    <div class="faq">
+      {
+        vsBlock.faq.items.map((item) => (
+          <div class="faq-item">
+            <h3>{item.q}</h3>
+            <p>{item.a}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- More comparisons (spoke-to-spoke internal links) -->
+  <section class="more block">
+    <h2>{m.vs.more.h2}</h2>
+    <ul class="more-links">
+      {
+        COMPARISON_RIVALS.filter((rivalId) => rivalId !== id).map((rivalId) => (
+          <li>
+            <a href={localizedHref(locale, `vs/${rivalId}`)}>
+              {t('vs.more.vsLabel', { name: COMPARISONS[rivalId].rival.name })}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a href={localizedHref(locale, 'best-ai-commit-tools')}>{m.vs.more.roundup}</a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Verdict + CTA (spec §6: roundup back-link lives in the verdict/more area) -->
+  <section class="verdict" id="cta">
+    <h2>{vsBlock.verdict.h2}</h2>
+    <p set:html={vsBlock.verdict.body} />
+    <div class="cta">
+      <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
+      <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
+        {t('footer.star')}
+      </a>
+    </div>
+    <p class="verdict-roundup">
+      <a href={localizedHref(locale, 'best-ai-commit-tools')}>{m.vs.more.roundup}</a>
+    </p>
+  </section>
+</ArticleShell>
 
 <style>
-  .article {
-    max-width: 820px;
-    padding-block: clamp(2.5rem, 1rem + 4vw, 4.5rem) clamp(3rem, 1rem + 5vw, 5rem);
-    position: relative;
-    z-index: 2;
-  }
-  h1 {
-    font-size: var(--text-h2);
-    line-height: 1.05;
-    margin: 0.75rem 0 0;
-  }
-  .lede {
-    color: var(--color-ink-muted);
-    line-height: 1.65;
-    margin-top: 1rem;
-    font-size: var(--text-lede);
-  }
+  /* Page-unique styles. The article CSS layer (.article namespace) lives in
+     ArticleShell. */
   .lede a {
     color: var(--color-amber);
     text-decoration: none;
     border-bottom: 1px solid color-mix(in oklch, var(--color-amber) 40%, transparent);
   }
 
-  .crumbs {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.4rem;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--color-ink-dim);
-    margin-bottom: 0.5rem;
-  }
-  .crumbs a {
-    color: var(--color-ink-muted);
-    text-decoration: none;
-  }
-  .crumbs a:hover {
-    color: var(--color-amber);
-  }
-  .crumbs span[aria-current='page'] {
-    color: var(--color-ink);
-  }
-
-  .callout {
-    margin-top: 1.75rem;
-    padding: 1rem 1.25rem;
-    border: 1px solid var(--color-line);
-    border-left: 3px solid var(--color-amber);
-    border-radius: 10px;
-    background: var(--color-amber-soft);
-    color: var(--color-ink);
-    font-size: 0.95rem;
-    line-height: 1.6;
-  }
-  .callout code {
-    color: var(--color-amber);
-    font-family: var(--font-mono);
-  }
-
-  .block {
-    margin-top: 2.75rem;
-  }
-  .block h2 {
-    font-size: 1.5rem;
-    margin: 0 0 1rem;
-  }
-  .block-lede {
-    color: var(--color-ink-muted);
-    margin: -0.25rem 0 1.25rem;
-    line-height: 1.6;
-    font-size: 0.975rem;
-  }
-
-  /* Point lists */
-  .points {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1.1rem;
-  }
-  .points li {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  .point-h {
-    font-weight: 600;
-    color: var(--color-ink);
-  }
-  .point-n {
-    color: var(--color-ink-muted);
-    line-height: 1.6;
-    font-size: 0.95rem;
-  }
   .tie-tag {
     font-family: var(--font-mono);
     font-size: 0.65rem;
@@ -346,24 +210,6 @@ const schema = [
     padding: 0.05rem 0.45rem;
     margin-left: 0.4rem;
     vertical-align: middle;
-  }
-
-  /* FAQ */
-  .faq {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  .faq-item h3 {
-    font-size: 1rem;
-    margin: 0 0 0.35rem;
-    color: var(--color-ink);
-  }
-  .faq-item p {
-    color: var(--color-ink-muted);
-    line-height: 1.6;
-    font-size: 0.95rem;
-    margin: 0;
   }
 
   /* More comparisons */
@@ -385,26 +231,6 @@ const schema = [
     color: var(--color-ink);
   }
 
-  /* Verdict */
-  .verdict {
-    margin-top: 2.75rem;
-    padding: 1.75rem;
-    border: 1px solid var(--color-line-soft);
-    border-radius: 14px;
-    background: var(--color-surface);
-  }
-  .verdict h2 {
-    font-size: 1.5rem;
-    margin: 0 0 0.75rem;
-  }
-  .verdict p {
-    color: var(--color-ink-muted);
-    line-height: 1.65;
-  }
-  .verdict code {
-    color: var(--color-amber);
-    font-family: var(--font-mono);
-  }
   .verdict-roundup {
     margin: 1.25rem 0 0;
   }
@@ -416,43 +242,6 @@ const schema = [
     font-size: 0.95rem;
   }
   .verdict-roundup a:hover {
-    color: var(--color-ink);
-  }
-  .cta {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-  .cta-link {
-    color: var(--color-ink);
-    text-decoration: none;
-    padding: 0.55rem 1rem;
-    border: 1px solid var(--color-line);
-    border-radius: 999px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    transition:
-      border-color var(--duration-fast) ease,
-      color var(--duration-fast) ease;
-  }
-  .cta-link:hover {
-    border-color: var(--color-amber);
-    color: var(--color-amber);
-  }
-
-  .inline-cta {
-    margin-top: 1.5rem;
-  }
-  .inline-cta a {
-    color: var(--color-amber);
-    text-decoration: none;
-    border-bottom: 1px solid color-mix(in oklch, var(--color-amber) 40%, transparent);
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-  .inline-cta a:hover {
     color: var(--color-ink);
   }
 </style>

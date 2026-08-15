@@ -64,6 +64,24 @@ Hand-maintained prose (ADR-0006); distinct from a roundup (survey intent)
 or a vs page (migration intent). `/resolve/` is the first.
 _Avoid_: feature page (generic — say capability).
 
+**Article shell**:
+The shared scaffold of every narrative content page
+(`src/components/content/ArticleShell.astro`): Base chrome, the article
+column and its CSS layer (`.article` namespace), the crumb nav, and the
+page's JSON-LD, assembled from meta strings a page passes in. Pages own
+their body and page-unique styles; the shell owns everything the eight
+content pages used to copy. Locale is self-determined from the URL
+(ADR-0010), like Base.
+_Avoid_: layout, template wrapper (it also derives content — schema, crumbs).
+
+**Hybrid hero**:
+The two-column copy + Terminal template (ADR-0009) that capability pages
+open with — eyebrow, h1, lede, and install CTA on the left, a terminal
+mockup on the right (`src/components/content/HybridHero.astro`). Distinct
+from a homepage Section: full container width, above the Article shell's
+narrower column.
+_Avoid_: hero banner, header (generic).
+
 **Editorial comparison**:
 A human judgment about a competitor (e.g. "aicommits has no auto-batching"),
 not a machine-readable fact. Hand-maintained because it cannot be fetched —
