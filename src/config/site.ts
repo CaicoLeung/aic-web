@@ -116,23 +116,6 @@ export const PRIMARY_INSTALL_COMMAND = 'brew install CaicoLeung/aic/aic';
 export const HOW_IT_WORKS_STEPS = ['01', '02', '03', '04', '05', '06'] as const;
 
 /**
- * Commands table rows for the hero (ADR-0010). `command`/`args` are literal
- * (locale-invariant); the human-facing `description` is localized in
- * `messages.commands`, keyed by `id`.
- */
-export interface CommandRow {
-  readonly id: 'aic' | 'aic-setup' | 'aic-list';
-  readonly command: string;
-  readonly args?: string;
-}
-
-export const COMMANDS: readonly CommandRow[] = [
-  { id: 'aic', command: 'aic' },
-  { id: 'aic-setup', command: 'aic', args: 'setup' },
-  { id: 'aic-list', command: 'aic', args: 'list' },
-] as const;
-
-/**
  * Per-hunk batch splitting — the differentiator behind the #03 Auto-batching
  * section. Shipped in v0.3.5 (#12, per-hunk split + live reasoning view) and
  * v0.3.6 (#13, streaming multi-batch).

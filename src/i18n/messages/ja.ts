@@ -137,25 +137,6 @@ export const messages: Messages = {
     copied: 'コピーしました ✓',
   },
 
-  hero: {
-    eyebrow: '01 — はじめに',
-    h1: {
-      line1: '1つのファイル',
-      line2: '3つの関心事',
-      line3: '3つのコミット',
-    },
-    ledeBefore:
-      'aic は hunk レベルで diff を読み、未ステージの作業を焦点を絞った conventional コミットに分割します — 1つのファイルが3つの関心事に触れていれば、1つではなく3つのコミットに。マージ中なら、',
-    ledeLink: 'すべてのコンフリクトを解決',
-    ledeAfter:
-      'し、何かが適用される前に diff を示します。すでに Claude Code や Codex を使っている？ aic をあなたのエージェントに向けるだけ — API キー不要、中間業者なし。',
-    ctaHint: 'そして <code>{cmd}</code> を実行',
-    /** 主アクションの命名(CRO)。 */
-    ctaLabel: 'aic をインストール — コマンド1つ',
-    /** CTA 下のプラットフォーム微コピー(CRO)。 */
-    platformNote: 'Homebrew（macOS · Linux）— Windows・Unix のインストーラーは下へ ↓',
-  },
-
   how: {
     eyebrow: '02 — 仕組み',
     h2: '一度インストール → <code>{cmd}</code> と入力 → クリーンなコミット。',
@@ -170,12 +151,6 @@ export const messages: Messages = {
       '05': { label: '起草', detail: 'メッセージを書く' },
       '06': { label: 'コミット', detail: '完了  ✓' },
     },
-  },
-
-  commands: {
-    aic: { description: 'ステージ済みをコミット · または未ステージの作業をまとめて計画' },
-    'aic-setup': { description: '一度だけのウィザード — プロバイダ → キー → モデル' },
-    'aic-list': { description: '解決済みの設定 + マスク済み API キーを表示' },
   },
 
   batching: {

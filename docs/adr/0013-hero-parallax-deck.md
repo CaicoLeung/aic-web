@@ -1,6 +1,10 @@
 # ADR-0013: Hero section — 3D parallax deck redesign
 
-- **Status:** Accepted
+- **Status:** Superseded — the parallax-deck implementation (Hero.astro +
+  Dag.astro) was replaced by the V2 "Diff Lab" hero (HeroV2.astro, PR #38)
+  and its source deleted. The decision below remains valid history: the
+  spine-structure vs internal-treatment split it established still governs
+  section redesigns (see ADR-0017).
 - **Date:** 2026-08-01
 - **Decision owner:** Caico Leung
 - **Amends:** `docs/site-architecture.md` §2 ("homepage spine — unchanged") and

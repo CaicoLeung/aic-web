@@ -16,13 +16,14 @@ _Avoid_: body text, copy (too generic — say "prose" when naming the register).
 
 **Code register**:
 Identifiers, commands, paths, hashes, version strings, and technical
-labels (eyebrows, install tabs, provider chips, the Terminal mockup). Set
+labels (eyebrows, install tabs, provider chips, the terminal mockups). Set
 in JetBrains Mono (`--font-mono`).
 _Avoid_: monospace text (describe by purpose, not glyph width).
 
 **Visual mockup**:
-A decorative in-page graphic that reinforces copy — the animated
-`Terminal` and the batching `.pill` stack. The site has **no** raster
+A decorative in-page graphic that reinforces copy — the animated terminal
+mockups (HeroV2's diff-lab editor, ScrollDemo, ResolveTerminal,
+AgentTerminal) and the batching `.pill` stack. The site has **no** raster
 `<img>`s, so the word "image" in briefs maps to one of these.
 _Avoid_: screenshot, picture, photo (there are none).
 

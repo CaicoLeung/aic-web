@@ -136,25 +136,6 @@ export const messages: Messages = {
     copied: '복사되었습니다 ✓',
   },
 
-  hero: {
-    eyebrow: '01 — 소개',
-    h1: {
-      line1: '하나의 파일',
-      line2: '세 가지 관심사',
-      line3: '세 개의 커밋',
-    },
-    ledeBefore:
-      'aic는 hunk 단위로 diff를 읽고 미스테이지 작업을 집중된 conventional 커밋으로 분할합니다 — 한 파일이 세 가지 관심사에 걸쳐 있으면 한 개가 아닌 세 개의 커밋으로. 병합 중이라면, ',
-    ledeLink: '모든 충돌을 해결',
-    ledeAfter:
-      '하고, 무엇이든 적용되기 전에 diff를 보여줍니다. 이미 Claude Code나 Codex를 쓰고 있다면? aic를 당신의 에이전트로 향하게 하세요 — API 키 불필요, 중간자 없음.',
-    ctaHint: '그런 다음 <code>{cmd}</code> 실행',
-    /** 기본 동작 이름 표시(CRO). */
-    ctaLabel: 'aic 설치 — 명령 하나',
-    /** CTA 아래 플랫폼 안내(CRO). */
-    platformNote: 'Homebrew(macOS · Linux) — Windows·Unix 설치 프로그램은 아래로 ↓',
-  },
-
   how: {
     eyebrow: '02 — 작동 방식',
     h2: '한 번 설치 → <code>{cmd}</code> 입력 → 깔끔한 커밋.',
@@ -166,12 +147,6 @@ export const messages: Messages = {
       '05': { label: '초안', detail: '메시지 작성' },
       '06': { label: '커밋', detail: '완료  ✓' },
     },
-  },
-
-  commands: {
-    aic: { description: '스테이지된 작업 커밋 · 또는 미스테이지 배치 계획' },
-    'aic-setup': { description: '일회성 마법사 — 프로바이더 → 키 → 모델' },
-    'aic-list': { description: '해결된 구성 + 마스킹된 API 키 표시' },
   },
 
   batching: {
