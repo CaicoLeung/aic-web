@@ -27,9 +27,11 @@ Three strategies were on the table:
 **Full sync (C) via site-build-time fetch + parse, with a nightly cron
 rebuild and per-fact fallback constants.**
 
-At build time, Astro frontmatter fetches
-`raw.githubusercontent.com/CaicoLeung/aic/main/{Cargo.toml,README.md,src/llm.rs}`
-and parses:
+At build time, Astro frontmatter fetches the aic source files via the
+GitHub contents API (`api.github.com/.../contents`, `Accept:
+application/vnd.github.raw+json` — token-backed in CI, see
+`src/config/site.ts` `GITHUB_SOURCE_BASE`) for
+`{Cargo.toml,README.md,src/llm.rs}` and parses:
 
 - `Cargo.toml` `[package] version` — via TOML regex.
 - `src/llm.rs` `pub enum Provider { ... }` — variant names → ids/display.

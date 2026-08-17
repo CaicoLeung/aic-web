@@ -62,6 +62,9 @@ jobs:
           # defaults and SITE_ORIGIN in src/config/site.ts.
           SITE_ORIGIN: https://www.lookupapp.net
           BASE_PATH: /aic/
+          # Build-time fact fetch needs the token — anonymous raw/API calls
+          # are rate-limited on shared runner IPs.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_OPTIONS: --max-old-space-size=4096
 
       # Commit dist/ contents to the cpanel-deploy branch incrementally.

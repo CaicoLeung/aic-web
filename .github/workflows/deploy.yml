@@ -49,8 +49,9 @@ jobs:
           SITE_ORIGIN: https://caicoleung.github.io
           BASE_PATH: /aic-web/
           NOINDEX: 'true'
-          # Build-time fact fetch needs no secrets — raw.githubusercontent.com
-          # is public for the aic repo. Astro fetches at build time.
+          # Build-time fact fetch funnels through GITHUB_TOKEN (ADR-0003):
+          # anonymous raw/API calls are rate-limited on shared runner IPs.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_OPTIONS: --max-old-space-size=4096
 
       - name: Upload artifact

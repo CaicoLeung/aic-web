@@ -15,8 +15,16 @@ export async function fetchBuildTime(
   init?: RequestInit,
 ): Promise<Response | null> {
   try {
+    const headers = new Headers(init?.headers);
+    // Actions runners share egress IPs, so anonymous raw/API fetches get
+    // rate-limited (429 / anonymous 60 req/hr). The built-in GITHUB_TOKEN
+    // (any workflow, permissions: contents: read) fixes both — no secret.
+    if (process.env.GITHUB_TOKEN) {
+      headers.set('Authorization', `Bearer ${process.env.GITHUB_TOKEN}`);
+    }
     const res = await fetch(url, {
       ...init,
+      headers,
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     });
     return res.ok ? res : null;

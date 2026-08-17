@@ -13,7 +13,7 @@
 import {
   FALLBACK_PROVIDERS,
   FALLBACK_VERSION,
-  GITHUB_RAW_BASE,
+  GITHUB_SOURCE_BASE,
   PROVIDER_DISPLAY_NAMES,
   type ProviderInfo,
 } from '@/config/site';
@@ -28,7 +28,9 @@ export interface AicFacts {
 
 /** Fetch a source-repo file. Build-time only; null degrades to FALLBACK_* (ADR-0003). */
 async function fetchSource(path: string): Promise<string | null> {
-  const res = await fetchBuildTime(`${GITHUB_RAW_BASE}/${path}`);
+  const res = await fetchBuildTime(`${GITHUB_SOURCE_BASE}/${path}`, {
+    headers: { Accept: 'application/vnd.github.raw+json' },
+  });
   return res ? await res.text() : null;
 }
 

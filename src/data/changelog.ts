@@ -17,7 +17,7 @@
  * the outage — is preferable to shipping incorrect release notes.
  */
 
-import { GITHUB_OWNER, GITHUB_RAW_BASE, GITHUB_REPO, GITHUB_URL } from '@/config/site';
+import { GITHUB_OWNER, GITHUB_REPO, GITHUB_SOURCE_BASE, GITHUB_URL } from '@/config/site';
 import { fetchBuildTime } from '@/data/fetch';
 
 export interface ChangelogSection {
@@ -37,7 +37,7 @@ export interface ChangelogEntry {
   readonly sections: readonly ChangelogSection[];
 }
 
-const RAW_CHANGELOG_URL = `${GITHUB_RAW_BASE}/CHANGELOG.md`;
+const RAW_CHANGELOG_URL = `${GITHUB_SOURCE_BASE}/CHANGELOG.md`;
 const RELEASES_API_URL = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/releases`;
 
 /**
@@ -113,7 +113,9 @@ interface GithubRelease {
 }
 
 async function fetchChangelogMarkdown(): Promise<string | null> {
-  const res = await fetchBuildTime(RAW_CHANGELOG_URL);
+  const res = await fetchBuildTime(RAW_CHANGELOG_URL, {
+    headers: { Accept: 'application/vnd.github.raw+json' },
+  });
   return res ? await res.text() : null;
 }
 

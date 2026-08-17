@@ -18,7 +18,12 @@ export const SITE_ORIGIN = process.env.SITE_ORIGIN ?? 'https://www.lookupapp.net
 export const GITHUB_OWNER = 'CaicoLeung';
 export const GITHUB_REPO = 'aic';
 export const GITHUB_URL = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}`;
-export const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main`;
+// Source-file base for build-time fetches. Deliberately the GitHub contents
+// API (with `Accept: application/vnd.github.raw+json` at call sites), NOT
+// raw.githubusercontent.com: the raw CDN rate-limits shared runner IPs even
+// with a token (429), while the API honors the built-in GITHUB_TOKEN
+// (5000 req/hr) — see ADR-0003 / the changelog carve-out in ADR-0008.
+export const GITHUB_SOURCE_BASE = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents`;
 
 /** Build-time HTTP fetch timeout (ADR-0003). Window before degrading to `FALLBACK_*`. */
 export const FETCH_TIMEOUT_MS = 8000;

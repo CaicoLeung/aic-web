@@ -20,9 +20,11 @@ Three architectural decisions are documented as ADRs in [`docs/adr/`](./docs/adr
 
 ## Content sync
 
-Version and provider list are **fetched at build time** from
-`raw.githubusercontent.com/CaicoLeung/aic/main/{Cargo.toml,src/llm.rs}`
-(see `src/data/aic.ts`). A nightly cron rebuild in
+Version and provider list are **fetched at build time** from the aic
+source repo via the GitHub contents API (token-backed in CI — the raw
+CDN rate-limits shared runner IPs; see ADR-0003):
+`{Cargo.toml,src/llm.rs}` (see `src/data/aic.ts`). A nightly cron
+rebuild in
 `.github/workflows/deploy.yml` keeps the live site within ~24h of an aic
 release. Every fact has a `FALLBACK_*` constant in `src/config/site.ts`
 so a parse failure never breaks a deploy.

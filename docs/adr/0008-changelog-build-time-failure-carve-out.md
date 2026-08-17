@@ -33,7 +33,7 @@ breaks a deploy" promise continues to apply to version and providers;
 this ADR carves out an exception for the changelog fetch.
 
 Concretely: `loadChangelog()` (`src/data/changelog.ts`) throws when both
-`CHANGELOG.md` (via `raw.githubusercontent.com`) and the GitHub Releases
+`CHANGELOG.md` (via the GitHub contents API) and the GitHub Releases
 API (via `api.github.com`) fail or return no parseable entries. Because
 `astro build` compiles every page in one job, this also blocks the
 version/provider refresh and the rest of the site until the fetch
@@ -51,7 +51,7 @@ and provider lists are not:
   lists **0.1.7** as the latest release. That contradiction is worse
   than a build failure: it actively misleads a visitor cross-referencing
   release notes.
-- The GitHub Releases API and `raw.githubusercontent.com` are typically
+- The GitHub Releases API and the contents API are typically
   co-failing (GitHub incidents take both down), so a `FALLBACK_*`
   constant decays silently rather than catching transient blips.
 - A build failure is loud: the cron job goes red, the deploy is
@@ -67,7 +67,7 @@ and provider lists are not:
   failures, prompting investigation rather than silent degradation.
 - **Pro:** Visitors are never broken — GitHub Pages retains the last
   good build until the fetch recovers.
-- **Con:** A GitHub incident during the cron window blocks *all* site
+- **Con:** A GitHub incident during the cron window blocks _all_ site
   refreshes, not just the changelog. Acceptable: the alternative
   (shipping a contradicting changelog) is worse, and the blast radius
   is bounded by GitHub's own recovery time.
