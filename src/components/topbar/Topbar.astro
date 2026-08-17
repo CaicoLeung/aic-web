@@ -95,7 +95,10 @@ const versionTitle = t('topbar.versionTitle', { version });
     /* base (not base-deep): matches the page atmosphere gradient, which is
        --color-base at the viewport top — the bar reads in-tone, not as a
        near-black band over the warmer page. */
-    background: color-mix(in oklch, var(--color-base) 70%, transparent);
+    /* srgb (not oklch): oklch interpolation of the near-black navy toward
+       transparent wobbles its tiny blue chroma warm, tinting the bar red.
+       srgb keeps the hue on the base tone (see aic-web issue). */
+    background: color-mix(in srgb, var(--color-base) 70%, transparent);
     border-bottom: 1px solid transparent;
     backdrop-filter: none;
     transition:
@@ -112,7 +115,7 @@ const versionTitle = t('topbar.versionTitle', { version });
   .topbar[data-blur='true'] {
     border-bottom-color: var(--color-line-soft);
     backdrop-filter: blur(14px) saturate(140%);
-    background: color-mix(in oklch, var(--color-base) 80%, transparent);
+    background: color-mix(in srgb, var(--color-base) 80%, transparent);
   }
   .brand {
     display: inline-flex;
