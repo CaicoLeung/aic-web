@@ -6,6 +6,7 @@ import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 import CopyButton from '@/components/ui/CopyButton.astro';
+import Icon from '@/components/ui/Icon.astro';
 
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
@@ -34,13 +35,15 @@ const agentsBase = localizedHref(locale, 'agents');
           rel="noopener noreferrer"
         >
           {t('footer.star')}
+          <Icon name="github" size={14} />
         </a>
       </div>
     </div>
 
     <div class="footer-meta">
       <a class="repo" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
-        {GITHUB_URL.replace('https://', '')}
+        <span class="repo-icon"><Icon name="github" size={13} /></span>
+        <span>{GITHUB_URL.replace('https://', '')}</span>
       </a>
       <nav class="footer-links" aria-label="Explore">
         <a href={resolveBase}>
@@ -182,6 +185,9 @@ const agentsBase = localizedHref(locale, 'agents');
     border-radius: 999px;
     font-size: 0.82rem;
     font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     transition:
       border-color var(--duration-fast) ease,
       color var(--duration-fast) ease;
@@ -203,6 +209,13 @@ const agentsBase = localizedHref(locale, 'agents');
     color: var(--color-ink-muted);
     text-decoration: none;
     width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .repo-icon {
+    display: inline-flex;
+    color: var(--color-ink-dim);
   }
   .repo:hover {
     color: var(--color-amber);
