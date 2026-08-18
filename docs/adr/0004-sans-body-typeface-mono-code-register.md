@@ -12,7 +12,7 @@ language for the whole site, and body copy was set in JetBrains Mono at
 14px to evoke a terminal feel. On mobile this taxed readability: mono is
 ~12% wider than proportional type (fewer characters per line), and
 persuasive ledes read as "code" rather than copy — which also blurred the
-signal that the *actual* code (terminal, commands, hashes) is meant to
+signal that the _actual_ code (terminal, commands, hashes) is meant to
 carry.
 
 ## Decision
@@ -34,11 +34,11 @@ phone-to-desktop, which is worse than the original problem.
 
 - **Pro:** Largest readability win at zero font cost; the system-sans stack
   is already loaded for headings.
-- **Pro:** Sharper code/prose distinction — mono now reads as *intentionally*
+- **Pro:** Sharper code/prose distinction — mono now reads as _intentionally_
   mono instead of "everything is mono."
 - **Con:** Softens the terminal aesthetic slightly. Acceptable: the terminal
   mockup, command tables, and hashes still carry it.
-- **Con:** Future body copy must opt *into* sans by default; only
+- **Con:** Future body copy must opt _into_ sans by default; only
   identifiers/commands/labels opt into mono. Documented in `CONTEXT.md`.
 
 ## Alternatives considered

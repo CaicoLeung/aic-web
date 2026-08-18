@@ -18,10 +18,30 @@ export const GET: APIRoute = () => {
     background_color: THEME_COLOR,
     theme_color: THEME_COLOR,
     icons: [
-      { src: `${BASE}icons/icon-192.png`, sizes: '192x192', type: 'image/png', purpose: 'any' },
-      { src: `${BASE}icons/icon-512.png`, sizes: '512x512', type: 'image/png', purpose: 'any' },
-      { src: `${BASE}icons/maskable-192.png`, sizes: '192x192', type: 'image/png', purpose: 'maskable' },
-      { src: `${BASE}icons/maskable-512.png`, sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      {
+        src: `${BASE}icons/icon-192.png`,
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: `${BASE}icons/icon-512.png`,
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: `${BASE}icons/maskable-192.png`,
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'maskable',
+      },
+      {
+        src: `${BASE}icons/maskable-512.png`,
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'maskable',
+      },
     ],
   };
   return new Response(JSON.stringify(manifest), {

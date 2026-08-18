@@ -1,0 +1,60 @@
+---
+/**
+ * Inline stroke icon — the shared home for the site's icon geometry.
+ *
+ * Follows the footer-link convention: 24×24 viewBox, `currentColor`
+ * stroke (1.6, round caps), `fill: none` unless a path opts out via
+ * `fill="currentColor" stroke="none"` (dots). Decorative by default
+ * (`aria-hidden`) — never the sole carrier of meaning. No icon font,
+ * no runtime, no dependency: geometry is data, paint is CSS.
+ */
+interface Props {
+  readonly name: keyof typeof GEOMETRY;
+  readonly size?: number;
+  readonly class?: string;
+}
+
+/** Inner SVG markup per icon name (Lucide-grade, hand-trimmed). */
+const GEOMETRY = {
+  check: '<path d="m4.5 12.5 5 5 10-11" />',
+  download:
+    '<path d="M12 3v11" /><path d="m7.5 10 4.5 4.5L16.5 10" /><path d="M4 17.5v1.5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5" />',
+  key: '<circle cx="7.5" cy="15.5" r="3.5" /><path d="m10 13 9-9" /><path d="m15.5 4.5 3 3" /><path d="m13 6.5 3 3" />',
+  play: '<path d="m7 4.5 12 7.5-12 7.5z" />',
+  eye: '<path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" /><circle cx="12" cy="12" r="2.5" />',
+  pen: '<path d="m13.5 5 5.5 5.5L9 20.5H4v-5.5z" /><path d="m11.5 7 5.5 5.5" />',
+  commit:
+    '<circle cx="12" cy="12" r="3.5" /><path d="M2 12h6.5" /><path d="M15.5 12H22" />',
+  package:
+    '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z" /><path d="m4 7.5 8 4.5 8-4.5" /><path d="M12 12v9" />',
+  terminal:
+    '<path d="m5 7 4 4-4 4" /><path d="M11 16h8" /><rect x="2" y="4" width="20" height="16" rx="2" />',
+  windows:
+    '<rect x="3" y="4" width="8" height="7" rx="1" /><rect x="13" y="4" width="8" height="7" rx="1" /><rect x="3" y="13" width="8" height="7" rx="1" /><rect x="13" y="13" width="8" height="7" rx="1" />',
+  shield: '<path d="M12 3 5 5.5v6c0 4.5 3 7.5 7 9.5 4-2 7-5 7-9.5v-6z" />',
+  github:
+    '<path d="M9 19c-4 1.3-4-2.2-5.5-2.7m11 5.2v-3.7c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.4-.4-4.5 1.7a11.6 11.6 0 0 0-6 0C4.6 2 3.1 2.4 3.1 2.4a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 1.7 8.8c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2v3.7" fill="none" />',
+} as const;
+
+const { name, size = 16, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icon', className]}
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  aria-hidden="true"
+  set:html={GEOMETRY[name]}
+/>
+
+<style>
+  .icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+</style>

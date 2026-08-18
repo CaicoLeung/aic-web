@@ -35,7 +35,9 @@ const fmtDate = new Intl.DateTimeFormat(LOCALE_HREFLANG[locale], {
         <div class="body">
           <div class="node-head">
             <h2 class="version">v{entry.version}</h2>
-            {i === 0 && <span class="latest-badge">{t('changelog.timeline.latest')}</span>}
+            {i === 0 && (
+              <span class="latest-badge">{t('changelog.timeline.latest')}</span>
+            )}
             <time class="date" datetime={entry.date}>
               {fmtDate.format(new Date(entry.date))}
             </time>
@@ -45,7 +47,8 @@ const fmtDate = new Intl.DateTimeFormat(LOCALE_HREFLANG[locale], {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {t('changelog.timeline.githubRelease')}<span aria-hidden="true"> ↗</span>
+              {t('changelog.timeline.githubRelease')}
+              <span aria-hidden="true"> ↗</span>
             </a>
           </div>
 

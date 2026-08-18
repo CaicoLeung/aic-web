@@ -9,16 +9,16 @@
 ## Context
 
 The site was built as a **single marketing page** whose stated principle
-was: *"The README of the source repo stays the docs source of truth; this
-site links to it rather than duplicating"* (README; section comments in
+was: _"The README of the source repo stays the docs source of truth; this
+site links to it rather than duplicating"_ (README; section comments in
 `index.astro`). That kept content drift-free but left the site with
 nothing indexable for **descriptive** search queries — only the branded
 term "aic" ranks, and even that collides with the popular `aicommits`
 tool.
 
 The SEO goal (ADR-0006's premise) is to rank for descriptive long-tail
-queries like *"AI commit message generator"* and *"aicommits
-alternative"*. Search engines rank **pages with content on the ranking
+queries like _"AI commit message generator"_ and _"aicommits
+alternative"_. Search engines rank **pages with content on the ranking
 domain**, not pages that point elsewhere. Every fact delegated to the
 GitHub README is a fact Google cannot reward this site for.
 
@@ -32,7 +32,7 @@ ownership by **type**, not by "duplicates or not":
   ADR-0003 territory; duplicating it rots fast.
 - The **site owns narrative content that does not belong in a README**:
   comparisons, "why," use cases, guides. This is **prose the README does
-  not carry** (per `CONTEXT.md`, the *prose register*), so there is no
+  not carry** (per `CONTEXT.md`, the _prose register_), so there is no
   duplication — it is a different register entirely.
 
 The v1 page-set: a home hub (`/`), a head-to-head `/vs/aicommits`, and a
