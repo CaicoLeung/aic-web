@@ -392,7 +392,7 @@ export const messages: Messages = {
     verdict: {
       h2: '简而言之',
       body: '<code>aic</code> + 你的编码 agent：agent 负责推理，aic 负责提交。无需 API 密钥，无需中间人，无需挑选模型 —— 输出的依然是 aic 一贯产出的那种批处理、约定式、彩色的历史。',
-      releaseNotes: 'v0.5.0 发布说明',
+      releaseNotes: 'v0.5.5 发布说明',
     },
   },
 

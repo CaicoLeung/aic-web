@@ -393,7 +393,7 @@ export const messages: Messages = {
     verdict: {
       h2: '짧은 요약',
       body: '<code>aic</code> + 코딩 에이전트: 에이전트는 추론, aic는 커밋을 출시. API 키도, 중간자도, 고를 모델도 없음 — aic가 언제나 만드는 것과 같은 배치된, 컨벤셔널, 컬러 히스토리뿐.',
-      releaseNotes: 'v0.5.0 릴리스 노트',
+      releaseNotes: 'v0.5.5 릴리스 노트',
     },
   },
 

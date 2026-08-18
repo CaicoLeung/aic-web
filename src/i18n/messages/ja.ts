@@ -402,7 +402,7 @@ export const messages: Messages = {
     verdict: {
       h2: '要するに',
       body: '<code>aic</code> + あなたのコーディングエージェント：エージェントが推論し、aic がコミットを出荷。API キーも中間業者も、選ぶモデルも不要 — あるのは aic がいつも生成するのと同じ、バッチ処理されたコンベンショナルなカラー履歴だけ。',
-      releaseNotes: 'v0.5.0 リリースノート',
+      releaseNotes: 'v0.5.5 リリースノート',
     },
   },
 
