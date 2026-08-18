@@ -347,7 +347,10 @@ export const messages: Messages = {
           h: 'Codex',
           n: '읽기 전용 샌드박스에서 조용히 실행, 완료되면 메시지를 반환합니다.',
         },
-        { h: 'Pi', n: 'Claude Code처럼 추론을 실시간 스트리밍.' },
+        {
+          h: 'Pi',
+          n: '토큰 단위로 추론을 실시간 스트리밍 — Claude Code의 페이즈 끝 일괄 출력보다 세밀.',
+        },
         {
           h: 'OpenCode',
           n: '조용히 실행, 기존 프로바이더 키(예: Cursor OAuth)를 재사용.',
@@ -393,7 +396,7 @@ export const messages: Messages = {
     verdict: {
       h2: '짧은 요약',
       body: '<code>aic</code> + 코딩 에이전트: 에이전트는 추론, aic는 커밋을 출시. API 키도, 중간자도, 고를 모델도 없음 — aic가 언제나 만드는 것과 같은 배치된, 컨벤셔널, 컬러 히스토리뿐.',
-      releaseNotes: 'v0.5.5 릴리스 노트',
+      releaseNotes: 'v{version} 릴리스 노트',
     },
   },
 

@@ -352,7 +352,7 @@ export const messages: Messages = {
         },
         {
           h: 'Pi',
-          n: 'Claude Code と同じく、推論をライブストリーミング。',
+          n: '推論をトークン単位でライブストリーミング — Claude Code のフェーズ末の一括出力よりも細かい。',
         },
         {
           h: 'OpenCode',
@@ -402,7 +402,7 @@ export const messages: Messages = {
     verdict: {
       h2: '要するに',
       body: '<code>aic</code> + あなたのコーディングエージェント：エージェントが推論し、aic がコミットを出荷。API キーも中間業者も、選ぶモデルも不要 — あるのは aic がいつも生成するのと同じ、バッチ処理されたコンベンショナルなカラー履歴だけ。',
-      releaseNotes: 'v0.5.5 リリースノート',
+      releaseNotes: 'v{version} リリースノート',
     },
   },
 

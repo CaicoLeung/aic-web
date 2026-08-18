@@ -396,7 +396,7 @@ export const messages = {
         },
         {
           h: 'Pi',
-          n: 'Streams reasoning live, same as Claude Code.',
+          n: "Token-streams its reasoning live — finer-grained than Claude Code's end-of-phase bursts.",
         },
         {
           h: 'OpenCode',
@@ -452,7 +452,7 @@ export const messages = {
       h2: 'The short version',
       // Contains <code>; render via set:html.
       body: '<code>aic</code> + your coding agent: the agent reasons, aic ships the commit. No API key, no middleman, no model to pick — just the same batched, conventional, colored history aic always produces.',
-      releaseNotes: 'v0.5.5 release notes',
+      releaseNotes: 'v{version} release notes',
     },
   },
 

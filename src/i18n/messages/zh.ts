@@ -346,7 +346,10 @@ export const messages: Messages = {
           n: '通过 <code>thinking_delta</code> 实时流式输出推理过程。你看 agent 思考，然后提交。',
         },
         { h: 'Codex', n: '在只读沙盒中静默运行，完成后返回提交信息。' },
-        { h: 'Pi', n: '实时流式输出推理过程，和 Claude Code 一样。' },
+        {
+          h: 'Pi',
+          n: '逐 token 实时流出推理 —— 粒度比 Claude Code 的阶段末集中输出更细。',
+        },
         { h: 'OpenCode', n: '静默运行，复用你已有的供应商密钥（例如 Cursor OAuth）。' },
         { h: 'Oh My Pi', n: 'pi 的分支 —— 和 pi 一样实时流式输出推理。' },
         {
@@ -392,7 +395,7 @@ export const messages: Messages = {
     verdict: {
       h2: '简而言之',
       body: '<code>aic</code> + 你的编码 agent：agent 负责推理，aic 负责提交。无需 API 密钥，无需中间人，无需挑选模型 —— 输出的依然是 aic 一贯产出的那种批处理、约定式、彩色的历史。',
-      releaseNotes: 'v0.5.5 发布说明',
+      releaseNotes: 'v{version} 发布说明',
     },
   },
 
