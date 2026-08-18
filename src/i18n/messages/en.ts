@@ -105,9 +105,9 @@ export const messages = {
         'Use DeepSeek to write Conventional Commits with aic: first-class provider, one setup wizard, your key never leaves your machine. No Node.js.',
     },
     agents: {
-      title: 'aic + your AI coding agent — Claude Code, Codex, Pi, OpenCode',
+      title: 'aic + your AI coding agent — 11 CLI agents, one backend',
       description:
-        'aic can delegate to your local AI coding agent — Claude Code, Codex, Pi, or OpenCode — in headless mode. No API key, no middleman: your agent reads the diff and writes the commit, reusing its own model.',
+        'aic can delegate to your local AI coding agent — Claude Code, Codex, Cursor, Gemini, Copilot, and more (11 presets) — in headless mode. No API key, no middleman: your agent reads the diff and writes the commit, reusing its own model.',
     },
     changelog: {
       title: 'aic changelog — every release',
@@ -195,7 +195,7 @@ export const messages = {
   agentsSection: {
     eyebrow: '05 — Bring your agent',
     // h2 reuses `agents.h1` — single source for the headline.
-    lede: "Already running Claude Code, Codex, Pi, or OpenCode? Point aic at your agent in headless mode — it passes the diff, your agent writes the message, aic ships the commit. No API key, no default model: it reuses your agent's own auth.",
+    lede: "Already running Claude Code, Codex, Cursor, or Gemini? Point aic at your agent in headless mode — it passes the diff, your agent writes the message, aic ships the commit. No API key, no default model: it reuses your agent's own auth.",
     link: 'see the agent backend →',
   },
 
@@ -359,7 +359,7 @@ export const messages = {
     eyebrow: 'Capability · CLI-agent backend',
     h1: 'Bring your agent, not your key.',
     // Contains <b>; render via set:html.
-    lede: '<b>aic</b> can delegate to your local AI coding agent — Claude Code, Codex, Pi, or OpenCode — in headless mode. No API key, no default model, no middleman: your agent reads the diff and writes the commit, reusing its own model and auth.',
+    lede: '<b>aic</b> can delegate to your local AI coding agent — Claude Code, Codex, Cursor, Gemini, or any of the 11 presets — in headless mode. No API key, no default model, no middleman: your agent reads the diff and writes the commit, reusing its own model and auth.',
     // Contains <code>; render via set:html.
     ctaHint: 'then run <code>aic setup</code> → pick agent backend',
     how: {
@@ -382,8 +382,8 @@ export const messages = {
       ],
     },
     presets: {
-      h2: 'Four agents, one backend',
-      lede: 'Four presets ship out of the box. Each reuses its own auth — no extra setup if the agent is already installed.',
+      h2: 'Eleven agents, one backend',
+      lede: 'Eleven presets ship out of the box — three stream reasoning live, eight run print-mode. Each reuses its own auth — no extra setup if the agent is already installed.',
       // `h` is the display name; `n` may contain <code> — render via set:html.
       items: [
         {
@@ -396,11 +396,39 @@ export const messages = {
         },
         {
           h: 'Pi',
-          n: 'Streams reasoning live, same as Claude Code.',
+          n: "Token-streams its reasoning live — finer-grained than Claude Code's end-of-phase bursts.",
         },
         {
           h: 'OpenCode',
           n: 'Runs silently, reuses your existing provider keys (e.g. Cursor OAuth).',
+        },
+        {
+          h: 'Oh My Pi',
+          n: 'pi fork — streams reasoning live, same feed as pi.',
+        },
+        {
+          h: 'Gemini',
+          n: 'Print mode via <code>gemini -p</code>. The preset shadows the provider name — <code>aic use google</code> still reaches the Google API.',
+        },
+        {
+          h: 'Cursor',
+          n: 'Print mode via <code>cursor-agent -p</code>, run untrusted — writes stay disabled.',
+        },
+        {
+          h: 'Windsurf',
+          n: 'Windsurf was renamed Devin Desktop — the preset maps to the <code>devin</code> binary.',
+        },
+        {
+          h: 'GitHub Copilot',
+          n: 'Print mode; headless runs stay text-only since tool use needs interactive approval.',
+        },
+        {
+          h: 'Trae',
+          n: 'Print mode via <code>traecli -p</code> — non-read tools stay gated.',
+        },
+        {
+          h: 'Qwen Code',
+          n: 'gemini-cli lineage — print mode via <code>qwen -p</code>.',
         },
       ],
     },
@@ -413,7 +441,7 @@ export const messages = {
     custom: {
       h2: 'Or any custom agent',
       // Contains <code>; render via set:html.
-      body: 'Beyond the four presets, you can configure any CLI command as your agent. If it accepts a prompt on stdin and prints to stdout, aic can drive it.',
+      body: 'Beyond the eleven presets, you can configure any CLI command as your agent. If it accepts a prompt on stdin and prints to stdout, aic can drive it.',
     },
     speed: {
       h2: "Why it's fast",
@@ -424,7 +452,7 @@ export const messages = {
       h2: 'The short version',
       // Contains <code>; render via set:html.
       body: '<code>aic</code> + your coding agent: the agent reasons, aic ships the commit. No API key, no middleman, no model to pick — just the same batched, conventional, colored history aic always produces.',
-      releaseNotes: 'v0.5.0 release notes',
+      releaseNotes: 'v{version} release notes',
     },
   },
 

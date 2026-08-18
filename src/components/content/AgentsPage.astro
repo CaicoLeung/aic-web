@@ -4,10 +4,10 @@
  *
  * Uses the Hybrid Hero template: two-column copy + AgentTerminal on top of
  * an article body. The body is narrative-only per ADR-0006 — the full
- * command reference lives in the aic README. The four agent names are
+ * command reference lives in the aic README. The eleven agent names are
  * illustrative narrative copy, not a build-time-fetched table.
  *
- * Targets tool-finder intent: "aic + Claude Code / Codex / Pi / OpenCode".
+ * Targets tool-finder intent: "aic + Claude Code / Codex / Cursor / Gemini".
  *
  * Rendered by both `/agents/` and `/[locale]/agents/` (ADR-0010). The
  * Article shell self-determines locale, so the same component serves every
@@ -18,6 +18,7 @@ import HybridHero from '@/components/content/HybridHero.astro';
 import ArticleShell from '@/components/content/ArticleShell.astro';
 import AgentTerminal from '@/components/agents/AgentTerminal.astro';
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
+import { loadAicFacts } from '@/data/aic';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer, useMessages } from '@/i18n/t';
 
@@ -25,7 +26,8 @@ const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const m = useMessages(locale);
 const roundup = localizedHref(locale, 'best-ai-commit-tools');
-const releaseUrl = `${GITHUB_URL}/releases/tag/v0.5.0`;
+const { version } = await loadAicFacts();
+const releaseUrl = `${GITHUB_URL}/releases/tag/v${version}`;
 
 const title = t('meta.agents.title');
 const description = t('meta.agents.description');
@@ -35,6 +37,7 @@ const description = t('meta.agents.description');
   title={title}
   description={description}
   datePublished="2026-08-10"
+  dateModified="2026-08-18"
   about={[
     'aic',
     'CLI agent',
@@ -42,6 +45,13 @@ const description = t('meta.agents.description');
     'Codex',
     'Pi',
     'OpenCode',
+    'Oh My Pi',
+    'Gemini',
+    'Cursor',
+    'Windsurf',
+    'GitHub Copilot',
+    'Trae',
+    'Qwen Code',
     'AI coding agent',
   ]}
   postHero
@@ -73,7 +83,7 @@ const description = t('meta.agents.description');
     </ol>
   </section>
 
-  <!-- Four presets -->
+  <!-- Eleven presets (v0.5.0 #118 + v0.5.5 #145) -->
   <section class="block">
     <h2>{t('agents.presets.h2')}</h2>
     <p class="block-lede">{t('agents.presets.lede')}</p>
@@ -119,7 +129,7 @@ const description = t('meta.agents.description');
         {t('batching.cmpLink')}
       </a>
       <a class="cta-link" href={releaseUrl} target="_blank" rel="noopener noreferrer">
-        {t('agents.verdict.releaseNotes')}<span aria-hidden="true"> ↗</span>
+        {t('agents.verdict.releaseNotes', { version })}<span aria-hidden="true"> ↗</span>
       </a>
     </div>
   </section>

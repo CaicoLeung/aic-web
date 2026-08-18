@@ -91,9 +91,9 @@ export const messages: Messages = {
         'DeepSeek로 aic에 Conventional Commits를 작성하게 하세요: 일급 프로바이더, 하나의 설정 마법사, 키는 기기를 떠나지 않습니다. Node.js 불필요.',
     },
     agents: {
-      title: 'aic + 당신의 AI 코딩 에이전트 — Claude Code, Codex, Pi, OpenCode',
+      title: 'aic + 당신의 AI 코딩 에이전트 — 11개 CLI 에이전트, 하나의 백엔드',
       description:
-        'aic는 헤드리스 모드에서 로컬 AI 코딩 에이전트 — Claude Code, Codex, Pi, 또는 OpenCode — 에 작업을 위임할 수 있습니다. API 키도, 중간자도 없음: 에이전트가 diff를 읽고 커밋을 작성하며, 자신의 모델을 재사용합니다.',
+        'aic는 헤드리스 모드에서 로컬 AI 코딩 에이전트 — Claude Code, Codex, Cursor, Gemini, Copilot 등 11개 프리셋 — 에 작업을 위임할 수 있습니다. API 키도, 중간자도 없음: 에이전트가 diff를 읽고 커밋을 작성하며, 자신의 모델을 재사용합니다.',
     },
     changelog: {
       title: 'aic 체인지로그 — 모든 릴리스',
@@ -168,7 +168,7 @@ export const messages: Messages = {
 
   agentsSection: {
     eyebrow: '05 — 에이전트 가져오기',
-    lede: '이미 Claude Code, Codex, Pi, 또는 OpenCode를 쓰고 계신가요? 헤드리스 모드에서 aic를 당신의 에이전트로 향하게 하세요 — diff를 넘기고, 에이전트가 메시지를 쓰고, aic가 커밋합니다. API 키도 기본 모델도 없음: 에이전트 자체의 인증을 재사용합니다.',
+    lede: '이미 Claude Code, Codex, Cursor, 또는 Gemini를 쓰고 계신가요? 헤드리스 모드에서 aic를 당신의 에이전트로 향하게 하세요 — diff를 넘기고, 에이전트가 메시지를 쓰고, aic가 커밋합니다. API 키도 기본 모델도 없음: 에이전트 자체의 인증을 재사용합니다.',
     link: '에이전트 백엔드 보기 →',
   },
 
@@ -315,7 +315,7 @@ export const messages: Messages = {
   agents: {
     eyebrow: '기능 · CLI 에이전트 백엔드',
     h1: '에이전트를 가져오세요, 키가 아닙니다.',
-    lede: '<b>aic</b>는 헤드리스 모드에서 로컬 AI 코딩 에이전트 — Claude Code, Codex, Pi, 또는 OpenCode — 에 작업을 위임할 수 있습니다. API 키도, 기본 모델도, 중간자도 없음: 에이전트가 diff를 읽고 커밋을 작성하며, 자신의 모델과 인증을 재사용합니다.',
+    lede: '<b>aic</b>는 헤드리스 모드에서 로컬 AI 코딩 에이전트 — Claude Code, Codex, Cursor, Gemini 등 11개 프리셋 — 에 작업을 위임할 수 있습니다. API 키도, 기본 모델도, 중간자도 없음: 에이전트가 diff를 읽고 커밋을 작성하며, 자신의 모델과 인증을 재사용합니다.',
     ctaHint: '그런 다음 <code>aic setup</code> 실행 → 에이전트 백엔드 선택',
     how: {
       h2: '작동 방식',
@@ -336,8 +336,8 @@ export const messages: Messages = {
       ],
     },
     presets: {
-      h2: '네 에이전트, 하나의 백엔드',
-      lede: '네 가지 프리셋이 기본 제공됩니다. 각각 자체 인증을 재사용 — 에이전트가 이미 설치되어 있다면 추가 설정 불필요.',
+      h2: '11개 에이전트, 하나의 백엔드',
+      lede: '11개 프리셋이 기본 제공 — 3개는 추론을 실시간 스트리밍, 8개는 프린트 모드로 동작. 각각 자체 인증을 재사용 — 에이전트가 이미 설치되어 있다면 추가 설정 불필요.',
       items: [
         {
           h: 'Claude Code',
@@ -347,11 +347,36 @@ export const messages: Messages = {
           h: 'Codex',
           n: '읽기 전용 샌드박스에서 조용히 실행, 완료되면 메시지를 반환합니다.',
         },
-        { h: 'Pi', n: 'Claude Code처럼 추론을 실시간 스트리밍.' },
+        {
+          h: 'Pi',
+          n: '토큰 단위로 추론을 실시간 스트리밍 — Claude Code의 페이즈 끝 일괄 출력보다 세밀.',
+        },
         {
           h: 'OpenCode',
           n: '조용히 실행, 기존 프로바이더 키(예: Cursor OAuth)를 재사용.',
         },
+        { h: 'Oh My Pi', n: 'pi 포크 — pi처럼 추론을 실시간 스트리밍.' },
+        {
+          h: 'Gemini',
+          n: '<code>gemini -p</code> 프린트 모드. 이 프리셋은 같은 이름의 프로바이더를 가립니다 — <code>aic use google</code>으로 Google API를 계속 사용 가능.',
+        },
+        {
+          h: 'Cursor',
+          n: '<code>cursor-agent -p</code> 프린트 모드. 신뢰 없이 실행 — 쓰기는 비활성화.',
+        },
+        {
+          h: 'Windsurf',
+          n: 'Windsurf는 Devin Desktop으로 개명 — 프리셋은 <code>devin</code> 바이너리에 매핑.',
+        },
+        {
+          h: 'GitHub Copilot',
+          n: '프린트 모드. 도구 사용은 대화형 승인이 필요해 헤드리스 실행은 텍스트 전용.',
+        },
+        {
+          h: 'Trae',
+          n: '<code>traecli -p</code> 프린트 모드 — 읽기 외 도구는 프롬프트로 제한.',
+        },
+        { h: 'Qwen Code', n: 'gemini-cli 계열 — <code>qwen -p</code> 프린트 모드.' },
       ],
     },
     eitherOr: {
@@ -361,7 +386,7 @@ export const messages: Messages = {
     },
     custom: {
       h2: '또는 모든 커스텀 에이전트',
-      body: '네 가지 프리셋 외에도, 모든 CLI 명령을 에이전트로 구성할 수 있습니다. stdin으로 프롬프트를 받고 stdout으로 출력한다면, aic가 구동할 수 있습니다.',
+      body: '11개 프리셋 외에도, 모든 CLI 명령을 에이전트로 구성할 수 있습니다. stdin으로 프롬프트를 받고 stdout으로 출력한다면, aic가 구동할 수 있습니다.',
     },
     speed: {
       h2: '왜 빠른가',
@@ -371,7 +396,7 @@ export const messages: Messages = {
     verdict: {
       h2: '짧은 요약',
       body: '<code>aic</code> + 코딩 에이전트: 에이전트는 추론, aic는 커밋을 출시. API 키도, 중간자도, 고를 모델도 없음 — aic가 언제나 만드는 것과 같은 배치된, 컨벤셔널, 컬러 히스토리뿐.',
-      releaseNotes: 'v0.5.0 릴리스 노트',
+      releaseNotes: 'v{version} 릴리스 노트',
     },
   },
 

@@ -184,10 +184,13 @@ export const HUNK_SPLITTING: HunkSplitting = {
 } as const;
 
 /**
- * v0.5.0 CLI-agent backend presets (#118). `BackendKind::Cli` — aic delegates
- * to a local coding-agent CLI in headless/print mode, reusing that agent's
- * own auth. No API key, no default model. Listed in source-repo preset order
- * (`["claude", "codex", "pi", "opencode"]`). See ADR-0015.
+ * v0.5.0 CLI-agent backend presets (#118); v0.5.5 adds 7 more headless
+ * presets (#145) — 11 total. `BackendKind::Cli` — aic delegates to a local
+ * coding-agent CLI in headless/print mode, reusing that agent's own auth.
+ * No API key, no default model. Listed in source-repo preset order
+ * (`PRESETS` in `src/llm/cli_agent/mod.rs`). Reasoning: claude/pi/omp
+ * stream live (omp is a pi fork reusing PiStreamJson); the rest are
+ * print-mode — answer arrives whole. See ADR-0015.
  */
 export interface AgentPreset {
   readonly id: string;
@@ -201,6 +204,13 @@ export const AGENT_PRESETS: readonly AgentPreset[] = [
   { id: 'codex', displayName: 'Codex', reasoning: 'batch' },
   { id: 'pi', displayName: 'Pi', reasoning: 'stream' },
   { id: 'opencode', displayName: 'OpenCode', reasoning: 'batch' },
+  { id: 'omp', displayName: 'Oh My Pi', reasoning: 'stream' },
+  { id: 'gemini', displayName: 'Gemini', reasoning: 'batch' },
+  { id: 'cursor', displayName: 'Cursor', reasoning: 'batch' },
+  { id: 'windsurf', displayName: 'Windsurf', reasoning: 'batch' },
+  { id: 'copilot', displayName: 'GitHub Copilot', reasoning: 'batch' },
+  { id: 'trae', displayName: 'Trae', reasoning: 'batch' },
+  { id: 'qwen', displayName: 'Qwen Code', reasoning: 'batch' },
 ] as const;
 
 /**

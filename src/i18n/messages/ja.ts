@@ -92,9 +92,9 @@ export const messages: Messages = {
     },
     agents: {
       title:
-        'aic + あなたの AI コーディングエージェント — Claude Code, Codex, Pi, OpenCode',
+        'aic + あなたの AI コーディングエージェント — 11 の CLI エージェント、1つのバックエンド',
       description:
-        'aic はローカルの AI コーディングエージェント — Claude Code、Codex、Pi、または OpenCode — にヘッドレスモードで委譲できます。API キーも中間業者も不要：あなたのエージェントが diff を読み、自身のモデルを再利用してコミットを書きます。',
+        'aic はローカルの AI コーディングエージェント — Claude Code、Codex、Cursor、Gemini、Copilot など 11 のプリセット — にヘッドレスモードで委譲できます。API キーも中間業者も不要：あなたのエージェントが diff を読み、自身のモデルを再利用してコミットを書きます。',
     },
     changelog: {
       title: 'aic チェンジログ — すべてのリリース',
@@ -172,7 +172,7 @@ export const messages: Messages = {
 
   agentsSection: {
     eyebrow: '05 — あなたのエージェントを連携',
-    lede: 'Claude Code、Codex、Pi、OpenCode を既に使っていますか？aic をヘッドレスモードであなたのエージェントに向けます — diff を渡し、エージェントがメッセージを書き、aic がコミットします。API キーもデフォルトモデルも不要：エージェント自身の認証を再利用します。',
+    lede: 'Claude Code、Codex、Cursor、Gemini を既に使っていますか？aic をヘッドレスモードであなたのエージェントに向けます — diff を渡し、エージェントがメッセージを書き、aic がコミットします。API キーもデフォルトモデルも不要：エージェント自身の認証を再利用します。',
     link: 'エージェントバックエンドを見る →',
   },
 
@@ -318,7 +318,7 @@ export const messages: Messages = {
   agents: {
     eyebrow: '機能 · CLI エージェントバックエンド',
     h1: 'キーではなく、エージェントを連携。',
-    lede: '<b>aic</b> はローカルの AI コーディングエージェント — Claude Code、Codex、Pi、または OpenCode — にヘッドレスモードで委譲できます。API キーもデフォルトモデルも中間業者も不要：あなたのエージェントが diff を読み、自身のモデルと認証を再利用してコミットを書きます。',
+    lede: '<b>aic</b> はローカルの AI コーディングエージェント — Claude Code、Codex、Cursor、Gemini など 11 のプリセット — にヘッドレスモードで委譲できます。API キーもデフォルトモデルも中間業者も不要：あなたのエージェントが diff を読み、自身のモデルと認証を再利用してコミットを書きます。',
     ctaHint: 'そして <code>aic setup</code> を実行 → エージェントバックエンドを選択',
     how: {
       h2: '仕組み',
@@ -339,8 +339,8 @@ export const messages: Messages = {
       ],
     },
     presets: {
-      h2: '4つのエージェント、1つのバックエンド',
-      lede: '4つのプリセットが最初から同梱されています。それぞれが自身の認証を再利用 — エージェントが既にインストールされていれば追加セットアップ不要。',
+      h2: '11のエージェント、1つのバックエンド',
+      lede: '11のプリセットが最初から同梱 — 3つが推論をライブストリーミング、8つがプリントモードで動作。それぞれが自身の認証を再利用 — エージェントが既にインストールされていれば追加セットアップ不要。',
       items: [
         {
           h: 'Claude Code',
@@ -352,11 +352,36 @@ export const messages: Messages = {
         },
         {
           h: 'Pi',
-          n: 'Claude Code と同じく、推論をライブストリーミング。',
+          n: '推論をトークン単位でライブストリーミング — Claude Code のフェーズ末の一括出力よりも細かい。',
         },
         {
           h: 'OpenCode',
           n: 'サイレントに動作し、既存のプロバイダキー（例：Cursor OAuth）を再利用。',
+        },
+        { h: 'Oh My Pi', n: 'pi のフォーク — pi と同じく推論をライブストリーミング。' },
+        {
+          h: 'Gemini',
+          n: '<code>gemini -p</code> のプリントモード。このプリセットは同名のプロバイダ名を隠します — <code>aic use google</code> で引き続き Google API を利用可能。',
+        },
+        {
+          h: 'Cursor',
+          n: '<code>cursor-agent -p</code> のプリントモード。信頼なしで実行 — 書き込みは無効のまま。',
+        },
+        {
+          h: 'Windsurf',
+          n: 'Windsurf は Devin Desktop に改称 — プリセットは <code>devin</code> バイナリにマッピング。',
+        },
+        {
+          h: 'GitHub Copilot',
+          n: 'プリントモード。ツール利用には対話的な承認が必要なため、ヘッドレス実行はテキストのみ。',
+        },
+        {
+          h: 'Trae',
+          n: '<code>traecli -p</code> のプリントモード — 読み取り以外のツールはプロンプトでガード。',
+        },
+        {
+          h: 'Qwen Code',
+          n: 'gemini-cli 系譜 — <code>qwen -p</code> のプリントモード。',
         },
       ],
     },
@@ -367,7 +392,7 @@ export const messages: Messages = {
     },
     custom: {
       h2: 'または任意のカスタムエージェント',
-      body: '4つのプリセットのほか、任意の CLI コマンドをエージェントとして設定できます。stdin でプロンプトを受け取り stdout に出力するなら、aic で駆動できます。',
+      body: '11のプリセットのほか、任意の CLI コマンドをエージェントとして設定できます。stdin でプロンプトを受け取り stdout に出力するなら、aic で駆動できます。',
     },
     speed: {
       h2: 'なぜ速いのか',
@@ -377,7 +402,7 @@ export const messages: Messages = {
     verdict: {
       h2: '要するに',
       body: '<code>aic</code> + あなたのコーディングエージェント：エージェントが推論し、aic がコミットを出荷。API キーも中間業者も、選ぶモデルも不要 — あるのは aic がいつも生成するのと同じ、バッチ処理されたコンベンショナルなカラー履歴だけ。',
-      releaseNotes: 'v0.5.0 リリースノート',
+      releaseNotes: 'v{version} リリースノート',
     },
   },
 
