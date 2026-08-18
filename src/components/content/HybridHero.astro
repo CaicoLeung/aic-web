@@ -6,6 +6,10 @@
  * under the lede. Full container width; the article body below is
  * narrower (ArticleShell).
  *
+ * `titleTop` variant: for long headlines, the eyebrow + h1 span the full
+ * width on top and only the lede/CTA pair with the terminal below —
+ * two rows instead of two columns.
+ *
  * Slots: `h1` (page-authored so pages keep their own accent markup) and
  * `terminal`. The install CTA + hint are identical on every page, so
  * they live here as props.
@@ -21,12 +25,17 @@ interface Props {
   readonly lede: string;
   /** HTML string — the hint after the install button. */
   readonly ctaHint: string;
+  /** Long-headline variant: eyebrow + h1 full width on top, lede/CTA + terminal in two columns below. */
+  readonly titleTop?: boolean;
 }
 
-const { h1Id, eyebrow, lede, ctaHint } = Astro.props;
+const { h1Id, eyebrow, lede, ctaHint, titleTop = false } = Astro.props;
 ---
 
-<section class="hybrid-hero container" aria-labelledby={h1Id}>
+<section
+  class:list={['hybrid-hero', 'container', { 'title-top': titleTop }]}
+  aria-labelledby={h1Id}
+>
   <p class="eyebrow hybrid-eyebrow">
     <span class="line" aria-hidden="true"></span>{eyebrow}
   </p>
@@ -123,6 +132,14 @@ const { h1Id, eyebrow, lede, ctaHint } = Astro.props;
     }
     .hybrid-cta {
       grid-area: cta;
+    }
+    /* titleTop variant: row 1 = eyebrow + h1 full width, row 2 = copy + terminal. */
+    .hybrid-hero.title-top {
+      grid-template-areas:
+        'eyebrow  eyebrow'
+        'h1       h1'
+        'lede     terminal'
+        'cta      terminal';
     }
   }
 </style>
