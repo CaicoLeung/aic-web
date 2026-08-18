@@ -4,10 +4,10 @@
  *
  * Uses the Hybrid Hero template: two-column copy + AgentTerminal on top of
  * an article body. The body is narrative-only per ADR-0006 — the full
- * command reference lives in the aic README. The four agent names are
+ * command reference lives in the aic README. The eleven agent names are
  * illustrative narrative copy, not a build-time-fetched table.
  *
- * Targets tool-finder intent: "aic + Claude Code / Codex / Pi / OpenCode".
+ * Targets tool-finder intent: "aic + Claude Code / Codex / Cursor / Gemini".
  *
  * Rendered by both `/agents/` and `/[locale]/agents/` (ADR-0010). The
  * Article shell self-determines locale, so the same component serves every
@@ -42,6 +42,13 @@ const description = t('meta.agents.description');
     'Codex',
     'Pi',
     'OpenCode',
+    'Oh My Pi',
+    'Gemini',
+    'Cursor',
+    'Windsurf',
+    'GitHub Copilot',
+    'Trae',
+    'Qwen Code',
     'AI coding agent',
   ]}
   postHero
@@ -73,7 +80,7 @@ const description = t('meta.agents.description');
     </ol>
   </section>
 
-  <!-- Four presets -->
+  <!-- Eleven presets (v0.5.0 #118 + v0.5.5 #145) -->
   <section class="block">
     <h2>{t('agents.presets.h2')}</h2>
     <p class="block-lede">{t('agents.presets.lede')}</p>

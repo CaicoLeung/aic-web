@@ -60,18 +60,30 @@ describe('commit-type palette', () => {
 });
 
 describe('agent presets', () => {
-  it('has exactly 4 presets', () => {
-    assert.equal(AGENT_PRESETS.length, 4);
+  it('has exactly 11 presets', () => {
+    assert.equal(AGENT_PRESETS.length, 11);
   });
 
   it('matches source Encoding::streams_reasoning_live classification', () => {
-    // Spec #118: ClaudeStreamJson + PiStreamJson stream; CodexJson +
-    // OpenCodeJson are batch (answer arrives whole, no live token stream).
+    // Spec #118 + #145: ClaudeStreamJson + PiStreamJson stream (omp is a pi
+    // fork reusing PiStreamJson); Codex, OpenCode, and the seven v0.5.5
+    // print-mode presets are batch (answer arrives whole, no live stream).
     const byId = Object.fromEntries(AGENT_PRESETS.map((a) => [a.id, a.reasoning]));
     assert.equal(byId.claude, 'stream', 'claude must stream (ClaudeStreamJson)');
     assert.equal(byId.pi, 'stream', 'pi must stream (PiStreamJson)');
-    assert.equal(byId.codex, 'batch', 'codex must batch (CodexJson)');
-    assert.equal(byId.opencode, 'batch', 'opencode must batch (OpenCodeJson)');
+    assert.equal(byId.omp, 'stream', 'omp must stream (pi fork, PiStreamJson)');
+    for (const id of [
+      'codex',
+      'opencode',
+      'gemini',
+      'cursor',
+      'windsurf',
+      'copilot',
+      'trae',
+      'qwen',
+    ]) {
+      assert.equal(byId[id], 'batch', `${id} must batch (print mode)`);
+    }
   });
   it('ids are unique', () => {
     const ids = AGENT_PRESETS.map((a) => a.id);

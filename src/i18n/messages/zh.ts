@@ -94,9 +94,9 @@ export const messages: Messages = {
         '用 DeepSeek 让 aic 写约定式提交:一流供应商、一个配置向导、密钥永不离开你的机器。无需 Node.js。',
     },
     agents: {
-      title: 'aic + 你的 AI 编码 agent — Claude Code、Codex、Pi、OpenCode',
+      title: 'aic + 你的 AI 编码 agent — 11 个 CLI agent，一个后端',
       description:
-        'aic 可以委托给你的本地 AI 编码 agent —— Claude Code、Codex、Pi 或 OpenCode —— 在 headless 模式下运行。无需 API 密钥，无需中间人：你的 agent 读取 diff 并写出提交，复用它自己的模型。',
+        'aic 可以委托给你的本地 AI 编码 agent —— Claude Code、Codex、Cursor、Gemini、Copilot 等 11 个预设 —— 在 headless 模式下运行。无需 API 密钥，无需中间人：你的 agent 读取 diff 并写出提交，复用它自己的模型。',
     },
     changelog: {
       title: 'aic 更新日志 — 每一个版本',
@@ -171,7 +171,7 @@ export const messages: Messages = {
 
   agentsSection: {
     eyebrow: '05 — 带上你的 agent',
-    lede: '已经在用 Claude Code、Codex、Pi 或 OpenCode？以无头模式把 aic 指向你的 agent——它传递 diff，你的 agent 写提交信息，aic 提交。无需 API 密钥，无需默认模型：复用你 agent 自己的认证。',
+    lede: '已经在用 Claude Code、Codex、Cursor 或 Gemini？以无头模式把 aic 指向你的 agent——它传递 diff，你的 agent 写提交信息，aic 提交。无需 API 密钥，无需默认模型：复用你 agent 自己的认证。',
     link: '查看 agent 后端 →',
   },
 
@@ -317,7 +317,7 @@ export const messages: Messages = {
   agents: {
     eyebrow: '能力 · CLI-agent 后端',
     h1: '带上你的 agent，而不是你的密钥。',
-    lede: '<b>aic</b> 可以委托给你的本地 AI 编码 agent —— Claude Code、Codex、Pi 或 OpenCode —— 在 headless 模式下运行。无需 API 密钥，无需默认模型，无需中间人：你的 agent 读取 diff 并写出提交，复用它自己的模型和授权。',
+    lede: '<b>aic</b> 可以委托给你的本地 AI 编码 agent —— Claude Code、Codex、Cursor、Gemini 等 11 个预设 —— 在 headless 模式下运行。无需 API 密钥，无需默认模型，无需中间人：你的 agent 读取 diff 并写出提交，复用它自己的模型和授权。',
     ctaHint: '然后运行 <code>aic setup</code> → 选择 agent 后端',
     how: {
       h2: '工作原理',
@@ -338,8 +338,8 @@ export const messages: Messages = {
       ],
     },
     presets: {
-      h2: '四个 agent，一个后端',
-      lede: '开箱即用四个预设。每个复用各自的授权 —— 只要 agent 已经装好，就无需额外配置。',
+      h2: '十一个 agent，一个后端',
+      lede: '开箱即用十一个预设 —— 三个实时流式输出推理，八个以 print 模式运行。每个复用各自的授权 —— 只要 agent 已经装好，就无需额外配置。',
       items: [
         {
           h: 'Claude Code',
@@ -348,6 +348,31 @@ export const messages: Messages = {
         { h: 'Codex', n: '在只读沙盒中静默运行，完成后返回提交信息。' },
         { h: 'Pi', n: '实时流式输出推理过程，和 Claude Code 一样。' },
         { h: 'OpenCode', n: '静默运行，复用你已有的供应商密钥（例如 Cursor OAuth）。' },
+        { h: 'Oh My Pi', n: 'pi 的分支 —— 和 pi 一样实时流式输出推理。' },
+        {
+          h: 'Gemini',
+          n: '通过 <code>gemini -p</code> 以 print 模式运行。该预设会遮蔽同名供应商 —— <code>aic use google</code> 仍可使用 Google API。',
+        },
+        {
+          h: 'Cursor',
+          n: '通过 <code>cursor-agent -p</code> 以 print 模式运行，默认不受信 —— 写入保持禁用。',
+        },
+        {
+          h: 'Windsurf',
+          n: 'Windsurf 已更名为 Devin Desktop —— 预设映射到 <code>devin</code> 二进制。',
+        },
+        {
+          h: 'GitHub Copilot',
+          n: 'print 模式；工具调用需要交互式审批，无头运行保持纯文本。',
+        },
+        {
+          h: 'Trae',
+          n: '通过 <code>traecli -p</code> 以 print 模式运行 —— 非只读工具仍受权限提示限制。',
+        },
+        {
+          h: 'Qwen Code',
+          n: 'gemini-cli 血统 —— 通过 <code>qwen -p</code> 以 print 模式运行。',
+        },
       ],
     },
     eitherOr: {
@@ -357,7 +382,7 @@ export const messages: Messages = {
     },
     custom: {
       h2: '或者任意自定义 agent',
-      body: '在这四个预设之外，你可以把任意 CLI 命令配置为你的 agent。只要它从 stdin 接收 prompt 并向 stdout 输出，aic 就能驱动它。',
+      body: '在这十一个预设之外，你可以把任意 CLI 命令配置为你的 agent。只要它从 stdin 接收 prompt 并向 stdout 输出，aic 就能驱动它。',
     },
     speed: {
       h2: '为什么这么快',
