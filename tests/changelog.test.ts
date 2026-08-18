@@ -69,7 +69,10 @@ describe('parseChangelogMarkdown', () => {
     assert.equal(entries.length, 2);
     assert.equal(entries[0]!.version, '0.2.0');
     assert.equal(entries[0]!.date, '2026-07-09');
-    assert.equal(entries[0]!.url, 'https://github.com/CaicoLeung/aic/releases/tag/v0.2.0');
+    assert.equal(
+      entries[0]!.url,
+      'https://github.com/CaicoLeung/aic/releases/tag/v0.2.0',
+    );
     assert.equal(entries[1]!.version, '0.1.7');
     assert.equal(entries[1]!.date, '2026-07-08');
   });
@@ -83,7 +86,10 @@ describe('parseChangelogMarkdown', () => {
       ['Features'],
     );
     assert.equal(first[0]!.items.length, 1);
-    assert.equal(first[0]!.items[0], 'Expand to 12 providers, refresh default models, add base URL');
+    assert.equal(
+      first[0]!.items[0],
+      'Expand to 12 providers, refresh default models, add base URL',
+    );
 
     // 0.1.7 — three sections, source order preserved.
     const second = entries[1]!.sections;
