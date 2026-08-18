@@ -5,6 +5,7 @@
  */
 import { GITHUB_URL } from '@/config/site';
 import type { ProviderInfo } from '@/config/site';
+import Icon from '@/components/ui/Icon.astro';
 import { localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 
@@ -44,9 +45,13 @@ const t = useLocalizer(locale);
     </dl>
 
     <p class="aside">
-      {t('providers.aside')}
+      <span class="aside-icon"><Icon name="shield" size={14} /></span>
+      <span>{t('providers.aside')}</span>
     </p>
-    <p class="aside" set:html={t('providers.profilesHint')} />
+    <p class="aside">
+      <span class="aside-icon"><Icon name="terminal" size={14} /></span>
+      <span set:html={t('providers.profilesHint')} />
+    </p>
     <a
       class="link"
       href={`${GITHUB_URL}/blob/main/src/llm.rs`}
@@ -135,6 +140,14 @@ const t = useLocalizer(locale);
     color: var(--color-ink-muted);
     font-size: 0.9375rem;
     margin: 0.5rem 0 1.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .aside-icon {
+    display: inline-flex;
+    align-self: center;
+    color: var(--color-mint);
   }
   .link {
     color: var(--color-amber);
