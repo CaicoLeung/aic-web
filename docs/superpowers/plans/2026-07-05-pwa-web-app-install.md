@@ -22,23 +22,24 @@
 
 ## File Map
 
-| File | Action | Responsibility |
-|------|--------|----------------|
-| `package.json` | Modify | Add `sharp` + `tsx` devDeps; add `test` script |
-| `src/lib/icon.ts` | Create | `rasterizeIcon(svg, size, options?)` — thin `sharp` wrapper |
-| `tests/icon.test.ts` | Create | Unit test for `rasterizeIcon` via `node:test` |
-| `public/maskable.svg` | Create | Derived source SVG for maskable icons (full-bleed bg, 80% logo) |
-| `src/pages/icons/[icon].png.ts` | Create | Endpoint emitting 5 PNG variants via `getStaticPaths` |
-| `src/pages/manifest.webmanifest.ts` | Create | Manifest endpoint |
-| `src/pages/sw.js.ts` | Create | Service worker endpoint |
-| `src/layouts/Base.astro` | Modify | Add manifest link, apple meta tags, apple-touch-icon, SW registration script |
-| `docs/adr/0005-pwa-web-app-install.md` | Create | Records the decision in the project's ADR format |
+| File                                   | Action | Responsibility                                                               |
+| -------------------------------------- | ------ | ---------------------------------------------------------------------------- |
+| `package.json`                         | Modify | Add `sharp` + `tsx` devDeps; add `test` script                               |
+| `src/lib/icon.ts`                      | Create | `rasterizeIcon(svg, size, options?)` — thin `sharp` wrapper                  |
+| `tests/icon.test.ts`                   | Create | Unit test for `rasterizeIcon` via `node:test`                                |
+| `public/maskable.svg`                  | Create | Derived source SVG for maskable icons (full-bleed bg, 80% logo)              |
+| `src/pages/icons/[icon].png.ts`        | Create | Endpoint emitting 5 PNG variants via `getStaticPaths`                        |
+| `src/pages/manifest.webmanifest.ts`    | Create | Manifest endpoint                                                            |
+| `src/pages/sw.js.ts`                   | Create | Service worker endpoint                                                      |
+| `src/layouts/Base.astro`               | Modify | Add manifest link, apple meta tags, apple-touch-icon, SW registration script |
+| `docs/adr/0005-pwa-web-app-install.md` | Create | Records the decision in the project's ADR format                             |
 
 ---
 
 ## Task 1: Add tooling (sharp, tsx, test script)
 
 **Files:**
+
 - Modify: `package.json`
 
 - [ ] **Step 1: Add devDeps and test script**
@@ -104,6 +105,7 @@ git commit -m "chore(deps): add sharp and tsx for PWA icon rasterization and tes
 ## Task 2: Icon rasterize helper (TDD)
 
 **Files:**
+
 - Test: `tests/icon.test.ts`
 - Create: `src/lib/icon.ts`
 
@@ -217,6 +219,7 @@ git commit -m "feat(icon): add sharp-based SVG→PNG rasterize helper"
 ## Task 3: Maskable source SVG
 
 **Files:**
+
 - Create: `public/maskable.svg`
 
 This is a static asset — no unit test. Correctness is verified visually in Task 9 (Android safe-zone check via Lighthouse maskable validation).
@@ -262,6 +265,7 @@ git commit -m "feat(assets): add maskable logo SVG for PWA adaptive icons"
 ## Task 4: Icon PNG endpoint
 
 **Files:**
+
 - Create: `src/pages/icons/[icon].png.ts`
 
 - [ ] **Step 1: Create the endpoint**
@@ -326,6 +330,7 @@ Expected: `astro check` passes (no type errors); `astro build` succeeds. `dist/i
 
 Run: `node -e "import('sharp').then(async ({default: sharp}) => { for (const n of ['icon-192','icon-512','maskable-192','maskable-512','apple-touch-icon']) { const m = await sharp('dist/icons/'+n+'.png').metadata(); console.log(n, m.width+'x'+m.height, m.hasAlpha ? 'alpha' : 'opaque'); } })"`
 Expected:
+
 ```
 icon-192 192x192 alpha
 icon-512 512x512 alpha
@@ -333,6 +338,7 @@ maskable-192 192x192 alpha
 maskable-512 512x512 alpha
 apple-touch-icon 180x180 opaque
 ```
+
 `apple-touch-icon` must report `opaque` (flattened); the others report `alpha` (rounded corners on the favicon leave transparency).
 
 - [ ] **Step 4: Commit**
@@ -347,6 +353,7 @@ git commit -m "feat(icons): add PNG icon endpoint rasterizing 5 variants via sha
 ## Task 5: Web App Manifest endpoint
 
 **Files:**
+
 - Create: `src/pages/manifest.webmanifest.ts`
 
 - [ ] **Step 1: Create the manifest endpoint**
@@ -371,10 +378,30 @@ export const GET: APIRoute = () => {
     background_color: THEME_COLOR,
     theme_color: THEME_COLOR,
     icons: [
-      { src: `${BASE}icons/icon-192.png`, sizes: '192x192', type: 'image/png', purpose: 'any' },
-      { src: `${BASE}icons/icon-512.png`, sizes: '512x512', type: 'image/png', purpose: 'any' },
-      { src: `${BASE}icons/maskable-192.png`, sizes: '192x192', type: 'image/png', purpose: 'maskable' },
-      { src: `${BASE}icons/maskable-512.png`, sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      {
+        src: `${BASE}icons/icon-192.png`,
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: `${BASE}icons/icon-512.png`,
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: `${BASE}icons/maskable-192.png`,
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'maskable',
+      },
+      {
+        src: `${BASE}icons/maskable-512.png`,
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'maskable',
+      },
     ],
   };
   return new Response(JSON.stringify(manifest), {
@@ -403,6 +430,7 @@ git commit -m "feat(pwa): add web app manifest endpoint"
 ## Task 6: Service worker endpoint
 
 **Files:**
+
 - Create: `src/pages/sw.js.ts`
 
 - [ ] **Step 1: Create the service worker endpoint**
@@ -501,6 +529,7 @@ git commit -m "feat(pwa): add service worker with shell precache and SWR caching
 ## Task 7: Wire manifest, apple meta, and SW registration into Base.astro
 
 **Files:**
+
 - Modify: `src/layouts/Base.astro` (the `<head>` block, currently lines 36–58)
 
 - [ ] **Step 1: Add PWA `<head>` entries**
@@ -508,22 +537,25 @@ git commit -m "feat(pwa): add service worker with shell precache and SWR caching
 In `src/layouts/Base.astro`, locate the icons comment block (currently):
 
 ```astro
-    <!-- icons -->
-    <link rel="icon" href="/aic-web/favicon.svg" type="image/svg+xml" />
+<!-- icons -->
+<link rel="icon" href="/aic-web/favicon.svg" type="image/svg+xml" />
 ```
 
 Replace it with:
 
 ```astro
-    <!-- icons -->
-    <link rel="icon" href="/aic-web/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href={`${import.meta.env.BASE_URL}icons/apple-touch-icon.png`} />
-    <link rel="manifest" href={`${import.meta.env.BASE_URL}manifest.webmanifest`} />
+<!-- icons -->
+<link rel="icon" href="/aic-web/favicon.svg" type="image/svg+xml" />
+<link
+  rel="apple-touch-icon"
+  href={`${import.meta.env.BASE_URL}icons/apple-touch-icon.png`}
+/>
+<link rel="manifest" href={`${import.meta.env.BASE_URL}manifest.webmanifest`} />
 
-    <!-- apple web app -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="aic" />
+<!-- apple web app -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="aic" />
 ```
 
 > The pre-existing `favicon.svg` and font links hardcode `/aic-web/`. They are out of scope for this change; new PWA links use `import.meta.env.BASE_URL` so a future domain swap only touches `astro.config.mjs`.
@@ -533,16 +565,16 @@ Replace it with:
 In the same file, immediately before the closing `</head>` (currently the `<meta name="generator" ... />` line at line 80), insert a bundled `<script>`. **Do not** use `is:inline` — Astro would then ship `import.meta.env.BASE_URL` unreplaced, and `import.meta` is illegal in a classic (non-module) script, so the registration would throw. A plain `<script>` is treated as a module, bundled by Astro/Vite, and `import.meta.env.BASE_URL` is replaced at build:
 
 ```astro
-    <!-- PWA: register service worker (progressive enhancement — fails silently) -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker
-            .register(`${import.meta.env.BASE_URL}sw.js`)
-            .catch(() => {});
-        });
-      }
-    </script>
+<!-- PWA: register service worker (progressive enhancement — fails silently) -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register(`${import.meta.env.BASE_URL}sw.js`)
+        .catch(() => {});
+    });
+  }
+</script>
 ```
 
 - [ ] **Step 3: Build**
@@ -554,6 +586,7 @@ Expected: build succeeds with no type or template errors. Astro emits the bundle
 
 Run: `grep -E 'manifest|apple-touch-icon|apple-mobile-web-app' dist/index.html`
 Expected output (paths shown after Vite replaces `import.meta.env.BASE_URL`):
+
 ```
 <link rel="apple-touch-icon" href="/aic-web/icons/apple-touch-icon.png" />
 <link rel="manifest" href="/aic-web/manifest.webmanifest" />
@@ -564,7 +597,7 @@ Expected output (paths shown after Vite replaces `import.meta.env.BASE_URL`):
 
 Then confirm the registration script has `BASE_URL` resolved to the real base path (it lives in the hashed bundle, not inline):
 Run: `grep -rE 'register\(' dist/_astro/ | head -3`
-Expected: at least one hit containing `` register(`/aic-web/sw.js`) `` — confirming `import.meta.env.BASE_URL` was replaced with `/aic-web/` at build time.
+Expected: at least one hit containing ``register(`/aic-web/sw.js`)`` — confirming `import.meta.env.BASE_URL` was replaced with `/aic-web/` at build time.
 
 - [ ] **Step 5: Run lint and unit tests together**
 
@@ -583,6 +616,7 @@ git commit -m "feat(pwa): wire manifest, apple meta, and SW registration into Ba
 ## Task 8: ADR-0005
 
 **Files:**
+
 - Create: `docs/adr/0005-pwa-web-app-install.md`
 
 - [ ] **Step 1: Write the ADR**
@@ -693,6 +727,7 @@ Expected: serves at `http://localhost:4321/aic-web/`. Leave it running for the b
 - [ ] **Step 4: DevTools — Application tab**
 
 Open `http://localhost:4321/aic-web/` in Chrome. Open DevTools → Application:
+
 - **Manifest:** parses without warnings; shows `aic` name, `standalone` display, theme color `#0e0f14`, and all four icons resolved (no broken-image thumbnails).
 - **Service Workers:** shows `sw.js` activated and running; check "Update on reload" off, then reload — status should be **activated and is running**.
 - **Cache Storage:** an `aic-web-v1` entry exists containing at least the start URL. After browsing around and reloading, CSS/JS/font/icon entries appear.
@@ -743,4 +778,7 @@ git status   # confirm whether sw.js.ts was reverted or left bumped
 - [ ] Offline reload renders the shell.
 - [ ] Lighthouse PWA audit reports installable.
 - [ ] ADR-0005 merged.
+
+```
+
 ```

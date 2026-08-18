@@ -79,17 +79,17 @@ moves to a custom domain (flagged in `astro.config.mjs`), only
 
 Endpoint returns JSON with `Content-Type: application/manifest+json`.
 
-| Field | Value |
-|-------|-------|
-| `name` | `"aic — AI-powered git commits"` |
-| `short_name` | `"aic"` |
-| `description` | Reuse `Base.astro`'s default description |
-| `start_url` | `import.meta.env.BASE_URL` → `/aic-web/` |
-| `scope` | `import.meta.env.BASE_URL` → `/aic-web/` |
-| `display` | `"standalone"` |
-| `background_color` | `#0e0f14` |
-| `theme_color` | `#0e0f14` |
-| `icons` | 4 entries (see below) |
+| Field              | Value                                    |
+| ------------------ | ---------------------------------------- |
+| `name`             | `"aic — AI-powered git commits"`         |
+| `short_name`       | `"aic"`                                  |
+| `description`      | Reuse `Base.astro`'s default description |
+| `start_url`        | `import.meta.env.BASE_URL` → `/aic-web/` |
+| `scope`            | `import.meta.env.BASE_URL` → `/aic-web/` |
+| `display`          | `"standalone"`                           |
+| `background_color` | `#0e0f14`                                |
+| `theme_color`      | `#0e0f14`                                |
+| `icons`            | 4 entries (see below)                    |
 
 Icon entries (absolute paths under the base):
 
@@ -154,13 +154,13 @@ export async function rasterizeIcon(svg: string, size: number): Promise<Buffer> 
 Uses `getStaticPaths` to emit five icon variants, each returning PNG
 bytes with `Content-Type: image/png`:
 
-| Param (`icon`) | Size | Source SVG | Notes |
-|----------------|------|------------|-------|
-| `icon-192` | 192 | `public/favicon.svg` | `purpose: any` |
-| `icon-512` | 512 | `public/favicon.svg` | `purpose: any` |
-| `maskable-192` | 192 | `public/maskable.svg` | `purpose: maskable` |
-| `maskable-512` | 512 | `public/maskable.svg` | `purpose: maskable` |
-| `apple-touch-icon` | 180 | `public/favicon.svg` | flattened onto opaque `#0e0f14` background (no transparency — iOS rejects alpha here) |
+| Param (`icon`)     | Size | Source SVG            | Notes                                                                                 |
+| ------------------ | ---- | --------------------- | ------------------------------------------------------------------------------------- |
+| `icon-192`         | 192  | `public/favicon.svg`  | `purpose: any`                                                                        |
+| `icon-512`         | 512  | `public/favicon.svg`  | `purpose: any`                                                                        |
+| `maskable-192`     | 192  | `public/maskable.svg` | `purpose: maskable`                                                                   |
+| `maskable-512`     | 512  | `public/maskable.svg` | `purpose: maskable`                                                                   |
+| `apple-touch-icon` | 180  | `public/favicon.svg`  | flattened onto opaque `#0e0f14` background (no transparency — iOS rejects alpha here) |
 
 ### Maskable source — `public/maskable.svg`
 
@@ -183,9 +183,9 @@ Add to the existing `<head>`:
   ```ts
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker
-        .register(`${import.meta.env.BASE_URL}sw.js`)
-        .catch(() => { /* swallow: SW is a progressive enhancement */ });
+      navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch(() => {
+        /* swallow: SW is a progressive enhancement */
+      });
     });
   }
   ```
