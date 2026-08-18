@@ -5,12 +5,20 @@
  */
 import { INSTALL_METHODS } from '@/config/site';
 import CopyButton from '@/components/ui/CopyButton.astro';
+import Icon from '@/components/ui/Icon.astro';
 import { localeFromUrl } from '@/i18n/config';
 import { useLocalizer, useMessages } from '@/i18n/t';
 
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const m = useMessages(locale);
+
+/** Install method id → tab icon. */
+const METHOD_ICONS = {
+  brew: 'package',
+  unix: 'terminal',
+  windows: 'windows',
+} as const;
 ---
 
 <section id="install" class="section install">
@@ -21,7 +29,16 @@ const m = useMessages(locale);
     <h2>{t('install.h2')}</h2>
 
     <ul class="trust-strip" aria-label="Trust">
-      {m.install.trust.map((item) => <li>{item}</li>)}
+      {
+        m.install.trust.map((item) => (
+          <li>
+            <span class="trust-check">
+              <Icon name="check" size={13} />
+            </span>
+            <span>{item}</span>
+          </li>
+        ))
+      }
     </ul>
 
     <div class="tabs-row" role="tablist" aria-label="Install method" data-tabs>
@@ -36,7 +53,8 @@ const m = useMessages(locale);
             tabindex={i === 0 ? 0 : -1}
             data-tab={method.id}
           >
-            {m.install.methods[method.id].label}
+            <Icon name={METHOD_ICONS[method.id]} size={14} />
+            <span>{m.install.methods[method.id].label}</span>
           </button>
         ))
       }
@@ -95,6 +113,9 @@ const m = useMessages(locale);
     font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
     border-bottom: 2px solid transparent;
     transition:
       color var(--duration-fast) ease,
@@ -196,10 +217,14 @@ const m = useMessages(locale);
     letter-spacing: 0.04em;
     color: var(--color-ink-muted);
   }
-  .trust-strip li::before {
-    content: '✓ ';
+  .trust-strip li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .trust-check {
+    display: inline-flex;
     color: var(--color-mint);
-    font-weight: 700;
   }
 </style>
 
