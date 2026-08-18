@@ -6,6 +6,7 @@
 import { GITHUB_URL } from '@/config/site';
 import type { ProviderInfo } from '@/config/site';
 import Icon from '@/components/ui/Icon.astro';
+import ProviderLogo from '@/components/ui/ProviderLogo.astro';
 import { localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 
@@ -28,14 +29,24 @@ const t = useLocalizer(locale);
     </p>
 
     <ul class="provider-list" aria-label="Supported LLM providers">
-      {providers.map((p) => <li class="provider-chip">{p.name}</li>)}
+      {
+        providers.map((p) => (
+          <li class="provider-chip">
+            <ProviderLogo id={p.id} size={14} />
+            <span>{p.name}</span>
+          </li>
+        ))
+      }
     </ul>
 
     <dl class="default-models" aria-label="Default model per provider">
       {
         providers.map((p) => (
           <div class="model-row">
-            <dt>{p.name}</dt>
+            <dt>
+              <ProviderLogo id={p.id} size={11} />
+              <span>{p.name}</span>
+            </dt>
             <dd>
               {p.defaultModel ?? <span class="muted">{t('providers.yourModel')}</span>}
             </dd>
@@ -91,6 +102,9 @@ const t = useLocalizer(locale);
     margin: 2rem 0 1rem;
   }
   .provider-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
     font-family: var(--font-mono);
     padding: 0.5rem 1rem;
     border: 1px solid var(--color-line);
@@ -121,6 +135,9 @@ const t = useLocalizer(locale);
     gap: 0.75rem;
   }
   .model-row dt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     font-family: var(--font-mono);
     color: var(--color-ink-muted);
     font-size: 0.8rem;
