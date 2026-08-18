@@ -2,8 +2,9 @@
 /**
  * /resolve/ — Capability page for `aic resolve` (ADR-0009, CONTEXT.md).
  *
- * Uses the Hybrid Hero template (product register): two-column copy +
- * ResolveTerminal on top of an article body. The body is narrative-only
+ * Uses the Hybrid Hero template (product register): title-top variant —
+ * full-width headline over a lede + ResolveTerminal two-column row — on
+ * top of an article body. The body is narrative-only
  * (prose register) per the v0.3.0 content-provenance decision — the full
  * command reference lives in the aic README; this page links to the v0.3.0
  * release as the interim reference until the README documents
@@ -44,6 +45,7 @@ const description = t('meta.resolve.description');
   <HybridHero
     slot="hero"
     h1Id="resolve-h1"
+    titleTop
     eyebrow={t('resolve.eyebrow')}
     lede={t('resolve.lede')}
     ctaHint={t('resolve.ctaHint')}
