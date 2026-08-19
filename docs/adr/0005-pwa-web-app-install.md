@@ -65,3 +65,14 @@ new runtime dependencies:
 - **Pre-committed PNGs** — generate icons once out-of-band and commit.
   Rejected: binary artifacts in git, easy to forget regenerating when the
   logo changes, and a non-reproducible build step.
+
+## Amendment (2026-08-19, ADR-0021)
+
+**Navigations switch from network-first to stale-while-revalidate.**
+Network-first made every repeat visit re-pay the origin HTML TTFB
+(~0.8–3s depending on geography) before paint. SWR paints from cache
+instantly and refreshes in the background; repeat visitors can see
+one-page-view-stale content, which is acceptable for a marketing site
+(version facts self-heal on the next view). The offline fallback
+behavior is unchanged. No install precache, still — the first real
+navigation populates the cache.

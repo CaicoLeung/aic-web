@@ -4,7 +4,7 @@ import type { APIRoute } from 'astro';
 // slash here. The SW needs the slash (scope prefix + start URL), so normalize.
 const RAW_BASE = import.meta.env.BASE_URL;
 const BASE = RAW_BASE.endsWith('/') ? RAW_BASE : `${RAW_BASE}/`;
-const CACHE = 'aic-web-v1';
+const CACHE = 'aic-web-v2';
 
 export const GET: APIRoute = () => {
   const sw = `
@@ -38,14 +38,20 @@ self.addEventListener('fetch', (event) => {
   if (!url.pathname.startsWith(BASE)) return;
 
   if (request.mode === 'navigate') {
+    // Stale-while-revalidate (ADR-0021 amendment): paint from cache
+    // instantly, refresh in the background. Accepts one-page-view-stale
+    // HTML on repeat visits — fine for a marketing site.
     event.respondWith(
-      fetch(request)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(START_URL, copy));
-          return res;
-        })
-        .catch(() => caches.match(START_URL)),
+      caches.match(START_URL).then((cached) => {
+        const network = fetch(request)
+          .then((res) => {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(START_URL, copy));
+            return res;
+          })
+          .catch(() => cached);
+        return cached || network;
+      }),
     );
     return;
   }
