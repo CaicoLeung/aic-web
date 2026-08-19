@@ -13,6 +13,10 @@ const BASE_PATH = process.env.BASE_PATH ?? '/aic/';
 
 // https://astro.build/config
 export default defineConfig({
+  // Inline all CSS into HTML (ADR-0021): total CSS (~34KB raw / ~6KB br)
+  // is below the threshold where a separate render-blocking request pays
+  // for itself — first paint = HTML arrival, always dark.
+  build: { inlineStylesheets: 'always' },
   // site + base drive sitemap, canonical URLs, OG metadata, and asset paths.
   // Override per-deploy via env; defaults target the primary (cPanel) domain.
   site: SITE_ORIGIN,
