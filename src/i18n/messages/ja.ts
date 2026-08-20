@@ -182,7 +182,6 @@ export const messages: Messages = {
     profilesHint: 'プロファイルを保存 · <code>aic use</code> で切り替え',
     lede: 'プロバイダを自分で。aic は LLM と直接通信 — 中間業者なし、コミットごとの課金なし、プロキシなし。API キーはあなたのマシンから出ません。',
     aside: '中間業者なし · コミットごとの課金なし · 呼び出しはあなたのマシンから直接',
-    link: 'プロバイダのコードを読む →',
     yourModel: '（あなたのモデル）',
   },
 

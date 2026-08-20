@@ -219,12 +219,33 @@ const current = crumbs?.[crumbs.length - 1];
     grid-column: 2;
     font-weight: 600;
     color: var(--color-ink);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   :global(.article .step-n) {
     grid-column: 2;
     color: var(--color-ink-muted);
     line-height: 1.6;
     font-size: 0.95rem;
+  }
+  /* Step icons — accent names the palette token, placed by meaning
+     (ADR-0019): cyan = pending/in-flight, amber = committed/done;
+     mint/amber-warm are supporting hues outside the duotone pair. */
+  :global(.article .step-ico) {
+    display: inline-flex;
+  }
+  :global(.article .step-ico.cyan) {
+    color: var(--color-cyan);
+  }
+  :global(.article .step-ico.mint) {
+    color: var(--color-mint);
+  }
+  :global(.article .step-ico.amber-warm) {
+    color: var(--color-amber-warm);
+  }
+  :global(.article .step-ico.amber) {
+    color: var(--color-amber);
   }
 
   /* Point lists */
@@ -244,6 +265,9 @@ const current = crumbs?.[crumbs.length - 1];
   :global(.article .point-h) {
     font-weight: 600;
     color: var(--color-ink);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   :global(.article .point-n) {
     color: var(--color-ink-muted);

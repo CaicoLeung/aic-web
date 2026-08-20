@@ -17,6 +17,12 @@ import CopyButton from '@/components/ui/CopyButton.astro';
 import HybridHero from '@/components/content/HybridHero.astro';
 import ArticleShell from '@/components/content/ArticleShell.astro';
 import AgentTerminal from '@/components/agents/AgentTerminal.astro';
+import StepHeading, {
+  ACCENT_ROTATION,
+  type StepAccent,
+} from '@/components/content/StepHeading.astro';
+import type { IconName } from '@/components/ui/Icon.astro';
+import ProviderLogo from '@/components/ui/ProviderLogo.astro';
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { loadAicFacts } from '@/data/aic';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
@@ -31,6 +37,31 @@ const releaseUrl = `${GITHUB_URL}/releases/tag/v${version}`;
 
 const title = t('meta.agents.title');
 const description = t('meta.agents.description');
+
+// Icon + accent per how-it-works step, index-aligned with the i18n steps
+// array. Accents follow ADR-0019: mint = config saved (setup), cyan =
+// in-flight (delegation), amber = committed (commit output).
+const HOW_STEPS: [IconName, StepAccent][] = [
+  ['terminal', 'mint'],
+  ['play', 'cyan'],
+  ['commit', 'amber'],
+];
+
+// Brand mark id per preset, index-aligned with `agents.presets.items`.
+// Accents rotate — brands carry no duotone state (ADR-0019).
+const PRESET_MARKS = [
+  'anthropic',
+  'openai',
+  'pi',
+  'opencode',
+  'omp',
+  'gemini',
+  'cursor',
+  'windsurf',
+  'githubcopilot',
+  'trae',
+  'qwen',
+] as const;
 ---
 
 <ArticleShell
@@ -59,6 +90,7 @@ const description = t('meta.agents.description');
   <HybridHero
     slot="hero"
     h1Id="agents-h1"
+    titleTop
     eyebrow={t('agents.eyebrow')}
     lede={t('agents.lede')}
     ctaHint={t('agents.ctaHint')}
@@ -73,9 +105,9 @@ const description = t('meta.agents.description');
     <p class="block-lede">{t('agents.how.lede')}</p>
     <ol class="steps">
       {
-        m.agents.how.steps.map((s) => (
+        m.agents.how.steps.map((s, i) => (
           <li>
-            <span class="step-h" set:html={s.h} />
+            <StepHeading icon={HOW_STEPS[i][0]} accent={HOW_STEPS[i][1]} h={s.h} />
             <span class="step-n" set:html={s.n} />
           </li>
         ))
@@ -89,9 +121,14 @@ const description = t('meta.agents.description');
     <p class="block-lede">{t('agents.presets.lede')}</p>
     <ul class="points">
       {
-        m.agents.presets.items.map((p) => (
+        m.agents.presets.items.map((p, i) => (
           <li>
-            <span class="point-h">{p.h}</span>
+            <span class="point-h">
+              <span class:list={['step-ico', ACCENT_ROTATION[i % 4]]}>
+                <ProviderLogo id={PRESET_MARKS[i]} size={15} />
+              </span>
+              <span set:html={p.h} />
+            </span>
             <span class="point-n" set:html={p.n} />
           </li>
         ))

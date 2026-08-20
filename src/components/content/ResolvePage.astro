@@ -21,6 +21,8 @@ import CopyButton from '@/components/ui/CopyButton.astro';
 import HybridHero from '@/components/content/HybridHero.astro';
 import ArticleShell from '@/components/content/ArticleShell.astro';
 import ResolveTerminal from '@/components/resolve/ResolveTerminal.astro';
+import StepHeading, { type StepAccent } from '@/components/content/StepHeading.astro';
+import type { IconName } from '@/components/ui/Icon.astro';
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer, useMessages } from '@/i18n/t';
@@ -33,6 +35,18 @@ const releaseUrl = `${GITHUB_URL}/releases/tag/v0.3.0`;
 
 const title = t('meta.resolve.title');
 const description = t('meta.resolve.description');
+
+// Icon + accent per workflow step, index-aligned with the i18n steps
+// array. Accents follow ADR-0019: cyan = pending/in-flight, mint =
+// procedural review, amber-warm = approved-not-yet-committed,
+// amber = committed (finalize).
+const WORKFLOW_STEPS: [IconName, StepAccent][] = [
+  ['eye', 'cyan'],
+  ['pen', 'cyan'],
+  ['diff', 'mint'],
+  ['check', 'amber-warm'],
+  ['merge', 'amber'],
+];
 ---
 
 <ArticleShell
@@ -65,9 +79,13 @@ const description = t('meta.resolve.description');
     <p class="block-lede">{t('resolve.workflow.lede')}</p>
     <ol class="steps">
       {
-        m.resolve.workflow.steps.map((s) => (
+        m.resolve.workflow.steps.map((s, i) => (
           <li>
-            <span class="step-h" set:html={s.h} />
+            <StepHeading
+              icon={WORKFLOW_STEPS[i][0]}
+              accent={WORKFLOW_STEPS[i][1]}
+              h={s.h}
+            />
             <span class="step-n" set:html={s.n} />
           </li>
         ))

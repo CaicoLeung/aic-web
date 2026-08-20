@@ -1,0 +1,37 @@
+---
+/**
+ * Step heading for article `.steps` lists — accent-tinted icon + heading.
+ *
+ * `accent` names the palette token directly and follows ADR-0019 semantics:
+ * cyan = pending/in-flight, amber = committed/done. mint and amber-warm are
+ * supporting hues outside the duotone pair (saved-config, approved) — using
+ * them keeps middle steps colorful without drift.
+ */
+import Icon, { type IconName } from '@/components/ui/Icon.astro';
+
+export type StepAccent = 'cyan' | 'mint' | 'amber-warm' | 'amber';
+
+/** Accent rotation for flat lists with no duotone state (ADR-0019 binds
+ *  cyan/amber to pending/committed states; a brand list has none). */
+export const ACCENT_ROTATION: readonly StepAccent[] = [
+  'cyan',
+  'amber-warm',
+  'mint',
+  'amber',
+];
+
+interface Props {
+  readonly icon: IconName;
+  readonly accent: StepAccent;
+  readonly h: string;
+}
+
+const { icon, accent, h } = Astro.props;
+---
+
+<span class="step-h">
+  <span class:list={['step-ico', accent]}>
+    <Icon name={icon} size={15} />
+  </span>
+  <span set:html={h} />
+</span>

@@ -204,7 +204,6 @@ export const messages = {
     h2: 'your key · your model',
     lede: 'Bring your own provider. aic talks straight to your LLM — no middleman, no per-commit markup, no proxy. Your API key never leaves your machine.',
     aside: 'no middleman · no per-commit markup · calls go straight from your machine',
-    link: 'read the provider code →',
     yourModel: '(your model)',
     profilesHint: 'save profiles · switch with <code>aic use</code>',
   },

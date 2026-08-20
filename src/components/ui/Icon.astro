@@ -9,10 +9,13 @@
  * no runtime, no dependency: geometry is data, paint is CSS.
  */
 interface Props {
-  readonly name: keyof typeof GEOMETRY;
+  readonly name: IconName;
   readonly size?: number;
   readonly class?: string;
 }
+
+/** Selectable icon names (the GEOMETRY keys). */
+export type IconName = keyof typeof GEOMETRY;
 
 /** Inner SVG markup per icon name (Lucide-grade, hand-trimmed). */
 const GEOMETRY = {
@@ -32,6 +35,9 @@ const GEOMETRY = {
   windows:
     '<rect x="3" y="4" width="8" height="7" rx="1" /><rect x="13" y="4" width="8" height="7" rx="1" /><rect x="3" y="13" width="8" height="7" rx="1" /><rect x="13" y="13" width="8" height="7" rx="1" />',
   shield: '<path d="M12 3 5 5.5v6c0 4.5 3 7.5 7 9.5 4-2 7-5 7-9.5v-6z" />',
+  diff: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8v2h2v2h2v-2h2V9h-2V7h-2v2Z" /><path d="M8 17h8" />',
+  merge:
+    '<circle cx="18" cy="18" r="3" /><circle cx="6" cy="6" r="3" /><path d="M6 21V9a9 9 0 0 0 9 9" />',
   github:
     '<path d="M9 19c-4 1.3-4-2.2-5.5-2.7m11 5.2v-3.7c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.4-.4-4.5 1.7a11.6 11.6 0 0 0-6 0C4.6 2 3.1 2.4 3.1 2.4a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 1.7 8.8c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2v3.7" fill="none" />',
 } as const;

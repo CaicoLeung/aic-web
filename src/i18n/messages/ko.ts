@@ -177,7 +177,6 @@ export const messages: Messages = {
     h2: '당신의 키 · 당신의 모델',
     lede: '프로바이더를 직접. aic는 LLM과 직접 통신 — 중간자 없음, 커밋별 추가 비용 없음, 프록시 없음. API 키는 당신의 기계를 떠나지 않습니다.',
     aside: '중간자 없음 · 커밋별 추가 비용 없음 · 호출은 당신의 기계에서 직접',
-    link: '프로바이더 코드 읽기 →',
     yourModel: '(당신의 모델)',
     profilesHint: '프로필 저장 · <code>aic use</code>로 전환',
   },
