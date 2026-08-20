@@ -219,12 +219,31 @@ const current = crumbs?.[crumbs.length - 1];
     grid-column: 2;
     font-weight: 600;
     color: var(--color-ink);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   :global(.article .step-n) {
     grid-column: 2;
     color: var(--color-ink-muted);
     line-height: 1.6;
     font-size: 0.95rem;
+  }
+  /* Colorful step icons — accent rotation, on-palette only (ADR-0019). */
+  :global(.article .step-ico) {
+    display: inline-flex;
+  }
+  :global(.article .step-ico.c1) {
+    color: var(--color-cyan);
+  }
+  :global(.article .step-ico.c2) {
+    color: var(--color-amber-warm);
+  }
+  :global(.article .step-ico.c3) {
+    color: var(--color-mint);
+  }
+  :global(.article .step-ico.c4) {
+    color: var(--color-amber);
   }
 
   /* Point lists */
