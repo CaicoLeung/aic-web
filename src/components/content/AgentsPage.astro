@@ -18,6 +18,7 @@ import HybridHero from '@/components/content/HybridHero.astro';
 import ArticleShell from '@/components/content/ArticleShell.astro';
 import AgentTerminal from '@/components/agents/AgentTerminal.astro';
 import Icon from '@/components/ui/Icon.astro';
+import ProviderLogo from '@/components/ui/ProviderLogo.astro';
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { loadAicFacts } from '@/data/aic';
 import { localizedHref, localeFromUrl } from '@/i18n/config';
@@ -35,6 +36,22 @@ const description = t('meta.agents.description');
 
 // One icon per how-it-works step, index-aligned with the i18n steps array.
 const HOW_ICONS = ['terminal', 'play', 'commit'] as const;
+
+// Brand mark id per preset, index-aligned with `agents.presets.items`.
+// '' (Pi, Oh My Pi) → generic node mark tinted by the accent rotation.
+const PRESET_MARKS = [
+  'anthropic',
+  'openai',
+  '',
+  'opencode',
+  '',
+  'gemini',
+  'cursor',
+  'windsurf',
+  'githubcopilot',
+  'trae',
+  'qwen',
+] as const;
 ---
 
 <ArticleShell
@@ -98,9 +115,14 @@ const HOW_ICONS = ['terminal', 'play', 'commit'] as const;
     <p class="block-lede">{t('agents.presets.lede')}</p>
     <ul class="points">
       {
-        m.agents.presets.items.map((p) => (
+        m.agents.presets.items.map((p, i) => (
           <li>
-            <span class="point-h">{p.h}</span>
+            <span class="point-h">
+              <span class={`step-ico c${(i % 4) + 1}`}>
+                <ProviderLogo id={PRESET_MARKS[i]} size={15} />
+              </span>
+              <span set:html={p.h} />
+            </span>
             <span class="point-n" set:html={p.n} />
           </li>
         ))
