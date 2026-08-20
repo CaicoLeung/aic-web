@@ -3,7 +3,6 @@
  * Providers & privacy — provider list (live from source repo via
  * loadAicFacts) + the "your key · your model · no middleman" positioning.
  */
-import { GITHUB_URL } from '@/config/site';
 import type { ProviderInfo } from '@/config/site';
 import Icon from '@/components/ui/Icon.astro';
 import ProviderLogo from '@/components/ui/ProviderLogo.astro';
@@ -63,14 +62,6 @@ const t = useLocalizer(locale);
       <span class="aside-icon"><Icon name="terminal" size={14} /></span>
       <span set:html={t('providers.profilesHint')} />
     </p>
-    <a
-      class="link"
-      href={`${GITHUB_URL}/blob/main/src/llm.rs`}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {t('providers.link')}
-    </a>
   </div>
 </section>
 
@@ -165,15 +156,5 @@ const t = useLocalizer(locale);
     display: inline-flex;
     align-self: center;
     color: var(--color-mint);
-  }
-  .link {
-    color: var(--color-amber);
-    text-decoration: none;
-    font-size: 0.88rem;
-    border-bottom: 1px solid transparent;
-    transition: border-color var(--duration-fast) ease;
-  }
-  .link:hover {
-    border-bottom-color: var(--color-amber);
   }
 </style>
