@@ -17,7 +17,11 @@ import CopyButton from '@/components/ui/CopyButton.astro';
 import HybridHero from '@/components/content/HybridHero.astro';
 import ArticleShell from '@/components/content/ArticleShell.astro';
 import AgentTerminal from '@/components/agents/AgentTerminal.astro';
-import Icon from '@/components/ui/Icon.astro';
+import StepHeading, {
+  ACCENT_ROTATION,
+  type StepAccent,
+} from '@/components/content/StepHeading.astro';
+import type { IconName } from '@/components/ui/Icon.astro';
 import ProviderLogo from '@/components/ui/ProviderLogo.astro';
 import { GITHUB_URL, PRIMARY_INSTALL_COMMAND } from '@/config/site';
 import { loadAicFacts } from '@/data/aic';
@@ -34,10 +38,17 @@ const releaseUrl = `${GITHUB_URL}/releases/tag/v${version}`;
 const title = t('meta.agents.title');
 const description = t('meta.agents.description');
 
-// One icon per how-it-works step, index-aligned with the i18n steps array.
-const HOW_ICONS = ['terminal', 'play', 'commit'] as const;
+// Icon + accent per how-it-works step, index-aligned with the i18n steps
+// array. Accents follow ADR-0019: mint = config saved (setup), cyan =
+// in-flight (delegation), amber = committed (commit output).
+const HOW_STEPS: [IconName, StepAccent][] = [
+  ['terminal', 'mint'],
+  ['play', 'cyan'],
+  ['commit', 'amber'],
+];
 
 // Brand mark id per preset, index-aligned with `agents.presets.items`.
+// Accents rotate — brands carry no duotone state (ADR-0019).
 const PRESET_MARKS = [
   'anthropic',
   'openai',
@@ -96,12 +107,7 @@ const PRESET_MARKS = [
       {
         m.agents.how.steps.map((s, i) => (
           <li>
-            <span class="step-h">
-              <span class={`step-ico c${(i % 4) + 1}`}>
-                <Icon name={HOW_ICONS[i]} size={15} />
-              </span>
-              <span set:html={s.h} />
-            </span>
+            <StepHeading icon={HOW_STEPS[i][0]} accent={HOW_STEPS[i][1]} h={s.h} />
             <span class="step-n" set:html={s.n} />
           </li>
         ))
@@ -118,7 +124,7 @@ const PRESET_MARKS = [
         m.agents.presets.items.map((p, i) => (
           <li>
             <span class="point-h">
-              <span class={`step-ico c${(i % 4) + 1}`}>
+              <span class:list={['step-ico', ACCENT_ROTATION[i % 4]]}>
                 <ProviderLogo id={PRESET_MARKS[i]} size={15} />
               </span>
               <span set:html={p.h} />

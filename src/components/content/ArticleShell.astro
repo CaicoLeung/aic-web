@@ -229,20 +229,22 @@ const current = crumbs?.[crumbs.length - 1];
     line-height: 1.6;
     font-size: 0.95rem;
   }
-  /* Colorful step icons — accent rotation, on-palette only (ADR-0019). */
+  /* Step icons — accent names the palette token, placed by meaning
+     (ADR-0019): cyan = pending/in-flight, amber = committed/done;
+     mint/amber-warm are supporting hues outside the duotone pair. */
   :global(.article .step-ico) {
     display: inline-flex;
   }
-  :global(.article .step-ico.c1) {
+  :global(.article .step-ico.cyan) {
     color: var(--color-cyan);
   }
-  :global(.article .step-ico.c2) {
-    color: var(--color-amber-warm);
-  }
-  :global(.article .step-ico.c3) {
+  :global(.article .step-ico.mint) {
     color: var(--color-mint);
   }
-  :global(.article .step-ico.c4) {
+  :global(.article .step-ico.amber-warm) {
+    color: var(--color-amber-warm);
+  }
+  :global(.article .step-ico.amber) {
     color: var(--color-amber);
   }
 
