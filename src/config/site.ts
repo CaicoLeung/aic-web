@@ -29,7 +29,7 @@ export const GITHUB_SOURCE_BASE = `https://api.github.com/repos/${GITHUB_OWNER}/
 export const FETCH_TIMEOUT_MS = 8000;
 
 /** Visible across the site; overwritten by loadAicFacts() when reachable. */
-export const FALLBACK_VERSION = '0.3.0';
+export const FALLBACK_VERSION = '0.5.7';
 
 export interface ProviderInfo {
   /** Lowercase id as used in config/env (`openai`, `anthropic`, …). */
