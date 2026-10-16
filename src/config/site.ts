@@ -184,6 +184,18 @@ export const HUNK_SPLITTING: HunkSplitting = {
 } as const;
 
 /**
+ * v0.5.8 control-loop features — `--hint` run directive, opt-in Batch Review
+ * (`review_batch_plan`), `aic undo`, and the secrets redaction gate
+ * (`--no-redact`). Powers the #07 Full-control ship-badge and the Batching
+ * Batch-Review badge. Historical/immutable, same rule as
+ * `HUNK_SPLITTING.shippedIn` (feature claims are editorial — ADR-0003).
+ */
+export const CONTROL_SHIPPED_IN = '0.5.8';
+
+/** Ordered step ids for the #07 Full-control loop (steer → review → undo). */
+export const CONTROL_STEPS = ['steer', 'review', 'undo'] as const;
+
+/**
  * v0.5.0 CLI-agent backend presets (#118); v0.5.5 adds 7 more headless
  * presets (#145) — 11 total. `BackendKind::Cli` — aic delegates to a local
  * coding-agent CLI in headless/print mode, reusing that agent's own auth.

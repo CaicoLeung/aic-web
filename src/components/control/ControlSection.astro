@@ -1,0 +1,160 @@
+---
+/**
+ * Full control (#07) — the control-loop section (ADR-0022).
+ *
+ * v0.5.8 made the run negotiable end-to-end: a `--hint` run directive
+ * steers the draft, opt-in Batch Review vets each plan before anything is
+ * drafted, and `aic undo` resets a whole run. Three compact cards whose
+ * command lines are terminal-mock text — locale-invariant EN by design
+ * (same convention as `how.steps` details). The ship-badge links into
+ * /changelog/#0.5.8.
+ *
+ * The safety half of v0.5.8 (secrets redaction gate) deliberately does NOT
+ * live here: it is folded into the Providers asides + Install trust strip,
+ * keeping one promise per section (CONTEXT.md → Section).
+ */
+import { CONTROL_SHIPPED_IN, CONTROL_STEPS } from '@/config/site';
+import { localizedHref, localeFromUrl } from '@/i18n/config';
+import { useLocalizer, useMessages } from '@/i18n/t';
+
+const locale = localeFromUrl(Astro.url.pathname);
+const t = useLocalizer(locale);
+const m = useMessages(locale);
+const changelog = `${localizedHref(locale, 'changelog')}#${CONTROL_SHIPPED_IN}`;
+---
+
+<section id="control" class="section control-section">
+  <div class="container">
+    <p class="eyebrow">
+      <span class="line" aria-hidden="true"></span>{t('control.eyebrow')}
+    </p>
+    <h2>{t('control.h2')}</h2>
+    <p class="lede" set:html={t('control.lede')} />
+
+    <ol class="steps">
+      {
+        CONTROL_STEPS.map((id) => (
+          <li class="step">
+            <span class="step-label">{m.control.steps[id].label}</span>
+            <code class="step-cmd">{m.control.steps[id].detail}</code>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="meta-row">
+      <a class="ship-badge" href={changelog}>
+        {t('control.shipBadge', { version: CONTROL_SHIPPED_IN })}<span
+          class="ship-arrow"
+          aria-hidden="true">→</span
+        >
+      </a>
+    </p>
+  </div>
+</section>
+
+<style>
+  /* Mirrors ResolveSection's rhythm (deep background band between two
+     surface sections); single column, compact — teaser, not a demo. */
+  .control-section {
+    padding: clamp(3rem, 0.5rem + 6vw, 7rem) 0;
+    background-color: var(--color-base-deep);
+    position: relative;
+    z-index: 2;
+  }
+  h2 {
+    font-size: var(--text-h2);
+    line-height: 1.05;
+    margin: 0.75rem 0 0;
+  }
+  .lede {
+    color: var(--color-ink-muted);
+    line-height: 1.65;
+    margin-top: 1rem;
+    max-width: 40rem;
+    font-size: var(--text-lede);
+  }
+
+  /* ── The three-step control loop ──────────────────────────────────────
+     Terminal-mock cards — same family as the batching pills: mono, raised
+     surface, amber accent on the verb. */
+  .steps {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 0.75rem;
+    margin: 2.25rem 0 0;
+    padding: 0;
+    max-width: 56rem;
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: 0.9rem 1.05rem;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    background: var(--color-surface);
+    box-shadow: 0 12px 28px -18px rgba(0, 0, 0, 0.6);
+  }
+  .step-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-amber);
+  }
+  /* Reset the global `.section code` chip (ADR-0014) — this is a terminal
+     line on the card's surface, not an inline chip. Specificity (0,2,0)
+     beats `.section code` (0,1,1). */
+  .step .step-cmd {
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  /* Tier-2 scroll reveal, JS-free (same pattern as Install's panels). */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .step {
+        animation: v2-fade-up 0.9s both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 32%;
+      }
+    }
+  }
+
+  .meta-row {
+    margin: 1.4rem 0 0;
+  }
+  .ship-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.7rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-decoration: none;
+    transition:
+      border-color var(--duration-fast) ease,
+      color var(--duration-fast) ease;
+  }
+  .ship-badge:hover {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+  }
+  .ship-arrow {
+    color: var(--color-amber);
+  }
+</style>
