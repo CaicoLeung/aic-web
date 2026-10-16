@@ -28,12 +28,13 @@ AgentTerminal) and the batching `.pill` stack. The site has **no** raster
 _Avoid_: screenshot, picture, photo (there are none).
 
 **Section**:
-A permanent anchored block of the homepage spine (the V2 nine: Topbar · Hero ·
-How it works · Auto-batching · Resolve · Bring your agent · Providers · Install
-· Footer — see ADR-0017). A co-equal pillar of the product story that survives
-version churn. The original fixed-seven was expanded to nine by symmetrically
-promoting resolve + the agent backend (ADR-0017); further additions remain an
-ADR-grade break.
+A permanent anchored block of the homepage spine (the V2 ten: Topbar · Hero ·
+How it works · Auto-batching · Resolve · Bring your agent · Providers · Full
+control · Install · Footer — see ADR-0017 / ADR-0022). A co-equal pillar of
+the product story that survives version churn. The original fixed-seven was
+expanded to nine by symmetrically promoting resolve + the agent backend
+(ADR-0017), then to ten by adding the v0.5.8 control loop (ADR-0022);
+further additions remain an ADR-grade break.
 _Avoid_: block, panel (generic — say section when naming a spine unit).
 
 **Feature highlight**:
@@ -146,6 +147,36 @@ preference — each page honors its own URL (ADR-0010).
 _Avoid_: language picker, dropdown (generic — say switcher when naming this
 element).
 
+## Workflow
+
+**Run**:
+One invocation of `aic` (or `aic resolve`) — the unit of work that reads the
+diff, drafts messages, and commits. The thing `aic undo` resets. Distinct
+from a batch (a grouping of hunks within one Run) and from a session (aic
+has none — each Run is independent).
+_Avoid_: session, execution.
+
+**Run directive** (`--hint`):
+A one-off steer passed on the command line, appended to both prompts for a
+single Run — "keep the parser rewrite separate". Not persisted: distinct
+from a Provider profile or `AIC_SYSTEM_PROMPT`, which survive across Runs.
+_Avoid_: prompt override, system prompt.
+
+**Batch Review**:
+The opt-in gate (`review_batch_plan`, default off) that surfaces the batch
+plan before drafting and lets the user merge, undo-merge, or abort each
+batch. Distinct from resolve's per-file `y/n` (that approves resolutions;
+Batch Review approves the grouping before messages exist).
+_Avoid_: code review.
+
+**Redaction gate**:
+The safety check that stops a Run before any LLM send when the diff or a
+conflicted file contains secret-shaped content (cloud keys, tokens, private
+keys), naming the file and the pattern. Opt out with `--no-redact`.
+Distinct from "your key never leaves your machine" — that is about the API
+key; this is about secrets already sitting in your diff.
+_Avoid_: secret scanning (implies reporting, not blocking).
+
 ## Backends
 
 **Backend**:
@@ -153,7 +184,7 @@ The execution source for aic's reasoning — what aic talks to when it drafts a
 commit message or resolves a conflict. Two kinds, mutually exclusive at run
 time: an API **Provider** (key + model) or a CLI **Agent backend** (a local
 agent's auth). The user selects one; only one is active per run. The site's
-Providers section (#04) covers the API kind; a capability page covers the
+Providers section (#06) covers the API kind; a capability page covers the
 Agent kind.
 _Avoid_: engine, driver (generic — say backend when naming the execution source).
 
