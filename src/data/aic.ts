@@ -50,7 +50,8 @@ async function loadVersion(): Promise<string> {
 }
 
 /**
- * Parse the `Provider` enum from src/llm.rs source.
+ * Parse the `Provider` enum from src/llm/mod.rs source (moved out of
+ * src/llm.rs in aic ~v0.5.8-era; shape kept parser-compatible upstream).
  *
  * Looks for `pub enum Provider { Variant1, Variant2, ... }` and returns each
  * variant as a `ProviderInfo` — `id` is lowercased, `name` applies
@@ -92,7 +93,7 @@ export function parseProviders(rs: string): readonly ProviderInfo[] | null {
 }
 
 async function loadProviders(): Promise<readonly ProviderInfo[]> {
-  const src = await fetchSource('src/llm.rs');
+  const src = await fetchSource('src/llm/mod.rs');
   return (src !== null ? parseProviders(src) : null) ?? FALLBACK_PROVIDERS;
 }
 
