@@ -3,7 +3,7 @@
 **Generated**: 2026-08-01 · **Scope**: marketing site for aic (AI git commit CLI)
 **Site type**: Hybrid SaaS-marketing + SEO content (single-page product home + content pages)
 **Locale model**: ADR-0010 — `en` canonical at root, `zh`/`ja`/`ko` prefixed (`/{locale}/`)
-**Constraint**: homepage spine is 9 sections (ADR-0017, was 7; CONTEXT.md) — content pages are the growth surface
+**Constraint**: homepage spine is 10 sections (ADR-0017/0022, was 7; CONTEXT.md) — content pages are the growth surface
 
 ---
 
@@ -11,8 +11,8 @@
 
 ```
 Homepage (/)                                    L0
-├── [homepage spine, anchored sections]         L1  (V2 nine: Topbar · Hero · How it works · Auto-batching · Resolve · Bring your agent · Providers · Install · Footer)
-│   └── CompareBand (#compare)                  connective band (Providers→Install): links to all /vs/* + roundup — not a spine section
+├── [homepage spine, anchored sections]         L1  (V2 ten: Topbar · Hero · How it works · Auto-batching · Resolve · Bring your agent · Providers · Full control · Install · Footer)
+│   └── CompareBand (#compare)                  connective band (Full control→Install): links to all /vs/* + roundup — not a spine section
 ├── Resolve (/resolve)                          L1  capability page (ADR-0006)
 ├── Roundup (/best-ai-commit-tools)             L1  SEO survey hub
 │   ├── vs aicommits (/vs/aicommits)            L2  comparison
@@ -119,10 +119,14 @@ URL conventions already compliant: lowercase, hyphens, trailing slash, no dates/
 > symmetrically — dissolving the asymmetry ADR-0015 had defended. The
 > ADR-0015 Feature-highlight chip is retired (agents is now permanent, not
 > transient). See `docs/adr/0017-v2-respine-promote-resolve-agents.md`.
+> **Spine expanded (ADR-0022).** The nine grew to ten: #07 Full control
+> (steer/review/undo) was inserted between Providers and Install (renumbered
+> 07→08, all four locales). See
+> `docs/adr/0022-v058-control-section-and-trust-copy.md`.
 > **Connective band (not a spine break).** The `CompareBand` (#compare) sits
-> between Providers (#06) and Install (#07). It is a navigation/routing
+> between Full control (#07) and Install (#08). It is a navigation/routing
 > element — not a co-equal product-story pillar — so it is excluded from the
-> nine-section count and needs no ADR. It funnels comparison-intent visitors
+> ten-section count and needs no ADR. It funnels comparison-intent visitors
 > into the SEO cluster: rival chips → `/vs/{rival}`, a roundup link →
 > `/best-ai-commit-tools`. The chip list is data-driven from
 > `COMPARISON_RIVALS`, so new rivals appear automatically.

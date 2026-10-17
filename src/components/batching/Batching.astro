@@ -19,14 +19,14 @@ import {
   HUNK_TYPE_ACCENT,
 } from '@/config/site';
 import HunkTraceLine from './HunkTraceLine.astro';
-import { localizedHref, localeFromUrl } from '@/i18n/config';
+import { changelogHref, localizedHref, localeFromUrl } from '@/i18n/config';
 import { useLocalizer } from '@/i18n/t';
 
 const locale = localeFromUrl(Astro.url.pathname);
 const t = useLocalizer(locale);
 const roundup = localizedHref(locale, 'best-ai-commit-tools');
-const changelog = `${localizedHref(locale, 'changelog')}#${HUNK_SPLITTING.shippedIn}`;
-const changelogReview = `${localizedHref(locale, 'changelog')}#${CONTROL_SHIPPED_IN}`;
+const changelog = changelogHref(locale, HUNK_SPLITTING.shippedIn);
+const changelogReview = changelogHref(locale, CONTROL_SHIPPED_IN);
 ---
 
 <section id="batching" class="section batching">
@@ -318,29 +318,6 @@ const changelogReview = `${localizedHref(locale, 'changelog')}#${CONTROL_SHIPPED
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-  }
-  .ship-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.28rem 0.7rem;
-    border: 1px solid var(--color-line);
-    border-radius: 999px;
-    background: var(--color-surface);
-    color: var(--color-ink);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    text-decoration: none;
-    transition:
-      border-color var(--duration-fast) ease,
-      color var(--duration-fast) ease;
-  }
-  .ship-badge:hover {
-    border-color: var(--color-amber);
-    color: var(--color-amber);
-  }
-  .ship-arrow {
-    color: var(--color-amber);
   }
   .cmp-link {
     display: inline-block;

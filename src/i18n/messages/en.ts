@@ -183,7 +183,8 @@ export const messages = {
     /** `{version}` is the shipped-in semver (HUNK_SPLITTING.shippedIn). */
     shipBadge: 'shipped in v{version}',
     /** Opt-in Batch Review (v0.5.8) — pre-draft plan review, rendered as a
-     *  second ship-badge next to `shipBadge`. `{version}` is the semver. */
+     *  second ship-badge next to `shipBadge`. `{version}` is the shipped-in
+     *  semver (CONTROL_SHIPPED_IN). */
     reviewBadge: 'opt-in Batch Review — shipped in v{version}',
     cmpLink: 'see aic among the best AI commit tools →',
   },
@@ -207,9 +208,10 @@ export const messages = {
     h2: 'your key · your model',
     lede: 'Bring your own provider. aic talks straight to your LLM — no middleman, no per-commit markup, no proxy. Your API key never leaves your machine.',
     aside: 'no middleman · no per-commit markup · calls go straight from your machine',
-    /** Secrets redaction gate (v0.5.8) — shield aside under the provider list. */
+    /** Secrets redaction gate (v0.5.8) — key-icon aside under the provider
+     *  list (the shield aside is the API-key claim). */
     redactionAside:
-      'secrets redaction gate — key-shaped content in a diff stops the run before it is sent',
+      'secrets redaction gate — secret-shaped content in the diff or a conflicted file stops the run before it is sent',
     yourModel: '(your model)',
     profilesHint: 'save profiles · switch with <code>aic use</code>',
   },
@@ -226,7 +228,7 @@ export const messages = {
       review: { label: 'review', detail: 'batch plan: merge · undo-merge · abort' },
       undo: { label: 'undo', detail: 'aic undo  ✓ run reset, changes unstaged' },
     },
-    /** `{version}` is the shipped-in semver (CONTROL.shippedIn). */
+    /** `{version}` is the shipped-in semver (CONTROL_SHIPPED_IN, src/config/site.ts). */
     shipBadge: 'shipped in v{version}',
   },
 
@@ -264,8 +266,8 @@ export const messages = {
   },
   compareBand: {
     // Connective band (not a numbered spine section — a navigation/routing
-    // element toward the SEO comparison cluster). Sits between Providers
-    // (#06) and Install (#07). Plain text; render via t().
+    // element toward the SEO comparison cluster). Sits between Full control
+    // (#07) and Install (#08). Plain text; render via t().
     heading: 'how aic compares',
     lede: 'Curious how aic holds up against aicommits, OpenCommit, or the rest? Each comparison concedes where the rival wins and shows exactly where aic pulls ahead.',
     roundupLink: 'see the full field →',

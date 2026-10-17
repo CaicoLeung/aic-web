@@ -254,6 +254,33 @@
     border-radius: 6px;
     font-size: 0.85em;
   }
+
+  /* Ship-badge — mono pill linking a feature claim to its release's
+     /changelog/ anchor (amber hover). Third section-local copy promoted
+     here per ADR-0020's shared-primitive rule. */
+  .ship-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.7rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-decoration: none;
+    transition:
+      border-color var(--duration-fast) ease,
+      color var(--duration-fast) ease;
+  }
+  .ship-badge:hover {
+    border-color: var(--color-amber);
+    color: var(--color-amber);
+  }
+  .ship-arrow {
+    color: var(--color-amber);
+  }
 }
 
 /* ── V2 design overrides ─────────────────────────────────────────────
