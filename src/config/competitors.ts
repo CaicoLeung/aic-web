@@ -104,6 +104,18 @@ const AICOMMITS_COMPARISON: CompetitorComparison = {
       winner: 'aic',
     },
     {
+      id: 'undo',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'redaction',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
       id: 'anthropic',
       aic: { glyph: 'yes' },
       rival: { glyph: 'no' },
@@ -193,6 +205,18 @@ const AI_COMMIT_COMPARISON: CompetitorComparison = {
       winner: 'aic',
     },
     {
+      id: 'undo',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'redaction',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
       id: 'claude-context',
       aic: { glyph: 'no' },
       rival: { glyph: 'yes' },
@@ -276,6 +300,18 @@ const LLMC_COMPARISON: CompetitorComparison = {
     },
     {
       id: 'resolve',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'undo',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'redaction',
       aic: { glyph: 'yes' },
       rival: { glyph: 'no' },
       winner: 'aic',
@@ -370,6 +406,18 @@ const GIT_AI_COMPARISON: CompetitorComparison = {
       winner: 'aic',
     },
     {
+      id: 'undo',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'redaction',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
       id: 'pr-description',
       aic: { glyph: 'no' },
       rival: { glyph: 'yes' },
@@ -453,6 +501,18 @@ const OPENCOMMIT_COMPARISON: CompetitorComparison = {
     },
     {
       id: 'resolve',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'undo',
+      aic: { glyph: 'yes' },
+      rival: { glyph: 'no' },
+      winner: 'aic',
+    },
+    {
+      id: 'redaction',
       aic: { glyph: 'yes' },
       rival: { glyph: 'no' },
       winner: 'aic',

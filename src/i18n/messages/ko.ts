@@ -158,6 +158,7 @@ export const messages: Messages = {
     swatchLabel: '17가지 커밋 타입 · WCAG 안전 색상',
     stripLabel: '추론 · hunk별',
     shipBadge: 'v{version}에 탑재',
+    reviewBadge: '선택적 Batch Review — v{version}에 탑재',
     cmpLink: '최고 AI 커밋 도구들 사이의 aic 보기 →',
   },
   resolveSection: {
@@ -177,12 +178,26 @@ export const messages: Messages = {
     h2: '당신의 키 · 당신의 모델',
     lede: '프로바이더를 직접. aic는 LLM과 직접 통신 — 중간자 없음, 커밋별 추가 비용 없음, 프록시 없음. API 키는 당신의 기계를 떠나지 않습니다.',
     aside: '중간자 없음 · 커밋별 추가 비용 없음 · 호출은 당신의 기계에서 직접',
+    redactionAside:
+      '시크릿 검열 게이트 — diff에 키 형태 문자열이 있으면 보내기 전에 실행을 멈춥니다',
     yourModel: '(당신의 모델)',
     profilesHint: '프로필 저장 · <code>aic use</code>로 전환',
   },
 
+  control: {
+    eyebrow: '07 — 완전한 제어',
+    h2: '이끌기 · 검토 · 되돌리기',
+    lede: '초안은 모델이 쓰고, 주도권은 당신에게. 일회성 힌트로 그루핑을 이끌고, 선택적 배치 검토로 초안 작성 전 각 계획을 병합 또는 거부하며, <code>aic undo</code>로 실행 전체를 리셋합니다 — 커밋은 사라지고 모든 변경은 미스테이지로 돌아갑니다.',
+    steps: {
+      steer: { label: '이끌기', detail: 'aic --hint "keep the parser rewrite separate"' },
+      review: { label: '검토', detail: 'batch plan: merge · undo-merge · abort' },
+      undo: { label: '되돌리기', detail: 'aic undo ✓ run reset, changes unstaged' },
+    },
+    shipBadge: 'v{version}에 탑재',
+  },
+
   install: {
-    eyebrow: '07 — 설치',
+    eyebrow: '08 — 설치',
     h2: '한 줄로 aic 설치.',
     // CRO 신뢰 스트립 — 설치 방법 전에 주요 우려에 답합니다.
     trust: [
@@ -191,6 +206,7 @@ export const messages: Messages = {
       '12개 프로바이더',
       'pre-commit 훅과 공존',
       '키는 기기를 떠나지 않음',
+      '전송 전 시크릿 차단',
     ],
     postinstall:
       '<span class="arrow" aria-hidden="true">→</span> 그런 다음 <code>{cmd}</code>를 실행해 프로바이더, 키, 모델을 선택.',
@@ -442,6 +458,18 @@ export const messages: Messages = {
           rival: '아니오 — 커밋 메시지만',
           note: 'aic의 두 번째 대표 워크플로(`v0.3.0`). aicommits엔 충돌 이야기가 없습니다 — 손으로 병합한 뒤에야 메시지를 씁니다.',
         },
+        undo: {
+          feature: '마지막 실행 되돌리기',
+          aic: '예 — `aic undo`가 해당 실행의 커밋을 리셋, 변경은 미스테이지로 복귀',
+          rival: '아니오 — 커밋 후에는 수동으로 고쳐야',
+          note: 'aic v0.5.8 탑재. 실수 하나에 대화형 `git reset` 대신 명령 한 번: 실행의 커밋이 제거되고 모든 변경이 미스테이지로 돌아가며, 히스토리가 진행됐으면 거부합니다. aicommits에는 되돌리기가 없습니다 — 잘못 쓰인 AI 메시지는 직접 고쳐야 합니다.',
+        },
+        redaction: {
+          feature: '전송 전 시크릿 검열',
+          aic: '예 — LLM 호출 전 실행을 중단, 파일과 패턴을 지적',
+          rival: '아니오 — diff가 그대로 모델에 전달',
+          note: 'aic v0.5.8 탑재, `aic`와 `aic resolve` 모두에 적용. diff에 클라우드 키·토큰·개인 키가 있으면 기계 밖으로 나가기 전에 실행이 멈춥니다 — aic는 파일과 패턴을 지적합니다. `--no-redact`로 끌 수 있습니다. aicommits는 diff를 그대로 모델에 보냅니다.',
+        },
         anthropic: {
           feature: '일급 Anthropic · Gemini · DeepSeek',
           aic: '예 — 네이티브 프로바이더',
@@ -544,6 +572,18 @@ export const messages: Messages = {
           rival: '아니요 — 커밋 메시지만',
           note: 'ai-commit에는 충돌 대응이 없습니다 — 머지는 여전히 수작업입니다.',
         },
+        undo: {
+          feature: '마지막 실행 되돌리기',
+          aic: '예 — `aic undo`가 해당 실행의 커밋을 리셋, 변경은 미스테이지로 복귀',
+          rival: '아니오 — 커밋 후에는 수동으로 고쳐야',
+          note: 'aic v0.5.8 탑재. 실행의 커밋이 제거되고 모든 변경이 미스테이지로 돌아가며, 히스토리가 진행됐으면 거부합니다. ai-commit에는 되돌리기가 없습니다 — 잘못된 메시지는 직접 고쳐야 합니다.',
+        },
+        redaction: {
+          feature: '전송 전 시크릿 검열',
+          aic: '예 — LLM 호출 전 실행을 중단, 파일과 패턴을 지적',
+          rival: '아니오 — diff가 그대로 모델에 전달',
+          note: 'aic v0.5.8 탑재, `aic`와 `aic resolve` 모두에 적용. diff에 키 형태 문자열이 있으면 기계 밖으로 나가기 전에 실행이 멈춥니다. `--no-redact`로 끌 수 있습니다. ai-commit는 diff를 그대로 모델에 보냅니다.',
+        },
         'claude-context': {
           feature: 'Claude Code 맥락',
           aic: '아니요',
@@ -645,6 +685,18 @@ export const messages: Messages = {
           aic: '예 — `aic resolve`가 diff를 제안하고 파일별로 확인',
           rival: '아니요 — 커밋 메시지만',
           note: 'llmc에는 충돌 대응이 없습니다 — 머지는 여전히 수작업입니다.',
+        },
+        undo: {
+          feature: '마지막 실행 되돌리기',
+          aic: '예 — `aic undo`가 해당 실행의 커밋을 리셋, 변경은 미스테이지로 복귀',
+          rival: '아니오 — 커밋 후에는 수동으로 고쳐야',
+          note: 'aic v0.5.8 탑재. 실행의 커밋이 제거되고 모든 변경이 미스테이지로 돌아가며, 히스토리가 진행됐으면 거부합니다. llmc에는 되돌리기가 없습니다 — 잘못된 메시지는 직접 고쳐야 합니다.',
+        },
+        redaction: {
+          feature: '전송 전 시크릿 검열',
+          aic: '예 — LLM 호출 전 실행을 중단, 파일과 패턴을 지적',
+          rival: '아니오 — diff가 그대로 모델에 전달',
+          note: 'aic v0.5.8 탑재, `aic`와 `aic resolve` 모두에 적용. diff에 키 형태 문자열이 있으면 기계 밖으로 나가기 전에 실행이 멈춥니다. `--no-redact`로 끌 수 있습니다. llmc는 diff를 그대로 모델에 보냅니다.',
         },
         'provider-count': {
           feature: '프로바이더 수',
@@ -757,6 +809,18 @@ export const messages: Messages = {
           rival: '아니요 — 커밋 메시지만',
           note: 'git-ai에는 충돌 대응이 없습니다 — 머지는 여전히 수작업입니다.',
         },
+        undo: {
+          feature: '마지막 실행 되돌리기',
+          aic: '예 — `aic undo`가 해당 실행의 커밋을 리셋, 변경은 미스테이지로 복귀',
+          rival: '아니오 — 커밋 후에는 수동으로 고쳐야',
+          note: 'aic v0.5.8 탑재. 실행의 커밋이 제거되고 모든 변경이 미스테이지로 돌아가며, 히스토리가 진행됐으면 거부합니다. git-ai에는 되돌리기가 없습니다 — 잘못된 메시지는 직접 고쳐야 합니다.',
+        },
+        redaction: {
+          feature: '전송 전 시크릿 검열',
+          aic: '예 — LLM 호출 전 실행을 중단, 파일과 패턴을 지적',
+          rival: '아니오 — diff가 그대로 모델에 전달',
+          note: 'aic v0.5.8 탑재, `aic`와 `aic resolve` 모두에 적용. diff에 키 형태 문자열이 있으면 기계 밖으로 나가기 전에 실행이 멈춥니다. `--no-redact`로 끌 수 있습니다. git-ai는 diff를 그대로 모델에 보냅니다.',
+        },
         'pr-description': {
           feature: 'PR 설명',
           aic: '아니요',
@@ -855,6 +919,18 @@ export const messages: Messages = {
           aic: '예 — `aic resolve`가 diff를 제안하고 파일별로 확인',
           rival: '아니요 — 커밋 메시지만',
           note: 'OpenCommit에는 충돌 대응이 없습니다 — 머지는 여전히 수작업입니다.',
+        },
+        undo: {
+          feature: '마지막 실행 되돌리기',
+          aic: '예 — `aic undo`가 해당 실행의 커밋을 리셋, 변경은 미스테이지로 복귀',
+          rival: '아니오 — 커밋 후에는 수동으로 고쳐야',
+          note: 'aic v0.5.8 탑재. 실행의 커밋이 제거되고 모든 변경이 미스테이지로 돌아가며, 히스토리가 진행됐으면 거부합니다. OpenCommit에는 되돌리기가 없습니다 — 잘못된 메시지는 직접 고쳐야 합니다.',
+        },
+        redaction: {
+          feature: '전송 전 시크릿 검열',
+          aic: '예 — LLM 호출 전 실행을 중단, 파일과 패턴을 지적',
+          rival: '아니오 — diff가 그대로 모델에 전달',
+          note: 'aic v0.5.8 탑재, `aic`와 `aic resolve` 모두에 적용. diff에 키 형태 문자열이 있으면 기계 밖으로 나가기 전에 실행이 멈춥니다. `--no-redact`로 끌 수 있습니다. OpenCommit는 diff를 그대로 모델에 보냅니다.',
         },
         runtime: {
           feature: '런타임과 의존성',

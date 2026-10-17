@@ -182,6 +182,10 @@ export const messages = {
     stripLabel: 'reasoning · per hunk',
     /** `{version}` is the shipped-in semver (HUNK_SPLITTING.shippedIn). */
     shipBadge: 'shipped in v{version}',
+    /** Opt-in Batch Review (v0.5.8) — pre-draft plan review, rendered as a
+     *  second ship-badge next to `shipBadge`. `{version}` is the shipped-in
+     *  semver (CONTROL_SHIPPED_IN). */
+    reviewBadge: 'opt-in Batch Review — shipped in v{version}',
     cmpLink: 'see aic among the best AI commit tools →',
   },
   resolveSection: {
@@ -204,12 +208,32 @@ export const messages = {
     h2: 'your key · your model',
     lede: 'Bring your own provider. aic talks straight to your LLM — no middleman, no per-commit markup, no proxy. Your API key never leaves your machine.',
     aside: 'no middleman · no per-commit markup · calls go straight from your machine',
+    /** Secrets redaction gate (v0.5.8) — key-icon aside under the provider
+     *  list (the shield aside is the API-key claim). */
+    redactionAside:
+      'secrets redaction gate — secret-shaped content stops the run before it is sent',
     yourModel: '(your model)',
     profilesHint: 'save profiles · switch with <code>aic use</code>',
   },
 
+  control: {
+    eyebrow: '07 — Full control',
+    h2: 'steer it · review it · undo it',
+    lede: 'The model drafts; you stay in charge. A one-off hint steers the grouping, an opt-in batch review lets you merge or veto each plan before anything is drafted, and <code>aic undo</code> resets a whole run — commits gone, every change back unstaged.',
+    // Step content keyed by id (CONTROL_STEPS). Details are literal
+    // commands/menu labels — they stay EN in every locale (commands don't
+    // translate; same convention as `how.steps`).
+    steps: {
+      steer: { label: 'steer', detail: 'aic --hint "keep the parser rewrite separate"' },
+      review: { label: 'review', detail: 'batch plan: merge · undo-merge · abort' },
+      undo: { label: 'undo', detail: 'aic undo ✓ run reset, changes unstaged' },
+    },
+    /** `{version}` is the shipped-in semver (CONTROL_SHIPPED_IN, src/config/site.ts). */
+    shipBadge: 'shipped in v{version}',
+  },
+
   install: {
-    eyebrow: '07 — Install',
+    eyebrow: '08 — Install',
     h2: 'install aic in one line.',
     // CRO trust strip — answers the top objections before install methods.
     trust: [
@@ -218,6 +242,7 @@ export const messages = {
       '12 providers',
       'Survives your pre-commit hooks',
       'Key never leaves your machine',
+      'Secrets blocked before send',
     ],
     // Contains <code>; render via set:html. `{cmd}` is the literal command.
     postinstall:
@@ -241,8 +266,8 @@ export const messages = {
   },
   compareBand: {
     // Connective band (not a numbered spine section — a navigation/routing
-    // element toward the SEO comparison cluster). Sits between Providers
-    // (#06) and Install (#07). Plain text; render via t().
+    // element toward the SEO comparison cluster). Sits between Full control
+    // (#07) and Install (#08). Plain text; render via t().
     heading: 'how aic compares',
     lede: 'Curious how aic holds up against aicommits, OpenCommit, or the rest? Each comparison concedes where the rival wins and shows exactly where aic pulls ahead.',
     roundupLink: 'see the full field →',
@@ -505,6 +530,18 @@ export const messages = {
           rival: 'No — commit messages only',
           note: 'aic’s second signature workflow (`v0.3.0`). aicommits has no conflict story — it only writes the message after you’ve merged by hand.',
         },
+        undo: {
+          feature: 'Undo the last run',
+          aic: 'Yes — `aic undo` resets the run’s commits, changes back unstaged',
+          rival: 'No — rewrite by hand once committed',
+          note: 'Shipped in aic v0.5.8. A miss is one command instead of an interactive `git reset`: the run’s commits are removed, every change returns unstaged, and it refuses if the history has moved on. aicommits has no undo — a bad AI message is yours to rewrite by hand.',
+        },
+        redaction: {
+          feature: 'Secrets redaction before send',
+          aic: 'Yes — run stops before the LLM call, names file + pattern',
+          rival: 'No — diff goes to the model as-is',
+          note: 'Shipped in aic v0.5.8, on both `aic` and `aic resolve`. A cloud key, token, or private key in the diff stops the run before anything leaves your machine — aic names the file and the pattern. `--no-redact` opts out. aicommits ships the diff to the model as-is.',
+        },
         anthropic: {
           feature: 'First-class Anthropic · Gemini · DeepSeek',
           aic: 'Yes — native providers',
@@ -608,6 +645,18 @@ export const messages = {
           rival: 'No — commit messages only',
           note: 'ai-commit has no conflict story — you still untangle merges by hand.',
         },
+        undo: {
+          feature: 'Undo the last run',
+          aic: 'Yes — `aic undo` resets the run’s commits, changes back unstaged',
+          rival: 'No — rewrite by hand once committed',
+          note: 'Shipped in aic v0.5.8. The run’s commits are removed, every change returns unstaged, and it refuses if the history has moved on. ai-commit has no undo — a bad message is yours to rewrite by hand.',
+        },
+        redaction: {
+          feature: 'Secrets redaction before send',
+          aic: 'Yes — run stops before the LLM call, names file + pattern',
+          rival: 'No — diff goes to the model as-is',
+          note: 'Shipped in aic v0.5.8, on both `aic` and `aic resolve`. Key-shaped content in the diff stops the run before anything leaves your machine; `--no-redact` opts out. ai-commit sends the diff to the model as-is.',
+        },
         'claude-context': {
           feature: 'Claude Code context',
           aic: 'No',
@@ -710,6 +759,18 @@ export const messages = {
           aic: 'Yes — `aic resolve` proposes a diff, asks per file',
           rival: 'No — commit messages only',
           note: 'llmc has no conflict story — you still untangle merges by hand.',
+        },
+        undo: {
+          feature: 'Undo the last run',
+          aic: 'Yes — `aic undo` resets the run’s commits, changes back unstaged',
+          rival: 'No — rewrite by hand once committed',
+          note: 'Shipped in aic v0.5.8. The run’s commits are removed, every change returns unstaged, and it refuses if the history has moved on. llmc has no undo — a bad message is yours to rewrite by hand.',
+        },
+        redaction: {
+          feature: 'Secrets redaction before send',
+          aic: 'Yes — run stops before the LLM call, names file + pattern',
+          rival: 'No — diff goes to the model as-is',
+          note: 'Shipped in aic v0.5.8, on both `aic` and `aic resolve`. Key-shaped content in the diff stops the run before anything leaves your machine; `--no-redact` opts out. llmc sends the diff to the model as-is.',
         },
         'provider-count': {
           feature: 'Provider count',
@@ -826,6 +887,18 @@ export const messages = {
           rival: 'No — commit messages only',
           note: 'git-ai has no conflict story — you still untangle merges by hand.',
         },
+        undo: {
+          feature: 'Undo the last run',
+          aic: 'Yes — `aic undo` resets the run’s commits, changes back unstaged',
+          rival: 'No — rewrite by hand once committed',
+          note: 'Shipped in aic v0.5.8. The run’s commits are removed, every change returns unstaged, and it refuses if the history has moved on. git-ai has no undo — a bad message is yours to rewrite by hand.',
+        },
+        redaction: {
+          feature: 'Secrets redaction before send',
+          aic: 'Yes — run stops before the LLM call, names file + pattern',
+          rival: 'No — diff goes to the model as-is',
+          note: 'Shipped in aic v0.5.8, on both `aic` and `aic resolve`. Key-shaped content in the diff stops the run before anything leaves your machine; `--no-redact` opts out. git-ai sends the diff to the model as-is.',
+        },
         'pr-description': {
           feature: 'PR descriptions',
           aic: 'No',
@@ -927,6 +1000,18 @@ export const messages = {
           aic: 'Yes — `aic resolve` proposes a diff, asks per file',
           rival: 'No — commit messages only',
           note: 'OpenCommit has no conflict story — you still untangle merges by hand.',
+        },
+        undo: {
+          feature: 'Undo the last run',
+          aic: 'Yes — `aic undo` resets the run’s commits, changes back unstaged',
+          rival: 'No — rewrite by hand once committed',
+          note: 'Shipped in aic v0.5.8. The run’s commits are removed, every change returns unstaged, and it refuses if the history has moved on. OpenCommit has no undo — a bad message is yours to rewrite by hand.',
+        },
+        redaction: {
+          feature: 'Secrets redaction before send',
+          aic: 'Yes — run stops before the LLM call, names file + pattern',
+          rival: 'No — diff goes to the model as-is',
+          note: 'Shipped in aic v0.5.8, on both `aic` and `aic resolve`. Key-shaped content in the diff stops the run before anything leaves your machine; `--no-redact` opts out. OpenCommit ships the diff to the model as-is.',
         },
         runtime: {
           feature: 'Runtime & dependencies',

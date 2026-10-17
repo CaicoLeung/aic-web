@@ -161,6 +161,7 @@ export const messages: Messages = {
     swatchLabel: '17 种提交类型 · WCAG 安全配色',
     stripLabel: '推理 · 按 hunk',
     shipBadge: '随 v{version} 发布',
+    reviewBadge: '选择性开启 Batch Review —— 随 v{version} 发布',
     cmpLink: '查看 aic 在最佳 AI 提交工具中的位置 →',
   },
   resolveSection: {
@@ -180,12 +181,25 @@ export const messages: Messages = {
     h2: '你的密钥 · 你的模型',
     lede: '自带供应商。aic 直连你的 LLM——没有中间人，没有按提交计费，没有代理。你的 API 密钥永不离开你的机器。',
     aside: '无中间人 · 无按提交计费 · 调用直接从你的机器发出',
+    redactionAside: '密钥脱敏门禁——diff 中形似密钥的内容会在发送前拦下整次运行',
     yourModel: '（你的模型）',
     profilesHint: '保存配置 · 用 <code>aic use</code> 切换',
   },
 
+  control: {
+    eyebrow: '07 — 全程可控',
+    h2: '引导它 · 审阅它 · 撤销它',
+    lede: '模型起草，你掌舵。一次性 hint 引导分组，选择性开启的批量审阅让你在起草前逐案合并或否决，<code>aic undo</code> 则重置一整次运行——提交消失，全部改动退回未暂存。',
+    steps: {
+      steer: { label: '引导', detail: 'aic --hint "keep the parser rewrite separate"' },
+      review: { label: '审阅', detail: 'batch plan: merge · undo-merge · abort' },
+      undo: { label: '撤销', detail: 'aic undo ✓ run reset, changes unstaged' },
+    },
+    shipBadge: '随 v{version} 发布',
+  },
+
   install: {
-    eyebrow: '07 — 安装',
+    eyebrow: '08 — 安装',
     h2: '一行安装 aic。',
     // CRO 信任条——在安装方式前回答主要顾虑。
     trust: [
@@ -194,6 +208,7 @@ export const messages: Messages = {
       '12 个供应商',
       '兼容你的 pre-commit 钩子',
       '密钥永不离机',
+      '发送前拦截密钥',
     ],
     postinstall:
       '<span class="arrow" aria-hidden="true">→</span> 然后运行 <code>{cmd}</code> 来选择供应商、密钥和模型。',
@@ -441,6 +456,18 @@ export const messages: Messages = {
           rival: '否 —— 只有提交信息',
           note: 'aic 的第二个招牌流程（`v0.3.0`）。aicommits 没有任何冲突解决方案——它只在你手动合并完之后写那条信息。',
         },
+        undo: {
+          feature: '撤销上一次运行',
+          aic: '是——`aic undo` 重置该次运行的提交，改动退回未暂存',
+          rival: '否——提交后只能手动改写',
+          note: 'aic v0.5.8 发布。一次失手只需一条命令，无需手动 `git reset`：移除该次运行的提交，全部改动退回未暂存；历史已被改写时拒绝执行。aicommits 没有撤销——写错的 AI 信息只能自己手动改写。',
+        },
+        redaction: {
+          feature: '发送前密钥脱敏',
+          aic: '是——LLM 调用前拦下运行，点名文件与模式',
+          rival: '否——diff 原样发给模型',
+          note: 'aic v0.5.8 发布，`aic` 与 `aic resolve` 均生效。diff 中出现云密钥、token 或私钥时，任何内容离开你的机器之前运行即被拦下——aic 点名文件与命中的模式。可用 `--no-redact` 关闭。aicommits 把 diff 原样发给模型。',
+        },
         anthropic: {
           feature: '一等支持 Anthropic · Gemini · DeepSeek',
           aic: '是 —— 原生供应商',
@@ -543,6 +570,18 @@ export const messages: Messages = {
           rival: '否——只写提交信息',
           note: 'ai-commit 没有冲突处理能力——你仍然要手动解开合并。',
         },
+        undo: {
+          feature: '撤销上一次运行',
+          aic: '是——`aic undo` 重置该次运行的提交，改动退回未暂存',
+          rival: '否——提交后只能手动改写',
+          note: 'aic v0.5.8 发布。该次运行的提交被移除，全部改动退回未暂存；历史已被改写时拒绝执行。ai-commit 没有撤销——写错的信息只能自己手动改写。',
+        },
+        redaction: {
+          feature: '发送前密钥脱敏',
+          aic: '是——LLM 调用前拦下运行，点名文件与模式',
+          rival: '否——diff 原样发给模型',
+          note: 'aic v0.5.8 发布，`aic` 与 `aic resolve` 均生效。diff 中形似密钥的内容会让运行在任何内容离开你的机器之前被拦下；可用 `--no-redact` 关闭。ai-commit 把 diff 原样发给模型。',
+        },
         'claude-context': {
           feature: 'Claude Code 上下文',
           aic: '否',
@@ -644,6 +683,18 @@ export const messages: Messages = {
           aic: '是——`aic resolve` 提出 diff，逐文件确认',
           rival: '否——只写提交信息',
           note: 'llmc 没有冲突处理能力——你仍然要手动解开合并。',
+        },
+        undo: {
+          feature: '撤销上一次运行',
+          aic: '是——`aic undo` 重置该次运行的提交，改动退回未暂存',
+          rival: '否——提交后只能手动改写',
+          note: 'aic v0.5.8 发布。该次运行的提交被移除，全部改动退回未暂存；历史已被改写时拒绝执行。llmc 没有撤销——写错的信息只能自己手动改写。',
+        },
+        redaction: {
+          feature: '发送前密钥脱敏',
+          aic: '是——LLM 调用前拦下运行，点名文件与模式',
+          rival: '否——diff 原样发给模型',
+          note: 'aic v0.5.8 发布，`aic` 与 `aic resolve` 均生效。diff 中形似密钥的内容会让运行在任何内容离开你的机器之前被拦下；可用 `--no-redact` 关闭。llmc 把 diff 原样发给模型。',
         },
         'provider-count': {
           feature: '供应商数量',
@@ -756,6 +807,18 @@ export const messages: Messages = {
           rival: '否——只写提交信息',
           note: 'git-ai 没有冲突处理能力——你仍然要手动解开合并。',
         },
+        undo: {
+          feature: '撤销上一次运行',
+          aic: '是——`aic undo` 重置该次运行的提交，改动退回未暂存',
+          rival: '否——提交后只能手动改写',
+          note: 'aic v0.5.8 发布。该次运行的提交被移除，全部改动退回未暂存；历史已被改写时拒绝执行。git-ai 没有撤销——写错的信息只能自己手动改写。',
+        },
+        redaction: {
+          feature: '发送前密钥脱敏',
+          aic: '是——LLM 调用前拦下运行，点名文件与模式',
+          rival: '否——diff 原样发给模型',
+          note: 'aic v0.5.8 发布，`aic` 与 `aic resolve` 均生效。diff 中形似密钥的内容会让运行在任何内容离开你的机器之前被拦下；可用 `--no-redact` 关闭。git-ai 把 diff 原样发给模型。',
+        },
         'pr-description': {
           feature: 'PR 描述',
           aic: '否',
@@ -853,6 +916,18 @@ export const messages: Messages = {
           aic: '是——`aic resolve` 提出 diff，逐文件确认',
           rival: '否——只写提交信息',
           note: 'OpenCommit 没有冲突处理能力——你仍然要手动解开合并。',
+        },
+        undo: {
+          feature: '撤销上一次运行',
+          aic: '是——`aic undo` 重置该次运行的提交，改动退回未暂存',
+          rival: '否——提交后只能手动改写',
+          note: 'aic v0.5.8 发布。该次运行的提交被移除，全部改动退回未暂存；历史已被改写时拒绝执行。OpenCommit 没有撤销——写错的信息只能自己手动改写。',
+        },
+        redaction: {
+          feature: '发送前密钥脱敏',
+          aic: '是——LLM 调用前拦下运行，点名文件与模式',
+          rival: '否——diff 原样发给模型',
+          note: 'aic v0.5.8 发布，`aic` 与 `aic resolve` 均生效。diff 中形似密钥的内容会让运行在任何内容离开你的机器之前被拦下；可用 `--no-redact` 关闭。OpenCommit 把 diff 原样发给模型。',
         },
         runtime: {
           feature: '运行时与依赖',

@@ -59,6 +59,10 @@ const t = useLocalizer(locale);
       <span>{t('providers.aside')}</span>
     </p>
     <p class="aside">
+      <span class="aside-icon"><Icon name="key" size={14} /></span>
+      <span>{t('providers.redactionAside')}</span>
+    </p>
+    <p class="aside">
       <span class="aside-icon"><Icon name="terminal" size={14} /></span>
       <span set:html={t('providers.profilesHint')} />
     </p>

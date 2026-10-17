@@ -162,6 +162,7 @@ export const messages: Messages = {
     aside: 'hunk ごとのバッチ処理 ✦',
     stripLabel: '推論 · hunk ごと',
     shipBadge: 'v{version} で搭載',
+    reviewBadge: '選択制 Batch Review — v{version} で搭載',
     cmpLink: 'ベスト AI コミットツールの中の aic を見る →',
   },
   resolveSection: {
@@ -182,11 +183,25 @@ export const messages: Messages = {
     profilesHint: 'プロファイルを保存 · <code>aic use</code> で切り替え',
     lede: 'プロバイダを自分で。aic は LLM と直接通信 — 中間業者なし、コミットごとの課金なし、プロキシなし。API キーはあなたのマシンから出ません。',
     aside: '中間業者なし · コミットごとの課金なし · 呼び出しはあなたのマシンから直接',
+    redactionAside:
+      'シークレット・リダクション・ゲート — diff にキーらしい文字列があると送信前に実行を止めます',
     yourModel: '（あなたのモデル）',
   },
 
+  control: {
+    eyebrow: '07 — フルコントロール',
+    h2: '操る · 審査する · 元に戻す',
+    lede: 'ドラフトを書くのはモデル、主導権はあなた。一回限りのヒントでグルーピングを操り、選択制のバッチ審査で起草前に各プランを承認・却下し、<code>aic undo</code> で実行全体をリセット — コミットは消え、変更はすべて未ステージに戻ります。',
+    steps: {
+      steer: { label: '操る', detail: 'aic --hint "keep the parser rewrite separate"' },
+      review: { label: '審査', detail: 'batch plan: merge · undo-merge · abort' },
+      undo: { label: '元に戻す', detail: 'aic undo ✓ run reset, changes unstaged' },
+    },
+    shipBadge: 'v{version} で搭載',
+  },
+
   install: {
-    eyebrow: '07 — インストール',
+    eyebrow: '08 — インストール',
     h2: '1行で aic をインストール。',
     // CRO トラストストリップ — インストール方法の前に主な懸念へ回答。
     trust: [
@@ -195,6 +210,7 @@ export const messages: Messages = {
       '12プロバイダー',
       'pre-commit フックと共存',
       'キーはマシンから出ない',
+      '送信前にシークレットをブロック',
     ],
     postinstall:
       '<span class="arrow" aria-hidden="true">→</span> そして <code>{cmd}</code> を実行してプロバイダ、キー、モデルを選択。',
@@ -448,6 +464,18 @@ export const messages: Messages = {
           rival: 'いいえ — コミットメッセージのみ',
           note: 'aic の2つ目の看板ワークフロー（`v0.3.0`）。aicommits にはコンフリクトの話がありません — 手動でマージした後にメッセージを書くだけです。',
         },
+        undo: {
+          feature: '直近の実行を取り消す',
+          aic: 'はい — `aic undo` がその実行のコミットをリセット、変更は未ステージに戻る',
+          rival: 'いいえ — コミット後は手で書き直すのみ',
+          note: 'aic v0.5.8 で搭載。失敗しても対話的な `git reset` の代わりにコマンド一本：実行のコミットを消し、変更はすべて未ステージに戻り、履歴が進んでいれば拒否します。aicommits にアンドゥはありません — 書き損じた AI メッセージは手直しするしかありません。',
+        },
+        redaction: {
+          feature: '送信前のシークレット・リダクション',
+          aic: 'はい — LLM 呼び出し前に実行を止め、ファイルとパターンを指摘',
+          rival: 'いいえ — diff はそのままモデルへ',
+          note: 'aic v0.5.8 で搭載、`aic` と `aic resolve` の両方に効きます。diff にクラウドキー・トークン・秘密鍵があれば、マシンの外に出る前に実行が止まります — aic はファイルとパターンを指摘します。`--no-redact` でオフにできます。aicommits は diff をそのままモデルへ送ります。',
+        },
         anthropic: {
           feature: 'ファーストクラスの Anthropic · Gemini · DeepSeek',
           aic: 'はい — ネイティブプロバイダ',
@@ -550,6 +578,18 @@ export const messages: Messages = {
           rival: 'なし — コミットメッセージのみ',
           note: 'ai-commit にはコンフリクト対応がありません — マージは手作業のまま。',
         },
+        undo: {
+          feature: '直近の実行を取り消す',
+          aic: 'はい — `aic undo` がその実行のコミットをリセット、変更は未ステージに戻る',
+          rival: 'いいえ — コミット後は手で書き直すのみ',
+          note: 'aic v0.5.8 で搭載。実行のコミットは消え、変更はすべて未ステージに戻り、履歴が進んでいれば拒否します。ai-commit にアンドゥはありません — 書き損じたメッセージは手直しするしかありません。',
+        },
+        redaction: {
+          feature: '送信前のシークレット・リダクション',
+          aic: 'はい — LLM 呼び出し前に実行を止め、ファイルとパターンを指摘',
+          rival: 'いいえ — diff はそのままモデルへ',
+          note: 'aic v0.5.8 で搭載、`aic` と `aic resolve` の両方に効きます。diff にキーらしい文字列があれば、マシンの外に出る前に実行が止まります。`--no-redact` でオフにできます。ai-commit は diff をそのままモデルへ送ります。',
+        },
         'claude-context': {
           feature: 'Claude Code の文脈',
           aic: 'なし',
@@ -651,6 +691,18 @@ export const messages: Messages = {
           aic: 'あり — `aic resolve` が diff を提案し、ファイルごとに確認',
           rival: 'なし — コミットメッセージのみ',
           note: 'llmc にはコンフリクト対応がありません — マージは手作業のまま。',
+        },
+        undo: {
+          feature: '直近の実行を取り消す',
+          aic: 'はい — `aic undo` がその実行のコミットをリセット、変更は未ステージに戻る',
+          rival: 'いいえ — コミット後は手で書き直すのみ',
+          note: 'aic v0.5.8 で搭載。実行のコミットは消え、変更はすべて未ステージに戻り、履歴が進んでいれば拒否します。llmc にアンドゥはありません — 書き損じたメッセージは手直しするしかありません。',
+        },
+        redaction: {
+          feature: '送信前のシークレット・リダクション',
+          aic: 'はい — LLM 呼び出し前に実行を止め、ファイルとパターンを指摘',
+          rival: 'いいえ — diff はそのままモデルへ',
+          note: 'aic v0.5.8 で搭載、`aic` と `aic resolve` の両方に効きます。diff にキーらしい文字列があれば、マシンの外に出る前に実行が止まります。`--no-redact` でオフにできます。llmc は diff をそのままモデルへ送ります。',
         },
         'provider-count': {
           feature: 'プロバイダー数',
@@ -763,6 +815,18 @@ export const messages: Messages = {
           rival: 'なし — コミットメッセージのみ',
           note: 'git-ai にはコンフリクト対応がありません — マージは手作業のまま。',
         },
+        undo: {
+          feature: '直近の実行を取り消す',
+          aic: 'はい — `aic undo` がその実行のコミットをリセット、変更は未ステージに戻る',
+          rival: 'いいえ — コミット後は手で書き直すのみ',
+          note: 'aic v0.5.8 で搭載。実行のコミットは消え、変更はすべて未ステージに戻り、履歴が進んでいれば拒否します。git-ai にアンドゥはありません — 書き損じたメッセージは手直しするしかありません。',
+        },
+        redaction: {
+          feature: '送信前のシークレット・リダクション',
+          aic: 'はい — LLM 呼び出し前に実行を止め、ファイルとパターンを指摘',
+          rival: 'いいえ — diff はそのままモデルへ',
+          note: 'aic v0.5.8 で搭載、`aic` と `aic resolve` の両方に効きます。diff にキーらしい文字列があれば、マシンの外に出る前に実行が止まります。`--no-redact` でオフにできます。git-ai は diff をそのままモデルへ送ります。',
+        },
         'pr-description': {
           feature: 'PR 説明',
           aic: 'なし',
@@ -861,6 +925,18 @@ export const messages: Messages = {
           aic: 'あり — `aic resolve` が diff を提案し、ファイルごとに確認',
           rival: 'なし — コミットメッセージのみ',
           note: 'OpenCommit にはコンフリクト対応がありません — マージは手作業のまま。',
+        },
+        undo: {
+          feature: '直近の実行を取り消す',
+          aic: 'はい — `aic undo` がその実行のコミットをリセット、変更は未ステージに戻る',
+          rival: 'いいえ — コミット後は手で書き直すのみ',
+          note: 'aic v0.5.8 で搭載。実行のコミットは消え、変更はすべて未ステージに戻り、履歴が進んでいれば拒否します。OpenCommit にアンドゥはありません — 書き損じたメッセージは手直しするしかありません。',
+        },
+        redaction: {
+          feature: '送信前のシークレット・リダクション',
+          aic: 'はい — LLM 呼び出し前に実行を止め、ファイルとパターンを指摘',
+          rival: 'いいえ — diff はそのままモデルへ',
+          note: 'aic v0.5.8 で搭載、`aic` と `aic resolve` の両方に効きます。diff にキーらしい文字列があれば、マシンの外に出る前に実行が止まります。`--no-redact` でオフにできます。OpenCommit は diff をそのままモデルへ送ります。',
         },
         runtime: {
           feature: 'ランタイムと依存',

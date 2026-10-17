@@ -29,7 +29,7 @@ export const GITHUB_SOURCE_BASE = `https://api.github.com/repos/${GITHUB_OWNER}/
 export const FETCH_TIMEOUT_MS = 8000;
 
 /** Visible across the site; overwritten by loadAicFacts() when reachable. */
-export const FALLBACK_VERSION = '0.5.7';
+export const FALLBACK_VERSION = '0.5.8';
 
 export interface ProviderInfo {
   /** Lowercase id as used in config/env (`openai`, `anthropic`, …). */
@@ -182,6 +182,18 @@ export const HUNK_SPLITTING: HunkSplitting = {
     { at: 134, type: 'refactor', summary: 'extract token store' },
   ],
 } as const;
+
+/**
+ * v0.5.8 control-loop features — `--hint` run directive, opt-in Batch Review
+ * (`review_batch_plan`), `aic undo`, and the secrets redaction gate
+ * (`--no-redact`). Powers the #07 Full-control ship-badge and the Batching
+ * Batch-Review badge. Historical/immutable, same rule as
+ * `HUNK_SPLITTING.shippedIn` (feature claims are editorial — ADR-0003).
+ */
+export const CONTROL_SHIPPED_IN = '0.5.8';
+
+/** Ordered step ids for the #07 Full-control loop (steer → review → undo). */
+export const CONTROL_STEPS = ['steer', 'review', 'undo'] as const;
 
 /**
  * v0.5.0 CLI-agent backend presets (#118); v0.5.5 adds 7 more headless

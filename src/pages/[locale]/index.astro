@@ -24,6 +24,7 @@ import ResolveSection from '@/components/resolve/ResolveSection.astro';
 import AgentsSection from '@/components/agents/AgentsSection.astro';
 import Providers from '@/components/providers/Providers.astro';
 import CompareBand from '@/components/compare/CompareBand.astro';
+import ControlSection from '@/components/control/ControlSection.astro';
 import Install from '@/components/install/Install.astro';
 import Footer from '@/components/footer/Footer.astro';
 
@@ -51,6 +52,7 @@ const facts = await loadAicFacts();
     <ResolveSection />
     <AgentsSection />
     <Providers providers={facts.providers} />
+    <ControlSection />
     <CompareBand />
     <Install />
   </main>

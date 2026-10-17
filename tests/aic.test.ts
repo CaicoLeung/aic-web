@@ -1,7 +1,7 @@
 /**
  * Fixture tests for the build-time Rust-source parsers (src/data/aic.ts).
  *
- * The parsers regex-read Cargo.toml and src/llm.rs from the aic source repo
+ * The parsers regex-read Cargo.toml and src/llm/mod.rs from the aic source
  * at build time (ADR-0003). An upstream refactor can silently break them,
  * and a miss degrades the site to fallback facts in production — these
  * fixtures pin the parsing contracts against realistic source excerpts so
@@ -22,7 +22,7 @@ edition = "2021"
 tokio = { version = "1", features = ["full"] }
 `;
 
-const LLM_RS = `use crate::config::Config;
+const LLM_MOD_RS = `use crate::config::Config;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Provider {
@@ -69,7 +69,7 @@ version = "2.0.0"
 
 describe('parseProviders', () => {
   it('parses variants in declaration order with live models, display names, and doc-comment dedupe', () => {
-    assert.deepEqual(parseProviders(LLM_RS), [
+    assert.deepEqual(parseProviders(LLM_MOD_RS), [
       { id: 'anthropic', name: 'Anthropic', defaultModel: 'claude-sonnet-4-5' },
       { id: 'openai', name: 'OpenAi', defaultModel: 'gpt-5.2' },
       { id: 'xai', name: 'xAI', defaultModel: 'grok-4' },

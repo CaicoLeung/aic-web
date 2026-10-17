@@ -103,3 +103,13 @@ export function localizedHref(
   const tail = slug.replace(/^\/+|\/+$/g, '');
   return `${base}${prefix}${tail}${tail ? '/' : ''}`;
 }
+
+/**
+ * Localized /changelog/ href pinned to one release. The changelog page
+ * emits `id={entry.version}` per release, so this deep-links straight to
+ * that release's notes:
+ *   changelogHref('zh', '0.5.8')  → '/aic-web/zh/changelog/#0.5.8'
+ */
+export function changelogHref(locale: Locale, version: string): string {
+  return `${localizedHref(locale, 'changelog')}#${version}`;
+}
