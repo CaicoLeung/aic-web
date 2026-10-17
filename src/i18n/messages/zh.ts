@@ -193,7 +193,7 @@ export const messages: Messages = {
     steps: {
       steer: { label: '引导', detail: 'aic --hint "keep the parser rewrite separate"' },
       review: { label: '审阅', detail: 'batch plan: merge · undo-merge · abort' },
-      undo: { label: '撤销', detail: 'aic undo  ✓ run reset, changes unstaged' },
+      undo: { label: '撤销', detail: 'aic undo ✓ run reset, changes unstaged' },
     },
     shipBadge: '随 v{version} 发布',
   },

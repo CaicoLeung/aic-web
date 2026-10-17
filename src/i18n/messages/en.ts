@@ -211,7 +211,7 @@ export const messages = {
     /** Secrets redaction gate (v0.5.8) — key-icon aside under the provider
      *  list (the shield aside is the API-key claim). */
     redactionAside:
-      'secrets redaction gate — secret-shaped content in the diff or a conflicted file stops the run before it is sent',
+      'secrets redaction gate — secret-shaped content stops the run before it is sent',
     yourModel: '(your model)',
     profilesHint: 'save profiles · switch with <code>aic use</code>',
   },
@@ -226,7 +226,7 @@ export const messages = {
     steps: {
       steer: { label: 'steer', detail: 'aic --hint "keep the parser rewrite separate"' },
       review: { label: 'review', detail: 'batch plan: merge · undo-merge · abort' },
-      undo: { label: 'undo', detail: 'aic undo  ✓ run reset, changes unstaged' },
+      undo: { label: 'undo', detail: 'aic undo ✓ run reset, changes unstaged' },
     },
     /** `{version}` is the shipped-in semver (CONTROL_SHIPPED_IN, src/config/site.ts). */
     shipBadge: 'shipped in v{version}',

@@ -191,7 +191,7 @@ export const messages: Messages = {
     steps: {
       steer: { label: '이끌기', detail: 'aic --hint "keep the parser rewrite separate"' },
       review: { label: '검토', detail: 'batch plan: merge · undo-merge · abort' },
-      undo: { label: '되돌리기', detail: 'aic undo  ✓ run reset, changes unstaged' },
+      undo: { label: '되돌리기', detail: 'aic undo ✓ run reset, changes unstaged' },
     },
     shipBadge: 'v{version}에 탑재',
   },
