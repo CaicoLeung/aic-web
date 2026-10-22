@@ -26,8 +26,12 @@ const { h } = Astro.props;
 
 <div class="hunk-trace-line" data-hunk-line>
   <span class="ht-at">@@{h.at}</span>
-  <span class="ht-arrow" aria-hidden="true">→</span>
-  <span class="ht-type" style={`--accent: ${HUNK_TYPE_ACCENT[h.type]}`}>{h.type}</span>
+  <span class="ht-arrow" aria-hidden="true">
+    →
+  </span>
+  <span class="ht-type" style={`--accent: ${HUNK_TYPE_ACCENT[h.type]}`}>
+    {h.type}
+  </span>
   <span class="ht-sum">{h.summary}</span>
 </div>
 

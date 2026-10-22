@@ -33,23 +33,24 @@ const description = t('meta.alt.hub.description');
     { name: hub.eyebrow, path: '' },
   ]}
 >
-  <p class="eyebrow"><span class="line" aria-hidden="true"></span>{hub.eyebrow}</p>
+  <p class="eyebrow">
+    <span class="line" aria-hidden="true"></span>
+    {hub.eyebrow}
+  </p>
   <h1>{hub.h1}</h1>
   <p class="lede" set:html={hub.lede} />
 
   <section class="block">
     <h2>{hub.h2}</h2>
     <ul class="cards">
-      {
-        hub.items.map((item) => (
-          <li class="card">
-            <a class="card-link" href={localizedHref(locale, `alternatives/${item.id}`)}>
-              <span class="card-name">{item.name}</span>
-              <span class="card-line">{item.line}</span>
-            </a>
-          </li>
-        ))
-      }
+      {hub.items.map((item) => (
+        <li class="card">
+          <a class="card-link" href={localizedHref(locale, `alternatives/${item.id}`)}>
+            <span class="card-name">{item.name}</span>
+            <span class="card-line">{item.line}</span>
+          </a>
+        </li>
+      ))}
     </ul>
   </section>
 

@@ -28,8 +28,15 @@ const { title = 'projects/your-repo', bodyAttr = 'data-term-body' } = Astro.prop
 
 <figure class="terminal" aria-hidden="true">
   <div class="termbar">
-    <div class="dots"><i></i><i></i><i></i></div>
-    <div class="termtitle"><b>~/</b>{title}</div>
+    <div class="dots">
+      <i></i>
+      <i></i>
+      <i></i>
+    </div>
+    <div class="termtitle">
+      <b>~/</b>
+      {title}
+    </div>
   </div>
 
   <div class="termbody" {...{ [bodyAttr]: '' }}>

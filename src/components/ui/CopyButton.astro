@@ -39,7 +39,9 @@ const t = useLocalizer(locale);
   data-aria-copied={t('copyButton.copiedAria', { label })}
   aria-label={t('copyButton.copyAria', { label })}
 >
-  <span class="copy-btn__label" data-label>{label}</span>
+  <span class="copy-btn__label" data-label>
+    {label}
+  </span>
   <svg
     class="copy-btn__icon"
     width="14"

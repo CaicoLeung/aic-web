@@ -26,28 +26,27 @@ const changelog = changelogHref(locale, CONTROL_SHIPPED_IN);
 <section id="control" class="section control-section">
   <div class="container">
     <p class="eyebrow">
-      <span class="line" aria-hidden="true"></span>{t('control.eyebrow')}
+      <span class="line" aria-hidden="true"></span>
+      {t('control.eyebrow')}
     </p>
     <h2>{t('control.h2')}</h2>
     <p class="lede" set:html={t('control.lede')} />
 
     <ol class="steps">
-      {
-        CONTROL_STEPS.map((id) => (
-          <li class="step">
-            <span class="step-label">{m.control.steps[id].label}</span>
-            <code class="step-cmd">{m.control.steps[id].detail}</code>
-          </li>
-        ))
-      }
+      {CONTROL_STEPS.map((id) => (
+        <li class="step">
+          <span class="step-label">{m.control.steps[id].label}</span>
+          <code class="step-cmd">{m.control.steps[id].detail}</code>
+        </li>
+      ))}
     </ol>
 
     <p class="meta-row">
       <a class="ship-badge" href={changelog}>
-        {t('control.shipBadge', { version: CONTROL_SHIPPED_IN })}<span
-          class="ship-arrow"
-          aria-hidden="true">→</span
-        >
+        {t('control.shipBadge', { version: CONTROL_SHIPPED_IN })}
+        <span class="ship-arrow" aria-hidden="true">
+          →
+        </span>
       </a>
     </p>
   </div>

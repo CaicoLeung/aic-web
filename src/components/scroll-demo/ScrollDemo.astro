@@ -23,7 +23,11 @@
     <div class="demo-inner container">
       <div class="demo-terminal" data-terminal>
         <div class="term-chrome">
-          <div class="term-dots"><i></i><i></i><i></i></div>
+          <div class="term-dots">
+            <i></i>
+            <i></i>
+            <i></i>
+          </div>
           <span class="term-title">aic</span>
           <span class="term-stage" data-stage-label></span>
         </div>
@@ -35,7 +39,9 @@
             <span class="cmd">aic</span>
           </div>
           <div class="tline r0 blank" data-reveal="0.00"></div>
-          <div class="tline r0 accent" data-reveal="0.02">⟢ agent starting</div>
+          <div class="tline r0 accent" data-reveal="0.02">
+            ⟢ agent starting
+          </div>
           <div class="tline r0 muted" data-reveal="0.03">
             config <span class="val">.aic.yml</span>
           </div>
@@ -48,8 +54,9 @@
 
           <!-- Loading spinner bridge -->
           <div class="tline load" data-reveal="0.10">
-            <span class="spinner"></span><span class="cyan">analyzing repository</span
-            ><span class="dot-anim" aria-hidden="true"></span>
+            <span class="spinner"></span>
+            <span class="cyan">analyzing repository</span>
+            <span class="dot-anim" aria-hidden="true"></span>
           </div>
 
           <!-- r1: Agent thinking — streams one-by-one -->
@@ -72,9 +79,13 @@
           <div class="tline r1 muted" data-reveal="0.42">
             lock.json <span class="bracket">┘</span>
           </div>
-          <div class="tline r1 cyan" data-reveal="0.45">3 commit groups identified</div>
+          <div class="tline r1 cyan" data-reveal="0.45">
+            3 commit groups identified
+          </div>
           <div class="tline r1 blank" data-reveal="0.47"></div>
-          <div class="tline r1 muted sep" data-reveal="0.49">━━ proposed plan ━━</div>
+          <div class="tline r1 muted sep" data-reveal="0.49">
+            ━━ proposed plan ━━
+          </div>
           <div class="tline r1" data-reveal="0.52">
             <span class="num"> 1</span>
             <span class="amber">feat(auth): refresh token rotation</span>
@@ -105,10 +116,14 @@
             ✓ ghi9012 feat(auth): refresh token rotation
           </div>
           <div class="tline r2 blank" data-reveal="0.75"></div>
-          <div class="tline r2 cyan" data-reveal="0.76">12 files → 3 commits in 4.2s</div>
+          <div class="tline r2 cyan" data-reveal="0.76">
+            12 files → 3 commits in 4.2s
+          </div>
 
           <!-- Blinking cursor — JS toggles during streaming -->
-          <span class="term-cursor" data-cursor>▋</span>
+          <span class="term-cursor" data-cursor>
+            ▋
+          </span>
         </div>
       </div>
     </div>

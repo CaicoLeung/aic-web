@@ -65,10 +65,11 @@ const WORKFLOW_STEPS: [IconName, StepAccent][] = [
     ctaHint={t('resolve.ctaHint')}
   >
     <Fragment slot="h1">
-      {t('resolve.h1.main')}<br />
-      <em class="ital">{m.resolve.h1.sub[0]}</em>{m.resolve.h1.sub[1]}<span class="pop"
-        >{m.resolve.h1.sub[2]}</span
-      >
+      {t('resolve.h1.main')}
+      <br />
+      <em class="ital">{m.resolve.h1.sub[0]}</em>
+      {m.resolve.h1.sub[1]}
+      <span class="pop">{m.resolve.h1.sub[2]}</span>
     </Fragment>
     <ResolveTerminal slot="terminal" />
   </HybridHero>
@@ -78,18 +79,16 @@ const WORKFLOW_STEPS: [IconName, StepAccent][] = [
     <h2>{t('resolve.workflow.h2')}</h2>
     <p class="block-lede">{t('resolve.workflow.lede')}</p>
     <ol class="steps">
-      {
-        m.resolve.workflow.steps.map((s, i) => (
-          <li>
-            <StepHeading
-              icon={WORKFLOW_STEPS[i][0]}
-              accent={WORKFLOW_STEPS[i][1]}
-              h={s.h}
-            />
-            <span class="step-n" set:html={s.n} />
-          </li>
-        ))
-      }
+      {m.resolve.workflow.steps.map((s, i) => (
+        <li>
+          <StepHeading
+            icon={WORKFLOW_STEPS[i][0]}
+            accent={WORKFLOW_STEPS[i][1]}
+            h={s.h}
+          />
+          <span class="step-n" set:html={s.n} />
+        </li>
+      ))}
     </ol>
   </section>
 
@@ -98,14 +97,12 @@ const WORKFLOW_STEPS: [IconName, StepAccent][] = [
     <h2>{t('resolve.twoWays.h2')}</h2>
     <p class="block-lede">{t('resolve.twoWays.lede')}</p>
     <ul class="points">
-      {
-        m.resolve.twoWays.points.map((p) => (
-          <li>
-            <span class="point-h" set:html={p.h} />
-            <span class="point-n" set:html={p.n} />
-          </li>
-        ))
-      }
+      {m.resolve.twoWays.points.map((p) => (
+        <li>
+          <span class="point-h" set:html={p.h} />
+          <span class="point-n" set:html={p.n} />
+        </li>
+      ))}
     </ul>
   </section>
 
@@ -121,14 +118,12 @@ const WORKFLOW_STEPS: [IconName, StepAccent][] = [
     <h2>{t('resolve.limits.h2')}</h2>
     <p class="block-lede">{t('resolve.limits.lede')}</p>
     <ul class="points">
-      {
-        m.resolve.limits.points.map((p) => (
-          <li>
-            <span class="point-h" set:html={p.h} />
-            <span class="point-n" set:html={p.n} />
-          </li>
-        ))
-      }
+      {m.resolve.limits.points.map((p) => (
+        <li>
+          <span class="point-h" set:html={p.h} />
+          <span class="point-n" set:html={p.n} />
+        </li>
+      ))}
     </ul>
   </section>
 
@@ -142,7 +137,8 @@ const WORKFLOW_STEPS: [IconName, StepAccent][] = [
         {t('batching.cmpLink')}
       </a>
       <a class="cta-link" href={releaseUrl} target="_blank" rel="noopener noreferrer">
-        {t('resolve.verdict.releaseNotes')}<span aria-hidden="true"> ↗</span>
+        {t('resolve.verdict.releaseNotes')}
+        <span aria-hidden="true"> ↗</span>
       </a>
     </div>
   </section>

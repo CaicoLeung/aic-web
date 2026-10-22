@@ -59,7 +59,10 @@ const vsPage = localizedHref(locale, `vs/${id}`);
     { name: alt.h1, path: '' },
   ]}
 >
-  <p class="eyebrow"><span class="line" aria-hidden="true"></span>{alt.eyebrow}</p>
+  <p class="eyebrow">
+    <span class="line" aria-hidden="true"></span>
+    {alt.eyebrow}
+  </p>
   <h1>{alt.h1}</h1>
   <p class="lede" set:html={alt.lede} />
 
@@ -97,16 +100,18 @@ const vsPage = localizedHref(locale, `vs/${id}`);
   <section class="block">
     <h2>{alt.migrateH}</h2>
     <ol class="migrate">
-      {
-        /*
+      {/*
         Install step sources the command from PRIMARY_INSTALL_COMMAND (ADR-0003)
         rather than re-typing it in every locale's prose (ADR-0006). Only the
         localized lead-in lives in the message module; the command is
         code-register, rendered as <code> by the component.
-      */
-      }
-      <li>{t('alt.migrateLead')} <code>{PRIMARY_INSTALL_COMMAND}</code></li>
-      {alt.migrate.map((step) => <li set:html={step} />)}
+      */}
+      <li>
+        {t('alt.migrateLead')} <code>{PRIMARY_INSTALL_COMMAND}</code>
+      </li>
+      {alt.migrate.map((step) => (
+        <li set:html={step} />
+      ))}
     </ol>
   </section>
 
@@ -114,7 +119,9 @@ const vsPage = localizedHref(locale, `vs/${id}`);
   <section class="verdict" id="cta">
     <div class="cta">
       <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
-      <a class="cta-link" href={vsPage}>{m.vs[id].h1}</a>
+      <a class="cta-link" href={vsPage}>
+        {m.vs[id].h1}
+      </a>
       <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
         {t('footer.star')}
       </a>

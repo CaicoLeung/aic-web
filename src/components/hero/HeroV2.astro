@@ -28,7 +28,9 @@
       <div class="editor" data-editor>
         <div class="ed-chrome">
           <div class="ed-dots">
-            <span></span><span></span><span></span>
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
           <div class="ed-tabs">
             <span class="ed-tab active">auth.ts</span>
@@ -41,15 +43,19 @@
           <div class="hunk" data-hunk data-group="1" style="--gc: var(--color-amber)">
             <div class="hunk-glow" data-hunk-glow></div>
             <div class="hunk-line" data-i="0">
-              <span class="ln">3</span><span class="sign del">-</span><span class="code"
-                ><span class="kw">const</span> session = getStoredSession()</span
-              >
+              <span class="ln">3</span>
+              <span class="sign del">-</span>
+              <span class="code">
+                <span class="kw">const</span> session = getStoredSession()
+              </span>
             </div>
             <div class="hunk-line" data-i="0">
-              <span class="ln">4</span><span class="sign add">+</span><span class="code"
-                ><span class="kw">const</span> session = <span class="kw">await</span>
-                <span class="fn">refreshToken</span>(stored)</span
-              >
+              <span class="ln">4</span>
+              <span class="sign add">+</span>
+              <span class="code">
+                <span class="kw">const</span> session = <span class="kw">await</span>
+                <span class="fn">refreshToken</span>(stored)
+              </span>
             </div>
           </div>
 
@@ -59,48 +65,60 @@
           <div class="hunk" data-hunk data-group="0" style="--gc: var(--color-cyan)">
             <div class="hunk-glow" data-hunk-glow></div>
             <div class="hunk-line" data-i="0">
-              <span class="ln">6</span><span class="sign add">+</span><span class="code"
-                ><span class="kw">export async function</span>
+              <span class="ln">6</span>
+              <span class="sign add">+</span>
+              <span class="code">
+                <span class="kw">export async function</span>
                 <span class="fn">refreshToken</span>(t: <span class="ty">string</span>)
-                &#123;</span
-              >
+                &#123;
+              </span>
             </div>
             <div class="hunk-line" data-i="1">
-              <span class="ln">7</span><span class="sign add">+</span><span class="code"
-                ><span class="kw">const</span> res = <span class="kw">await</span>
-                <span class="fn">fetch</span>(&#123;</span
-              >
+              <span class="ln">7</span>
+              <span class="sign add">+</span>
+              <span class="code">
+                <span class="kw">const</span> res = <span class="kw">await</span>
+                <span class="fn">fetch</span>(&#123;
+              </span>
             </div>
             <div class="hunk-line" data-i="2">
-              <span class="ln">8</span><span class="sign add">+</span><span class="code"
-                >url: <span class="str">'/api/refresh'</span>,</span
-              >
+              <span class="ln">8</span>
+              <span class="sign add">+</span>
+              <span class="code">
+                url: <span class="str">'/api/refresh'</span>,
+              </span>
             </div>
             <div class="hunk-line" data-i="2">
-              <span class="ln">9</span><span class="sign add">+</span><span class="code"
-                >method: <span class="str">'POST'</span>,</span
-              >
+              <span class="ln">9</span>
+              <span class="sign add">+</span>
+              <span class="code">
+                method: <span class="str">'POST'</span>,
+              </span>
             </div>
             <div class="hunk-line" data-i="2">
-              <span class="ln">10</span><span class="sign add">+</span><span class="code"
-                >body: <span class="fn">JSON</span>.<span class="fn">stringify</span
-                >(&#123; t &#125;),</span
-              >
+              <span class="ln">10</span>
+              <span class="sign add">+</span>
+              <span class="code">
+                body: <span class="fn">JSON</span>.<span class="fn">stringify</span>
+                (&#123; t &#125;),
+              </span>
             </div>
             <div class="hunk-line" data-i="1">
-              <span class="ln">11</span><span class="sign add">+</span><span class="code"
-                >&#125;)</span
-              >
+              <span class="ln">11</span>
+              <span class="sign add">+</span>
+              <span class="code">&#125;)</span>
             </div>
             <div class="hunk-line" data-i="1">
-              <span class="ln">12</span><span class="sign add">+</span><span class="code"
-                ><span class="kw">return</span> res.<span class="fn">json</span>()</span
-              >
+              <span class="ln">12</span>
+              <span class="sign add">+</span>
+              <span class="code">
+                <span class="kw">return</span> res.<span class="fn">json</span>()
+              </span>
             </div>
             <div class="hunk-line" data-i="0">
-              <span class="ln">13</span><span class="sign add">+</span><span class="code"
-                >&#125;</span
-              >
+              <span class="ln">13</span>
+              <span class="sign add">+</span>
+              <span class="code">&#125;</span>
             </div>
           </div>
 
@@ -110,22 +128,25 @@
           <div class="hunk" data-hunk data-group="1" style="--gc: var(--color-amber)">
             <div class="hunk-glow" data-hunk-glow></div>
             <div class="hunk-line" data-i="0">
-              <span class="ln">15</span><span class="sign add">+</span><span class="code"
-                ><span class="kw">if</span> (session.expired) &#123;</span
-              >
+              <span class="ln">15</span>
+              <span class="sign add">+</span>
+              <span class="code">
+                <span class="kw">if</span> (session.expired) &#123;
+              </span>
             </div>
             <div class="hunk-line" data-i="1">
-              <span class="ln">16</span><span class="sign add">+</span><span class="code"
-                ><span class="kw">return</span>
-                <span class="fn">redirect</span>(<span class="str"
-                  >'/login?reason=expired'</span
-                >)</span
-              >
+              <span class="ln">16</span>
+              <span class="sign add">+</span>
+              <span class="code">
+                <span class="kw">return</span>
+                <span class="fn">redirect</span>(
+                <span class="str">'/login?reason=expired'</span>)
+              </span>
             </div>
             <div class="hunk-line" data-i="0">
-              <span class="ln">17</span><span class="sign add">+</span><span class="code"
-                >&#125;</span
-              >
+              <span class="ln">17</span>
+              <span class="sign add">+</span>
+              <span class="code">&#125;</span>
             </div>
           </div>
           <div class="hunk-gap"></div>
@@ -134,9 +155,11 @@
           <div class="hunk" data-hunk data-group="2" style="--gc: var(--color-mint)">
             <div class="hunk-glow" data-hunk-glow></div>
             <div class="hunk-line" data-i="1">
-              <span class="ln">19</span><span class="sign add">+</span><span class="code"
-                ><span class="str">"next"</span>: <span class="str">"^14.2.0"</span></span
-              >
+              <span class="ln">19</span>
+              <span class="sign add">+</span>
+              <span class="code">
+                <span class="str">"next"</span>: <span class="str">"^14.2.0"</span>
+              </span>
             </div>
           </div>
         </div>
@@ -228,23 +251,28 @@
           </div>
         </div>
       </div>
-    </div><!-- /lab-stage -->
+    </div>
+    <!-- /lab-stage -->
 
     <!-- ═══ BOTTOM: Terminal bar ═══ -->
     <div class="lab-term" data-lab-term>
       <div class="term-line">
         <span class="term-prompt">$</span>
         <span class="term-cmd">aic commit --all</span>
-        <span class="term-cursor" data-term-cursor>▋</span>
+        <span class="term-cursor" data-term-cursor>
+          ▋
+        </span>
       </div>
       <div class="term-result" data-term-result>
-        <span class="tr-ok">✓</span> 3 commits created in <b>4.2s</b> — <span
-          class="tr-link">view on GitHub →</span
-        >
+        <span class="tr-ok">✓</span> 3 commits created in <b>4.2s</b> —{' '}
+        <span class="tr-link">view on GitHub →</span>
       </div>
     </div>
-    <span class="lab-hint" data-lab-hint>scroll to decompose ↓</span>
-  </div><!-- /lab-pin -->
+    <span class="lab-hint" data-lab-hint>
+      scroll to decompose ↓
+    </span>
+  </div>
+  <!-- /lab-pin -->
 </section>
 
 <style>

@@ -37,18 +37,25 @@ const { h1Id, eyebrow, lede, ctaHint, titleTop = false } = Astro.props;
   aria-labelledby={h1Id}
 >
   <p class="eyebrow hybrid-eyebrow">
-    <span class="line" aria-hidden="true"></span>{eyebrow}
+    <span class="line" aria-hidden="true"></span>
+    {eyebrow}
   </p>
-  <h1 id={h1Id} class="hybrid-h1"><slot name="h1" /></h1>
+  <h1 id={h1Id} class="hybrid-h1">
+    <slot name="h1" />
+  </h1>
 
-  <div class="hybrid-terminal"><slot name="terminal" /></div>
+  <div class="hybrid-terminal">
+    <slot name="terminal" />
+  </div>
 
   <p class="lede hybrid-lede" set:html={lede} />
 
   <div class="hybrid-cta">
     <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
     <span class="cta-hint">
-      <span class="arrow" aria-hidden="true">→</span>
+      <span class="arrow" aria-hidden="true">
+        →
+      </span>
       <Fragment set:html={ctaHint} />
     </span>
   </div>

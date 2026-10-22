@@ -93,11 +93,9 @@ const cjkStack =
     {noindex && <meta name="robots" content="noindex, follow" />}
 
     {/* hreflang alternates + x-default → en (ADR-0010) */}
-    {
-      hreflangAlternates.map((alt) => (
-        <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
-      ))
-    }
+    {hreflangAlternates.map((alt) => (
+      <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+    ))}
 
     {/* icons */}
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
@@ -126,7 +124,6 @@ const cjkStack =
 
     {/* structured data — SoftwareApplication (home) or per-page schema */}
     <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
-
     {/* PWA: register service worker (progressive enhancement — fails silently) */}
     <script>
       if ('serviceWorker' in navigator) {
@@ -135,27 +132,26 @@ const cjkStack =
         });
       }
     </script>
-
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
     <div class="scroll-progress" aria-hidden="true"></div>
-    {
-      /* Page content flows directly into <body>. Do NOT wrap the slot in a
+    {/* Page content flows directly into <body>. Do NOT wrap the slot in a
         positioned box (position: relative + z-index): that establishes a
         stacking context and traps fixed descendants — e.g. the scroll
-        progress bar above — below later sections. */
-    }
+        progress bar above — below later sections. */}
     <slot />
 
     <style>
       /* Scroll progress bar — thin duotone bar at viewport top (div above).
-     Zero JS: animation-timeline: scroll(). A real fixed element — not a
-     root pseudo-element — so the scroll-driven transform composites
-     reliably; duration auto + fill forwards keeps the bar pinned at
-     scaleX(1) at the scroll boundary instead of dropping to its base
-     style. Inert (no size, no paint) in browsers without support. */
+      Zero JS: animation-timeline: scroll(). A real fixed element — not a
+      root pseudo-element — so the scroll-driven transform composites
+      reliably; duration auto + fill forwards keeps the bar pinned at
+      scaleX(1) at the scroll boundary instead of dropping to its base
+      style. Inert (no size, no paint) in browsers without support. */
       @supports (animation-timeline: scroll()) {
         @media (prefers-reduced-motion: no-preference) {
           .scroll-progress {

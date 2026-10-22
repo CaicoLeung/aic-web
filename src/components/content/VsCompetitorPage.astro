@@ -76,12 +76,15 @@ const description = t(`meta.vs.${id}.description`);
   ]}
 >
   <p class="eyebrow">
-    <span class="line" aria-hidden="true"></span>{vsBlock.eyebrow}
+    <span class="line" aria-hidden="true"></span>
+    {vsBlock.eyebrow}
   </p>
   <h1>{vsBlock.h1}</h1>
   <p class="lede">
-    <a href={rival.repo} target="_blank" rel="noopener noreferrer">{rival.name}</a
-    ><Fragment set:html={vsBlock.ledeAfter} />
+    <a href={rival.repo} target="_blank" rel="noopener noreferrer">
+      {rival.name}
+    </a>
+    <Fragment set:html={vsBlock.ledeAfter} />
   </p>
 
   <aside class="callout" set:html={vsBlock.callout} />
@@ -102,25 +105,20 @@ const description = t(`meta.vs.${id}.description`);
   <section class="block">
     <h2>{vsBlock.winsH2}</h2>
     <ul class="points">
-      {
-        aicWins.map((axis) => (
-          <li>
-            <span class="point-h">{vsBlock.axes[axis.id].feature}</span>
-            <span class="point-n">{vsBlock.axes[axis.id].note}</span>
-          </li>
-        ))
-      }
-      {
-        ties.map((axis) => (
-          <li>
-            <span class="point-h">
-              {vsBlock.axes[axis.id].feature}{' '}
-              <span class="tie-tag">{vsBlock.tieTag}</span>
-            </span>
-            <span class="point-n">{vsBlock.axes[axis.id].note}</span>
-          </li>
-        ))
-      }
+      {aicWins.map((axis) => (
+        <li>
+          <span class="point-h">{vsBlock.axes[axis.id].feature}</span>
+          <span class="point-n">{vsBlock.axes[axis.id].note}</span>
+        </li>
+      ))}
+      {ties.map((axis) => (
+        <li>
+          <span class="point-h">
+            {vsBlock.axes[axis.id].feature} <span class="tie-tag">{vsBlock.tieTag}</span>
+          </span>
+          <span class="point-n">{vsBlock.axes[axis.id].note}</span>
+        </li>
+      ))}
     </ul>
   </section>
 
@@ -129,14 +127,12 @@ const description = t(`meta.vs.${id}.description`);
     <h2>{vsBlock.rivalH2}</h2>
     <p class="block-lede">{vsBlock.rivalLede}</p>
     <ul class="points">
-      {
-        rivalWins.map((axis) => (
-          <li>
-            <span class="point-h">{vsBlock.axes[axis.id].feature}</span>
-            <span class="point-n">{vsBlock.axes[axis.id].note}</span>
-          </li>
-        ))
-      }
+      {rivalWins.map((axis) => (
+        <li>
+          <span class="point-h">{vsBlock.axes[axis.id].feature}</span>
+          <span class="point-n">{vsBlock.axes[axis.id].note}</span>
+        </li>
+      ))}
     </ul>
   </section>
 
@@ -144,14 +140,12 @@ const description = t(`meta.vs.${id}.description`);
   <section class="block">
     <h2>{vsBlock.faq.h2}</h2>
     <div class="faq">
-      {
-        vsBlock.faq.items.map((item) => (
-          <div class="faq-item">
-            <h3>{item.q}</h3>
-            <p>{item.a}</p>
-          </div>
-        ))
-      }
+      {vsBlock.faq.items.map((item) => (
+        <div class="faq-item">
+          <h3>{item.q}</h3>
+          <p>{item.a}</p>
+        </div>
+      ))}
     </div>
   </section>
 
@@ -159,15 +153,13 @@ const description = t(`meta.vs.${id}.description`);
   <section class="more block">
     <h2>{m.vs.more.h2}</h2>
     <ul class="more-links">
-      {
-        COMPARISON_RIVALS.filter((rivalId) => rivalId !== id).map((rivalId) => (
-          <li>
-            <a href={localizedHref(locale, `vs/${rivalId}`)}>
-              {t('vs.more.vsLabel', { name: COMPARISONS[rivalId].rival.name })}
-            </a>
-          </li>
-        ))
-      }
+      {COMPARISON_RIVALS.filter((rivalId) => rivalId !== id).map((rivalId) => (
+        <li>
+          <a href={localizedHref(locale, `vs/${rivalId}`)}>
+            {t('vs.more.vsLabel', { name: COMPARISONS[rivalId].rival.name })}
+          </a>
+        </li>
+      ))}
       <li>
         <a href={localizedHref(locale, 'best-ai-commit-tools')}>{m.vs.more.roundup}</a>
       </li>

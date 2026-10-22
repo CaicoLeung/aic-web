@@ -26,50 +26,46 @@ const fmtDate = new Intl.DateTimeFormat(LOCALE_HREFLANG[locale], {
 ---
 
 <ol class="timeline">
-  {
-    entries.map((entry, i) => (
-      <li class="node" id={entry.version}>
-        <div class="rail" aria-hidden="true">
-          <span class="dot" />
+  {entries.map((entry, i) => (
+    <li class="node" id={entry.version}>
+      <div class="rail" aria-hidden="true">
+        <span class="dot" />
+      </div>
+      <div class="body">
+        <div class="node-head">
+          <h2 class="version">v{entry.version}</h2>
+          {i === 0 && <span class="latest-badge">{t('changelog.timeline.latest')}</span>}
+          <time class="date" datetime={entry.date}>
+            {fmtDate.format(new Date(entry.date))}
+          </time>
+          <a
+            class="release-link"
+            href={entry.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('changelog.timeline.githubRelease')}
+            <span aria-hidden="true"> ↗</span>
+          </a>
         </div>
-        <div class="body">
-          <div class="node-head">
-            <h2 class="version">v{entry.version}</h2>
-            {i === 0 && (
-              <span class="latest-badge">{t('changelog.timeline.latest')}</span>
-            )}
-            <time class="date" datetime={entry.date}>
-              {fmtDate.format(new Date(entry.date))}
-            </time>
-            <a
-              class="release-link"
-              href={entry.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t('changelog.timeline.githubRelease')}
-              <span aria-hidden="true"> ↗</span>
-            </a>
-          </div>
 
-          {entry.sections.length === 0 ? (
-            <p class="no-notes">{t('changelog.timeline.noNotes')}</p>
-          ) : (
-            entry.sections.map((section) => (
-              <section class="change-section">
-                <h3>{section.kind}</h3>
-                <ul>
-                  {section.items.map((item) => (
-                    <li>{item}</li>
-                  ))}
-                </ul>
-              </section>
-            ))
-          )}
-        </div>
-      </li>
-    ))
-  }
+        {entry.sections.length === 0 ? (
+          <p class="no-notes">{t('changelog.timeline.noNotes')}</p>
+        ) : (
+          entry.sections.map((section) => (
+            <section class="change-section">
+              <h3>{section.kind}</h3>
+              <ul>
+                {section.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </section>
+          ))
+        )}
+      </div>
+    </li>
+  ))}
 </ol>
 
 <style>
