@@ -20,50 +20,51 @@ const t = useLocalizer(locale);
 <section id="providers" class="section providers">
   <div class="container">
     <p class="eyebrow">
-      <span class="line" aria-hidden="true"></span>{t('providers.eyebrow')}
+      <span class="line" aria-hidden="true"></span>
+      {t('providers.eyebrow')}
     </p>
     <h2>{t('providers.h2')}</h2>
-    <p class="lede">
-      {t('providers.lede')}
-    </p>
+    <p class="lede">{t('providers.lede')}</p>
 
     <ul class="provider-list" aria-label="Supported LLM providers">
-      {
-        providers.map((p) => (
-          <li class="provider-chip">
-            <ProviderLogo id={p.id} size={14} />
-            <span>{p.name}</span>
-          </li>
-        ))
-      }
+      {providers.map((p) => (
+        <li class="provider-chip">
+          <ProviderLogo id={p.id} size={14} />
+          <span>{p.name}</span>
+        </li>
+      ))}
     </ul>
 
     <dl class="default-models" aria-label="Default model per provider">
-      {
-        providers.map((p) => (
-          <div class="model-row">
-            <dt>
-              <ProviderLogo id={p.id} size={11} />
-              <span>{p.name}</span>
-            </dt>
-            <dd>
-              {p.defaultModel ?? <span class="muted">{t('providers.yourModel')}</span>}
-            </dd>
-          </div>
-        ))
-      }
+      {providers.map((p) => (
+        <div class="model-row">
+          <dt>
+            <ProviderLogo id={p.id} size={11} />
+            <span>{p.name}</span>
+          </dt>
+          <dd>
+            {p.defaultModel ?? <span class="muted">{t('providers.yourModel')}</span>}
+          </dd>
+        </div>
+      ))}
     </dl>
 
     <p class="aside">
-      <span class="aside-icon"><Icon name="shield" size={14} /></span>
+      <span class="aside-icon">
+        <Icon name="shield" size={14} />
+      </span>
       <span>{t('providers.aside')}</span>
     </p>
     <p class="aside">
-      <span class="aside-icon"><Icon name="key" size={14} /></span>
+      <span class="aside-icon">
+        <Icon name="key" size={14} />
+      </span>
       <span>{t('providers.redactionAside')}</span>
     </p>
     <p class="aside">
-      <span class="aside-icon"><Icon name="terminal" size={14} /></span>
+      <span class="aside-icon">
+        <Icon name="terminal" size={14} />
+      </span>
       <span set:html={t('providers.profilesHint')} />
     </p>
   </div>

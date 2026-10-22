@@ -89,19 +89,17 @@ const current = crumbs?.[crumbs.length - 1];
   <main id="main">
     <slot name="hero" />
     <article class:list={['article', 'container', { 'post-hero': postHero }]}>
-      {
-        current && (
-          <nav class="crumbs" aria-label="Breadcrumb">
-            {parents.map((crumb) => (
-              <>
-                <a href={localizedHref(locale, crumb.path)}>{crumb.name}</a>
-                <span aria-hidden="true">›</span>
-              </>
-            ))}
-            <span aria-current="page">{current.name}</span>
-          </nav>
-        )
-      }
+      {current && (
+        <nav class="crumbs" aria-label="Breadcrumb">
+          {parents.map((crumb) => (
+            <>
+              <a href={localizedHref(locale, crumb.path)}>{crumb.name}</a>
+              <span aria-hidden="true">›</span>
+            </>
+          ))}
+          <span aria-current="page">{current.name}</span>
+        </nav>
+      )}
       <slot />
     </article>
   </main>

@@ -35,7 +35,10 @@ const roundup = localizedHref(locale, 'best-ai-commit-tools');
     { name: d.h1, path: '' },
   ]}
 >
-  <p class="eyebrow"><span class="line" aria-hidden="true"></span>{d.eyebrow}</p>
+  <p class="eyebrow">
+    <span class="line" aria-hidden="true"></span>
+    {d.eyebrow}
+  </p>
   <h1>{d.h1}</h1>
   <p class="lede" set:html={d.lede} />
 
@@ -43,7 +46,9 @@ const roundup = localizedHref(locale, 'best-ai-commit-tools');
   <section class="block">
     <h2>{d.whyH}</h2>
     <ul class="checks">
-      {d.why.map((point) => <li set:html={point} />)}
+      {d.why.map((point) => (
+        <li set:html={point} />
+      ))}
     </ul>
   </section>
 
@@ -51,7 +56,9 @@ const roundup = localizedHref(locale, 'best-ai-commit-tools');
   <section class="block">
     <h2>{d.setupH}</h2>
     <ol class="setup-list">
-      {d.setup.map((step) => <li set:html={step} />)}
+      {d.setup.map((step) => (
+        <li set:html={step} />
+      ))}
     </ol>
     <p class="env" set:html={d.env} />
   </section>
@@ -66,14 +73,12 @@ const roundup = localizedHref(locale, 'best-ai-commit-tools');
   <section class="block">
     <h2>{d.faq.h2}</h2>
     <div class="faq">
-      {
-        d.faq.items.map((item) => (
-          <div class="faq-item">
-            <h3>{item.q}</h3>
-            <p>{item.a}</p>
-          </div>
-        ))
-      }
+      {d.faq.items.map((item) => (
+        <div class="faq-item">
+          <h3>{item.q}</h3>
+          <p>{item.a}</p>
+        </div>
+      ))}
     </div>
   </section>
 

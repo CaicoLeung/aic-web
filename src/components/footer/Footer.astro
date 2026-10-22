@@ -23,7 +23,8 @@ const agentsBase = localizedHref(locale, 'agents');
   <div class="footer-inner container">
     <div class="footer-cta">
       <p class="eyebrow">
-        <span class="line" aria-hidden="true"></span>{t('footer.eyebrow')}
+        <span class="line" aria-hidden="true"></span>
+        {t('footer.eyebrow')}
       </p>
       <h2>{t('footer.h2')}</h2>
       <div class="footer-actions">
@@ -42,7 +43,9 @@ const agentsBase = localizedHref(locale, 'agents');
 
     <div class="footer-meta">
       <a class="repo" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
-        <span class="repo-icon"><Icon name="github" size={13} /></span>
+        <span class="repo-icon">
+          <Icon name="github" size={13} />
+        </span>
         <span>{GITHUB_URL.replace('https://', '')}</span>
       </a>
       <nav class="footer-links" aria-label="Explore">

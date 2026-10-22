@@ -51,25 +51,28 @@ const schema = {
 
 <ArticleShell title={title} description={description} schema={schema}>
   <p class="eyebrow">
-    <span class="line" aria-hidden="true"></span>{t('changelog.eyebrow')}
+    <span class="line" aria-hidden="true"></span>
+    {t('changelog.eyebrow')}
   </p>
   <h1>{t('changelog.h1')}</h1>
   <p class="lede">
-    <Fragment set:html={t('changelog.ledeBefore')} /><a
+    <Fragment set:html={t('changelog.ledeBefore')} />
+    <a
       class="inline-link"
       href={`${GITHUB_URL}/blob/main/CHANGELOG.md`}
       target="_blank"
-      rel="noopener noreferrer">{t('changelog.ledeLink')}</a
-    ><Fragment set:html={t('changelog.ledeAfter')} />
+      rel="noopener noreferrer"
+    >
+      {t('changelog.ledeLink')}
+    </a>
+    <Fragment set:html={t('changelog.ledeAfter')} />
   </p>
 
-  {
-    locale !== DEFAULT_LOCALE && (
-      <p class="en-note" role="note">
-        {t('changelog.englishNote')}
-      </p>
-    )
-  }
+  {locale !== DEFAULT_LOCALE && (
+    <p class="en-note" role="note">
+      {t('changelog.englishNote')}
+    </p>
+  )}
 
   <Changelog entries={entries} />
 </ArticleShell>

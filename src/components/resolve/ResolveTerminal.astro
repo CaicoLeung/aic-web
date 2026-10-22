@@ -21,18 +21,21 @@ import TerminalShell from '@/components/ui/TerminalShell.astro';
     <span class="cmdin">aic resolve</span>
   </div>
   <div class="row" data-row="detect">
-    <span class="warn" aria-hidden="true">⚠</span>
+    <span class="warn" aria-hidden="true">
+      ⚠
+    </span>
     <span class="out">conflict detected · merge · 2 files</span>
   </div>
   <div class="row" data-row="resolve">
-    <span class="spin" aria-hidden="true">⠋</span>
+    <span class="spin" aria-hidden="true">
+      ⠋
+    </span>
     <span class="out">Resolving src/auth.rs…</span>
   </div>
 
   <div class="diffcard" data-row="diff">
     <div class="label">reviewed changes · src/auth.rs</div>
-    <pre
-      class="diff"><span class="del">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
+    <pre class="diff"><span class="del">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
 <span class="del">ours: refresh tokens on idle</span>
 <span class="del">=======</span>
 <span class="del">theirs: persist via keychain</span>
@@ -43,17 +46,23 @@ import TerminalShell from '@/components/ui/TerminalShell.astro';
   <div class="row" data-row="apply">
     <span class="out">apply src/auth.rs?</span>
     <span class="yn">y</span>
-    <span class="ok" aria-hidden="true">✓</span>
+    <span class="ok" aria-hidden="true">
+      ✓
+    </span>
     <span class="out">resolved</span>
   </div>
   <div class="row" data-row="skip">
-    <span class="dim" aria-hidden="true">•</span>
+    <span class="dim" aria-hidden="true">
+      •
+    </span>
     <span class="muted">skipped: logo.png (binary — resolve by hand)</span>
   </div>
   <div class="row" data-row="finalize">
     <span class="out">finalize now?</span>
     <span class="yn">y</span>
-    <span class="ok" aria-hidden="true">✓</span>
+    <span class="ok" aria-hidden="true">
+      ✓
+    </span>
     <span class="out">merge finalized</span>
   </div>
 </TerminalShell>

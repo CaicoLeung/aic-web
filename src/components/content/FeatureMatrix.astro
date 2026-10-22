@@ -47,39 +47,37 @@ const { axes, axisLabels, rivalName, labels } = Astro.props;
         </tr>
       </thead>
       <tbody>
-        {
-          axes.map((axis) => (
-            <tr>
-              <th scope="row">{axisLabels[axis.id].feature}</th>
-              <td class={axis.winner === 'aic' ? 'win' : ''}>
-                {axis.aic.glyph === 'yes' && (
-                  <span class="glyph yes" aria-hidden="true">
-                    ✓
-                  </span>
-                )}
-                {axis.aic.glyph === 'no' && (
-                  <span class="glyph no" aria-hidden="true">
-                    ✗
-                  </span>
-                )}
-                <span>{axisLabels[axis.id].aic}</span>
-              </td>
-              <td class={axis.winner === 'rival' ? 'win' : ''}>
-                {axis.rival.glyph === 'yes' && (
-                  <span class="glyph yes" aria-hidden="true">
-                    ✓
-                  </span>
-                )}
-                {axis.rival.glyph === 'no' && (
-                  <span class="glyph no" aria-hidden="true">
-                    ✗
-                  </span>
-                )}
-                <span>{axisLabels[axis.id].rival}</span>
-              </td>
-            </tr>
-          ))
-        }
+        {axes.map((axis) => (
+          <tr>
+            <th scope="row">{axisLabels[axis.id].feature}</th>
+            <td class={axis.winner === 'aic' ? 'win' : ''}>
+              {axis.aic.glyph === 'yes' && (
+                <span class="glyph yes" aria-hidden="true">
+                  ✓
+                </span>
+              )}
+              {axis.aic.glyph === 'no' && (
+                <span class="glyph no" aria-hidden="true">
+                  ✗
+                </span>
+              )}
+              <span>{axisLabels[axis.id].aic}</span>
+            </td>
+            <td class={axis.winner === 'rival' ? 'win' : ''}>
+              {axis.rival.glyph === 'yes' && (
+                <span class="glyph yes" aria-hidden="true">
+                  ✓
+                </span>
+              )}
+              {axis.rival.glyph === 'no' && (
+                <span class="glyph no" aria-hidden="true">
+                  ✗
+                </span>
+              )}
+              <span>{axisLabels[axis.id].rival}</span>
+            </td>
+          </tr>
+        ))}
       </tbody>
     </table>
   </div>

@@ -37,7 +37,8 @@ const description = t('meta.roundup.description');
   about={['AI commit message tools', 'git', 'conventional commits']}
 >
   <p class="eyebrow">
-    <span class="line" aria-hidden="true"></span>{t('roundup.eyebrow')}
+    <span class="line" aria-hidden="true"></span>
+    {t('roundup.eyebrow')}
   </p>
   <h1>{t('roundup.h1')}</h1>
   <p class="lede" set:html={t('roundup.lede')} />
@@ -48,16 +49,14 @@ const description = t('meta.roundup.description');
   <section class="block">
     <h2>{t('roundup.choose.h2')}</h2>
     <ul class="chooser">
-      {
-        m.roundup.choose.items.map((item) => (
-          <li>
-            <>
-              <span class="need">{item.need}</span>
-              <span class="pick">{item.pick}</span>
-            </>
-          </li>
-        ))
-      }
+      {m.roundup.choose.items.map((item) => (
+        <li>
+          <>
+            <span class="need">{item.need}</span>
+            <span class="pick">{item.pick}</span>
+          </>
+        </li>
+      ))}
     </ul>
   </section>
 
@@ -65,59 +64,57 @@ const description = t('meta.roundup.description');
   <section class="block">
     <h2>{t('roundup.field.h2')}</h2>
     <ul class="cards">
-      {
-        ROUNDUP.map((tool) => (
-          <li class:list={['card', { home: tool.homeTeam }]}>
-            <div class="card-head">
-              <h3>{tool.name}</h3>
-              {tool.homeTeam && <span class="badge">{t('roundup.field.badge')}</span>}
+      {ROUNDUP.map((tool) => (
+        <li class:list={['card', { home: tool.homeTeam }]}>
+          <div class="card-head">
+            <h3>{tool.name}</h3>
+            {tool.homeTeam && <span class="badge">{t('roundup.field.badge')}</span>}
+          </div>
+          <p class="runtime">{tool.runtime}</p>
+          {tool.homeTeam && (
+            <div class="hl">
+              <span class="hl-eyebrow">
+                {t('roundup.field.hlEyebrow', {
+                  version: HUNK_SPLITTING.shippedIn,
+                })}
+              </span>
+              <p class="hl-head">{t('roundup.field.hlHead')}</p>
+              <p class="hl-sub">{t('roundup.field.hlSub')}</p>
             </div>
-            <p class="runtime">{tool.runtime}</p>
-            {tool.homeTeam && (
-              <div class="hl">
-                <span class="hl-eyebrow">
-                  {t('roundup.field.hlEyebrow', {
-                    version: HUNK_SPLITTING.shippedIn,
-                  })}
-                </span>
-                <p class="hl-head">{t('roundup.field.hlHead')}</p>
-                <p class="hl-sub">{t('roundup.field.hlSub')}</p>
-              </div>
+          )}
+          <p class="strength">{m.roundup.tools[tool.id].strength}</p>
+          <div class="card-links">
+            {tool.homeTeam ? (
+              <>
+                <CopyButton
+                  text={PRIMARY_INSTALL_COMMAND}
+                  label="brew install aic"
+                  variant="primary"
+                />
+                <a class="card-link" href={vsAicommits}>
+                  {t('roundup.field.vsAicommitsLink')}
+                </a>
+              </>
+            ) : (
+              <>
+                <a
+                  class="card-link"
+                  href={tool.repo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t('roundup.field.repoLink')}
+                </a>
+                {tool.vsPath && (
+                  <a class="card-link" href={localizedHref(locale, tool.vsPath)}>
+                    {t('roundup.field.compareLink')}
+                  </a>
+                )}
+              </>
             )}
-            <p class="strength">{m.roundup.tools[tool.id].strength}</p>
-            <div class="card-links">
-              {tool.homeTeam ? (
-                <>
-                  <CopyButton
-                    text={PRIMARY_INSTALL_COMMAND}
-                    label="brew install aic"
-                    variant="primary"
-                  />
-                  <a class="card-link" href={vsAicommits}>
-                    {t('roundup.field.vsAicommitsLink')}
-                  </a>
-                </>
-              ) : (
-                <>
-                  <a
-                    class="card-link"
-                    href={tool.repo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {t('roundup.field.repoLink')}
-                  </a>
-                  {tool.vsPath && (
-                    <a class="card-link" href={localizedHref(locale, tool.vsPath)}>
-                      {t('roundup.field.compareLink')}
-                    </a>
-                  )}
-                </>
-              )}
-            </div>
-          </li>
-        ))
-      }
+          </div>
+        </li>
+      ))}
     </ul>
     <p class="field-note" set:html={t('roundup.field.note')} />
   </section>
@@ -128,11 +125,15 @@ const description = t('meta.roundup.description');
     <p set:html={t('roundup.verdict.body')} />
     <div class="cta">
       <CopyButton text={PRIMARY_INSTALL_COMMAND} variant="primary" />
-      <a class="cta-link" href={resolve}>{t('footer.nav.resolve')}</a>
-      <a class="cta-link" href={vsAicommits}>{t('roundup.verdict.seeVs')}</a>
-      <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer"
-        >{t('footer.star')}</a
-      >
+      <a class="cta-link" href={resolve}>
+        {t('footer.nav.resolve')}
+      </a>
+      <a class="cta-link" href={vsAicommits}>
+        {t('roundup.verdict.seeVs')}
+      </a>
+      <a class="cta-link" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
+        {t('footer.star')}
+      </a>
     </div>
   </section>
 </ArticleShell>

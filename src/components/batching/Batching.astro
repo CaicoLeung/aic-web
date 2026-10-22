@@ -39,50 +39,55 @@ const changelogReview = changelogHref(locale, CONTROL_SHIPPED_IN);
         </div>
         <div class="connector" data-reveal></div>
         <div class="stack" data-reveal>
-          {
-            HUNK_SPLITTING.commits.map((c) => (
-              <div class="pill">
-                <span class="hash">{c.hash}</span>
-                <span class="msg">
-                  <span class="ctype" style={`--accent: ${HUNK_TYPE_ACCENT[c.type]}`}>
-                    {c.type}
-                  </span>
-                  <span class="scope">({c.scope})</span>
-                  <span class="summary">{c.summary}</span>
+          {HUNK_SPLITTING.commits.map((c) => (
+            <div class="pill">
+              <span class="hash">{c.hash}</span>
+              <span class="msg">
+                <span class="ctype" style={`--accent: ${HUNK_TYPE_ACCENT[c.type]}`}>
+                  {c.type}
                 </span>
-              </div>
-            ))
-          }
+                <span class="scope">({c.scope})</span>
+                <span class="summary">{c.summary}</span>
+              </span>
+            </div>
+          ))}
         </div>
         <div class="reason-strip" data-reveal>
           <p class="strip-label">{t('batching.stripLabel')}</p>
-          {HUNK_SPLITTING.hunks.map((h) => <HunkTraceLine h={h} />)}
+          {HUNK_SPLITTING.hunks.map((h) => (
+            <HunkTraceLine h={h} />
+          ))}
         </div>
       </div>
     </div>
 
     <div class="batching-copy">
       <p class="eyebrow" data-reveal>
-        <span class="line" aria-hidden="true"></span>{t('batching.eyebrow')}
+        <span class="line" aria-hidden="true"></span>
+        {t('batching.eyebrow')}
       </p>
-      <p class="kicker" data-reveal>{t('batching.kicker')}</p>
+      <p class="kicker" data-reveal>
+        {t('batching.kicker')}
+      </p>
       <h2 data-reveal>{t('batching.h2')}</h2>
       <p class="lede" data-reveal>
         {t('batching.lede')}
       </p>
-      <p class="aside" data-reveal>{t('batching.aside')}</p>
+      <p class="aside" data-reveal>
+        {t('batching.aside')}
+      </p>
       <p class="meta-row" data-reveal>
         <a class="ship-badge" href={changelog}>
-          {t('batching.shipBadge', { version: HUNK_SPLITTING.shippedIn })}<span
-            class="ship-arrow"
-            aria-hidden="true">→</span
-          >
+          {t('batching.shipBadge', { version: HUNK_SPLITTING.shippedIn })}
+          <span class="ship-arrow" aria-hidden="true">
+            →
+          </span>
         </a>
         <a class="ship-badge" href={changelogReview}>
-          {t('batching.reviewBadge', { version: CONTROL_SHIPPED_IN })}<span
-            class="ship-arrow"
-            aria-hidden="true">→</span
-          >
+          {t('batching.reviewBadge', { version: CONTROL_SHIPPED_IN })}
+          <span class="ship-arrow" aria-hidden="true">
+            →
+          </span>
         </a>
       </p>
       <a class="cmp-link" href={roundup} data-reveal>
@@ -94,18 +99,12 @@ const changelogReview = changelogHref(locale, CONTROL_SHIPPED_IN);
   <div class="swatch-strip container" data-reveal>
     <p class="swatch-label">{t('batching.swatchLabel')}</p>
     <div class="swatch-chips">
-      {
-        COMMIT_TYPE_PALETTE.map((c) => (
-          <span class="swatch-chip">
-            <span
-              class="swatch-dot"
-              style={`background: ${c.color}`}
-              aria-hidden="true"
-            />
-            {c.type}
-          </span>
-        ))
-      }
+      {COMMIT_TYPE_PALETTE.map((c) => (
+        <span class="swatch-chip">
+          <span class="swatch-dot" style={`background: ${c.color}`} aria-hidden="true" />
+          {c.type}
+        </span>
+      ))}
     </div>
   </div>
 </section>

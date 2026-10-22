@@ -31,18 +31,18 @@ const roundupHref = localizedHref(locale, 'best-ai-commit-tools');
     <p class="lede">{t('compareBand.lede')}</p>
 
     <ul class="rival-list" aria-label="aic vs competing tools">
-      {
-        rivals.map((r) => (
-          <li>
-            <a class="rival-chip" href={r.href}>
-              {t('vs.more.vsLabel', { name: r.name })}
-            </a>
-          </li>
-        ))
-      }
+      {rivals.map((r) => (
+        <li>
+          <a class="rival-chip" href={r.href}>
+            {t('vs.more.vsLabel', { name: r.name })}
+          </a>
+        </li>
+      ))}
     </ul>
 
-    <a class="link roundup-link" href={roundupHref}>{t('compareBand.roundupLink')}</a>
+    <a class="link roundup-link" href={roundupHref}>
+      {t('compareBand.roundupLink')}
+    </a>
   </div>
 </section>
 

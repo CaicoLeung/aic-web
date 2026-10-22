@@ -13,6 +13,10 @@ const BASE_PATH = process.env.BASE_PATH ?? '/aic/';
 
 // https://astro.build/config
 export default defineConfig({
+  // Preserve v6 HTML-aware whitespace handling. Astro 7 defaults to
+  // 'jsx' which strips inter-element spaces — risk of joined words in
+  // i18n copy. Revisit: audit inline elements, then try 'jsx'.
+  compressHTML: true,
   // Inline all CSS into HTML (ADR-0021): total CSS (~34KB raw / ~6KB br)
   // is below the threshold where a separate render-blocking request pays
   // for itself — first paint = HTML arrival, always dark.

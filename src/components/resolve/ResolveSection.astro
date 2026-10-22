@@ -22,7 +22,8 @@ const resolvePage = localizedHref(locale, 'resolve');
 <section id="resolve" class="section resolve-section">
   <div class="container">
     <p class="eyebrow">
-      <span class="line" aria-hidden="true"></span>{t('resolveSection.eyebrow')}
+      <span class="line" aria-hidden="true"></span>
+      {t('resolveSection.eyebrow')}
     </p>
     <h2>{t('resolve.h1.main')}</h2>
     <p class="lede" set:html={t('resolveSection.lede')} />
@@ -31,7 +32,9 @@ const resolvePage = localizedHref(locale, 'resolve');
       <ResolveTerminal />
     </div>
 
-    <a class="link" href={resolvePage}>{t('resolveSection.link')}</a>
+    <a class="link" href={resolvePage}>
+      {t('resolveSection.link')}
+    </a>
   </div>
 </section>
 
